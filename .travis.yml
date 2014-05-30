@@ -1,0 +1,29 @@
+language: php
+
+php:
+  - 5.4
+
+mysql:
+  database: nudata_starter
+  username: root
+  encoding: utf8
+
+install:
+  - cd test
+  - composer install
+  - mysql -e 'create database nudata_starter;'
+  - sudo apt-get update > /dev/null
+  - sudo apt-get --quiet=2 install php5-cgi php5-curl php5-gd php5-mysql > /dev/null
+
+  # Install latest Drush 6.
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - composer global require --no-interaction drush/drush:6.*
+  - cd ~/.drush/
+  - git clone git@github.com:WhiteHouse/drushsubtree.git
+  - git clone git@github.com:WhiteHouse/buildmanager.git
+
+script:
+# Build website
+  - drush buildmanager-build
+  - cd docroot
+  - drush si dkan --sites-subdir=default --db-url=mysql://root:@127.0.0.1/nudata_starter --account-name=admin --account-pass=admin  --site-name="DKAN" install_configure_form.update_status_module='array(FALSE,FALSE)' --yes
