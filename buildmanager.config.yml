@@ -33,3 +33,8 @@ subtrees:
     branch: master
     message: 'nudata_disqus subtree from git@github.com:nucivic/nudata_story.git'
 
+  nudata_theme:
+    path: nudata_theme
+    uri: 'git@github.com:nucivic/nudata_theme.git'
+    branch: master
+    message: 'nudata_theme subtree from git@github.com:nucivic/nudata_theme.git'
