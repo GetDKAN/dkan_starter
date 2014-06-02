@@ -24,9 +24,6 @@ ini_set('session.use_only_cookies', 1);
 ini_set('session.use_trans_sid',    0);
 ini_set('url_rewriter.tags',        '');
 
-$conf['shield_pass'] = 'dkanusaid';
-$conf['shield_user'] = 'admin';
-$conf['shield_print'] = '';
 
 // On Acquia Cloud, this include file configures Drupal to use the correct
 // database in each site environment (Dev, Stage, or Prod). To use this
