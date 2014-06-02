@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the nuData Disqus module.
+ */
+
+include_once 'nudata_disqus.features.inc';
