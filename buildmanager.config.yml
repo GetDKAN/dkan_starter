@@ -21,4 +21,14 @@ subtrees:
     uri: 'git@github.com:nuams/dkan.git'
     branch:  7.x-1.x
     message: 'dkan subtree from git@github.com:nuams/dkan.git'
+  nudata_disqus:
+    path: nudata_disqus
+    uri: 'git@github.com:nucivic/nudata_disqus.git'
+    branch: master
+    message: 'nudata_disqus subtree from git@github.com:nucivic/nudata_disqus.git'
+  nudata_story:
+    path: nudata_story
+    uri: 'git@github.com:nucivic/nudata_story.git'
+    branch: master
+    message: 'nudata_disqus subtree from git@github.com:nucivic/nudata_story.git'
 
