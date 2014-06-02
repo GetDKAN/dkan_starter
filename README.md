@@ -1,38 +1,16 @@
-# NuData Starter
+![NuData](http://nudatademo-dev.nuamsdev.com/sites/all/themes/nudata/logo.png)
 
-## Purpose
+NuData Starter is an Open Data platform based on the DKAN Open Data catalog created by NuCivic. NuData takes DKAN further by adding additional features.
 
-This "Starterkit" is designed to facilitate building off of DKAN while keeping up-to-date with DKAN changes. The Starkerkit allows developers and site administrators the ability to get upstream changes to DKAN using a "git subtree merge" strategy.
+NuData Starter provides:
 
-This is useful if you want to:
+* a best-practices example of building sites and services off of DKAN
+* additional features not provided by DKAN
 
-- Get regular changes from the DKAN development branch.
-- Have a strategy for getting future DKAN tags.
-- Follow a best-practice for developing sites with DKAN.
+Free demos of NuData Starter can be requested by filling out the form at http://nucivic.com/products/nudata/demo/.
 
-Do not use this Starterkit if you:
+[NuData Enterprise](http://www.nucivic.com/products/nudata/enterprise/) is a software-as-a-service offering based off of NuData Starter.
 
-- Want to use another strategy for updating DKAN or Drupal core (ie manually).
-- Do not like "git subtree" or can't use it.
+Because we use NuData Starter to manage our software-as-a-service, it is frequently updated and we do not guarantee backwards compatibility.   Therefore, if you wish to build a custom open data website based on Drupal, we recommend that you start with the code from the DKAN Drupal Distribution repository instead.
 
-## Requirements
-
-- git subtree
-- drush buildmanager https://github.com/WhiteHouse/buildmanager
-- drush subtree https://github.com/whitehouse/drushsubtree
-
-## Instructions
-
-- Clone this repository.
-- Add desired modules to "build.make" file.
-- Run ``drush buildmanager-build`` to get an updated version of DKAN that is coupled with your contributed modules.
-
-#### Staying Up-to-date with Tags Only
-
-If you desire to stay up to date with release tags instead of DKAN development releases:
-
-- change the "branch" to the desired tag in buildmanager.config.yml
-- run `` drush buildmanager-build ``
-
-## Props
-Thanks to the folks at Acquia and Whitehouse who developed this technique. For more details see: http://www.acquia.com/blog/maintaining-your-installed-drupal-distro
+We are open to contributions to this NuData repo, but in general we encourage developers interested in contributing to Drupal’s open data management capabilities to contribute to the DKAN Distribution project and repository instead.
