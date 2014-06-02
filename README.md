@@ -1,3 +1,5 @@
+![NuData](http://nudatademo-dev.nuamsdev.com/sites/all/themes/nudata/logo.png)
+
 NuData Starter is an open-source code repository on github that NuCivic uses as the basis for the NuData software-as-a-service is comprised of:
 
 * the DKAN Drupal Distribution for open data management, plus
