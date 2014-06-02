@@ -4,6 +4,9 @@
 /files/*
 /cache
 
+# Ignore settings local file
+/sites/default/settings.local.php
+
 # ** Only works in OSs that support newer versions of fnmatch (Bash 4+)
 /sites/default/**/files
 /sites/default/**/private
@@ -31,7 +34,8 @@
 .DS_Store*
 ehthumbs.db
 Thumbs.db
-#Icon
+#Icon
+
 ._*
 
 # Vim generated files #

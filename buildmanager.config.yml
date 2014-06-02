@@ -11,6 +11,7 @@ postbuild-commands:
   - 'rm -rf docroot/sites; cd docroot; ln -s ../sites'
   - 'rm docroot/profiles/dkan/.gitignore'
   - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
+  - './scripts/rebuild-nudata.sh'
   # If your site includes libraries installed by composer (e.g. composer_autoload
   # or guzzle module) you'll want to include something like this:
   # - 'cd docroot/sites/all/modules/guzzle; composer install;

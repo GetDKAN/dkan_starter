@@ -9,4 +9,7 @@ includes[dkan] = projects/dkan/build-dkan.make
 projects[devel][version] = 1.x
 projects[devel][subdir] = contrib
 
+projects[disqus][version] = 1.10
+projects[disqus][subdir] = contrib
+
 ; Libraries
