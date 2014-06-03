@@ -1,0 +1,40 @@
+build:
+  target: docroot
+  build_file: build.make
+
+prebuild-commands:
+# - 'shell command 1 goes here'# - 'shell command 2 goes here'
+
+# Custom commands. These are run after subtrees are updated and after the drush make
+# rebuild runs, before any changes from drush make are committed.
+postbuild-commands:
+  - 'rm -rf docroot/sites; cd docroot; ln -s ../sites'
+  - 'rm docroot/profiles/dkan/.gitignore'
+  - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
+  - './scripts/rebuild-nudata.sh'
+  # If your site includes libraries installed by composer (e.g. composer_autoload
+  # or guzzle module) you'll want to include something like this:
+  # - 'cd docroot/sites/all/modules/guzzle; composer install;
+
+subtrees:
+  dkan:
+    path: dkan
+    uri: 'git@github.com:nuams/dkan.git'
+    branch:  7.x-1.x
+    message: 'dkan subtree from git@github.com:nuams/dkan.git'
+  nudata_disqus:
+    path: nudata_disqus
+    uri: 'git@github.com:nucivic/nudata_disqus.git'
+    branch: master
+    message: 'nudata_disqus subtree from git@github.com:nucivic/nudata_disqus.git'
+  nudata_story:
+    path: nudata_story
+    uri: 'git@github.com:nucivic/nudata_story.git'
+    branch: master
+    message: 'nudata_disqus subtree from git@github.com:nucivic/nudata_story.git'
+
+  nudata_theme:
+    path: nudata_theme
+    uri: 'git@github.com:nucivic/nudata_theme.git'
+    branch: master
+    message: 'nudata_theme subtree from git@github.com:nucivic/nudata_theme.git'
