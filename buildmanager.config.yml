@@ -8,7 +8,10 @@ prebuild-commands:
 # Custom commands. These are run after subtrees are updated and after the drush make
 # rebuild runs, before any changes from drush make are committed.
 postbuild-commands:
-  - 'rm -rf docroot/sites; cd docroot; ln -s ../sites'
+  - 'mkdir docroot/sites/all/modules/nudata/nudata'
+  - 'ln -s ../../../../projects/nudata_disqus docroot/sites/all/modules/nudata/nudata_disqus'
+  - 'ln -s ../../../../projects/nudata_story docroot/sites/all/modules/nudata/nudata_story'
+  - 'ln -s ../../../../projects/nudata_theme docroot/sites/all/themes/nudata_theme'
   - 'rm docroot/profiles/dkan/.gitignore'
   - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
   - './scripts/rebuild-nudata.sh'
