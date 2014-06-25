@@ -13,8 +13,8 @@ files[] = multistep.rules.inc
 configure = admin/config/content/multistep
 
 
-; Information added by drush on 2014-06-02
+; Information added by drush on 2014-06-25
 version = "3b0d40a"
 project = "multistep"
-datestamp = "1401732053"
+datestamp = "1403730693"
 

@@ -20,10 +20,3 @@ features[views_view][] = datasets
 files[] = includes/Datastore.inc
 files[] = includes/DkanDatastore.inc
 files[] = tests/dkan_datastore.test
-
-; Information added by Drupal.org packaging script on 2014-04-28
-version = "7.x-1.0"
-core = "7.x"
-project = "dkan_datastore"
-datestamp = "1398710927"
-
