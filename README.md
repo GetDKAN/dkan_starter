@@ -6,5 +6,5 @@ Free demos of NuCivic Data Starter can be requested by filling out the form at h
 
 Because we use NuCivic Data Starter to manage our software-as-a-service, it is frequently updated and we do not guarantee backwards compatibility.   Therefore, if you wish to build a custom open data website based on Drupal, we recommend that you start with the code from the DKAN Drupal Distribution repository instead.
 
-We are open to contributions to this NuCivic Data repo, but in general we encourage developers interested in contributing to Drupal’s open data management capabilities to contribute to the DKAN distribution project instead, at http://github.org/nuams/dkan.
+We are open to contributions to this NuCivic Data repo, but in general we encourage developers interested in contributing to Drupal’s open data management capabilities to contribute to the DKAN distribution project instead, at http://github.org/NuCivic/dkan.
 
