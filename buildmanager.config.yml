@@ -8,13 +8,13 @@ prebuild-commands:
 # Custom commands. These are run after subtrees are updated and after the drush make
 # rebuild runs, before any changes from drush make are committed.
 postbuild-commands:
-  - 'mkdir docroot/sites/all/modules/nudata/nudata'
-  - 'ln -s ../../../../projects/nudata_disqus docroot/sites/all/modules/nudata/nudata_disqus'
-  - 'ln -s ../../../../projects/nudata_story docroot/sites/all/modules/nudata/nudata_story'
-  - 'ln -s ../../../../projects/nudata_theme docroot/sites/all/themes/nudata_theme'
+  - 'mkdir docroot/sites/all/modules/nucivic'
+  - 'ln -s ../../../../projects/nudata_disqus docroot/sites/all/modules/nucivic/nudata_disqus'
+  - 'ln -s ../../../../projects/nudata_story docroot/sites/all/modules/nucivic/nudata_story'
+  - 'ln -s ../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
   - 'rm docroot/profiles/dkan/.gitignore'
   - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
-  - './scripts/rebuild-nudata.sh'
+  - './scripts/rebuild-nucivic-data.sh'
   # If your site includes libraries installed by composer (e.g. composer_autoload
   # or guzzle module) you'll want to include something like this:
   # - 'cd docroot/sites/all/modules/guzzle; composer install;
@@ -22,9 +22,9 @@ postbuild-commands:
 subtrees:
   dkan:
     path: dkan
-    uri: 'git@github.com:nuams/dkan.git'
+    uri: 'git@github.com:NuCivic/dkan.git'
     branch:  7.x-1.x
-    message: 'dkan subtree from git@github.com:nuams/dkan.git'
+    message: 'dkan subtree from git@github.com:NuCivic/dkan.git'
   nudata_disqus:
     path: nudata_disqus
     uri: 'git@github.com:nucivic/nudata_disqus.git'
@@ -35,9 +35,8 @@ subtrees:
     uri: 'git@github.com:nucivic/nudata_story.git'
     branch: master
     message: 'nudata_disqus subtree from git@github.com:nucivic/nudata_story.git'
-
-  nudata_theme:
-    path: nudata_theme
-    uri: 'git@github.com:nucivic/nudata_theme.git'
+  data_theme:
+    path: data_theme
+    uri: 'git@github.com:nucivic/data_theme.git'
     branch: master
-    message: 'nudata_theme subtree from git@github.com:nucivic/nudata_theme.git'
+    message: 'data_theme subtree from git@github.com:nucivic/data_theme.git'
