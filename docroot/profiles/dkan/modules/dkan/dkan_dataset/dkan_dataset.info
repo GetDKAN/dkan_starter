@@ -1,9 +1,9 @@
 name = DKAN Dataset
 description = Custom elements for Datasets.
 core = 7.x
+version = "7.x-1.x"
 package = DKAN
 php = 5.2.4
-version = 7.x-1.0
 project = dkan_dataset
 dependencies[] = autocomplete_deluxe
 dependencies[] = beautytips

@@ -27,7 +27,7 @@ projects[date][subdir] = contrib
 projects[double_field][version] = 2.3
 projects[double_field][subdir] = contrib
 
-projects[entity][version] = 1.4
+projects[entity][version] = 1.5
 projects[entity][subdir] = contrib
 
 projects[entityreference][version] = 1.1
@@ -40,7 +40,7 @@ projects[facetapi][subdir] = contrib
 projects[facetapi][version] = 1.3
 
 projects[facetapi_pretty_paths][subdir] = contrib
-projects[facetapi_pretty_paths][revision] = 1.0
+projects[facetapi_pretty_paths][version] = 1.1
 
 projects[features][version] = 2.0
 projects[features][subdir] = contrib
@@ -119,13 +119,13 @@ projects[uuid][version] = 1.0-alpha5
 projects[uuid][patch][1927474] = http://drupal.org/files/unknown-column-in-field-list-fix-1927474-2.patch
 projects[uuid][subdir] = contrib
 
-projects[views][version] = 3.7
+projects[views][version] = 3.8
 projects[views][subdir] = contrib
 
 projects[recline][download][type] = git
 projects[recline][download][url] = https://github.com/NuCivic/recline.git
 projects[recline][download][branch] = 7.x-1.x
-projects[recline][download][revision] = "0b4ec95c6ef68fc041c56fd7c48d0f1c362fa0f1"
+projects[recline][subdir] = contrib
 
 projects[entity_rdf][download][type] = git
 projects[entity_rdf][download][url] = http://git.drupal.org/project/entity_rdf.git
