@@ -12,7 +12,7 @@ prebuild-commands:
 postbuild-commands:
   - 'mkdir docroot/sites/all/modules/nucivic'
   - 'mkdir docroot/sites/all/themes/nucivic'
-  - 'rm docroot/sites/default; ln -s ../../assets/sites/default docroot/sites/default;'
+  - 'rm docroot/sites/default; ln -s ../../assets/sites/default docroot/sites/default'
   - 'ln -s ../../../../../projects/nudata_disqus docroot/sites/all/modules/nucivic/nudata_disqus'
   - 'ln -s ../../../../../projects/nudata_story docroot/sites/all/modules/nucivic/nudata_story'
   - 'ln -s ../../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
