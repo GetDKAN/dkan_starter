@@ -2,6 +2,8 @@ build:
   target: docroot
   build_file: build.make
 
+# Custom commands. These are run before subtrees are updated and before the drush make
+# rebuild runs.
 prebuild-commands:
 # - 'shell command 1 goes here'# - 'shell command 2 goes here'
 
@@ -10,12 +12,12 @@ prebuild-commands:
 postbuild-commands:
   - 'mkdir docroot/sites/all/modules/nucivic'
   - 'mkdir docroot/sites/all/themes/nucivic'
-  - 'ln -s ../../../../projects/nudata_disqus docroot/sites/all/modules/nucivic/nudata_disqus'
-  - 'ln -s ../../../../projects/nudata_story docroot/sites/all/modules/nucivic/nudata_story'
-  - 'ln -s ../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
+  - 'rm docroot/sites/default; ln -s ../../assets/sites/default docroot/sites/default;'
+  - 'ln -s ../../../../../projects/nudata_disqus docroot/sites/all/modules/nucivic/nudata_disqus'
+  - 'ln -s ../../../../../projects/nudata_story docroot/sites/all/modules/nucivic/nudata_story'
+  - 'ln -s ../../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
   - 'rm docroot/profiles/dkan/.gitignore'
   - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
-  - './scripts/rebuild-nucivic-data.sh'
   # If your site includes libraries installed by composer (e.g. composer_autoload
   # or guzzle module) you'll want to include something like this:
   # - 'cd docroot/sites/all/modules/guzzle; composer install;
