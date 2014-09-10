@@ -21,12 +21,12 @@ subtrees:
     uri: 'git@github.com:NuCivic/dkan.git'
     branch:  7.x-1.x
     message: 'dkan subtree from git@github.com:NuCivic/dkan.git'
-  nudata_disqus:
+  data_disqus:
     path: data_disqus
     uri: 'git@github.com:nucivic/data_disqus.git'
     branch: master
     message: 'data_disqus subtree from git@github.com:nucivic/data_disqus.git'
-  nudata_story:
+  data_story:
     path: data_story
     uri: 'git@github.com:nucivic/data_story.git'
     branch: master
