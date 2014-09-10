@@ -1,4 +1,5 @@
 <?php
+// $Id: disqus.install,v 1.1.2.4.2.3 2011/01/18 00:39:25 robloach Exp $
 
 /**
  * @file
@@ -15,7 +16,7 @@ function disqus_schema() {
       'did' => array(
         'type' => 'serial',
         'not null' => TRUE,
-      ),
+      ),  
       'nid' => array(
         'type' => 'int',
         'not null' => TRUE,
@@ -42,37 +43,8 @@ function disqus_schema() {
  * Implements hook_uninstall().
  */
 function disqus_uninstall() {
-  $variables = array(
-    'disqus_combination_widget_colortheme',
-    'disqus_combination_widget_defaulttabview',
-    'disqus_combination_widget_excerpt_length',
-    'disqus_combination_widget_hide_mods',
-    'disqus_combination_widget_items',
-    'disqus_developer',
-    'disqus_domain',
-    'disqus_inherit_login',
-    'disqus_localization',
-    'disqus_location',
-    'disqus_logo',
-    'disqus_nodetypes',
-    'disqus_popular_threads_items',
-    'disqus_publickey',
-    'disqus_recent_comments_avatarsize',
-    'disqus_recent_comments_excerpt_length',
-    'disqus_recent_comments_items',
-    'disqus_recent_comments_showavatars',
-    'disqus_secretkey',
-    'disqus_sso',
-    'disqus_top_commenters_avatarsize',
-    'disqus_top_commenters_hide_mods',
-    'disqus_top_commenters_items',
-    'disqus_top_commenters_showavatars',
-    'disqus_use_site_logo',
-    'disqus_weight',
-  );
-  foreach ($variables as $variable) {
-    variable_del($variable);
-  }
+  // Remove all Disqus-related variables.
+  db_delete('variable')->condition('name', 'disqus_%', 'LIKE')->execute();
 }
 
 /**
@@ -86,15 +58,5 @@ function disqus_update_7000() {
  * Updates Disqus with support for toggling comments per node.
  */
 function disqus_update_7001() {
-  if (!db_table_exists('disqus')) {
-    drupal_install_schema('disqus');
-  }
-}
-
-
-/**
- * Remove deprecated variable.
- */
-function disqus_update_7002() {
-  variable_del('disqus_userapikey');
+  drupal_install_schema('disqus');
 }
