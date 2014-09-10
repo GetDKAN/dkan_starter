@@ -2,25 +2,18 @@ build:
   target: docroot
   build_file: build.make
 
-# Custom commands. These are run before subtrees are updated and before the drush make
-# rebuild runs.
-prebuild-commands:
-# - 'shell command 1 goes here'# - 'shell command 2 goes here'
-
 # Custom commands. These are run after subtrees are updated and after the drush make
 # rebuild runs, before any changes from drush make are committed.
 postbuild-commands:
-  - 'mkdir docroot/sites/all/modules/nucivic'
-  - 'mkdir docroot/sites/all/themes/nucivic'
-  - 'rm docroot/sites/default; ln -s ../../assets/sites/default docroot/sites/default'
-  - 'ln -s ../../../../../projects/nudata_disqus docroot/sites/all/modules/nucivic/nudata_disqus'
-  - 'ln -s ../../../../../projects/nudata_story docroot/sites/all/modules/nucivic/nudata_story'
+  - 'mkdir -p docroot/sites/all/modules/nucivic'
+  - 'mkdir -p docroot/sites/all/themes/nucivic'
+  - 'rm docroot/sites/default;'
+  - 'ln -s ../../assets/sites/default docroot/sites/default'
+  - 'ln -s ../../../../../projects/data_disqus docroot/sites/all/modules/nucivic/data_disqus'
+  - 'ln -s ../../../../../projects/data_story docroot/sites/all/modules/nucivic/data_story'
   - 'ln -s ../../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
   - 'rm docroot/profiles/dkan/.gitignore'
   - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
-  # If your site includes libraries installed by composer (e.g. composer_autoload
-  # or guzzle module) you'll want to include something like this:
-  # - 'cd docroot/sites/all/modules/guzzle; composer install;
 
 subtrees:
   dkan:
@@ -28,16 +21,16 @@ subtrees:
     uri: 'git@github.com:NuCivic/dkan.git'
     branch:  7.x-1.x
     message: 'dkan subtree from git@github.com:NuCivic/dkan.git'
-  nudata_disqus:
-    path: nudata_disqus
-    uri: 'git@github.com:nucivic/nudata_disqus.git'
+  data_disqus:
+    path: data_disqus
+    uri: 'git@github.com:nucivic/data_disqus.git'
     branch: master
-    message: 'nudata_disqus subtree from git@github.com:nucivic/nudata_disqus.git'
-  nudata_story:
-    path: nudata_story
-    uri: 'git@github.com:nucivic/nudata_story.git'
+    message: 'data_disqus subtree from git@github.com:nucivic/data_disqus.git'
+  data_story:
+    path: data_story
+    uri: 'git@github.com:nucivic/data_story.git'
     branch: master
-    message: 'nudata_disqus subtree from git@github.com:nucivic/nudata_story.git'
+    message: 'data_story subtree from git@github.com:nucivic/data_story.git'
   data_theme:
     path: data_theme
     uri: 'git@github.com:nucivic/data_theme.git'

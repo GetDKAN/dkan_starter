@@ -1,3 +1,4 @@
+; $Id: disqus.info,v 1.1.6.2 2011/01/19 14:13:02 robloach Exp $
 name = Disqus
 description = Uses the Disqus web service to enhance comments.
 core = 7.x
@@ -7,13 +8,12 @@ files[] = disqus.admin.inc
 files[] = disqus.install
 files[] = disqus.module
 files[] = disqus.php
-files[] = disqus.views.inc
 
 configure = admin/config/services/disqus
 
-; Information added by  packaging script on 2013-11-17
-version = "7.x-1.10"
+; Information added by drupal.org packaging script on January 1, 1970 - 00:00
+version = "7.x-1.1"
 core = "7.x"
 project = "disqus"
-datestamp = "1384712905"
+datestamp = "1296068200"
 
