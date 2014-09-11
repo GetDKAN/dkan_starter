@@ -5,7 +5,7 @@
 ; Grab DKAN make file
 includes[dkan] = projects/dkan/build-dkan.make
 includes[data_story] = projects/data_story/data_story.make
-includes[data_story] = projects/data_story/data_disqus.make
+includes[data_disqus] = projects/data_disqus/data_disqus.make
 
 ; Include desired modules, themes, or libraries here.
 projects[devel][version] = 1.x
