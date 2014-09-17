@@ -1,0 +1,41 @@
+<?php
+/**
+ * @file
+ * Code for the NuCivic workflow feature.
+ */
+
+include_once 'publishing_workflow.features.inc';
+
+/**
+ * Implements hook_permission().
+ */
+function publishing_workflow_permission() {
+  return array(
+    'access unpublished data' => array(
+      'title' => t('Access Unpublished Data'),
+      'description' => t('Grant access to unpublished data page.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function publishing_workflow_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  switch ($form_id) {
+    case 'resource_node_form':
+    case 'dataset_node_form':
+      $roles = array_keys($user->roles);
+      $is_editor = in_array('254633039', $roles);
+      $is_portal_admin = in_array('27274083', $roles);
+      $is_administrator = $user->uid == 1;
+      $node = $form['#node'];
+      // Change published status only for new nodes.
+      if (!isset($node->nid)) {
+      	$status = $is_portal_admin || $is_editor || $is_administrator ? 1 : 0;
+        $form['options']['status']['#default_value'] = $status;
+      }
+      break;
+  }
+}

@@ -1,0 +1,15 @@
+name = NuCivic Data Data Contributor Role
+description = Collection of permissions and settings for NuCivic Data Content Contributor Role
+core = 7.x
+package = NUCIVIC
+version = 7.x-1.0
+project = data_contributor_role
+dependencies[] = dkan_dataset
+dependencies[] = entityreference_unpublished_node
+dependencies[] = features
+dependencies[] = features_roles_permissions
+dependencies[] = role_export
+features[features_api][] = api:2
+features[roles_permissions][] = data contributor
+features[user_role][] = data contributor
+project path = sites/all/modules/nucivic/data_workflow/publishing_roles
