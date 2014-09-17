@@ -36,3 +36,8 @@ subtrees:
     uri: 'git@github.com:nucivic/data_theme.git'
     branch: master
     message: 'data_theme subtree from git@github.com:nucivic/data_theme.git'
+  data_workflow:
+    path: data_workflow
+    uri: 'git@github.com:nucivic/data_workflow.git'
+    branch: master
+    message: 'data_workflow subtree from git@github.com:nucivic/data_workflow.git'
