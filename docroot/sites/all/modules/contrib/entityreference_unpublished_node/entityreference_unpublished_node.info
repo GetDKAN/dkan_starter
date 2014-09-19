@@ -1,0 +1,13 @@
+name = Entity reference unpublished node
+description = Enables the author to reference to unpulished node without the administer content permission and without an node access module.
+core = 7.x
+package = Fields
+dependencies[] = entityreference
+dependencies[] = ctools
+
+
+; Information added by drush on 2014-09-19
+version = "unknown"
+project = "entityreference_unpublished_node"
+datestamp = "1411138270"
+
