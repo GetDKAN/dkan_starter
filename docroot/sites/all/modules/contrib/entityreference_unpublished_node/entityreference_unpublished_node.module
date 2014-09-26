@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function entityreference_unpublished_node_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'entityreference') {
+    return 'plugins/' . $plugin;
+  }
+}
+
+/*
+ * Implements hook_permission().
+ * 
+ */
+function entityreference_unpublished_node_permission() {
+  $perms = array(
+    'reference unpublished nodes' => array(
+      'title' => t('Reference unpublished nodes in entityreference fields'),
+      'description' => t('Users with this permission may reference to unpublished nodes via entityreference fields.'),
+    ),
+  );
+  
+  return $perms;
+}

@@ -7,10 +7,11 @@ build:
 postbuild-commands:
   - 'mkdir -p docroot/sites/all/modules/nucivic'
   - 'mkdir -p docroot/sites/all/themes/nucivic'
-  - 'rm docroot/sites/default;'
+  - 'rm -rf docroot/sites/default;'
   - 'ln -s ../../assets/sites/default docroot/sites/default'
   - 'ln -s ../../../../../projects/data_disqus docroot/sites/all/modules/nucivic/data_disqus'
   - 'ln -s ../../../../../projects/data_story docroot/sites/all/modules/nucivic/data_story'
+  - 'ln -s ../../../../../projects/data_workflow docroot/sites/all/modules/nucivic/data_workflow'
   - 'ln -s ../../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
   - 'rm docroot/profiles/dkan/.gitignore'
   - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
@@ -36,3 +37,8 @@ subtrees:
     uri: 'git@github.com:nucivic/data_theme.git'
     branch: master
     message: 'data_theme subtree from git@github.com:nucivic/data_theme.git'
+  data_workflow:
+    path: data_workflow
+    uri: 'git@github.com:nucivic/data_workflow.git'
+    branch: master
+    message: 'data_workflow subtree from git@github.com:nucivic/data_workflow.git'

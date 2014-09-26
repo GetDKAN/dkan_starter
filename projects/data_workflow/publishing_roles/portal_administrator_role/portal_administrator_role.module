@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the USAID Portal Administrator Role feature.
+ */
+
+include_once 'portal_administrator_role.features.inc';

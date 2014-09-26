@@ -12,4 +12,5 @@ We are open to contributions to this NuCivic Data repo, but in general we encour
 | Component    | Status     |
 |--------------|:-----------|
 | Data Starter | [![Build Status](https://travis-ci.org/NuCivic/data_starter.svg?branch=master)](https://travis-ci.org/NuCivic/data_starter) |
-| Data Story   | [![Build Status](https://travis-ci.org/NuCivic/data_story.svg?branch=master)](https://travis-ci.org/NuCivic/data_story)
+| Data Story   | [![Build Status](https://travis-ci.org/NuCivic/data_story.svg?branch=master)](https://travis-ci.org/NuCivic/data_story) |
+| Data Workflow   | [![Build Status](https://travis-ci.org/NuCivic/data_workflow.svg?branch=master)](https://travis-ci.org/NuCivic/data_workflow) |
