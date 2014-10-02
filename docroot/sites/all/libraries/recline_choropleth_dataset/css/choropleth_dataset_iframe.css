@@ -1,0 +1,12 @@
+body.iframe-choropleth,
+.iframe-choropleth .container-12 .grid-12 ,
+.iframe-choropleth .container-12
+{
+    width: 100%;
+    min-width:570px;
+}
+
+body.iframe-choropleth #page,
+body.iframe-choropleth{
+    background-color: transparent;
+}

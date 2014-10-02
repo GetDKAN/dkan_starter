@@ -1,0 +1,16 @@
+name = Choropleth Dataset
+description = Creates the choropleth view mode.
+core = 7.x
+configure = admin/config/choropleth_dataset
+package = DKAN
+php = 5.2.4
+
+dependencies[] = choropleth
+dependencies[] = dkan_dataset
+dependencies[] = features
+dependencies[] = text
+dependencies[] = recline
+features[features_api][] = api:2
+features[field_base][] = field_choropleth_label
+features[field_instance][] = node-dataset-field_choropleth_label
+stylesheets[all][] = css/choropleth-dataset.css

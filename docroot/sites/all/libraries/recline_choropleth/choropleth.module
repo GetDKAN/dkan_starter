@@ -1,0 +1,266 @@
+<?php
+/**
+ * @file
+ * Adds choropleth functionality to Leaflet maps.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function choropleth_menu() {
+  $items = array();
+
+  $items['admin/choropleth/usstates_geojson'] = array(
+    'page callback' => 'choropleth_usstates_geojson',
+    'access arguments' => array('access content'),
+    'file' => 'choropleth.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Database schema for 'choropleth_data_column'.
+ */
+function choropleth_custom_db_field_schema() {
+  return array(
+    'choropleth_data_column' => array(
+      'type' => 'varchar',
+      'length' => '255',
+      'description' => 'Column to determine the choropleth map data.',
+    ),
+    'choropleth_breakpoints' => array(
+      'type' => 'varchar',
+      'length' => '255',
+      'description' => 'Comma separated list of breakpoints.',
+    ),
+    'choropleth_color_scale' => array(
+      'type' => 'varchar',
+      'length' => '2',
+      'description' => 'Color scale for the choropleth map data',
+    ),
+  );
+}
+
+/**
+ * Implements hook_recline_view_options().
+ */
+function choropleth_recline_view_options() {
+  return array('choropleth' => t('State by State'));
+}
+
+/**
+ * Implements hook_recline_field_columns_alter().
+ */
+function choropleth_recline_field_columns_alter(&$columns) {
+  $columns = $columns + choropleth_custom_db_field_schema();
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function choropleth_theme_registry_alter(&$theme_registry) {
+  $theme_registry['recline_default_formatter']['function'] = 'choropleth_recline_default_formatter';
+}
+
+/**
+ * Overrides theme_recline_default_formatter().
+ */
+function choropleth_recline_default_formatter($variables) {
+  $output = recline_default_formatter_output($variables);
+  choropleth_default_formatter_output($variables);
+  return drupal_render($output);
+}
+
+/**
+ * Adds js settings from recline field.
+ */
+function choropleth_default_formatter_output($variables) {
+  $settings = array();
+  if (isset($variables['item']['choropleth_data_column']) || isset($variables['item']['choropleth_breakpoints']) || isset($variables['item']['choropleth_color_scale'])) {
+    ctools_include('choropleth', 'choropleth', '');
+    $choropleth = $variables['item']['choropleth'] ? $variables['item']['choropleth'] : '';
+    // If this is a choropleth view, we need all the data from the resource
+    // so we can not use the paginated data if it is coming from the datastore.
+    // This sets the Drupal.settings to not use the datastore.
+    if ($choropleth) {
+      drupal_add_js('if (typeof Drupal.settings.recline.dkan != \'undefined\') { Drupal.settings.recline.dkan = false; }', array('type' => 'inline', 'scope' => 'footer'));
+    }
+    $choropleth_colors = choropleth_color_scale_settings();
+    $choropleth_colors_index = isset($variables['item']['choropleth_color_scale']) ? (int) $variables['item']['choropleth_color_scale'] : 0;
+    $settings['choropleth'] = array(
+      'choropleth' => $choropleth,
+      'choropleth_color_scale' => $choropleth_colors[$choropleth_colors_index],
+      'choropleth_data_column' => $variables['item']['choropleth_data_column'],
+      'choropleth_breakpoints' => $variables['item']['choropleth_breakpoints'],
+    );
+    drupal_add_js($settings, 'setting');
+  }
+  if (isset($choropleth) && $choropleth) {
+    $module_path = drupal_get_path('module', 'choropleth');
+    drupal_add_css($module_path . '/static/choropleth.css');
+    drupal_add_js($module_path . '/static/chroma.js');
+    drupal_add_js($module_path . '/static/numeral.min.js');
+
+    $settings = array(
+      'choropleth' => array(
+        'enable' => TRUE,
+        'statesData' => json_decode(file_get_contents(__DIR__ .
+          '/data/states_geojson.json')),
+      ),
+    );
+
+    drupal_add_js($settings, 'setting');
+    // Make sure we load our custom recline.view after Backbone is loaded.
+    drupal_add_js($module_path . '/static/recline.view.ChoroplethMap.js');
+    drupal_add_js($module_path . '/choropleth.js');
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function choropleth_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'resource_node_form':
+      $form['#validate'][] = 'choropleth_resource_form_submit';
+      break;
+  }
+}
+
+/**
+ * Validates resource node form.
+ */
+function choropleth_resource_form_submit($form, $form_state) {
+  $fields = choropleth_recline_fields();
+  foreach ($fields as $key => $field) {
+    if (isset($form_state['values'][$field]['und'])) {
+      foreach ($form_state['values'][$field]['und'] as $num => $value) {
+        // Choropleth view requires one other view to work currently.
+        if ($value['view']['choropleth'] && (!$value['view']['grid'] && !$value['view']['map'] && !$value['view']['graph'])) {
+          form_set_error($field . "][und][0][view][choropleth", t("States Map requires at least one additional Recline View be selected (Graph or Grid)."));
+        }
+        // Grab the file and try to find a 'state' header if 'choropleth'
+        // box is selected.
+        $file = file_load($value['fid']);
+        $headers = feeds_flatstore_processor_get_csv_results($file->uri, ",", 0);
+        foreach ($headers[0] as $key => $header) {
+          $headers[0][$key] = strtolower($header);
+        }
+        if ($value['view']['choropleth'] && !(in_array('state', $headers[0]))) {
+          form_set_error($field . "][und][0][view][choropleth", t("State by State Map view requires a State field."));
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Finds fields that are using Recline.
+ */
+function choropleth_recline_fields() {
+  $output = array();
+  $fields = field_info_fields();
+  foreach ($fields as $field_name => $field) {
+    if ($field['type'] == 'recline_field' && $field['storage']['type'] == 'field_sql_storage') {
+      $output[] = $field['field_name'];
+    }
+  }
+  return $output;
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function choropleth_field_widget_form_alter(&$element, &$form_state, $context) {
+  ctools_include('choropleth', 'choropleth', '');
+  if ($context['field']['type'] == 'recline_field') {
+    foreach ($element as $delta => $instance) {
+      $choropleth_data_column = isset($element[$delta]['#default_value']['choropleth_data_column']) ? $element[$delta]['#default_value']['choropleth_data_column'] : FALSE;
+      $element[$delta]['choropleth_data_column'] = array(
+        '#title' => 'Map data by',
+        '#description' => t('If there are multiple possible columns to map the data by, specify the name of the column in the uploaded data which should determine colors of states on a state-by-state map. (When there are multiple possible columns and no one column is specified, users will be prompted to select from radio buttons.)'),
+        '#type' => 'textfield',
+        '#weight' => 4,
+        '#default_value' => $choropleth_data_column,
+        '#states' => array(
+          'visible' => array(
+            ':input[name="field_upload[und][0][view][choropleth]"]' => array('checked' => TRUE),
+          ),
+        ),
+        '#weight' => 1,
+        '#default_value' => $choropleth_data_column,
+      );
+      $choropleth_breakpoints = isset($element[$delta]['#default_value']['choropleth_breakpoints']) ? $element[$delta]['#default_value']['choropleth_breakpoints'] : FALSE;
+      $element[$delta]['choropleth_breakpoints'] = array(
+        '#title' => 'Color Breakpoints',
+        '#description' => t('For the state-by-state map (if applicable) determine what values will be used as "breakpoints" for color shading. Enter breakpoints as a comma separated list. For example, if you want your map to include 4 colors where 0-24 is visualized as the lightest color, 25-49 medium light, 50-74 dark, 75-100 darkest, you would enter this: 25, 50, 75..'),
+        '#type' => 'textfield',
+        '#weight' => 4,
+        '#default_value' => $choropleth_breakpoints,
+        '#states' => array(
+          'visible' => array(
+            ':input[name="field_upload[und][0][view][choropleth]"]' => array('checked' => TRUE),
+          ),
+        ),
+        '#weight' => 1,
+        '#default_value' => $choropleth_breakpoints,
+      );
+      $choropleth_color_scale = isset($element[$delta]['#default_value']['choropleth_color_scale']) ? $element[$delta]['#default_value']['choropleth_color_scale'] : FALSE;
+      $choropleth_color_scale_options = choropleth_color_scale_tableselect_options();
+      $element[$delta]['choropleth_color_scale'] = array(
+        '#title' => 'Color Scale',
+        '#description' => t('Select desired color scale for the map polygons.'),
+        '#attributes' => array(
+          'class' => array('collapsible', 'collapsed'),
+        ),
+        '#states' => array(
+          'visible' => array(
+            ':input[name="field_upload[und][0][view][choropleth]"]' => array('checked' => TRUE),
+          ),
+        ),
+        '#type' => 'fieldset',
+        'colors' => array(
+          '#weight' => 0,
+          '#type' => 'tableselect',
+          '#header' => array(
+            'colors' => t('Colors'),
+          ),
+          '#options' => $choropleth_color_scale_options,
+          '#default_value' => $choropleth_color_scale,
+          '#multiple' => FALSE,
+        ),
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function choropleth_theme($existing, $type, $theme, $path) {
+  return array(
+    'choropleth-color-scale-option' => array(
+      'variables' => array(),
+      'template' => 'choropleth-color-scale-option',
+      'path' => drupal_get_path('module', 'choropleth') . '/templates/',
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ *
+ * Specifically this adds help text to the recline widget.
+ */
+function choropleth_field_widget_recline_widget_form_alter(&$element, &$form_state, $context) {
+  require_once 'choropleth.inc';
+  drupal_add_js('misc/collapse.js');
+  $collapsible_item = array('element' => array());
+  $collapsible_item['element']['#title'] = t("State by state (choropleth) map help");
+  $collapsible_item['element']['#description'] = choropleth_help_text();
+  $collapsible_item['element']['#attributes']['class'][] = 'collapsible';
+  $collapsible_item['element']['#attributes']['class'][] = 'collapsed';
+  $collapsible_item['element']['#children'] = '';
+  $element[0]['#description'] .= theme('fieldset', $collapsible_item);
+}

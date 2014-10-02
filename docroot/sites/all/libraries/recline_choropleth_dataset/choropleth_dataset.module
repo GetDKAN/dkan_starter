@@ -1,0 +1,347 @@
+<?php
+/**
+ * @file
+ * Hooks and code for the choropleth_dataset module.
+ */
+
+require_once 'includes/choropleth_dataset.inc';
+
+global $_choropleth_dataset_iframe_path_slug;
+$_choropleth_dataset_iframe_path_slug = 'choropleth-map';
+
+/**
+ * Implements hook_menu().
+ */
+function choropleth_dataset_menu() {
+  global $_choropleth_dataset_iframe_path_slug;
+  // This page's callback renders a dataset node with the choropleth view mode.
+  // /choropleth-dataset/% -> % being the nid of the dataset.
+  $items['choropleth-dataset/%'] = array(
+    'title' => 'Choropleth map by dataset nid',
+    'title_callback' => 'choropleth_dataset_get_title',
+    'page callback' => '_choropleth_dataset_page_by_nid',
+    'page arguments' => array(1),
+    'access arguments' => array('view choropleth displays'),
+    'file' => 'includes/choropleth_dataset.inc',
+  );
+
+  // This page's callback renders a choropleth map for embedding in an iframe.
+  // /choropleth-map/% -> % being the nid of the dataset.
+  $items[$_choropleth_dataset_iframe_path_slug . '/%'] = array(
+    'title' => 'Choropleth map iframe by dataset nid',
+    'page callback' => '_choropleth_map_page_by_nid',
+    'page arguments' => array(1),
+    'access arguments' => array('view choropleth displays'),
+    'file' => 'includes/choropleth_dataset.inc',
+  );
+
+  // This page's callback renders a dataset node with the choropleth view mode.
+  // /dataset/%/choropleth -> % being the dataset_slug.
+  $items['dataset/%/choropleth'] = array(
+    'title' => 'Choropleth map by dataset slug',
+    'page callback' => '_choropleth_dataset_page_by_dataset_slug',
+    'page arguments' => array(1),
+    'access arguments' => array('view choropleth displays'),
+    'file' => 'includes/choropleth_dataset.inc',
+  );
+
+  // Create an admin page for defining an optional url root for embeds.
+  $items['admin/config/choropleth_dataset'] = array(
+    'title' => 'Choropleth Dataset Configuration',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cholopleth_dataset_settings_form'),
+    'access arguments' => array('configure choropleth dataset'),
+    'file' => 'includes/choropleth_dataset.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function choropleth_dataset_entity_info_alter(&$entity_info) {
+  // Provide "Choropleth" view mode for dataset and resource nodes.
+  $entity_info['node']['view modes']['choropleth'] = array(
+    'label' => t('Choropleth'),
+    'custom settings' => FALSE,
+  );
+}
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function choropleth_dataset_preprocess_node(&$vars) {
+  if ((!empty($vars['view_mode'])) && ($vars['view_mode'] == 'choropleth')) {
+    $vars['theme_hook_suggestions'][] = 'node__' . $vars['type'] . '__' . $vars['view_mode'];
+    // If the node is a dataset build requirements for choropleth display.
+    if ($vars['type'] == 'dataset') {
+      // Save paths for reference.
+      $module_path = drupal_get_path('module', 'choropleth_dataset');
+      $parent_module_path = drupal_get_path('module', 'choropleth');
+      // Get path to parent module (choropleth) and add js/css dependencies.
+      libraries_load('recline');
+      // Library bbq is needed for hash support.
+      drupal_add_library('system', 'jquery.bbq');
+      drupal_add_css($parent_module_path . '/static/choropleth.css');
+      drupal_add_js($parent_module_path . '/static/chroma.js');
+      drupal_add_js($parent_module_path . '/static/numeral.min.js');
+      // Build main settings.
+      $settings = array(
+        'choroplethDataset' => array(
+          'targetDiv' => '#choropleth-dataset',
+          'resources' => array(),
+          'statesData' => json_decode(file_get_contents($parent_module_path . '/data/states_geojson.json')),
+        ),
+      );
+      // Load resources.
+      $resources_to_load = field_get_items('node', (object) $vars, 'field_resources');
+
+      if ($resources_to_load) {
+        foreach ($resources_to_load as $key => $value) {
+          $resources_to_load[$key] = $value['target_id'];
+        }
+        if (!empty($resources_to_load)) {
+          $resources = entity_load('node', $resources_to_load);
+        }
+      }
+      $field_choropleth_label = field_get_items('node', $vars['node'], 'field_choropleth_label');
+      $choropleth_label = isset($field_choropleth_label[0]) ? $field_choropleth_label[0]['safe_value'] : t('Resources');
+      $settings['choroplethDataset']['pointLabel'] = $choropleth_label;
+
+      // If we have resources, update settings.
+      if (isset($resources)) {
+        foreach ($resources as $resource) {
+          if ($field_upload = field_get_items('node', $resource, 'field_upload')) {
+            $field_upload = array_shift($field_upload);
+            if (($field_upload['choropleth']) || ($field_upload['map'])) {
+              ctools_include('choropleth', 'choropleth', '');
+              $choropleth_colors = array_values(choropleth_color_scale_settings());
+              $choropleth_colors_index = isset($field_upload['choropleth_color_scale']) ? (int) $field_upload['choropleth_color_scale'] : 0;
+              $map = isset($field_upload['map']) && $field_upload['map'] ? TRUE : FALSE;
+              $settings['choroplethDataset']['resources'][] = array(
+                'title' => $resource->title,
+                'file' => isset($field_upload['uri']) ? file_create_url($field_upload['uri']) : '',
+                'fileType' => isset($field_upload['filemime']) ? $field_upload['filemime'] : '',
+                'delimiter' => isset($field_upload['delimiter']) ? $field_upload['delimiter'] : ',',
+                'breakpoints' => isset($field_upload['choropleth_breakpoints']) ? $field_upload['choropleth_breakpoints'] : '',
+                'fieldToDisplay' => isset($field_upload['choropleth_data_column']) ? $field_upload['choropleth_data_column'] : '',
+                'unitOfMeasure' => isset($field_upload['choropleth_unit_of_measure']) ? $field_upload['choropleth_unit_of_measure'] : '',
+                'baseColor' => $choropleth_colors[$choropleth_colors_index],
+                'map' => $map,
+                'loaded' => FALSE,
+              );
+            }
+          }
+        }
+      }
+      drupal_add_js($settings, 'setting');
+      // Attach js.
+      drupal_add_js(
+        $parent_module_path . '/static/recline.view.ChoroplethMap.js',
+        array('type' => 'file', 'scope' => 'footer')
+      );
+      drupal_add_js(
+        $module_path . '/static/recline.view.MultiDatasetChoroplethMap.js',
+        array('type' => 'file', 'scope' => 'footer')
+      );
+      drupal_add_js(
+        $module_path . '/choropleth_dataset.js',
+        array('type' => 'file', 'scope' => 'footer')
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function choropleth_dataset_permission() {
+  return array(
+    'view choropleth displays' => array(
+      'title' => t('View choropleth renderings'),
+      'description' => t('Allows user to see choropleth displays.'),
+    ),
+    'configure choropleth dataset' => array(
+      'title' => t('Configure choropleth dataset settings'),
+      'description' => t('Grants access to cholopleth dataset configuration settings.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function choropleth_dataset_theme($existing, $type, $theme, $path) {
+  $a_themes = array(
+    'choropleth-dataset-page' => array(
+      'variables' => array(
+        'choropleth_none' => t('No map is available for this Dataset.'),
+        'back_button_text' => t('Back to Dataset'),
+        'choropleth' => NULL,
+        'node' => NULL,
+        'dataset_url' => NULL,
+        'choroplethable' => NULL,
+      ),
+      'template' => 'choropleth-dataset-page',
+      'path' => drupal_get_path('module', 'choropleth_dataset') . '/templates/',
+    ),
+    'choropleth-dataset-iframe' => array(
+      'variables' => array(
+        'choropleth_none' => t('No map is available for this Dataset.'),
+        'node' => NULL,
+        'choroplethable' => NULL,
+        'choropleth' => NULL,
+      ),
+      'template' => 'choropleth-dataset-iframe',
+      'path' => drupal_get_path('module', 'choropleth_dataset') . '/templates/',
+    ),
+    'choropleth-dataset-map-wrapper' => array(
+      'variables' => array(
+        'embed_toggle_text' => t('Embed this map.'),
+        'embed_help_text' => t('Copy and paste the link code below into your website wherever you would like the map to appear.'),
+        'link_source_title' => t('This link opens in a new window and takes you to'),
+        'dataset_url' => NULL,
+        'embedable_url' => NULL,
+        'choropleth' => NULL,
+        'privacy_policy_url' => NULL,
+        'privacy_policy_url_text' => NULL,
+        'privacy_policy_url_title_text' => NULL,
+      ),
+      'template' => 'choropleth-dataset-map-wrapper',
+      'path' => drupal_get_path('module', 'choropleth_dataset') . '/templates/',
+    ),
+    'choropleth-dataset-map-view' => array(
+      'variables' => array(
+        'map_view_html' => NULL,
+      ),
+      'template' => 'choropleth-dataset-map-view',
+      'path' => drupal_get_path('module', 'choropleth_dataset') . '/templates/',
+    ),
+    'node__dataset__choropleth' => array(
+      'template' => 'node__dataset__choropleth',
+      'path' => drupal_get_path('module', 'choropleth_dataset') . '/templates/',
+    ),
+    'choropleth-dataset-choropleth-link' => array(
+      'variables' => array(
+        'choropleth_url' => NULL,
+        'icon_url' => NULL,
+        'description' => t('View and filter all resources within this dataset on a map.'),
+        'label' => t('Dataset Map'),
+        'button_text' => t('Map Dataset'),
+        'anchor_title' => t('View the map of this dataset'),
+      ),
+      'template' => 'choropleth-dataset-choropleth-link',
+      'path' => drupal_get_path('module', 'choropleth_dataset') . '/templates/',
+    ),
+  );
+  return $a_themes;
+}
+
+/**
+ * Implements hook_process_page().
+ */
+function choropleth_dataset_process_page(&$variables) {
+  global $_choropleth_dataset_iframe_path_slug;
+  $current_path_slug = arg(0, current_path());
+  if ($_choropleth_dataset_iframe_path_slug === $current_path_slug) {
+    // It is an iframe, so clear out unecessary trimmings.
+    unset($variables['breadcrumb']);
+    unset($variables['page']['header']);
+    unset($variables['page']['footer']);
+    unset($variables['logo']);
+    unset($variables['messages']);
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function choropleth_dataset_preprocess_html(&$variables) {
+  global $_choropleth_dataset_iframe_path_slug;
+  $current_path_slug = arg(0, current_path());
+  if ($_choropleth_dataset_iframe_path_slug === $current_path_slug) {
+    // It is an iframe, so clear out unecessary trimmings.
+    unset($variables['page']['header']);
+    unset($variables['page']['footer']);
+    unset($variables['page']['page_bottom']);
+    // Set an iframe specific class.
+    $variables['classes_array'][] = 'iframe-choropleth';
+  }
+}
+
+
+/**
+ * Implements hook_node_view().
+ */
+function choropleth_dataset_node_view($node, $view_mode, $langcode) {
+  // Check to see if this is a dataset in view: full.
+  if (($node->type == 'dataset') && ($view_mode == 'full')) {
+    // Check if the dataset contains any resources set to show a state map.
+    if (choropleth_dataset_choroplethable($node) && user_access('view choropleth displays')) {
+      // The link to the choropleth map view of the dataset.
+      $choropleth_url = url('node/' . $node->nid) . '/choropleth';
+      $icon_url = drupal_get_path('module', 'choropleth_dataset') . '/images/state-map.jpg';
+
+      $node->content['choropleth_dataset_map_link'] = array(
+        '#weight' => 2,
+        '#theme' => 'choropleth-dataset-choropleth-link',
+        '#choropleth_url' => $choropleth_url,
+        '#icon_url' => $icon_url,
+      );
+    }
+  }
+}
+
+
+/**
+ * Implements hook_field_extra_fields().
+ */
+function choropleth_dataset_field_extra_fields() {
+  $extra['node']['dataset']['display'] = array(
+    // Declare choropleth map link as a pseudo-field for managed display.
+    'choropleth_dataset_map_link' => array(
+      'label' => t('Choropleth Map Link'),
+      'description' => t('The link to the choropleth map for the dataset.'),
+      'weight' => 2,
+    ),
+  );
+  return $extra;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function choropleth_dataset_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'resource_node_form':
+      $form['#validate'][] = 'choropleth_dataset_resource_form_submit';
+      break;
+  }
+}
+
+/**
+ * Validates resource node form.
+ */
+function choropleth_dataset_resource_form_submit($form, $form_state) {
+  $fields = choropleth_recline_fields();
+  foreach ($fields as $key => $field) {
+    if (isset($form_state['values'][$field]['und'])) {
+      foreach ($form_state['values'][$field]['und'] as $num => $value) {
+        // Grab the file and try to find headers for coordinates.
+        $file = file_load($value['fid']);
+        $headers = feeds_flatstore_processor_get_csv_results($file->uri, ",", 0);
+        foreach ($headers[0] as $key => $header) {
+          $headers[0][$key] = strtolower($header);
+        }
+        // Make sure Map is not enabled if file does not have lat/lon or
+        // Latitude / Longitude headers.
+        if ($value['view']['map'] &&
+          (!(in_array('lat', $headers[0]) && in_array('lon', $headers[0]))) && !(in_array('latitude', $headers[0]) && in_array('longitude', $headers[0]))) {
+          form_set_error($field . "][und][0][view][choropleth", t("Map view requires lat/lon or Latitude/Longitude fields."));
+        }
+      }
+    }
+  }
+}
