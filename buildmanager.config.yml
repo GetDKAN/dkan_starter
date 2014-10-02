@@ -13,6 +13,8 @@ postbuild-commands:
   - 'ln -s ../../../../../projects/data_story docroot/sites/all/modules/nucivic/data_story'
   - 'ln -s ../../../../../projects/data_workflow docroot/sites/all/modules/nucivic/data_workflow'
   - 'ln -s ../../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
+  - 'ln -s ../../../../../projects/geo_file_entity docroot/sites/all/themes/nucivic/geo_file_entity'
+  - 'ln -s ../../../../../projects/visualization_entity docroot/sites/all/themes/nucivic/visualization_entity'
   - 'rm docroot/profiles/dkan/.gitignore'
   - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
 
