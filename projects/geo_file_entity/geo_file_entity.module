@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Nudata Geo Entity feature.
+ */
+
+include_once 'geo_file_entity.features.inc';
