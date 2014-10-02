@@ -36,4 +36,4 @@ notifications:
   slack:
     rooms:
       - nucivic:t3p2KxXdzymmwxitWPvfAsnK#monitor-devops
-      - nucivic:t3p2KxXdzymmwxitWPvfAsnK#monitor-data-starter
+      - nucivic:t3p2KxXdzymmwxitWPvfAsnK#monitor-data_starter
