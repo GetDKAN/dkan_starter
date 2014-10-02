@@ -1,0 +1,35 @@
+name = Visualization Entity Choropleth Bundle
+core = 7.x
+package = NUCIVIC
+
+dependencies[] = dkan_dataset
+dependencies[] = dkan_dataset_content_types
+dependencies[] = eck
+dependencies[] = entityreference
+dependencies[] = features
+dependencies[] = list
+dependencies[] = options
+dependencies[] = recline
+dependencies[] = text
+dependencies[] = geo_file_entity_geojson_bundle
+dependencies[] = visualization_entity
+
+features[eck_bundle][] = visualization_choropleth_visualization
+features[features_api][] = api:2
+features[field_base][] = field_average_multiple_rows
+features[field_base][] = field_color_scale
+features[field_base][] = field_data_breakpoints
+features[field_base][] = field_data_column
+features[field_base][] = field_data_units
+features[field_base][] = field_geojson
+features[field_instance][] = visualization-choropleth_visualization-field_average_multiple_rows
+features[field_instance][] = visualization-choropleth_visualization-field_color_scale
+features[field_instance][] = visualization-choropleth_visualization-field_data_breakpoints
+features[field_instance][] = visualization-choropleth_visualization-field_data_column
+features[field_instance][] = visualization-choropleth_visualization-field_data_units
+features[field_instance][] = visualization-choropleth_visualization-field_geojson
+features[field_instance][] = visualization-choropleth_visualization-field_resource
+features[user_permission][] = eck view visualization choropleth_visualization entities
+features_exclude[field_base][field_resource] = field_resource
+
+project path = sites/all/modules/nucivic/visualization_entity/modules

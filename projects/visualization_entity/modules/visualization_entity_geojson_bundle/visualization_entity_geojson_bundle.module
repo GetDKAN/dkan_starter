@@ -1,0 +1,65 @@
+<?php
+/**
+ * @file
+ * Code for the Visualization Entity Geojson Bundle feature.
+ */
+
+include_once 'visualization_entity_geojson_bundle.features.inc';
+
+/**
+ * Implements hook_theme().
+ */
+function visualization_entity_geojson_bundle_theme($existing, $type, $theme, $path) {
+  $tpls_path = drupal_get_path('module', 'visualization_entity_geojson_bundle') . '/theme';
+  return array(
+    'visualization__geojson_visualization' => array(
+      'render element' => 'elements',
+      'template' => 'visualization--geojson-visualization',
+      'path' => $tpls_path,
+    ),
+  );
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function visualization_entity_geojson_bundle_entity_view_alter(&$build, $type) {
+  if ($type === 'visualization' && $build['#entity']->type === 'geojson_visualization') {
+    // Load libraries.
+    libraries_load('recline');
+
+    // Build settings.
+    $settings = array();
+
+    // Build label column and geojson file.
+    $resource = $build['field_resource']['#items'][0]['entity'];
+    $geojson = $resource->field_upload[LANGUAGE_NONE][0]['uri'];
+    $geojson = drupal_realpath($geojson);
+    $geojson = json_decode(file_get_contents($geojson));
+
+    $settings['geojson'] = $geojson;
+
+    $settings = array(
+      'visualization_entity_geojson_bundle' => $settings,
+    );
+
+    // Add settings.
+    drupal_add_js($settings, 'setting');
+
+    // Add js controller and stylesheets.
+    $module_path = drupal_get_path('module', 'visualization_entity_geojson_bundle');
+    drupal_add_js($module_path . '/visualization_entity_geojson_bundle.js');
+    drupal_add_css($module_path . '/visualization_entity_geojson_bundle.css');
+  }
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function visualization_entity_geojson_bundle_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'eck__entity__form_add_visualization_geojson_visualization' || $form_id == 'eck__entity__form_edit_visualization_geojson_visualization') {
+
+    $options_resources = $form['field_resource'][LANGUAGE_NONE]['#options'];
+    $form['field_resource'][LANGUAGE_NONE]['#options'] = visualization_entity_filter_array_by_key($options_resources, 'visualization_entity_validate_file', array('node', 'field_upload', 'visualization_entity_is_geojson'));
+  }
+}
