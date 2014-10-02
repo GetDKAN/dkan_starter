@@ -42,3 +42,13 @@ subtrees:
     uri: 'git@github.com:nucivic/data_workflow.git'
     branch: master
     message: 'data_workflow subtree from git@github.com:nucivic/data_workflow.git'
+  geo_file_entity:
+    path: geo_file_entity
+    uri: 'git@github.com:nucivic/geo_file_entity.git'
+    branch: master
+    message: 'geo_file_entity subtree from git@github.com:nucivic/geo_file_entity.git'
+  visualization_entity:
+    path: visualization_entity
+    uri: 'git@github.com:nucivic/visualization_entity.git'
+    branch: master
+    message: 'visualization_entity subtree from git@github.com:nucivic/visualization_entity.git'
