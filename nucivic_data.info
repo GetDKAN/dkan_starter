@@ -32,7 +32,22 @@ regions[page_bottom]    = 'Page bottom'
 ;; Stylesheets
 ;;;;;;;;;;;;;;;;;;;;;
 
-stylesheets[all][] = css/nudata.css
+;stylesheets[all][] = css/nudata.css
+stylesheets[all][] = css/overrides.css
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Default Theme Settings
+;;;;;;;;;;;;;;;;;;;;;
+
+settings[toggle_logo] = 1
+settings[toggle_name] = 0
+settings[toggle_slogan] = 0
+settings[toggle_node_user_picture] = 1
+settings[toggle_comment_user_picture] = 1
+settings[toggle_comment_user_verification] = 1
+settings[toggle_favicon] = 1
+settings[toggle_main_menu] = 1
+settings[toggle_secondary_menu] = 1
 
 settings[logo_path] = 'sites/all/themes/nucivic/nucivic_data/logo.png'
-settings[hero_path] = 'sites/all/themes/nucivic/nucivic_data/images/hero.png'
+settings[hero_path] = 'sites/all/themes/nucivic/nucivic_data/images/hero.jpg'
