@@ -74,3 +74,8 @@ script:
   - bin/behat features/role_group_organizer.feature
   - bin/behat features/role_portal_administrator.feature
 
+notifications:
+  slack:
+    rooms:
+      - nucivic:t3p2KxXdzymmwxitWPvfAsnK#monitor-devops
+      - nucivic:t3p2KxXdzymmwxitWPvfAsnK#monitor-data_starter
