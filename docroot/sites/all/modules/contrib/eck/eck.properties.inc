@@ -81,7 +81,7 @@ function eck_property_type_schema($type) {
       );
       break;
 
-    case 'positive_integer':
+    case 'positive_inoteger':
       $schema = array(
         'type' => 'int',
         'description' => "Integer",

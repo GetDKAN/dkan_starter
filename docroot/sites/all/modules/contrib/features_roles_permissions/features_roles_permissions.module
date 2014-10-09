@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * TODO: Fill :)
+ */
+
+/**
  * Implements hook_hook_info().
  */
 function features_roles_permissions_info() {
