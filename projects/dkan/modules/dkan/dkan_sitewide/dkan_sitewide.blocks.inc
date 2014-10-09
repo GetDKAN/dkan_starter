@@ -22,7 +22,7 @@ function dkan_sitewide_block_info() {
     'cache' => DRUPAL_NO_CACHE
   );
   $blocks['dkan_sitewide_footer_author'] = array(
-    'info' => t('Powered by DKAN'),
+    'info' => t('Powered by NuCivic'),
     'cache' => DRUPAL_CACHE_GLOBAL
   );
   $blocks['dkan_sitewide_search_bar'] = array(
@@ -203,7 +203,13 @@ function dkan_sitewide_license_block() {
  * Adds Powered by.
  */
 function dkan_sitewide_footer_author() {
-  return t("powered by !dkan, a project of !nuams", array("!dkan" => l('DKAN', 'http://nucivic.com/dkan'), '!nuams' => l('nüams', 'http://nuams.com')));
+  return t(
+    "Powered by !dkan, a project of !nucivic",
+    array(
+      '!dkan' => l('DKAN', 'http://nucivic.com/dkan'),
+      '!nucivic' => l('NuCivic', 'http://nucivic.com'),
+    )
+  );
 }
 
 /**
