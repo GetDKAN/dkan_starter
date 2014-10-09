@@ -1,12 +1,17 @@
 <?php
 
 /**
+ * @file
+ * TODO: Fill :)
+ */
+
+/**
  * Implements hook_features_export().
  */
 function roles_permissions_features_export($data, &$export, $module_name = '') {
   $export['dependencies']['features'] = 'features';
   $export['dependencies']['features_roles_permissions'] = 'features_roles_permissions';
-
+  
   $map = features_get_default_map('roles_permissions', 'name');
   foreach ($data as $role) {
     // Role is provided by another module. Add dependency.
@@ -18,7 +23,7 @@ function roles_permissions_features_export($data, &$export, $module_name = '') {
       $export['features']['roles_permissions'][$role] = $role;
     }
   }
-
+  
   return array();
 }
 
@@ -39,9 +44,8 @@ function roles_permissions_features_export_render($module, $data) {
 
   foreach ($data as $name) {
     if ($role = user_role_load_by_name($name)) {
-      $role_lookup = array($role->rid => $role->name);
-      $permissions = user_role_permissions($role_lookup);
-      $role->permissions = array_shift($permissions);
+    	$role_lookup = array($role->rid => $role->name);
+      $role->permissions = array_shift(user_role_permissions($role_lookup));
       unset($role->rid);
       $role_identifier = features_var_export($name);
       $role_export = features_var_export($role, '  ');
@@ -53,7 +57,7 @@ function roles_permissions_features_export_render($module, $data) {
 
   $code[] = '  return $roles;';
   $code = implode("\n", $code);
-
+  
   return array('default_roles_permissions' => $code);
 }
 
@@ -69,8 +73,8 @@ function roles_permissions_features_revert($module) {
  */
 function roles_permissions_features_rebuild($module) {
   if ($defaults = features_get_default('roles_permissions', $module)) {
-    $modules = user_permission_get_modules();
-
+  	$modules = user_permission_get_modules();
+  	
     foreach ($defaults as $role) {
       $role = (object) $role;
       if ($existing = user_role_load_by_name($role->name)) {
@@ -79,24 +83,23 @@ function roles_permissions_features_rebuild($module) {
       user_role_save($role);
 
       $role_lookup = array($role->rid => $role->name);
-      $existing_permissions = user_role_permissions($role_lookup);
-      $existing = array_shift($existing_permissions);
+      $existing = array_shift(user_role_permissions($role_lookup));
       $permissions = array_merge($existing, $role->permissions);
-
+      
       foreach ($permissions as $permission => $value) {
-        if (array_key_exists($permission, $modules)) {
-          if (array_key_exists($permission, $role->permissions)) {
-            $permissions[$permission] = TRUE;
-          }
-          else {
-            $permissions[$permission] = FALSE;
-          }
-        }
-        else {
-          unset($permissions[$permission]);
-        }
+      	if (array_key_exists($permission, $modules)) {
+	        if (array_key_exists($permission, $role->permissions)) {
+	          $permissions[$permission] = TRUE;
+	        }
+	        else {
+	          $permissions[$permission] = FALSE;
+	        }
+      	}
+      	else {
+      		unset($permissions[$permission]);
+      	}
       }
-
+      
       user_role_change_permissions($role->rid, $permissions);
     }
   }

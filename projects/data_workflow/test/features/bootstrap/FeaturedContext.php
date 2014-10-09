@@ -43,7 +43,16 @@ class FeatureContext extends DrupalContext
             );
             // Patch till i figure out why rules are not firing.
             if ($user->name == 'editor') {
-              og_role_grant('node', $group_node->nid, $user->uid, 4);
+              $group_roles = db_select('og_role', 'ogr')
+                ->fields('ogr', array('rid', 'name'))
+                ->condition('group_type', 'node', '=')
+                ->condition('name', 'content editor', '=')
+                ->execute()
+                ->fetchAllkeyed();
+              $group_roles = array_keys($group_roles);
+              if (count($group_roles)) {
+                og_role_grant('node', $group_node->nid, $user->uid, $group_roles[0]);  
+              }
             }
           }
         }
