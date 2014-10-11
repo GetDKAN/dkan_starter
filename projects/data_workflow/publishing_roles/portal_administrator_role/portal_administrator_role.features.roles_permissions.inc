@@ -29,6 +29,7 @@ function portal_administrator_role_default_roles_permissions() {
       'assign data contributor role' => TRUE,
       'assign group organizer role' => TRUE,
       'assign portal administrator role' => TRUE,
+      'assign storyteller role' => TRUE,
       'create page content' => TRUE,
       'delete any dataset content' => TRUE,
       'delete any page content' => TRUE,
