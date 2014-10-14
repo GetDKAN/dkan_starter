@@ -6,8 +6,8 @@ core = 7.x
 hidden = TRUE
 
 
-; Information added by drush on 2014-10-11
+; Information added by drush on 2014-10-14
 version = "7d91983"
 project = "entity_rdf"
-datestamp = "1413000409"
+datestamp = "1413245208"
 
