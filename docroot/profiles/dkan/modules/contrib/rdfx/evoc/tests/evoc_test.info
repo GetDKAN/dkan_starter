@@ -7,9 +7,9 @@ files[] = evoc_test.module
 hidden = TRUE
 
 
-; Information added by drush on 2014-10-11
+; Information added by drush on 2014-10-14
 version = "7.x-2.0-alpha4+9-dev"
 core = "7.x"
 project = "rdfx"
-datestamp = "1413000411"
+datestamp = "1413245210"
 
