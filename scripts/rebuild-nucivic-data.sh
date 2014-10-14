@@ -11,6 +11,7 @@ drush -y dis dkan_sitewide_demo_front
 # Enable components
 drush -y en data_disqus data_story data_story_storyteller_role publishing_workflow og_permissions_settings
 drush -y en visualization_entity_choropleth_bundle visualization_entity_geojson_bundle
+drush -y en visualization_entity_visualization_contributor_role
 
 # Enable NUCIVIC Data Front
 drush -y en nucivic_data_demo_front
@@ -21,7 +22,8 @@ drush vset theme_default nucivic_data
 
 # Revert
 drush -y fr --force data_disqus data_story publishing_workflow
-drush -y fr --force visualization_entity_choropleth_bundle visualization_entity_geojson_bundle
+drush -y fr --force visualization_entity_choropleth_bundle visualization_entity_geojson_bundle 
+drush -y fr --force visualization_entity_visualization_contributor_role
 
 # Rebuild Permissions, Registry and clear Cache
 drush php-eval 'node_access_rebuild();'
