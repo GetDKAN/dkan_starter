@@ -13,9 +13,7 @@ function visualization_entity_choropleth_bundle_user_default_permissions() {
   // Exported permission: 'eck view visualization choropleth_visualization entities'.
   $permissions['eck view visualization choropleth_visualization entities'] = array(
     'name' => 'eck view visualization choropleth_visualization entities',
-    'roles' => array(
-      'anonymous user' => 'anonymous user',
-    ),
+    'roles' => array(),
     'module' => 'eck',
   );
 

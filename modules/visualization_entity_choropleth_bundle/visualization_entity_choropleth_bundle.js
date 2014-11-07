@@ -5,7 +5,9 @@
       var resources = settings.resources;
       var geojson = settings.geojson;
       var data_column = settings.data_column ? [settings.data_column] : [];
-      var label_column = settings.label_column;
+      var map_column = settings.map_column;
+      var geojson_key = settings.geojson_key;
+      var geojson_label = settings.geojson_label;
       var color_scale = settings.colors || ['#FFEDA0', '#FEB24C', '#E31A1C', '#800026'];
       var breakpoints = settings.breakpoints ? settings.breakpoints : [];
 
@@ -21,9 +23,11 @@
         view = new recline.View.ChoroplethMap({
           polygons: geojson,
           model: resource,
-          label_to_map: label_column,
+          map_column: map_column,
           selectable_fields: data_column,
           breakpoints: breakpoints,
+          geojson_key: geojson_key,
+          geojson_label: geojson_label,
           base_color: color_scale,
           avg: resources[0].avg,
           unitOfMeasure: resources[0].unitOfMeasure,
@@ -49,7 +53,7 @@
           polygons: geojson,
           resources: resources,
           selectable_fields: data_column,
-          label_to_map: label_column,
+          label_to_map: map_column,
           base_color: color_scale,
         });
       }
