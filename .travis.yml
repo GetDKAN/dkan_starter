@@ -27,7 +27,7 @@ before_script:
   # navigate out of TRAVIS_BUILD_DIR to prevent blown stack by recursive module lookup
   - cd ../..
   # Grab dkan
-  - git clone --branch 7.x-1.x http://git.drupal.org/project/dkan.git
+  - git clone --branch 7.x-1.x https://github.com/NuCivic/dkan.git
   # Prepare install
   - mkdir drupal
   - cd drupal

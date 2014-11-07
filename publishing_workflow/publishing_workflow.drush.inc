@@ -38,8 +38,21 @@ function drush_publishing_workflow_setup_workflow() {
     $status_ocurrances = array_keys($variable, 'status');
     foreach ($status_ocurrances as $status_ocurrance) {
       array_splice($variable, $status_ocurrance, 1);
-
     }
     variable_set('node_options_' . $node_type, $variable);
   }
+
+  $authenticated_role = user_role_load_by_name('authenticated user');
+  $permissions_to_revoke = array(
+    'create dataset content',
+    'create resource content',
+    'create group content',
+    'edit own dataset content',
+    'edit own resource content',
+    'edit own group content',
+    'delete own dataset content',
+    'delete own resource content',
+    'delete own group content',
+  );
+  user_role_revoke_permissions($authenticated_role->rid, $permissions_to_revoke);
 }
