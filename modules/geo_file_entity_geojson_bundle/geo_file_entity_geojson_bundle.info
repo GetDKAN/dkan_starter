@@ -14,4 +14,4 @@ features[field_instance][] = geo_file-geojson-field_file
 features[field_instance][] = geo_file-geojson-field_name_attribute
 features[user_permission][] = eck view geo_file geojson entities
 features_exclude[dependencies][file] = file
-project path = sites/all/modules/nudata/geo_file_entity/modules
+project path = sites/all/modules/nucivic/geo_file_entity/modules
