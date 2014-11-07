@@ -27,5 +27,6 @@ drush -y fr --force visualization_entity_visualization_contributor_role
 
 # Rebuild Permissions, Registry and clear Cache
 drush php-eval 'node_access_rebuild();'
+drush setup-workflow
 drush rr
 drush cc all
