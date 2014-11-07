@@ -367,6 +367,7 @@ function recline_default_formatter_output($variables) {
   $icon = '';
 
   $format = recline_get_data_type($file['filemime']);
+  drupal_alter('recline_format', $format, $variables['item']['entity']);
 
   // Set options as per anchor format described at
   // http://microformats.org/wiki/file-format-examples

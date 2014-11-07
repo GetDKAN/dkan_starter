@@ -112,6 +112,7 @@ function view_unpublished_views_handlers() {
  * Implements hook_views_query_substitutions().
  */
 function view_unpublished_views_query_substitutions() {
+  $substitutions = array();
   foreach (node_type_get_types() as $type => $name) {
     $substitutions["***VIEWUNPUBLISHED_$type***"] = intval(user_access('view any unpublished ' . $type . ' content'));
   }
@@ -124,7 +125,7 @@ function view_unpublished_views_query_substitutions() {
  *
  * Modify the Content Overview page to account for view unpublished permissions.
  */
-function view_unpublished_query_node_access_alter($query) {
+function view_unpublished_query_node_access_alter(QueryAlterableInterface $query) {
   global $user;
 
   $is_admin_content_page = (arg(0) == 'admin' && arg(1) == 'content');
@@ -132,26 +133,57 @@ function view_unpublished_query_node_access_alter($query) {
   $is_not_admin = ($user->uid !== "1");
   if ($is_admin_content_page && $is_tablesort_query && $is_not_admin) {
     $perms = view_unpublished_user_perms();
+
+    // Fetch the nids of the user's own unpublished nodes if he is allowed to
+    // view those. This is the same query as in node_admin_nodes(), we need it
+    // to remove the condition which restricts the unpublished nodes to the
+    // user's own ones.
+    $own_unpublished_nids = array();
+    if (user_access('view own unpublished content')) {
+      $own_unpublished_nids = db_select('node', 'n')
+        ->fields('n', array('nid'))
+        ->condition('uid', $user->uid)
+        ->condition('status', 0)
+        ->execute()
+        ->fetchCol();
+    }
+
     // "any" in this case means at least 1 view unpublished permission is set to
     // TRUE.
     if ($perms['any']) {
       $conditions =& $query->conditions();
+
+      // Configuration of a condition in $conditions to only list published
+      // nodes.
+      $published_condition = array(
+        'field' => 'n.status',
+        'value' => 1,
+        'operator' => '=',
+      );
+      // Configuration of the condition which adds the users own unpublished
+      // nodes to the result set as set in node_admin_nodes().
+      $own_unpublished_condition = array(
+        '#conjunction' => 'OR',
+        0 => $published_condition,
+        1 => array(
+          'field' => 'n.nid',
+          'value' => $own_unpublished_nids,
+          'operator' => 'IN',
+        ),
+      );
+      // Has the user a filter set to only list published nodes?
+      $filter_published_only = !empty($_SESSION['node_overview_filter'])
+        && in_array(array('status', 'status-1'), $_SESSION['node_overview_filter']);
+
       foreach ($conditions as $key => $condition) {
-        // For some queries $condition['field'] is not a string so we need a
-        // check for that.
-        if (isset($condition['field']) && $condition['field'] === 'n.status') {
-            // This condition is (probably) coming from
-            // modules/node/node.admin.inc,
-            // function node_admin_nodes(): $query->condition('n.status', 1);
-            // We don't want it.
-            unset($conditions[$key]);
-        }
-        elseif (is_object($condition['field'])){
-          $subconditions = $conditions[$key]["field"]->conditions();
-          $new_conditions = db_or();
-          $new_conditions->condition('n.status', 1, '=');
-          $new_conditions->condition('n.status', 0, '=');
-          $conditions[$key]["field"] = $new_conditions;
+        // Remove core conditions
+        if (!empty($condition['field'])
+          && (
+            (is_object($condition['field']) && $condition['field']->conditions() == $own_unpublished_condition)
+            || (!is_object($condition['field']) && $condition == $published_condition && !$filter_published_only)
+          )
+        ) {
+          unset($conditions[$key]);
         }
       }
       // If "view any unpublished content" (aka $perms['full']) is set, then
@@ -160,17 +192,20 @@ function view_unpublished_query_node_access_alter($query) {
       // dictated by the user's permissions, e.g. "view any unpublished page
       // content"
       if (!$perms['full']) {
-        $content_perms = array_filter($perms['content_type']);
-        if (count($content_perms) === 1) {
-          $query->condition('n.type', key($content_perms));
+        $container = db_or();
+
+        $container->condition('n.status', 1);
+
+        $cond = db_and()
+          ->condition('n.type', array_keys(array_filter($perms['content_type'])), 'IN')
+          ->condition('n.status', 0, '=');
+        $container->condition($cond);
+
+        if (!empty($own_unpublished_nids)) {
+          $container->condition('n.nid', $own_unpublished_nids, 'IN');
         }
-        else {
-          $db_or = db_or();
-          foreach ($content_perms as $k => $v) {
-            $db_or->condition('n.type', $k);
-          }
-          $query->condition($db_or);
-        }
+
+        $query->condition($container);
       }
     }
   }
