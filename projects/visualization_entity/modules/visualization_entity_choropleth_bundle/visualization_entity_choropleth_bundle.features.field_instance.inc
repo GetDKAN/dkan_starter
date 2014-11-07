@@ -300,8 +300,134 @@ function visualization_entity_choropleth_bundle_field_default_field_instances() 
     ),
   );
 
+  // Exported field_instance: 'visualization-choropleth_visualization-field_ve_geojson_key'
+  $field_instances['visualization-choropleth_visualization-field_ve_geojson_key'] = array(
+    'bundle' => 'choropleth_visualization',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Property on GeoJSON which contains same values as "Map Column" in data.',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 8,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'visualization',
+    'field_name' => 'field_ve_geojson_key',
+    'label' => 'GeoJSON Key',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 8,
+    ),
+  );
+
+  // Exported field_instance: 'visualization-choropleth_visualization-field_ve_geojson_label'
+  $field_instances['visualization-choropleth_visualization-field_ve_geojson_label'] = array(
+    'bundle' => 'choropleth_visualization',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Property on GeoJSON which has human readable name.',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 10,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'visualization',
+    'field_name' => 'field_ve_geojson_label',
+    'label' => 'GeoJSON Label',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 10,
+    ),
+  );
+
+  // Exported field_instance: 'visualization-choropleth_visualization-field_ve_map_column'
+  $field_instances['visualization-choropleth_visualization-field_ve_map_column'] = array(
+    'bundle' => 'choropleth_visualization',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Column in the data which maps to a property in the geojon.  If there is a column in the data "State Name" with values like California and Pennsylvania it should map to a property in the geojson like "State" with the same values. ',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 9,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'visualization',
+    'field_name' => 'field_ve_map_column',
+    'label' => 'Map Column',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 9,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
+  t('Column in the data which maps to a property in the geojon.  If there is a column in the data "State Name" with values like California and Pennsylvania it should map to a property in the geojson like "State" with the same values. ');
+  t('GeoJSON Key');
+  t('GeoJSON Label');
+  t('Map Column');
+  t('Property on GeoJSON which contains same values as "Map Column" in data.');
+  t('Property on GeoJSON which has human readable name.');
   t('average multiple rows');
   t('color scale');
   t('data breakpoints');
