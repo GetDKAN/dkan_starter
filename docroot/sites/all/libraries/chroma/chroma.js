@@ -290,9 +290,9 @@
         mode += 'a';
       }
       if (mode === 'rgb') {
-        return mode + '(' + rgb.slice(0, 3).join(',') + ')';
+        return mode + '(' + rgb.slice(0, 3).map(Math.round).join(',') + ')';
       } else if (mode === 'rgba') {
-        return mode + '(' + rgb.join(',') + ')';
+        return mode + '(' + rgb.slice(0, 3).map(Math.round).join(',') + ',' + rgb[3] + ')';
       } else if (mode === 'hsl' || mode === 'hsla') {
         hsl = me.hsl();
         rnd = function(a) {
@@ -1316,7 +1316,7 @@
     if (num == null) {
       num = 7;
     }
-    if (data.values == null) {
+    if (type(data) === 'array') {
       data = chroma.analyze(data);
     }
     min = data.min;
