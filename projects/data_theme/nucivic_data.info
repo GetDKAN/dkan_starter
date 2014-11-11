@@ -33,6 +33,7 @@ regions[page_bottom]    = 'Page bottom'
 ;;;;;;;;;;;;;;;;;;;;;
 
 ;stylesheets[all][] = css/nudata.css
+stylesheets[all][] = css/views.css
 stylesheets[all][] = css/overrides.css
 
 ;;;;;;;;;;;;;;;;;;;;;
