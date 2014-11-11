@@ -32,6 +32,12 @@ function nucivic_data_demo_front_context_default_contexts() {
           'region' => 'content',
           'weight' => '-10',
         ),
+        'views-latest_stories-block' => array(
+          'module' => 'views',
+          'delta' => 'latest_stories-block',
+          'region' => 'content',
+          'weight' => '-9',
+        ),
       ),
     ),
   );

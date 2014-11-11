@@ -6,6 +6,7 @@ dependencies[] = context
 dependencies[] = ctools
 dependencies[] = views
 dependencies[] = views_responsive_grid
+dependencies[] = data_story
 descriptions = Customizations to NuCivic Data home page.
 features[context][] = front
 features[ctools][] = context:context:3
