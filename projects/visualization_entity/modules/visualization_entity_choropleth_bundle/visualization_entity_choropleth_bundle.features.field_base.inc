@@ -88,7 +88,7 @@ function visualization_entity_choropleth_bundle_field_default_field_bases() {
     'locked' => 0,
     'module' => 'text',
     'settings' => array(
-      'max_length' => 100,
+      'max_length' => 255,
     ),
     'translatable' => 0,
     'type' => 'text',
@@ -117,7 +117,7 @@ function visualization_entity_choropleth_bundle_field_default_field_bases() {
     'locked' => 0,
     'module' => 'text',
     'settings' => array(
-      'max_length' => 20,
+      'max_length' => 255,
     ),
     'translatable' => 0,
     'type' => 'text',
@@ -146,7 +146,7 @@ function visualization_entity_choropleth_bundle_field_default_field_bases() {
     'locked' => 0,
     'module' => 'text',
     'settings' => array(
-      'max_length' => 60,
+      'max_length' => 255,
     ),
     'translatable' => 0,
     'type' => 'text',

@@ -7,8 +7,7 @@
       var map = new L.map(div.get(0)).setView([37.8, -96], 4);
 
       var geojson = new L.GeoJSON(settings.geojson);
-
-      var bounds = new L.LatLngBounds();
+      var bounds = geojson.getBounds();
 
       for (var layer in geojson._layers) {
         if (geojson._layers.hasOwnProperty(layer)){
@@ -28,7 +27,6 @@
       var bg = new L.TileLayer(mapUrl, {maxZoom: 18, attribution: osmAttribution, subdomains: '1234'});
 
       map.addLayer(bg);
-
       geojson.addTo(map);
     },
   };
