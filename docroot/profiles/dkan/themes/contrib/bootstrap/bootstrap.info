@@ -145,5 +145,5 @@ simplytest_dependencies[] = jquery_update
 ; Information added by drush on 2014-11-14
 version = "0390173732439fd60e898c7086219ab8c99c2f3d"
 project = "bootstrap"
-datestamp = "1415982060"
+datestamp = "1415996315"
 

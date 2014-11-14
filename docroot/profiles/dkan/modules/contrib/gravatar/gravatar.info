@@ -11,5 +11,5 @@ configure = admin/config/people/gravatar
 ; Information added by drush on 2014-11-14
 version = "e933db3"
 project = "gravatar"
-datestamp = "1415982011"
+datestamp = "1415996270"
 
