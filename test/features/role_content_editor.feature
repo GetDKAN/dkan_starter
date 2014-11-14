@@ -110,3 +110,16 @@ Feature: Testing content editor role and permissions
       And I check the box "edit-status"
       And I press "Save"
     Then I should see "Resource test has been updated"
+
+  # @api @javascript
+  # Scenario: Manage Datastore
+  #   Given users:
+  #     | name             | mail                      | status | roles     |
+  #     | editor           | editor@test.com           | 1      | 254633039 |
+  #   When I am logged in as "editor"
+  #     And I am on "/dataset/afghanistan-election-districts/resource/6b659860-b86c-46b9-9b86-62b47f446458"
+  #     And I click "Manage Datastore" in the "toolbar" region
+  #     And I press "Import"
+  #     And I wait for "7" seconds
+  #     And I click "View" in the "toolbar" region
+  #   Then I should see "resource has been added to the datastore"

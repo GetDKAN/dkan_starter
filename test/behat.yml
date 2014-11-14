@@ -17,10 +17,3 @@ default:
         drupal_root: 'drupal'
       text:
         log_out: "Log out"
-
-
-teo:
-  extensions:
-    Drupal\DrupalExtension\Extension:
-      drupal:
-        drupal_root: '/Users/teofilosibileau/Developing/NUCIVIC/BUILDS/drupal/'
