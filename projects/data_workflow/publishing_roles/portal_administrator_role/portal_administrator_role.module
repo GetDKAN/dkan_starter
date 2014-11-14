@@ -5,3 +5,26 @@
  */
 
 include_once 'portal_administrator_role.features.inc';
+
+/**
+ * Implements hook_permission().
+ */
+function portal_administrator_role_permission() {
+  return array(
+    'administer user settings' => array(
+      'title' => t('Administer User Settings'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function portal_administrator_role_menu_alter(&$items) {
+  foreach ($items as $path => &$item) {
+    if (strpos($path, 'admin/config/people') === 0) {
+      $item['access callback'] = 'user_access';
+      $item['access arguments'] = array('administer user settings');
+    }
+  }
+}
