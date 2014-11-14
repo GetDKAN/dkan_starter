@@ -205,7 +205,6 @@ function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type
       $settings['data_column'] = $build['field_data_column']['#items'][0]['value'];
     }
 
-    // dpm($settings);
     // Build resources files.
     $nids = array();
     $resources = $build['field_resource']['#items'];
@@ -214,29 +213,56 @@ function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type
     }
     $resources = node_load_multiple($nids);
 
-    $average = $build['field_average_multiple_rows']['#items'][0]['value'] === 1 ? TRUE : FALSE;
+    $average = $build['field_average_multiple_rows']['#items'][0]['value'] == 1 ? TRUE : FALSE;
 
     $unit_of_measure = isset($build['field_data_units']) ? $build['field_data_units']['#items'][0]['value'] : '';
     $settings['resources'] = array();
     foreach ($resources as $key => $resource) {
       $title = $resource->title;
-      $delimiter = $resource->field_upload[LANGUAGE_NONE][0]['delimiter'];
-      $delimiter = $delimiter !== NULL ? $delimiter : DEFAULT_CSV_DELIMITER;
-      $resource = $resource->field_upload[LANGUAGE_NONE][0]['uri'];
-      $resource = drupal_realpath($resource);
-      $resource = file_get_contents($resource);
-      array_push(
-        $settings['resources'],
-        array(
-          'title' => $title,
-          'delimiter' => $delimiter,
-          'dataset' => $resource,
-          'map' => FALSE,
-          'avg' => $average,
-          'unitOfMeasure' => $unit_of_measure,
-        )
-      );
+      if (dkan_datastore_status($resource) === 2 || count($resources) > 1) {
+        $delimiter = $resource->field_upload[LANGUAGE_NONE][0]['delimiter'];
+        $delimiter = $delimiter !== NULL ? $delimiter : DEFAULT_CSV_DELIMITER;
+        $resource_path = $resource->field_upload[LANGUAGE_NONE][0]['uri'];
+        $resource_path = drupal_realpath($resource_path);
+        $resource_file = file_get_contents($resource_path);
+        array_push(
+          $settings['resources'],
+          array(
+            'title' => $title,
+            'delimiter' => $delimiter,
+            'dataset' => $resource_file,
+            'map' => FALSE,
+            'avg' => $average,
+            'datastoreStatus' => dkan_datastore_status($resource),
+            'unitOfMeasure' => $unit_of_measure,
+          )
+        );
+      }
+      elseif (dkan_datastore_status($resource) === 1 && count($resources) === 1) {
+        array_push(
+          $settings['resources'],
+          array(
+            'title' => $title,
+            'map' => FALSE,
+            'avg' => $average,
+            'resource_id' => $resource->uuid,
+            'datastoreStatus' => dkan_datastore_status($resource),
+            'unitOfMeasure' => $unit_of_measure,
+          )
+        );
+      }
     }
+    // Build label column and geojson file.
+    $geojson = entity_load_single(
+      'geo_file',
+      $build['field_geojson']['#items'][0]['target_id']
+    );
+    $settings['label_column'] = $geojson->field_name_attribute[LANGUAGE_NONE][0]['value'];
+
+    $geojson = $geojson->field_file[LANGUAGE_NONE][0]['uri'];
+    $geojson = drupal_realpath($geojson);
+    $geojson = json_decode(file_get_contents($geojson));
+    $settings['geojson'] = $geojson;
 
     $settings = array(
       'visualization_choropleth' => $settings,
@@ -248,6 +274,7 @@ function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type
     // Add js controller and stylesheets.
     $module_path = drupal_get_path('module', 'visualization_entity_choropleth_bundle');
     drupal_add_js($module_path . '/visualization_entity_choropleth_bundle.js');
+    drupal_add_css($module_path . '/visualization_entity_choropleth_bundle.css');
   }
 }
 /**
@@ -366,15 +393,6 @@ function visualization_entity_choropleth_bundle_form_validate(&$form, &$form_sta
   $node = node_load($resource_id);
   $field_upload = $node->field_upload[LANGUAGE_NONE][0];
 
-  $geojson_id = $form_state['values']['field_geojson'][LANGUAGE_NONE][0]['target_id'];
-  $geojson = entity_load_single('geo_file', $geojson_id);
-
-  $name_attribute = $geojson->field_name_attribute[LANGUAGE_NONE][0]['value'];
-  $resource_columns = visualization_entity_csv_columns($field_upload);
-  // Name attribute must match a column name of resource.
-  if (!empty($name_attribute) && !in_array(strtolower($name_attribute), $resource_columns)) {
-    form_set_error('field_data_column', 'Name attribute must match a column name of resource.');
-  }
   // Data column must be a valid field in the csv file.
   if (!visualization_entity_choropleth_bundle_has_data_column($data_column, $field_upload)) {
     form_set_error('field_data_column', 'Data column must be a valid field in the csv file.');
