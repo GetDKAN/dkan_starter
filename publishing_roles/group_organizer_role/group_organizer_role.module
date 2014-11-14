@@ -3,3 +3,26 @@
  * @file
  * Drupal needs this blank file.
  */
+
+/**
+ * Implements hook_permission().
+ */
+function group_organizer_role_permission() {
+  return array(
+    'administer global og settings' => array(
+      'title' => t('Administer User Settings'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function group_organizer_role_menu_alter(&$items) {
+  foreach ($items as $path => &$item) {
+    if (strpos($path, 'admin/config/group') === 0) {
+      $item['access callback'] = 'user_access';
+      $item['access arguments'] = array('administer global og settings');
+    }
+  }
+}
