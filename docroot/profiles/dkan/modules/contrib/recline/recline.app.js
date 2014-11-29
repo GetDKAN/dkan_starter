@@ -4,16 +4,21 @@
  */
 
 (function ($) {
+    var maxLabelWidth = 77;
+    var labelMargin = 5;
+
     Drupal.behaviors.Recline = {
         attach: function (context) {
-            delimiter = Drupal.settings.recline.delimiter;
-            file = Drupal.settings.recline.file;
-            grid = Drupal.settings.recline.grid;
-            graph = Drupal.settings.recline.graph;
-            map = Drupal.settings.recline.map;
-            uuid = Drupal.settings.recline.uuid;
-            dkan = Drupal.settings.recline.dkan;
-            fileType = Drupal.settings.recline.fileType;
+            var delimiter = Drupal.settings.recline.delimiter;
+            var file = Drupal.settings.recline.file;
+            var uuid = Drupal.settings.recline.uuid;
+            var dkan = Drupal.settings.recline.dkan;
+            var fileType = Drupal.settings.recline.fileType;
+            var dataExplorerSettings = {
+                grid: Drupal.settings.recline.grid,
+                graph: Drupal.settings.recline.graph,
+                map: Drupal.settings.recline.map
+            };
 
             window.dataExplorer = null;
             window.explorerDiv = $('.data-explorer');
@@ -46,7 +51,7 @@
                                 backend: 'ckan'
                             });
                             dataset.fetch();
-                            return createExplorer(dataset, state);
+                            return createExplorer(dataset, state, dataExplorerSettings);
                         }
                         else {
                             $('.data-explorer').append('<div class="messages status">Error returned from datastore: ' + data + '.</div>');
@@ -71,7 +76,7 @@
                             records: recline.Backend.CSV.parseCSV(data, options)
                         });
                         dataset.fetch();
-                        var views = createExplorer(dataset, state);
+                        var views = createExplorer(dataset, state, dataExplorerSettings);
                         // The map needs to get redrawn when we are delivering from the ajax
                         // call.
                         $.each(views, function(i, view) {
@@ -96,18 +101,19 @@
                     backend: 'dataproxy'
                 });
                 dataset.fetch();
-                var views = createExplorer(dataset, state);
+                var views = createExplorer(dataset, state, dataExplorerSettings);
             }
             else {
                 $('.data-explorer').append('<div class="messages status">File type ' + fileType + ' not supported for preview.</div>');
             }
         }
-    }
+    };
 
     // make Explorer creation / initialization in a function so we can call it
     // again and again
-    var createExplorer = function(dataset, state) {
+    var createExplorer = function(dataset, state, settings) {
         // remove existing data explorer view
+
         var reload = false;
         if (window.dataExplorer) {
             window.dataExplorer.remove();
@@ -118,7 +124,8 @@
         $el.appendTo(window.explorerDiv);
 
         var views = [];
-        if (grid) {
+
+        if (settings.grid) {
             views.push(
                 {
                     id: 'grid',
@@ -129,18 +136,30 @@
                 }
             );
         }
-        if (graph) {
+        if (settings.graph) {
+            var state = {
+                graphOptions:{
+                    xaxis: {
+                        tickFormatter:tickFormatter(dataset),
+                    },
+                    hooks:{
+                        processOffset:[processOffset(dataset)],
+                        bindEvents: [bindEvents],
+                    }
+                }
+            };
             views.push(
                 {
                     id: 'graph',
                     label: 'Graph',
                     view: new recline.View.Graph({
-                        model: dataset
+                        model: dataset,
+                        state: state
                     })
                 }
             );
         }
-        if (map) {
+        if (settings.map) {
             views.push(
                 {
                     id: 'map',
@@ -157,14 +176,113 @@
             el: $el,
             state: state,
             views: views
-        }
+        };
 
         window.dataExplorer = new recline.View.MultiView(Drupal.settings.recline.args);
+        router = new recline.DeepLink.Router(window.dataExplorer);
         $.event.trigger('createDataExplorer');
         return views;
-    }
+    };
+
     $(".recline-embed a.embed-link").live('click', function(){
       $(this).parents('.recline-embed').find('.embed-code-wrapper').toggle();
       return false;
     });
+
+    function isInverted(){
+        return dataExplorer.pageViews[1].view.state.attributes.graphType === 'bars';
+    };
+
+    function computeWidth (plot, labels) {
+        var biggerLabel = '';
+        for( var i = 0; i < labels.length; i++){
+            if(labels[i].length > biggerLabel.length && !_.isUndefined(labels[i])){
+                biggerLabel = labels[i];
+            }
+        };
+        var canvas = plot.getCanvas();
+        var ctx = canvas.getContext('2d');
+        ctx.font = 'sans-serif smaller';
+        return ctx.measureText(biggerLabel).width;
+    };
+
+    function resize (plot) {
+        addCheckbox();
+        var itemWidth = computeWidth(plot, _.pluck(plot.getXAxes()[0].ticks, 'label'));
+        var graph = dataExplorer.pageViews[1];
+        if(!isInverted()){
+            var canvasWidth = Math.min(itemWidth + labelMargin, maxLabelWidth) * plot.getXAxes()[0].ticks.length;
+            var canvasContainerWith = $('.panel.graph').parent().width();
+            if(canvasWidth < canvasContainerWith || !$('#prevent-label-overlapping').is(':checked')){
+                canvasWidth = canvasContainerWith;
+            }
+            $('.panel.graph').width(canvasWidth);
+            $('.recline-flot').css({overflow:'auto'});
+        }else{
+            $('.recline-flot').css({overflow:'hidden'});
+            $('.panel.graph').css({width: '100%'});
+        }
+        plot.resize();
+        plot.setupGrid();
+        plot.draw();
+    };
+
+    function bindEvents (plot, eventHolder) {
+        var p = plot || dataExplorer.pageViews[1].view.plot;
+        resize(p);
+    };
+
+    function processOffset (dataset) {
+        return function(plot, offset) {
+            if(dataExplorer.pageViews[1].view.xvaluesAreIndex){
+                var series = plot.getData();
+                for (var i = 0; i < series.length; i++) {
+                      var numTicks = Math.min(dataset.records.length, 200);
+                      var ticks = [];
+                      for (var j = 0; j < dataset.records.length; j++) {
+                        ticks.push(parseInt(j, 10));
+                      }
+                      if(isInverted()){
+                        series[i].yaxis.options.ticks = ticks;
+                      }else{
+                        series[i].xaxis.options.ticks = ticks;
+                      }
+                }
+            }
+        };
+    };
+
+    function tickFormatter(dataset){
+        return function (x) {
+            x = parseInt(x, 10);
+            try {
+                if(isInverted()){
+                    return x;
+                }
+                var field = dataExplorer.pageViews[1].view.state.get('group');
+                var label = dataset.records.models[x].get(field) || "";
+                if(!moment(String(label)).isValid() && !isNaN(parseInt(label, 10))){
+                    label = parseInt(label, 10) - 1;
+                }
+                return label;
+            } catch(e) {
+                return x;
+            }
+        };
+    };
+
+    function addCheckbox() {
+        $control = $('#prevent-label-overlapping');
+        if(!$control.length){
+            $form = $('.form-stacked');
+            $checkboxDiv = $('<div class="checkbox"></div>').appendTo($form);
+            $label = $('<label />', { 'for': 'prevent-label-overlapping', text: 'Resize graph to prevent label overlapping' }).appendTo($checkboxDiv);
+            $label.prepend($('<input />', { type: 'checkbox', id: 'prevent-label-overlapping', value: '' }));
+            $control = $('#prevent-label-overlapping');
+            $control.on('change', function(){
+                resize(dataExplorer.pageViews[1].view.plot);
+            });
+        }
+    };
+
 })(jQuery);

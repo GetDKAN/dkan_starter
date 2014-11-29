@@ -261,6 +261,43 @@ function recline_libraries_info() {
       ),
     ),
   );
+
+  $libraries['recline_deeplink'] = array(
+    'name' => 'Recline DeepLink',
+    'vendor url' => 'https://github.com/NuCivic/recline-deeplink',
+    'download url' => 'https://github.com/NuCivic/recline-deeplink',
+    'path' => '',
+    'version' => array(
+      'file' => 'bower.js',
+      'pattern' => '@+([0-9][.][0-9][.][0-9])@',
+      'lines' => 3,
+      'cols' => 14,
+    ),
+    'files' => array(
+      'js' => array(
+        'dist/recline.deeplink.min.js',
+      ),
+    ),
+  );
+
+  $libraries['deep_diff'] = array(
+    'name' => 'Deep Diff',
+    'vendor url' => 'https://github.com/flitbit/diff',
+    'download url' => 'https://github.com/flitbit/diff',
+    'path' => '',
+    'version arguments' => array(
+      'file' => 'Readme.md',
+      'pattern' => '@([0-9][.][0-9][.][0-9])@',
+      'lines' => 20,
+      'cols' => 100,
+    ),
+    'files' => array(
+      'js' => array(
+        'releases/deep-diff-0.3.0.min.js',
+      ),
+    ),
+  );
+
   return $libraries;
 }
 

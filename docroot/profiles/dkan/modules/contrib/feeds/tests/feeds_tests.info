@@ -7,9 +7,9 @@ files[] = feeds_test.module
 hidden = TRUE
 
 
-; Information added by drush on 2014-11-14
+; Information added by drush on 2014-11-29
 version = "7.x-2.0-alpha8+8-dev"
 core = "7.x"
 project = "feeds"
-datestamp = "1415996294"
+datestamp = "1417272989"
 
