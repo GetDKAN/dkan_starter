@@ -13,7 +13,7 @@ function publishing_workflow_default_rules_configuration() {
       "LABEL" : "NUCIVIC DATA -Author saves Dataset or Resource",
       "PLUGIN" : "reaction rule",
       "TAGS" : [ "author", "dataset", "resource" ],
-      "REQUIRES" : [ "rules" ],
+      "REQUIRES" : [ "rules", "publishing_workflow" ],
       "ON" : [ "node_insert", "node_update" ],
       "IF" : [
         { "node_is_of_type" : {
@@ -29,11 +29,24 @@ function publishing_workflow_default_rules_configuration() {
         }
       ],
       "DO" : [
-        { "mail_to_users_of_role" : {
-            "roles" : { "value" : { "254633039" : "254633039" } },
-            "subject" : "[node:author] has just updated [node:title] on ",
-            "message" : "Please review the recent update at [node:title] -\\u003E [node:edit-url]",
-            "from" : "[site:mail]"
+        { "publishing_workflow_reviewers" : {
+            "USING" : { "node" : [ "node" ] },
+            "PROVIDE" : { "reviewers" : { "reviewers" : "List of reviewers" } }
+          }
+        },
+        { "LOOP" : {
+            "USING" : { "list" : [ "reviewers" ] },
+            "ITEM" : { "list_item" : "Current list item" },
+            "DO" : [
+              { "mail" : {
+                  "to" : [ "list-item:mail" ],
+                  "subject" : "[node:author] has just updated \\u0022[node:title]\\u0022",
+                  "message" : "Please review the recent update at -\\u003E [node:edit-url]",
+                  "from" : "[node:author:mail]",
+                  "language" : [ "" ]
+                }
+              }
+            ]
           }
         }
       ]
@@ -44,7 +57,7 @@ function publishing_workflow_default_rules_configuration() {
       "PLUGIN" : "reaction rule",
       "TAGS" : [ "dataset", "editor", "publish", "resource" ],
       "REQUIRES" : [ "rules" ],
-      "ON" : [ "node_update", "node_insert" ],
+      "ON" : [ "node_update" ],
       "IF" : [
         { "node_is_of_type" : {
             "node" : [ "node" ],
@@ -62,7 +75,7 @@ function publishing_workflow_default_rules_configuration() {
         { "mail" : {
             "to" : "[node:author:mail]",
             "subject" : "The \\u0022[node:title]\\u0022 [node:content-type] was just published",
-            "message" : "You can review it here -\\u003E [node:url]",
+            "message" : "You can review it here -\\u003E [node:edit-url]",
             "from" : "[site:mail]",
             "language" : [ "" ]
           }
