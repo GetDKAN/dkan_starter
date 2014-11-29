@@ -9,8 +9,8 @@ package = "Organic groups"
 
 
 
-; Information added by drush on 2014-11-14
+; Information added by drush on 2014-11-29
 version = "b7e3587"
 project = "og_extras"
-datestamp = "1415996275"
+datestamp = "1417272963"
 

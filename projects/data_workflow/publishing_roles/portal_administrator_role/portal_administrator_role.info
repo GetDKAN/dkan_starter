@@ -9,6 +9,7 @@ dependencies[] = dkan_dataset
 dependencies[] = entityreference_unpublished_node
 dependencies[] = features
 dependencies[] = features_roles_permissions
+dependencies[] = menu_admin_per_menu
 dependencies[] = role_delegation
 dependencies[] = role_export
 dependencies[] = roleassign
