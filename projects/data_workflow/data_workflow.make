@@ -13,6 +13,9 @@ projects[entityreference_unpublished_node][type] = module
 projects[features_roles_permissions][version] = 1.0
 projects[features_roles_permissions][subdir] = contrib
 
+projects[menu_admin_per_menu][version] = 1.0
+projects[menu_admin_per_menu][subdir] = contrib
+
 projects[roleassign][version] = 1.0
 projects[roleassign][subdir] = contrib
 
