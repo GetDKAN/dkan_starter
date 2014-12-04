@@ -33,66 +33,70 @@
                 state['currentView'] = 'timeline';
             }
             // Checks if dkan_datastore is installed.
-            if (dkan) {
+            if (dkan || fileType == 'text/csv') {
                 var drupal_base_path = Drupal.settings.basePath;
                 var DKAN_API = drupal_base_path + 'api/action/datastore/search.json';
-                var url = window.location.origin + DKAN_API + '?resource_id=' + uuid;
-                var DkanDatastore = false;
-                var DkanApi = $.ajax({
+                var url = dkan ? (window.location.origin + DKAN_API + '?resource_id=' + uuid) : file;
+                var options = dkan ? {} : {delimiter: delimiter};
+                var ajax_options = {
                     type: 'GET',
-                    url: url,
-                    dataType: 'json',
-                    success: function(data, status) {
-                        if ('success' in data && data.success) {
-                            var dataset = new recline.Model.Dataset({
-                                endpoint: window.location.origin + drupal_base_path + '/api',
-                                url: url,
-                                id: uuid,
-                                backend: 'ckan'
-                            });
-                            dataset.fetch();
-                            return createExplorer(dataset, state, dataExplorerSettings);
+                    url: dkan ? url : file,
+                    dataType: dkan  ? 'json' : 'text',
+                    beforeSend: function (jqXHR, settings) {
+                        /* add url property and get value from settings (or from caturl)*/
+                        jqXHR.dkan = dkan;
+                    },
+                    success: function(data, status, jqXHR) {
+                        var dataset, views;
+                        if (jqXHR.dkan) {
+                            if ('success' in data && data.success) {
+                                dataset = new recline.Model.Dataset({
+                                    endpoint: window.location.origin + drupal_base_path + '/api',
+                                    url: url,
+                                    id: uuid,
+                                    backend: 'ckan'
+                                });
+                                dataset.fetch();
+                                views = createExplorer(dataset, state, dataExplorerSettings);
+                            }
+                            else {
+                                $('.data-explorer').append('<div class="messages status">Error returned from datastore: ' + data + '.</div>');
+                            }
                         }
                         else {
-                            $('.data-explorer').append('<div class="messages status">Error returned from datastore: ' + data + '.</div>');
+                            // Converts line endings in either format to unix format.
+                            data = data.replace(/(\r\n|\n|\r)/gm,"\n");
+                            dataset = new recline.Model.Dataset({
+                                records: recline.Backend.CSV.parseCSV(data, options)
+                            });
+                            dataset.fetch();
+                            views = createExplorer(dataset, state, dataExplorerSettings);
+                            // The map needs to get redrawn when we are delivering from the ajax
+                            // call.
+                            $.each(views, function(i, view) {
+                                if (view.id == 'map') {
+                                    view.view.redraw('refresh');
+                                }
+                            });
                         }
-
-                    },
-                    error: function(data, status) {
-                        $('.data-explorer').append('<div class="messages status">Unable to connect to the datastore.</div>');
                     }
-                });
-            }
-            else if (fileType == 'text/csv') {
-                var options = {delimiter: delimiter};
-                $.ajax({
-                    url: file,
-                    dataType: "text",
-                    timeout: 500,
-                    success: function(data) {
-                        // Converts line endings in either format to unix format.
-                        data = data.replace(/(\r\n|\n|\r)/gm,"\n");
-                        var dataset = new recline.Model.Dataset({
-                            records: recline.Backend.CSV.parseCSV(data, options)
-                        });
-                        dataset.fetch();
-                        var views = createExplorer(dataset, state, dataExplorerSettings);
-                        // The map needs to get redrawn when we are delivering from the ajax
-                        // call.
-                        $.each(views, function(i, view) {
-                            if (view.id == 'map') {
-                                view.view.redraw('refresh');
-                            }
-                        });
-                    },
-                    error: function(x, t, m) {
+                };
+                if (dkan) {
+                    ajax_options.error = function(data, status, jqXHR) {
+                        $('.data-explorer').append('<div class="messages status">Unable to connect to the datastore.</div>');
+                    };
+                }
+                else {
+                    ajax_options.timeout = 500;
+                    ajax_options.error = function(x, t, m) {
                         if (t === "timeout") {
                             $('.data-explorer').append('<div class="messages status">File was too large or unavailable for preview.</div>');
                         } else {
                             $('.data-explorer').append('<div class="messages status">Data preview unavailable.</div>');
                         }
-                    }
-                });
+                    };
+                }
+                $.ajax(ajax_options);
             }
             // Checks if xls.
             else if (fileType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || fileType == 'application/vnd.ms-excel') {
@@ -136,15 +140,13 @@
             );
         }
         if (settings.graph) {
-            var state = {
-                graphOptions:{
-                    xaxis: {
-                        tickFormatter:tickFormatter(dataset),
-                    },
-                    hooks:{
-                        processOffset:[processOffset(dataset)],
-                        bindEvents: [bindEvents],
-                    }
+            state.graphOptions = {
+                xaxis: {
+                    tickFormatter:tickFormatter(dataset),
+                },
+                hooks:{
+                    processOffset:[processOffset(dataset)],
+                    bindEvents: [bindEvents],
                 }
             };
             views.push(
@@ -190,7 +192,7 @@
 
     function isInverted(){
         return dataExplorer.pageViews[1].view.state.attributes.graphType === 'bars';
-    };
+    }
 
     function computeWidth (plot, labels) {
         var biggerLabel = '';
@@ -198,12 +200,12 @@
             if(labels[i].length > biggerLabel.length && !_.isUndefined(labels[i])){
                 biggerLabel = labels[i];
             }
-        };
+        }
         var canvas = plot.getCanvas();
         var ctx = canvas.getContext('2d');
         ctx.font = 'sans-serif smaller';
         return ctx.measureText(biggerLabel).width;
-    };
+    }
 
     function resize (plot) {
         var itemWidth = computeWidth(plot, _.pluck(plot.getXAxes()[0].ticks, 'label'));
@@ -223,13 +225,13 @@
         plot.resize();
         plot.setupGrid();
         plot.draw();
-    };
+    }
 
     function bindEvents (plot, eventHolder) {
         var p = plot || dataExplorer.pageViews[1].view.plot;
         resize(p);
         setTimeout(addCheckbox, 0);
-    };
+    }
 
     function processOffset (dataset) {
         return function(plot, offset) {
@@ -249,7 +251,7 @@
                 }
             }
         };
-    };
+    }
 
     function tickFormatter(dataset){
         return function (x) {
@@ -268,7 +270,7 @@
                 return x;
             }
         };
-    };
+    }
 
     function addCheckbox() {
         $control = $('.form-stacked:visible').find('#prevent-label-overlapping');
@@ -282,6 +284,5 @@
                 resize(dataExplorer.pageViews[1].view.plot);
             });
         }
-    };
-
+    }
 })(jQuery);
