@@ -22,7 +22,7 @@ function visualization_entity_choropleth_bundle_field_widget_form_alter(&$elemen
         break;
 
       case 'field_data_column':
-        $element['value']['#description'] = t('If there are multiple possible columns to map the data by, specify the name of the column in the uploaded data which should determine colors of states on a state-by-state map. (When there are multiple possible columns and no one column is specified, users will be prompted to select from radio buttons.)');
+        $element['value']['#description'] = t('Determine which columns will be used as data for color shading. Enter columns separated by commas. If no column is specified then multiple possible columns will be prompted to the user to be selected from radio buttons).');
         break;
 
       case 'field_data_breakpoints':
@@ -172,6 +172,7 @@ function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type
     if (isset($build['field_data_breakpoints'])) {
       $breakpoints = $build['field_data_breakpoints']['#items'][0]['value'];
       $breakpoints = explode(',', $breakpoints);
+      $breakpoints = array_map('trim', $breakpoints);
       $settings['breakpoints'] = $breakpoints;
     }
     
@@ -202,7 +203,10 @@ function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type
     
     // Build data_column.
     if (isset($build['field_data_column'])) {
-      $settings['data_column'] = $build['field_data_column']['#items'][0]['value'];
+      $data_columns = $build['field_data_column']['#items'][0]['value'];
+      $data_columns = explode(',', $data_columns);
+      $data_columns = array_map('trim', $data_columns);
+      $settings['data_column'] = $data_columns;
     }
 
     // Build resources files.
@@ -389,13 +393,21 @@ function visualization_entity_choropleth_bundle_form_alter(&$form, &$form_state,
 function visualization_entity_choropleth_bundle_form_validate(&$form, &$form_state) {
 
   $resource_id = $form_state['values']['field_resource'][LANGUAGE_NONE][0]['target_id'];
-  $data_column = $form_state['values']['field_data_column'][LANGUAGE_NONE][0]['value'];
+  $data_columns = $form_state['values']['field_data_column'][LANGUAGE_NONE][0]['value'];
+  $data_columns = explode(',', $data_columns);
+  $data_columns = array_map('trim', $data_columns);
+
   $node = node_load($resource_id);
   $field_upload = $node->field_upload[LANGUAGE_NONE][0];
-
-  // Data column must be a valid field in the csv file.
-  if (!visualization_entity_choropleth_bundle_has_data_column($data_column, $field_upload)) {
-    form_set_error('field_data_column', 'Data column must be a valid field in the csv file.');
+  $errors = array();
+  foreach ($data_columns as $key => $data_column) {
+    if (!visualization_entity_choropleth_bundle_has_data_column($data_column, $field_upload)) {
+      array_push($errors, t($data_column . ' is not a selectable column from resource file'));
+    }
+  }
+  if (count($errors)) {
+    $errors = implode(', ', $errors);
+    form_set_error('field_data_column', $errors);
   }
 }
 

@@ -113,7 +113,6 @@
     // again and again
     var createExplorer = function(dataset, state, settings) {
         // remove existing data explorer view
-
         var reload = false;
         if (window.dataExplorer) {
             window.dataExplorer.remove();
@@ -207,13 +206,12 @@
     };
 
     function resize (plot) {
-        addCheckbox();
         var itemWidth = computeWidth(plot, _.pluck(plot.getXAxes()[0].ticks, 'label'));
         var graph = dataExplorer.pageViews[1];
-        if(!isInverted()){
+        if(!isInverted() && $('#prevent-label-overlapping').is(':checked')){
             var canvasWidth = Math.min(itemWidth + labelMargin, maxLabelWidth) * plot.getXAxes()[0].ticks.length;
             var canvasContainerWith = $('.panel.graph').parent().width();
-            if(canvasWidth < canvasContainerWith || !$('#prevent-label-overlapping').is(':checked')){
+            if(canvasWidth < canvasContainerWith){
                 canvasWidth = canvasContainerWith;
             }
             $('.panel.graph').width(canvasWidth);
@@ -230,6 +228,7 @@
     function bindEvents (plot, eventHolder) {
         var p = plot || dataExplorer.pageViews[1].view.plot;
         resize(p);
+        setTimeout(addCheckbox, 0);
     };
 
     function processOffset (dataset) {
@@ -272,7 +271,7 @@
     };
 
     function addCheckbox() {
-        $control = $('#prevent-label-overlapping');
+        $control = $('.form-stacked:visible').find('#prevent-label-overlapping');
         if(!$control.length){
             $form = $('.form-stacked');
             $checkboxDiv = $('<div class="checkbox"></div>').appendTo($form);
