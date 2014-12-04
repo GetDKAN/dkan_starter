@@ -12,6 +12,7 @@ postbuild-commands:
   - 'ln -s ../../../../../projects/data_disqus docroot/sites/all/modules/nucivic/data_disqus'
   - 'ln -s ../../../../../projects/data_story docroot/sites/all/modules/nucivic/data_story'
   - 'ln -s ../../../../../projects/data_workflow docroot/sites/all/modules/nucivic/data_workflow'
+  - 'rm -rf docroot/sites/all/modules/nucivic/geo_file_entity'
   - 'ln -s ../../../../../projects/geo_file_entity docroot/sites/all/modules/nucivic/geo_file_entity'
   - 'ln -s ../../../../../projects/visualization_entity docroot/sites/all/modules/nucivic/visualization_entity'
   - 'ln -s ../../../../../projects/nucivic_data_demo_front docroot/sites/all/modules/nucivic/nucivic_data_demo_front'
