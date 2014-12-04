@@ -26,7 +26,10 @@
           initView(resource);
         }
         else {
-          var url = 'http://dkan/api/action/datastore/search.json?resource_id=' + resource.resource_id;
+          var drupal_base_path = Drupal.settings.basePath;
+          var DKAN_API = drupal_base_path + 'api/action/datastore/search.json';
+          var url = window.location.origin + DKAN_API + '?resource_id=' + resource.resource_id;
+
           var records = [];
           var numReq;
           var currReq = 0;
@@ -74,10 +77,14 @@
           }
           // Get page url from iteration number.
           function getPageURL(i, resource) {
+            var drupal_base_path = Drupal.settings.basePath;
+            var DKAN_API = drupal_base_path + 'api/action/datastore/search.json';
+            var url = window.location.origin + DKAN_API + '?resource_id=' + resource.resource_id;
             var offset = i * pageSize;
             var limit = pageSize;
-            return 'http://dkan/api/action/datastore/search.json?resource_id=' + resource.resource_id + '&offset=' + offset + '&limit=' + limit;
+            return url + '&offset=' + offset + '&limit=' + limit;
           }
+
           // Get number of requests
           function getRequestNumber(total, pageSize){
             return Math.floor(total / pageSize);
