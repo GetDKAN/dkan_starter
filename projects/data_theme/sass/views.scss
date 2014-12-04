@@ -17,6 +17,10 @@
 			}
 		}
 		.latest {
+			.views-field-field-image img {
+				height: 130px;
+				max-width: 282px;
+			}
 			margin-top:22px;
 			.views-field-title {
 				margin-top:12px;
