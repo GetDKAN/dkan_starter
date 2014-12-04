@@ -10,5 +10,5 @@ dependencies[] = remote_stream_wrapper
 version = "7.x-1.x-dev"
 core = "7.x"
 project = "remote_file_source"
-datestamp = "1417702335"
+datestamp = "1417723429"
 
