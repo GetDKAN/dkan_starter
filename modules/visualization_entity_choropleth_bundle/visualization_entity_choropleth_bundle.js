@@ -4,7 +4,7 @@
       var settings = Drupal.settings.visualization_choropleth;
       var resources = settings.resources;
       var geojson = settings.geojson;
-      var data_column = settings.data_column ? [settings.data_column] : [];
+      var data_column = settings.data_column ? settings.data_column : [];
       var map_column = settings.map_column;
       var geojson_key = settings.geojson_key;
       var geojson_label = settings.geojson_label;
