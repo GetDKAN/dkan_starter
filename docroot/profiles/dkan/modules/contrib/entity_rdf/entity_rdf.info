@@ -5,8 +5,8 @@ dependencies[] = entity
 files[] = entity_rdf.test
 
 
-; Information added by drush on 2014-12-04
+; Information added by drush on 2014-12-19
 version = "7d91983"
 project = "entity_rdf"
-datestamp = "1417723438"
+datestamp = "1419000042"
 
