@@ -75,7 +75,13 @@
         <!-- #featured-inside -->
         <div class="featured-inside" class="clearfix">
             <div class="row">
-                <h1 class="tagline">More than just a data tool,<br>an Open Data Platform.</h1>
+                <?php $site_slogan = variable_get('site_slogan', t('More than just a data tool,
+an Open Data Platform.')); ?>
+                <?php if (!empty($site_slogan)): ?>
+                  <h1 class="tagline">
+                      <?php print $site_slogan; ?>
+                  </h1>
+                <?php endif; ?>
             </div>
         </div>
         <!-- EOF: #featured-inside -->
