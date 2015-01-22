@@ -139,6 +139,7 @@ function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type
   if ($type === 'visualization' && $build['#entity']->type === 'choropleth_visualization') {
     // Load libraries.
     libraries_load('recline');
+    libraries_load('leaflet_zoomtogeometries');
     libraries_load('numeral');
     libraries_load('chroma');
     libraries_load('recline_choropleth');
