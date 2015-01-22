@@ -1,5 +1,9 @@
 Creates choropleth maps for Recline.
 
+### Dependencies
+
+https://github.com/NuCivic/leaflet.map.zoomToGeometries.js
+
 ### Usage
 
 ```

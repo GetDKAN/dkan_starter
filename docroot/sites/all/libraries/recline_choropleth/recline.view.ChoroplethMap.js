@@ -36,10 +36,6 @@ this.recline.View = this.recline.View || {};
       this.polygons = options.polygons;
       this.polygons_layer = null;
 
-      this._calculateBoundsFromPolygons();
-      // Property to hold Geographic bounds (if given).
-      this.bounds = options.bounds ? options.bounds : this.bounds;
-
       // Property to hold Units of Measure
       this.unit_of_measure = options.unit_of_measure ? options.unit_of_measure : '';
 
@@ -325,25 +321,6 @@ this.recline.View = this.recline.View || {};
       $('.menu-right').show();
     },
     /**
-     * Calculates bounds from polygons
-     */
-    _calculateBoundsFromPolygons: function() {
-      var layers = new L.GeoJSON(this.polygons);
-      layers = layers._layers;
-      var bounds = new L.LatLngBounds();
-      for (var layer in layers) {
-        if (layers.hasOwnProperty(layer)){
-          var feature = layers[layer].feature;
-          for ( var j = 1; j < feature.geometry.coordinates[0].length; j++ ) {
-            var latlng = feature.geometry.coordinates[0][j];
-            latlng = new L.LatLng(latlng[1],latlng[0]);
-            bounds.extend(latlng);
-          }
-        }
-      }
-      this.bounds = bounds;
-    },
-    /**
      * Zoom map to preset bounds.
      */
     _zoomToPolygons: function() {
@@ -357,7 +334,8 @@ this.recline.View = this.recline.View || {};
         );
       }
       else {
-        this.map.fitBounds(this.bounds);
+        var layers = new L.GeoJSON(this.polygons);
+        this.map.zoomToGeometries(layers);
       }
     },
     /**
