@@ -101,7 +101,7 @@ function data_entity_entity_info() {
  * Implements hook_menu().
  */
 function data_entity_menu() {
-  $tables = data_entity_get_entity_tables();
+  $tables = data_get_all_tables();
 
   foreach ($tables as $table_name => $table) {
     // Items that are in the same tab set as Field UI tabs need to have separate
@@ -116,6 +116,13 @@ function data_entity_menu() {
       'type' => MENU_LOCAL_TASK,
       'weight' => -3,
     );
+
+    // The following menu items only concern tables that are declared as
+    // entity types, so skip those that are not.
+    $meta = $table->get('meta');
+    if (empty($meta['is_entity_type'])) {
+      continue;
+    }
 
     $items['admin/structure/data/edit/' . $table_name . '/entity-form'] = array(
       'title' => 'Configure entity form',

@@ -47,6 +47,7 @@ function geo_file_entity_geojson_bundle_entity_view_alter(&$build, $type) {
 
     // Add js controller and stylesheets.
     $module_path = drupal_get_path('module', 'geo_file_entity_geojson_bundle');
+    libraries_load('leaflet_zoomtogeometries');
     drupal_add_js($module_path . '/geo_file_entity_geojson_bundle.js');
     drupal_add_css($module_path . '/geo_file_entity_geojson_bundle.css');
   }

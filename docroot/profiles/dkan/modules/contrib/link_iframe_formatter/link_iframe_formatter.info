@@ -6,8 +6,8 @@ package = Fields
 dependencies[] = link
 
 
-; Information added by drush on 2015-01-09
+; Information added by drush on 2015-01-22
 version = "228f9f4"
 project = "link_iframe_formatter"
-datestamp = "1420844084"
+datestamp = "1421939120"
 

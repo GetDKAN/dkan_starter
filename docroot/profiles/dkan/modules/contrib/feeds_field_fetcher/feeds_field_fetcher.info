@@ -5,8 +5,8 @@ core = 7.x
 dependencies[] = feeds
 
 
-; Information added by drush on 2015-01-09
+; Information added by drush on 2015-01-22
 version = "master-dev"
 project = "feeds_field_fetcher"
-datestamp = "1420844135"
+datestamp = "1421939179"
 

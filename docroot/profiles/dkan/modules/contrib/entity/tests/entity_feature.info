@@ -7,9 +7,9 @@ dependencies[] = entity_test
 hidden = TRUE
 
 
-; Information added by drush on 2015-01-09
+; Information added by drush on 2015-01-22
 version = "7.x-1.5+2-dev"
 core = "7.x"
 project = "entity"
-datestamp = "1420844066"
+datestamp = "1421939093"
 

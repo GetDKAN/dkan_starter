@@ -27,7 +27,8 @@ function visualization_entity_geojson_bundle_entity_view_alter(&$build, $type) {
   if ($type === 'visualization' && $build['#entity']->type === 'geojson_visualization') {
     // Load libraries.
     libraries_load('recline');
-
+    libraries_load('leaflet_zoomtogeometries');
+    
     // Build settings.
     $settings = array();
 
