@@ -3,7 +3,7 @@
 ; and contribute to upstream code.
 
 ; Grab DKAN make file
-includes[dkan] = projects/dkan/build-dkan.make
+includes[dkan] = build-dkan.make
 includes[data_story] = projects/data_story/data_story.make
 includes[data_disqus] = projects/data_disqus/data_disqus.make
 includes[data_workflow] = projects/data_workflow/data_workflow.make

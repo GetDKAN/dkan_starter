@@ -21,11 +21,6 @@ postbuild-commands:
   - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
 
 subtrees:
-  dkan:
-    path: dkan
-    uri: 'git@github.com:NuCivic/dkan.git'
-    branch:  7.x-1.x
-    message: 'dkan subtree from git@github.com:NuCivic/dkan.git'
   data_disqus:
     path: data_disqus
     uri: 'git@github.com:nucivic/data_disqus.git'
