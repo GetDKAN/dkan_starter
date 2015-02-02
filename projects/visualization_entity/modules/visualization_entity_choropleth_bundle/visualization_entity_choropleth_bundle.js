@@ -2,6 +2,7 @@
   Drupal.behaviors.visualization_choropleth = {
     attach: function(context) {
       var settings = Drupal.settings.visualization_choropleth;
+      console.log(settings);
       var resources = settings.resources;
       var geojson = settings.geojson;
       var data_column = settings.data_column ? settings.data_column : [];
@@ -23,6 +24,7 @@
           resource = new recline.Model.Dataset({
             records: recline.Backend.CSV.parseCSV(resource, resource.delimiter),
           });
+          console.log(resource);
           initView(resource);
         }
         else {

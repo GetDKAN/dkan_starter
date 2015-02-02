@@ -51,6 +51,9 @@ function visualization_entity_entity_view_alter(&$build, $type) {
   }
 }
 
+/**
+ * Markup for embed widget.
+ */
 function visualization_entity_attach_embed_widget($markup, $element) {
   $module_path = drupal_get_path('module', 'visualization_entity');
   $embed_url = current_path();
@@ -95,6 +98,9 @@ function visualization_entity_preprocess_page(&$vars) {
   }
 }
 
+/**
+ * Check regex against elements in an array.
+ */
 function in_array_match($regex, $array) {
   if (!is_array($array)) {
     trigger_error('Argument 2 must be array');
@@ -106,4 +112,15 @@ function in_array_match($regex, $array) {
     }
   }
   return FALSE;
+}
+
+/**
+ * Implements hook_uuidreference_select_query_alter().
+ */
+function visualization_entity_uuidreference_select_query_alter(&$query, $entity_type, $bundle, $field_name) {
+  if ($entity_type == 'visualization' && $field_name = 'field_uuid_resource') {
+    $bundles = visualization_entity_recline_compatible_bundles();
+    $entity_info = entity_get_info($entity_type);
+    $query->condition($entity_info['entity keys']['bundle'], array_keys($bundles));
+  }
 }

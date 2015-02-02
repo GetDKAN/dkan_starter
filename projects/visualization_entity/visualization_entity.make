@@ -7,6 +7,10 @@ projects[geo_file_entity][download][url] = https://github.com/NuCivic/geo_file_e
 projects[geo_file_entity][download][branch] = master
 projects[geo_file_entity][type] = module
 
+projects[uuidreference][subdir] = contrib
+projects[uuidreference][version] = 1.x-dev
+projects[uuidreference][patch][238875] = https://www.drupal.org/files/issues/uuidreference-alternative_to_module_invoke_all_implementation_for_query_alter_hook-238875-0.patch
+
 ; Libraries
 libraries[chroma][download][type] = "file"
 libraries[chroma][download][url] = "https://github.com/gka/chroma.js/zipball/master"
