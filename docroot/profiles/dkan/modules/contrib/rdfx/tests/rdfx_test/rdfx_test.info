@@ -8,9 +8,9 @@ features[rdf_mappings][] = "node-article"
 hidden = TRUE
 
 
-; Information added by drush on 2015-02-02
+; Information added by drush on 2015-02-17
 version = "7.x-2.0-alpha4+9-dev"
 core = "7.x"
 project = "rdfx"
-datestamp = "1422907259"
+datestamp = "1424210864"
 
