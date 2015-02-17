@@ -1,3 +1,4 @@
+behat.local.yml
 bin
 composer.lock
 composer.phar

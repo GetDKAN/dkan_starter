@@ -31,21 +31,6 @@ function recline_field_info() {
 }
 
 /**
- * Implements hook_field_formatter_info().
- */
-function recline_field_formatter_info() {
-  $formatters = array(
-    'recline_default_formatter' => array(
-      'label' => t('Recline.js visualization'),
-      'field types' => array('recline_field', 'file'),
-      // TODO: add some settings.
-      'settings' => array(),
-    ),
-  );
-  return $formatters;
-}
-
-/**
  * Implements hook_field_settings_form().
  */
 function recline_field_settings_form($field, $instance, $has_data) {
@@ -294,21 +279,85 @@ function recline_field_delete($entity_type, $entity, $field, $instance, $langcod
 }
 
 /**
+ * Implements hook_field_formatter_info().
+ */
+function recline_field_formatter_info() {
+  $formatters = array(
+    'recline_default_formatter' => array(
+      'label' => t('Recline.js visualization'),
+      'field types' => array('recline_field', 'file'),
+      // TODO: add some settings.
+      'settings' => array(),
+    ),
+    'recline_link_formatter' => array(
+      'label' => t('Recline field link'),
+      'field types' => array('recline_field'),
+      'settings' => array(),
+    ),
+    'recline_url_formatter' => array(
+      'label' => t('Recline field URI'),
+      'field types' => array('recline_field'),
+      'settings' => array(),
+    ),
+  );
+  return $formatters;
+}
+
+/**
  * Implements hook_field_formatter_view().
  */
 function recline_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-
   $element = array();
-
-  foreach ($items as $delta => $item) {
-    $item['entity'] = $entity;
-    $element[$delta] = array(
-      '#theme' => 'recline_default_formatter',
-      '#item' => $item,
-    );
+  switch ($display['type']) {
+    case 'recline_default_formatter':
+    case 'recline_link_formatter':
+    case 'recline_url_formatter':
+      foreach ($items as $delta => $item) {
+        $item['entity'] = $entity;
+        $element[$delta] = array(
+          '#theme' => $display['type'],
+          '#item' => $item,
+        );
+      }
+    break;
   }
-
   return $element;
+}
+
+/**
+ * Returns HTML for link field formatter for recline field.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - item: Associative array of recline field
+ *
+ * @ingroup themeable
+ */
+function theme_recline_link_formatter($variables) {
+  $url = theme_recline_url_formatter($variables);
+  $output = l(
+    $variables['item']['filename'],
+    $url
+  );
+  return $output;
+}
+
+/**
+ * Returns HTML for url field formatter for recline field.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - item: Associative array of recline field
+ *
+ * @ingroup themeable
+ */
+function theme_recline_url_formatter($variables) {
+  $output = file_create_url($variables['item']['uri']);
+  $output = url(
+    $output,
+    array('absolute' => TRUE)
+  );
+  return $output;
 }
 
 /**
@@ -322,25 +371,37 @@ function recline_field_formatter_view($entity_type, $entity, $field, $instance, 
  */
 function theme_recline_default_formatter($variables) {
   $output = recline_default_formatter_output($variables);
-
+  // We should REALLY think about how we want to architecture this. I don't like
+  // the case by case thing going on here. We should provide a way of tying file
+  // extensions with render functions so people can hook on this field formatter
+  // for an extra set of mime types
   if (isset($variables['item']['filemime']) && $variables['item']['filemime'] == 'application/zip') {
-    // List files if item is an archive.
-    $archiver = archiver_get_archiver($variables['item']['uri']);
-    if ($archiver) {
-      $module_path = drupal_get_path('module', 'recline');
-      drupal_add_css($module_path . '/recline.css');
+    $uri = $variables['item']['uri'];
+    if (is_numeric(strpos($uri, 'public://'))) {
+      // List files if item is an archive.
+      $archiver = archiver_get_archiver($uri);
+      if ($archiver) {
+        $module_path = drupal_get_path('module', 'recline');
+        drupal_add_css($module_path . '/recline.css');
+        $output['ziplist'] = array(
+          '#theme' => 'item_list',
+          '#prefix' => '<div id="recline-zip-list">',
+          '#suffix' => '</div>',
+          '#title' => t('%number files in this archive', array('%number' => count($archiver->listContents()))),
+          '#items' => $archiver->listContents(),
+        );
+      }
+      elseif ($format == 'zip') {
+        $archivers_available = implode(', ', array_keys(archiver_get_info()));
+        drupal_set_message(t('Unable to provide file listing for zip format on this system. Available archiver formats are: %s',
+          array('%s' => $archivers_available)));
+      }
+    }
+    else {
       $output['ziplist'] = array(
         '#theme' => 'item_list',
-        '#prefix' => '<div id="recline-zip-list">',
-        '#suffix' => '</div>',
-        '#title' => t('%number files in this archive', array('%number' => count($archiver->listContents()))),
-        '#items' => $archiver->listContents(),
+        '#title' => t('Unable to provide file listing for remote zip file.'),
       );
-    }
-    elseif ($format == 'zip') {
-      $archivers_available = implode(', ', array_keys(archiver_get_info()));
-      drupal_set_message(t('Unable to provide file listing for zip format on this system. Available archiver formats are: %s',
-        array('%s' => $archivers_available)));
     }
   }
 
@@ -358,6 +419,7 @@ function recline_default_formatter_output($variables) {
   $icon = '';
 
   $format = recline_get_data_type($file['filemime']);
+  drupal_alter('recline_format', $format, $variables['item']['entity']);
 
   // Set options as per anchor format described at
   // http://microformats.org/wiki/file-format-examples
@@ -388,6 +450,12 @@ function recline_default_formatter_output($variables) {
     }
   }
   $recline = '';
+
+  $recline = libraries_load('recline');
+  $recline_deeplink = libraries_load('recline_deeplink');
+  $leaflet_markercluster = libraries_load('leaflet_markercluster');
+  $deep_diff = libraries_load('deep_diff');
+
   if (isset($variables['item']['grid']) &&
     isset($variables['item']['graph']) &&
     isset($variables['item']['map']) &&
@@ -395,7 +463,7 @@ function recline_default_formatter_output($variables) {
     if ($variables['item']['map'] || $variables['item']['grid'] || $variables['item']['graph'] || $variables['item']['embed']) {
       $uuid = isset($variables['item']['entity']->uuid) ? $variables['item']['entity']->uuid : FALSE;
       drupal_add_library('system', 'ui.sortable');
-      $recline = libraries_load('recline');
+
       $module_path = drupal_get_path('module', 'recline');
       drupal_add_js($module_path . '/backend.ckan_get.js');
       drupal_add_js($module_path . '/recline.app.js');
@@ -418,7 +486,9 @@ function recline_default_formatter_output($variables) {
   else {
     $uuid = isset($variables['item']['entity']->uuid) ? $variables['item']['entity']->uuid : FALSE;
     drupal_add_library('system', 'ui.sortable');
-    $recline = libraries_load('recline');
+
+
+
     $module_path = drupal_get_path('module', 'recline');
     drupal_add_js($module_path . '/backend.ckan_get.js');
     drupal_add_js($module_path . '/recline.app.js');
@@ -440,7 +510,7 @@ function recline_default_formatter_output($variables) {
   }
   if ($recline) {
     // Necessary to fix https://github.com/mapbox/mapbox.js/issues/339
-    $leaflet_imgs = $recline['library path'] . '/vendor/leaflet/0.4.4/images';
+    $leaflet_imgs = $recline['library path'] . '/vendor/leaflet/0.7.3/images';
     drupal_add_js('L.Icon.Default.imagePath = "/' . $leaflet_imgs . '"', 'inline');
   }
 

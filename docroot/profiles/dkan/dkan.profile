@@ -24,34 +24,6 @@ function dkan_additional_setup() {
   variable_set('node_access_needs_rebuild', FALSE);
   variable_set('gravatar_size', 190);
 
-  $tags = array(
-    'country-afghanistan',
-    'election',
-    'politics',
-    'transparency',
-    'municipal',
-    'price',
-    'time-series',
-  );
-  foreach ($tags as $tag) {
-    $term = new stdClass();
-    // 'Tags' vid.
-    $term->vid = 2;
-    $term->name = $tag;
-    taxonomy_term_save($term);
-  }
-  $formats = array(
-    'csv',
-    'html',
-  );
-  foreach ($formats as $format) {
-    $term = new stdClass();
-    // 'Formats' vid.
-    $term->vid = 1;
-    $term->name = $format;
-    taxonomy_term_save($term);
-  }
-
   // Make sure markdown editor installs correctly.
   module_load_include('install', 'markdowneditor', 'markdowneditor');
   _markdowneditor_insert_latest();
@@ -75,4 +47,6 @@ function dkan_additional_setup() {
   features_revert(array('dkan_sitewide_search_db' => array('search_api_server')));
   features_revert(array('dkan_sitewide_roles_perms' => array('user_permission', 'og_features_permission')));
   unset($_SESSION['messages']['warning']);
+  cache_clear_all();
+
 }

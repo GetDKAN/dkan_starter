@@ -1,0 +1,15 @@
+name = NuCivic Data demo front
+core = 7.x
+package = NUCIVIC
+project = nucivic_data_demo_front
+dependencies[] = context
+dependencies[] = ctools
+dependencies[] = views
+dependencies[] = views_responsive_grid
+dependencies[] = data_story
+descriptions = Customizations to NuCivic Data home page.
+features[context][] = front
+features[ctools][] = context:context:3
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = front_page_group_grid

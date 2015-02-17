@@ -5,3 +5,122 @@
  */
 
 include_once 'portal_administrator_role.features.inc';
+
+DEFINE('PORTAL_ADMINISTRATOR_ROLE_RID', '27274083');
+
+/**
+ * Implements hook_permission().
+ */
+function portal_administrator_role_permission() {
+  return array(
+    'administer user settings' => array(
+      'title' => t('Administer User Settings'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function portal_administrator_role_menu_alter(&$items) {
+  foreach ($items as $path => &$item) {
+    if (strpos($path, 'admin/config/people') === 0) {
+      $item['access callback'] = 'user_access';
+      $item['access arguments'] = array('administer user settings');
+    }
+  }
+}
+
+/**
+ * Implements hook_modules_enabled().
+ */
+function portal_administrator_role_modules_enabled($modules) {
+  if (in_array('data_story_storyteller_role', $modules)) {
+    user_role_grant_permissions(
+      PORTAL_ADMINISTRATOR_ROLE_RID,
+      array('assign storyteller role')
+    );
+  }
+  if (in_array('data_story', $modules)) {
+    user_role_grant_permissions(
+      PORTAL_ADMINISTRATOR_ROLE_RID,
+      array(
+        'create blog content',
+        'delete any blog content',
+        'delete own blog content',
+        'edit any blog content',
+        'edit own blog content',
+      )
+    );
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function portal_administrator_role_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  switch ($form_id) {
+    case 'user_cancel_confirm_form':
+      $account = $form['_account']['#value'];
+      if (in_array('portal administrator', $account->roles)) {
+        $portal_admins = "SELECT uid FROM {users_roles} WHERE rid = '%d'";
+        $portal_admins = db_query(
+          $portal_admins,
+          array(PORTAL_ADMINISTRATOR_ROLE_RID)
+        );
+        $count = 0;
+        foreach ($portal_admins as $portal_admin) {
+          $count++;
+        }
+        if ($count < 2) {
+          drupal_set_message(
+            t('
+              Please assign someone else the portal administrator role before
+              deleting this account. There should always be at least one portal
+              administrator user on this site.
+            '),
+            'error'
+          );
+          drupal_goto('/');
+        }
+      }
+      break;
+    case 'user_profile_form':
+      $account = $form['#user'];
+      $hide_status = in_array('portal administrator', $user->roles) ? TRUE : FALSE;
+      $hide_status = $account->uid == $user->uid && $hide_status ? TRUE : FALSE;
+      if ($hide_status) {
+        $form['account']['status']['#type'] = 'hidden';
+      }
+      break;
+    case 'user_admin_account':
+      $validate = $form['#validate'];
+      $c = count($validate);
+      $validate[$c] = 'portal_administrator_role_user_admin_account_validate';
+      $form['#validate'] = $validate;
+      break;
+  }
+}
+
+/**
+ * Validate user_admin_account form to avoid
+ * that portal administrators to block themselves.
+ */
+function portal_administrator_role_user_admin_account_validate($form, &$form_state) {
+  global $user;
+  if ($form['#form_id'] == 'user_admin_account') {
+    $operation = $form_state['values']['operation'];
+    $is_portal_admin = in_array('portal administrator', $user->roles);
+    if ($operation == 'block' && $is_portal_admin) {
+      $accounts = $form_state['values']['accounts'];
+      if (in_array($user->uid, $accounts)) {
+        drupal_set_message(
+            t('You are trying to block yourself.'),
+            'error'
+          );
+          drupal_goto('admin/people');
+      }
+    }
+  }
+}

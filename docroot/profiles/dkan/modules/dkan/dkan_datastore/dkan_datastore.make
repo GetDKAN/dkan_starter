@@ -24,9 +24,13 @@ projects[feeds_flatstore_processor][subdir] = contrib
 projects[feeds_flatstore_processor][type] = module
 
 projects[schema][subdir] = contrib
-projects[schema][patch][1237974] = http://drupal.org/files/schema-support-custom-types-1237974-48.patch
+projects[schema][download][revision] = "08b02458694d186f8ab3bd0b24fbc738f9271108"
+
 projects[services][subdir] = contrib
+projects[services][version] = 3.11
+
 projects[data][subdir] = contrib
 projects[data][version] = 1.x
+
 projects[job_scheduler][subdir] = contrib
 projects[job_scheduler][version] = 2.x

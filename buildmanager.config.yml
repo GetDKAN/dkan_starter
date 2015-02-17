@@ -12,16 +12,15 @@ postbuild-commands:
   - 'ln -s ../../../../../projects/data_disqus docroot/sites/all/modules/nucivic/data_disqus'
   - 'ln -s ../../../../../projects/data_story docroot/sites/all/modules/nucivic/data_story'
   - 'ln -s ../../../../../projects/data_workflow docroot/sites/all/modules/nucivic/data_workflow'
+  - 'rm -rf docroot/sites/all/modules/nucivic/geo_file_entity'
+  - 'ln -s ../../../../../projects/geo_file_entity docroot/sites/all/modules/nucivic/geo_file_entity'
+  - 'ln -s ../../../../../projects/visualization_entity docroot/sites/all/modules/nucivic/visualization_entity'
+  - 'ln -s ../../../../../projects/nucivic_data_demo_front docroot/sites/all/modules/nucivic/nucivic_data_demo_front'
   - 'ln -s ../../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
   - 'rm docroot/profiles/dkan/.gitignore'
   - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
 
 subtrees:
-  dkan:
-    path: dkan
-    uri: 'git@github.com:NuCivic/dkan.git'
-    branch:  7.x-1.x
-    message: 'dkan subtree from git@github.com:NuCivic/dkan.git'
   data_disqus:
     path: data_disqus
     uri: 'git@github.com:nucivic/data_disqus.git'
@@ -42,3 +41,13 @@ subtrees:
     uri: 'git@github.com:nucivic/data_workflow.git'
     branch: master
     message: 'data_workflow subtree from git@github.com:nucivic/data_workflow.git'
+  geo_file_entity:
+    path: geo_file_entity
+    uri: 'git@github.com:nucivic/geo_file_entity.git'
+    branch: master
+    message: 'geo_file_entity subtree from git@github.com:nucivic/geo_file_entity.git'
+  visualization_entity:
+    path: visualization_entity
+    uri: 'git@github.com:nucivic/visualization_entity.git'
+    branch: master
+    message: 'visualization_entity subtree from git@github.com:nucivic/visualization_entity.git'

@@ -1,0 +1,156 @@
+.tagline {
+  font-family: "raleway", Helvetica, Arial;
+  color: white;
+  font-size: 60px;
+  line-height: 60px;
+  padding-left: 40px;
+  padding-top: 70px;
+  padding-bottom: 70px;
+
+}
+
+.page-header{
+  margin-top: 0;
+}
+
+.group_home {
+  text-align: center;
+}
+
+.region-content .block {
+  background-color: white;
+  -bottom: 20px;
+}
+
+.view-front-page-group-grid .span6 span,
+.view-front-page-group-grid .col-lg-6 span {
+  background-color: white;
+  margin-bottom: 20px;
+  padding: 20px;
+  display: block;
+  overflow: hidden;
+  padding: 10px;
+  margin: 15px;
+  min-height: 130px;
+}
+
+.view-groups-page .views-column {
+  text-align: center;
+  margin: 0;
+  width: 50%;
+}
+
+#featured .tint,
+#block-dkan-sitewide-demo-front-dkan-demo-front {
+  background-color: rgba(56 , 103 , 177,0.45);
+}
+
+.region-content .block {
+  border: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  padding: 0px;
+}
+
+/** Nuboot customizations via UI **/
+body,
+body.overlay {
+  background-color: #292929;
+  color: #3b3b3b;
+}
+#nav-wrapper,
+#page-wrapper {
+  background-color: #ffffff;
+}
+h1,h2,h3,h4,
+h2.block-title {
+  
+}
+
+#featured .tint,
+#block-dkan-sitewide-demo-front-dkan-demo-front {
+  background-color: rgba(56 , 103 , 177,0.45);
+}
+
+.form-actions {
+  background-color: #ffffff;
+}
+
+a {
+  color: #3867b1;
+}
+a:hover,
+a:focus {
+  color: #3b78d8;
+}
+a:active {
+  color: #6690d1;
+}
+
+.region-header,
+.region-header a,
+.region-header li a.active,
+#name-and-slogan,
+#name-and-slogan a,
+#secondary-menu-links li a {
+  color: #fffeff;
+}
+
+#nav-wrapper .navbar-default .navbar-brand { color: #3867b1; }
+#nav-wrapper .navbar-default .navbar-nav li > a { color: #3867b1; }
+
+.nav-pills li a,
+.tabs--primary li a {
+  border:1px solid #c6e5f8;
+  background: #c6e5f8;
+  color:  #3867b1;
+}
+
+.tabs--primary li a:hover {
+  border:1px solid #6b95d6;
+  background: #6b95d6;
+  color: #ffffff;
+}
+
+.nav-pills li a.active,
+.nav-pills li.active a:hover,
+.nav-pills li.active a:focus,
+.tabs--primary li a.active {
+  border:1px solid #3867b1;
+  background: #3867b1;
+  color:#ffffff;
+}
+
+.view-group-block .views-field-nid a,
+.btn-primary {
+  background-color: #3867b1;
+  border:1px solid #3867b1;
+  color:#ffffff;
+}
+
+.view-group-block .views-field-nid a:hover,
+.btn-primary:hover {
+  background:#6b95d6;
+  border:1px solid #6b95d6;
+  color:#ffffff;
+}
+#edit-submit:hover,
+#edit-submit:focus, 
+#edit-submit:active {
+  background: #6690d1;
+  border-color: #6690d1;
+}
+
+.region-sidebar-first .block-facetapi ul li.leaf a:hover,
+.block-facetapi ul li.leaf a:hover {
+  color:#3867b1;
+}
+
+.footer-wrapper {
+  background-color: #292929;
+  color: #f6f6f2;
+}
+.footer-wrapper a {
+  color: #7da1d9;
+}

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the dkan_sitewide_demo_front feature.
+ */
+
+include_once 'nucivic_data_demo_front.features.inc';

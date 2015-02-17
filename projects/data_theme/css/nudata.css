@@ -5,7 +5,7 @@ a.logo img { height: 50px !important; }
 #featured #block-views-popular-tags-block .block-content { margin: 10px 0; }
 #featured .col-md-6 .block { padding: 0 35px; }
 
-#block-dkan-sitewide-demo-front-dkan-search-front .block-content { -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; padding: 15px; color: white; background: white; width: 100%; margin: 0; }
+#block-dkan-sitewide-demo-front-dkan-search-front .block-content { -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); -webkit-border-radius: 3px; -moz-border-radius: 3px; -ms-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px; padding: 15px; color: white; background: white; width: 100%; margin: 0; }
 #block-dkan-sitewide-demo-front-dkan-search-front .block-content #views-exposed-form-dataset-page { width: 100%; }
 #block-dkan-sitewide-demo-front-dkan-search-front .block-content #views-exposed-form-dataset-page input.form-control { width: 100%; }
 
