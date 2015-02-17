@@ -49,7 +49,7 @@ function visualization_entity_choropleth_bundle_field_default_field_instances() 
         'display_label' => 0,
       ),
       'type' => 'options_onoff',
-      'weight' => 3,
+      'weight' => 4,
     ),
   );
 
@@ -93,7 +93,7 @@ function visualization_entity_choropleth_bundle_field_default_field_instances() 
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 2,
+      'weight' => 3,
     ),
   );
 
@@ -133,7 +133,7 @@ function visualization_entity_choropleth_bundle_field_default_field_instances() 
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 5,
+      'weight' => 6,
     ),
   );
 
@@ -173,7 +173,7 @@ function visualization_entity_choropleth_bundle_field_default_field_instances() 
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 4,
+      'weight' => 5,
     ),
   );
 
@@ -213,7 +213,7 @@ function visualization_entity_choropleth_bundle_field_default_field_instances() 
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 6,
+      'weight' => 7,
     ),
   );
 
@@ -258,22 +258,25 @@ function visualization_entity_choropleth_bundle_field_default_field_instances() 
     ),
   );
 
-  // Exported field_instance: 'visualization-choropleth_visualization-field_resource'
-  $field_instances['visualization-choropleth_visualization-field_resource'] = array(
+  // Exported field_instance: 'visualization-choropleth_visualization-field_uuid_resource'
+  $field_instances['visualization-choropleth_visualization-field_uuid_resource'] = array(
     'bundle' => 'choropleth_visualization',
-    'default_value' => NULL,
+    'default_value' => array(
+      0 => array(
+        'target_uuid' => '704dfe95-cd90-4ebf-8a6c-6394e5b23cb3',
+      ),
+    ),
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'hidden',
-        'module' => 'entityreference',
+        'module' => 'uuidreference',
         'settings' => array(
-          'links' => 1,
-          'view_mode' => 'teaser',
+          'link' => 1,
         ),
-        'type' => 'entityreference_entity_view',
-        'weight' => 0,
+        'type' => 'uuidreference_label',
+        'weight' => 11,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -283,20 +286,18 @@ function visualization_entity_choropleth_bundle_field_default_field_instances() 
       ),
     ),
     'entity_type' => 'visualization',
-    'field_name' => 'field_resource',
-    'label' => 'resource',
+    'field_name' => 'field_uuid_resource',
+    'label' => 'uuid_resource',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(
-        'apply_chosen' => 0,
-      ),
-      'type' => 'options_select',
-      'weight' => 1,
+      'active' => 0,
+      'module' => 'uuidreference_select',
+      'settings' => array(),
+      'type' => 'uuidreference_select',
+      'weight' => 2,
     ),
   );
 
@@ -434,7 +435,7 @@ function visualization_entity_choropleth_bundle_field_default_field_instances() 
   t('data column');
   t('data units');
   t('geojson');
-  t('resource');
+  t('uuid_resource');
 
   return $field_instances;
 }
