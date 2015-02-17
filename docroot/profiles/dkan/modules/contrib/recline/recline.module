@@ -76,6 +76,14 @@ function recline_theme() {
       'variables' => array('item' => NULL),
       'file' => 'recline.field.inc',
     ),
+    'recline_link_formatter' => array(
+      'variables' => array('item' => NULL),
+      'file' => 'recline.field.inc',
+    ),
+    'recline_url_formatter' => array(
+      'variables' => array('item' => NULL),
+      'file' => 'recline.field.inc',
+    ),
     'recline_widget' => array(
       'render element' => 'element',
       'file' => 'recline.field.inc',
