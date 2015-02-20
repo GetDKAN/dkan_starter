@@ -15,9 +15,8 @@
 .panel-full-width .panel-col-first .inside,
 .panel-full-width .panel-col-second .inside,
 .panel-full-width .panel-col-third .inside,
-.panel-full-width .panel-col-fourth .inside,
 .panel-full-width .panel-middle .inside {
-  margin: 0 15px;
+  margin: 15px;
 }
 
 .panel-full-width .panel-top .panel-col-first,
@@ -28,19 +27,11 @@
 
 .panel-full-width .panel-bottom .panel-col-first,
 .panel-full-width .panel-bottom .panel-col-second,
-.panel-full-width .panel-bottom .panel-col-third,
-.panel-full-width .panel-bottom .panel-col-fourth {
-  width:25%;
+.panel-full-width .panel-bottom .panel-col-third {
+  width:33.333%;
   float:left;
 }
 
-/*.page-admin-structure .panel-full-width .panel-third .panel-col-first,
-.page-admin-structure .panel-full-width .panel-third .panel-col-last,
-.page-admin-structure .panel-full-width .panel-bottom .panel-col-first,
-.page-admin-structure .panel-full-width .panel-bottom .panel-col-last {
-  width: 50%;
-  float: left;
-}*/
 .panel-full-width .panel-separator {
   margin: 0;
 }

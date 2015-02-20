@@ -13,7 +13,7 @@ $plugin = array(
     'bottom-first' => t('Bottom First Column'),
     'bottom-second' => t('Bottom Second Column'),
     'bottom-third' => t('Bottom Third Column'),
-    'bottom-fourth' => t('Bottom Fourth Column'),
+    'footer' => t('Footer'),
   ),
 );
 
