@@ -4,7 +4,7 @@
 @mixin popblock {
   @include border-radius(3px);
   @include box-shadow(0 0 5px rgba(0, 0, 0, 0.3));
-  background-color: $white;
+  //background-color: $white;
   margin-bottom: 20px;
   padding:0px;
   .pane-content {
@@ -14,7 +14,8 @@
 }
 
 @mixin block-title {
-  @include background-image(linear-gradient(#F5F5F5, #F0F0F0));
+  //@include background-image(linear-gradient(#F5F5F5, #F0F0F0));
+  background-color: $border;
   @include border-radius(3px 3px 0 0);
   border-bottom: 1px solid $border;
   color: $gray-dark;
@@ -64,15 +65,15 @@
 }
 
 %button {
-  background:$brand-primary;
-  border-color:$brand-primary;
+  // background:$brand-primary;
+  // border-color:$brand-primary;
   color: white;
 }
 %button:hover, 
 %button:focus, 
 %button:active {
-  background:$brand-secondary;
-  border-color:$brand-secondary;
+  // background:$brand-secondary;
+  // border-color:$brand-secondary;
   color: white;
 }
 %button-attached {

@@ -11,9 +11,9 @@ files[] = evoc.install
 files[] = evoc.test
 
 
-; Information added by drush on 2015-02-17
+; Information added by drush on 2015-02-20
 version = "7.x-2.0-alpha4+9-dev"
 core = "7.x"
 project = "rdfx"
-datestamp = "1424210864"
+datestamp = "1424467155"
 

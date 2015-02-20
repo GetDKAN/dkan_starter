@@ -185,10 +185,10 @@
   margin:10px 0;
 }
 #action-info {
-  color: $brand-warning;
+  color: $brand-danger;
   margin: 1em 0;
   &:before {
-    color: $brand-warning;
+    color: $brand-danger;
     content: "\f071";
     font-family: "FontAwesome";
     font-size: 1.5em;

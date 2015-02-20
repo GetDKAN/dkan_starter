@@ -222,8 +222,8 @@ function nuboot_radix_user_picture(&$variables) {
   if (variable_get('user_pictures', 0)) {
     // Load the full user object since it is not provided with nodes, comments,
     // or views displays.
-    $account = _gravatar_load_account($variables['account']);
-    $filepath = _gravatar_get_account_user_picture($account);
+    $account = module_exists('gravatar') ? _gravatar_load_account($variables['account']) : $variables['account'];
+    $filepath = module_exists('gravatar') ? _gravatar_get_account_user_picture($account) : '';
 
     if (!empty($filepath)) {
       $alt = t("@user's picture", array('@user' => format_username($account)));

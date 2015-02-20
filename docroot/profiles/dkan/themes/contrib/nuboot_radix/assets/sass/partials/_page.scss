@@ -1,17 +1,17 @@
 //
 // Styles for individual pages
 // --------------------------------------------------
-.page-header {
-  border-bottom: none;
-}
-.front .page-header {
-  display: none;
+#page-header {
+  padding: 0 15px;
 }
 .main {
   padding:20px 0;
 }
 .front .main {
   padding: 0;
+}
+.page-admin .main {
+  padding: 20px 15px;
 }
 .page-groups {
   article.node-teaser {
