@@ -38,82 +38,7 @@
 
           var progressInfo = $('<div class="progress-info"></p>');
           progressInfo.hide();
-          // Transform results into records.
-          function processData(data, first) {
-            var fields = _.pluck(data.result.fields, 'id');
-            var records = _.map(data.result.records, function(r){
-              return _.values(r);
-            });
-            first && records.unshift(fields);
-            return records;
-          }
-          // Request more data.
-          function requestData(pageUrl){
-            return jQuery.get(pageUrl).done(function(data){
-              showProgressInfo();
-              records = records.concat(processData(data));
-              var dataset = new recline.Model.Dataset({records:records});
-              view.model = dataset;
-              view.redraw();
-              return records;
-            });
-          }
-          // Initialize ChoroplethMap.
-          function initView(dataset){
-            view = new recline.View.ChoroplethMap({
-              polygons: geojson,
-              model: dataset,
-              map_column: map_column,
-              selectable_fields: data_column,
-              breakpoints: breakpoints,
-              geojson_key: geojson_key,
-              geojson_label: geojson_label,
-              base_color: color_scale,
-              avg: resources[0].avg,
-              unitOfMeasure: resources[0].unitOfMeasure,
-            });
-            // Attach html and render the Recline view.
-            container.append(view.el);
-            sidebar.append(view.elSidebar);
-            view.render();
-          }
-          // Get page url from iteration number.
-          function getPageURL(i, resource) {
-            var drupal_base_path = Drupal.settings.basePath;
-            var DKAN_API = drupal_base_path + 'api/action/datastore/search.json';
-            var url = window.location.origin + DKAN_API + '?resource_id=' + resource.resource_id;
-            var offset = i * pageSize;
-            var limit = pageSize;
-            return url + '&offset=' + offset + '&limit=' + limit;
-          }
 
-          // Get number of requests
-          function getRequestNumber(total, pageSize){
-            return Math.floor(total / pageSize);
-          }
-          // Renders progress request info.
-          function showProgressInfo(){
-            if (currReq === 0) {
-              progressInfo.show();
-            }
-            currReq++;
-            if (currReq === numReq) {
-              progressInfo.hide();
-            }
-            progressInfo.html('Downloading ' + currReq + ' of ' + numReq );
-          }
-          // Make first request and populate initial data.
-          function initData(){
-            container.prepend(progressInfo);
-            jQuery.get(getPageURL(0, resource)).done(function(data) {
-              records = processData(data, true);
-              initView(new recline.Model.Dataset({records:records}));
-              numReq = getRequestNumber(data.result.total, pageSize);
-              for (var i = 1; i <= numReq; i++) {
-                requestData(getPageURL(i, resource));
-              };
-            });
-          }
           // Entry point.
           initData();
         }
@@ -144,6 +69,82 @@
         container.append(view.el);
         sidebar.append(view.elSidebar);
         view.render();
+      }
+      // Transform results into records.
+      function processData(data, first) {
+        var fields = _.pluck(data.result.fields, 'id');
+        var records = _.map(data.result.records, function(r){
+          return _.values(r);
+        });
+        first && records.unshift(fields);
+        return records;
+      }
+      // Request more data.
+      function requestData(pageUrl){
+        return jQuery.get(pageUrl).done(function(data){
+          showProgressInfo();
+          records = records.concat(processData(data));
+          var dataset = new recline.Model.Dataset({records:records});
+          view.model = dataset;
+          view.redraw();
+          return records;
+        });
+      }
+      // Initialize ChoroplethMap.
+      function initView(dataset){
+        view = new recline.View.ChoroplethMap({
+          polygons: geojson,
+          model: dataset,
+          map_column: map_column,
+          selectable_fields: data_column,
+          breakpoints: breakpoints,
+          geojson_key: geojson_key,
+          geojson_label: geojson_label,
+          base_color: color_scale,
+          avg: resources[0].avg,
+          unitOfMeasure: resources[0].unitOfMeasure,
+        });
+        // Attach html and render the Recline view.
+        container.append(view.el);
+        sidebar.append(view.elSidebar);
+        view.render();
+      }
+      // Get page url from iteration number.
+      function getPageURL(i, resource) {
+        var drupal_base_path = Drupal.settings.basePath;
+        var DKAN_API = drupal_base_path + 'api/action/datastore/search.json';
+        var url = window.location.origin + DKAN_API + '?resource_id=' + resource.resource_id;
+        var offset = i * pageSize;
+        var limit = pageSize;
+        return url + '&offset=' + offset + '&limit=' + limit;
+      }
+
+      // Get number of requests
+      function getRequestNumber(total, pageSize){
+        return Math.floor(total / pageSize);
+      }
+      // Renders progress request info.
+      function showProgressInfo(){
+        if (currReq === 0) {
+          progressInfo.show();
+        }
+        currReq++;
+        if (currReq === numReq) {
+          progressInfo.hide();
+        }
+        progressInfo.html('Downloading ' + currReq + ' of ' + numReq );
+      }
+      // Make first request and populate initial data.
+      function initData(){
+        container.prepend(progressInfo);
+        jQuery.get(getPageURL(0, resource)).done(function(data) {
+          records = processData(data, true);
+          initView(new recline.Model.Dataset({records:records}));
+          numReq = getRequestNumber(data.result.total, pageSize);
+          for (var i = 1; i <= numReq; i++) {
+            requestData(getPageURL(i, resource));
+          }
+        });
       }
     },
   };

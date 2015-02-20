@@ -16,23 +16,23 @@
   display: none;
 }
 
-.navbar #block-dkan-sitewide-dkan-sitewide-search-bar {
+#block-dkan-sitewide-dkan-sitewide-search-bar {
   @include searchbox;
-  display: inline-block;
+  position: absolute;
+  top: 10px;
+  right: 15px;
   width:172px;
-  vertical-align: bottom;
   form {
     width:172px;
   }
-    input.form-control {
-      width:170px;
-      height: 34px;
-      margin: 0;
-    }
-    .views-exposed-form .form-submit {
-      margin:22px 0 0;
-      //color:#fff;
-      text-shadow: none;
-    }
+  input.form-control {
+    width:170px;
+    height: 34px;
+    margin: 0;
+  }
+  .views-exposed-form .form-submit {
+    margin:22px 0 0;
+    text-shadow: none;
+  }
 }
 

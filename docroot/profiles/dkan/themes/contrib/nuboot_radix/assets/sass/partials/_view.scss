@@ -31,9 +31,16 @@
 .views-field-field-image img {
   display:block;
   height:auto;
-  margin:0 auto;
+  margin:0 auto 5px;
   max-width:220px;
   width:100%;
+}
+
+.view-user-profile-fields img {
+  height:auto;
+  margin:0 auto;
+  max-width:190px;
+  width:100%;  
 }
 
 .view-front-page-group-grid {
@@ -120,6 +127,7 @@
       margin: 0;
       position:relative;
     }
+    &.views-reset-button,
     &.views-submit-button {
       margin: 0;
       padding: .5em .5em 0 0;
@@ -137,3 +145,5 @@
     top: 10px;
   }
 }
+
+#views-exposed-form-dkan-datasets-panel-pane-1 .views-exposed-form .description { display: none;}

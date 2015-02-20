@@ -4,9 +4,9 @@ hidden = TRUE
 files[] = SchemaTestDatabaseConnection.php
 
 
-; Information added by drush on 2015-02-17
+; Information added by drush on 2015-02-20
 version = "7.x-1.2"
 core = "7.x"
 project = "schema"
-datestamp = "1424210902"
+datestamp = "1424467169"
 

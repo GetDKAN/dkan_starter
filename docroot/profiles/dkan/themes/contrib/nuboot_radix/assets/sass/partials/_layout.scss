@@ -8,10 +8,6 @@ aside.col-sm-3 {
 section.col-sm-9 {
   padding-right: 0;
 }
-.container .container-fluid {
-  margin-left: 0;
-  margin-right: 0;
-}
 
 #featured,
 .panel-top {
@@ -21,7 +17,8 @@ section.col-sm-9 {
   position: relative;
   z-index: 1;
   .tint {
-    background-color:rgba(10 , 119 , 189, .45);
+    // Let colorizer supply the background color.
+    //background-color:rgba(10 , 119 , 189, .45);
     position:absolute;
     height: 900px;
     width:100%;
@@ -39,11 +36,12 @@ section.col-sm-9 {
     z-index: 5;
   }
   .pane-block,
+  .panel-pane,
   .block-content {
     color:$white;
     font-size: 1.25em;
     line-height: 1.33em;
-    margin:0 10px;
+    margin:0 15px;
   }
   a {
     color:$white;

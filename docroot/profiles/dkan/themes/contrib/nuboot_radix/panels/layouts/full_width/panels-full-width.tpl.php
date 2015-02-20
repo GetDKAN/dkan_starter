@@ -38,7 +38,7 @@
     </div>
   <?php endif; ?>
 
-  <?php if($content['bottom-first'] || $content['bottom-second'] || $content['bottom-third'] || $content['bottom-fourth']): ?>
+  <?php if($content['bottom-first'] || $content['bottom-second'] || $content['bottom-third']): ?>
     <div class="panel-bottom panel-row">
       <div class="container">
         <div class="panel-col-first">
@@ -50,10 +50,16 @@
         <div class="panel-col-third">
           <div class="inside"><?php print $content['bottom-third']; ?></div>
         </div>
-        <div class="panel-col-fourth">
-          <div class="inside"><?php print $content['bottom-fourth']; ?></div>
-        </div>
       </div>
     </div>
   <?php endif; ?>
+
+  <?php if($content['footer']): ?>
+    <div class="panel-bottom-full panel-row">
+      <div class="container">
+        <div class="inside"><?php print $content['footer']; ?></div>
+      </div>
+    </div>
+  <?php endif; ?>
+
 </div>

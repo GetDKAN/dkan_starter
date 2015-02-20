@@ -1,17 +1,41 @@
 //
 // Styles for panels and panes.
 // --------------------------------------------------
+.region-content {
+	margin: 0 15px;
+}
+
+.breadcrumb,
+.alert,
+.tabs--primary,
+.page-header {
+  margin: 0 15px 15px;
+}
+
+.page-admin {
+	.region-content {
+		margin: 0;
+	}
+	.breadcrumb,
+	.alert,
+	.tabs--primary,
+	.page-header {
+		margin: 0 0 15px;
+	}
+}
+
+.front {
+	.region-content {
+		margin: 0;
+	}
+	.alert {
+		margin: 10px 15px;
+	}
+}
+
 #panels-choose-layout .form-type-radio input, 
 .panels-choose-layout .form-type-radio input {
 	width: 15px;
-}
-
-body[class*='panel-layout'] {
-	.alert,
-  .tabs--primary,
-  .page-header {
-    margin: 0 15px 15px;
-  }
 }
 
 .radix-layouts-sidebar {
@@ -28,7 +52,10 @@ body[class*='panel-layout'] {
 	}
 }
 .page-user .radix-layouts-content .pane-content {
-  padding: 15px 0;
+  padding: 0;
+  .profile {
+  	margin-top: 0;
+  }
 }
 .radix-layouts-content {
 	.pane-title {
@@ -66,6 +93,12 @@ body[class*='panel-layout'] {
 	}
 }
 
-body.modal-open {
-  overflow: visible !important;
+.panel-full-width .panel-bottom {
+	.panel-col-first,
+	.panel-col-second,
+	.panel-col-third {
+		inside {
+			//padding: 15px;
+		}
+	}
 }

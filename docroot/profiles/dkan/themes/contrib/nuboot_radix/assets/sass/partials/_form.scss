@@ -38,6 +38,9 @@ div.vertical-tabs .form-type-textfield input {
     }
   }
 }
+.bue-ui {
+  background-color: #ffffff;
+}
 // Chosen.
 .chzn-container-single {
   max-width: 100%;
@@ -125,33 +128,6 @@ fieldset.group-primary {
   border: none;
   color: $text-color;
   padding: 0;
-}
-
-#field-tags-wrapper {
-  // .panel {
-  //   padding-top: 0;
-  //   padding-bottom: 15px;
-  // }
-  // .path-form .add-on {
-  //   z-index: 1;
-  //   position: absolute;
-  //   height: 34px;
-  //   padding: 9px
-  // }
-  // #url-edit-label {
-  //   padding: 5px 0px 15px 0px;
-  // }
-  // #url-edit-prefix {
-  //   padding: 5px 0px 15px 10px;
-  // }
-  // .btn {
-  //   padding: 2px 5px;
-  //   font-size: 0.95em;
-  //   margin: 3px;
-  // }
-  // #url-slug {
-  //   margin: 5px 0;
-  // }
 }
 
 .filter-wrapper {

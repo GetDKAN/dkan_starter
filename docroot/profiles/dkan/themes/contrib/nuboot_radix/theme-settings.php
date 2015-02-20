@@ -41,15 +41,18 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
   // Helpful text showing the file name, non-editable.
   $form['hero']['hero_path'] = array(
     '#type' => 'textfield',
-    '#title' => 'Path to front page hero unit background image',
+    '#title' => 'Path to front page background image',
     '#default_value' => $hero_path,
     '#disabled' => TRUE,
   );
   // Upload field.
   $form['hero']['hero_upload'] = array(
     '#type' => 'file',
-    '#title' => 'Upload a photo for the hero unit background image',
-    '#description' => 'Upload a new image for the hero region background.',
+    '#title' => 'Upload a new photo for the hero unit',
+    '#description' => t('<p>The hero unit is the large featured area located on the front page. 
+      This theme supplies a default background image for this area. You may upload a different 
+      photo here and it will replace the default background image.</p><p>Max. file size: 2 MB
+      <br>Recommended pixel size: 1920 x 400<br>Allowed extensions: .png .jpg .jpeg</p>'),
     '#upload_validators' => array(
       'file_validate_extensions' => array('png jpg jpeg'),
     ),

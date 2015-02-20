@@ -5,15 +5,15 @@ api = 2
 projects[dkan_dataset][subdir] = dkan
 projects[dkan_dataset][download][type] = git
 projects[dkan_dataset][download][url] = https://github.com/NuCivic/dkan_dataset.git
-projects[dkan_dataset][download][branch] = 7.x-1.x
+projects[dkan_dataset][download][tag] = 7.x-1.7
 
 projects[dkan_datastore][subdir] = dkan
 projects[dkan_datastore][download][type] = git
 projects[dkan_datastore][download][url] = https://github.com/NuCivic/dkan_datastore.git
-projects[dkan_datastore][download][branch] = 7.x-1.x
+projects[dkan_datastore][download][tag] = 7.x-1.7
 
-includes[dkan_dataset_make] = https://raw.githubusercontent.com/NuCivic/dkan_dataset/7.x-1.x/dkan_dataset.make
-includes[dkan_datastore_make] = https://raw.githubusercontent.com/NuCivic/dkan_datastore/7.x-1.x/dkan_datastore.make
+includes[dkan_dataset_make] = https://raw.githubusercontent.com/NuCivic/dkan_dataset/7.x-1.7/dkan_dataset.make
+includes[dkan_datastore_make] = https://raw.githubusercontent.com/NuCivic/dkan_datastore/7.x-1.7/dkan_datastore.make
 
 ; Contrib Modules
 projects[admin_menu][version] = 3.0-rc5
@@ -66,7 +66,7 @@ projects[r4032login][subdir] = contrib
 projects[rules][version] = 2.3
 projects[rules][subdir] = contrib
 
-projects[restws][version] = 2.1
+projects[restws][version] = 2.3
 projects[restws][subdir] = contrib
 
 projects[schema][version] = 1.2
@@ -89,12 +89,14 @@ projects[bootstrap][subdir] = contrib
 projects[nuboot][subdir] = contrib
 projects[nuboot][download][type] = git
 projects[nuboot][download][url] = https://github.com/NuCivic/nuboot.git
+projects[nuboot][download][revision] = "fbd7ea2c2f1fa45a5f5a10b4215950940335879e"
 projects[nuboot][download][branch] = 7.x-1.x
 
 projects[nuboot_radix][subdir] = contrib
 projects[nuboot_radix][download][type] = git
 projects[nuboot_radix][download][url] = https://github.com/NuCivic/nuboot_radix.git
 projects[nuboot_radix][download][branch] = 7.x-1.x
+projects[nuboot_radix][download][revision] = "4fe9a15613f12946966927583ad15df08cbe99b3"
 projects[nuboot_radix][type] = theme
 
 projects[radix][subdir] = contrib
