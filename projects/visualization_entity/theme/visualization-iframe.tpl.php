@@ -17,7 +17,7 @@
       box-shadow: none;
       -webkit-box-shadow: none;
     }
-    #iframe-shell .content {
+    #iframe-shell .entity-visualization .content {
     	display: none;
     }
 </style>

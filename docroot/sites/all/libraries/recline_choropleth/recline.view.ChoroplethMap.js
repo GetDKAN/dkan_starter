@@ -28,7 +28,7 @@ this.recline.View = this.recline.View || {};
       this.rendered = false;
       this.visible = true;
       this.mapReady = false;
-
+      this.options = options || {};
       // This will be the Leaflet L.Map object (setup below).
       this.map = null;
 
@@ -204,7 +204,7 @@ this.recline.View = this.recline.View || {};
     /**
      * Remove the % from a percentage number
      * @param  {string|int} n
-     *   
+     *
      * @return {[type]}   [description]
      */
     _preparePercentage: function(n) {
@@ -583,7 +583,7 @@ this.recline.View = this.recline.View || {};
           if (!!popup_text) {
             popup_text = popup_text.replace(/(\r\n|\n|\r)/g,"<br />");
           }
-          
+
           // Check for field popup_link.
           popup_url = value[self._indexForColumn('popup link')];
           if (popup_url) {
@@ -812,7 +812,7 @@ this.recline.View = this.recline.View || {};
           });
         }
       }
-      
+
       return this;
     },
     /**

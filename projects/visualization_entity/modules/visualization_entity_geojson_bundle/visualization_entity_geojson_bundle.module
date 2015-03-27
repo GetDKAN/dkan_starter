@@ -28,12 +28,12 @@ function visualization_entity_geojson_bundle_entity_view_alter(&$build, $type) {
     // Load libraries.
     libraries_load('recline');
     libraries_load('leaflet_zoomtogeometries');
-    
+
     // Build settings.
     $settings = array();
 
     // Build resource.
-    $resources = visualization_entity_load_recline_resources($build['field_uuid_resource']['#items']);
+    $resources = visualization_entity_recline_field_reference_load_resources($build['field_uuid_resource']['#items']);
     $keys = array_keys($resources);
     $resource = $resources[$keys[0]];
 
@@ -68,15 +68,15 @@ function visualization_entity_geojson_bundle_form_alter(&$form, &$form_state, $f
   );
   if (in_array($form_id, $form_ids)) {
     if (isset($form['field_uuid_resource'][LANGUAGE_NONE]['#options'])) {
-      $options_uuid_resources = &$form['field_uuid_resource'][LANGUAGE_NONE];  
+      $options_uuid_resources = &$form['field_uuid_resource'][LANGUAGE_NONE];
     }
     else {
       $options_uuid_resources = &$form['field_uuid_resource'][LANGUAGE_NONE][0]['target_uuid'];
     }
-    
+
     $field = field_read_field('field_uuid_resource');
     $target_type = $field['settings']['target_type'];
-    $options_uuid_resources['#options'] = visualization_entity_filter_recline_compatible_instances(
+    $options_uuid_resources['#options'] = visualization_entity_recline_field_reference_filter_compatible_instances(
       $options_uuid_resources['#options'],
       $target_type,
       'visualization_entity_is_geojson'

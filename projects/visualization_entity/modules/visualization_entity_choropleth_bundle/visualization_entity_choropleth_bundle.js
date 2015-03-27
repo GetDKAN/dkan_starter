@@ -22,7 +22,7 @@
         if (resource.datastoreStatus === 2) {
           resource = resource.dataset.replace(/(\r\n|\n|\r)/gm,"\n");
           resource = new recline.Model.Dataset({
-            records: recline.Backend.CSV.parseCSV(resource, resource.delimiter),
+            records: recline.Backend.CSV.parse(resource, resource.delimiter),
           });
           console.log(resource);
           initView(resource);
@@ -53,7 +53,7 @@
           resources[k].selectable_fields = data_column;
           resources[k].fieldToDisplay = data_column.length > 0 ? data_column[0] : '';
           resources[k].dataset = new recline.Model.Dataset({
-            records: recline.Backend.CSV.parseCSV(
+            records: recline.Backend.CSV.parse(
               resources[k].dataset.replace(/(\r\n|\n|\r)/gm,"\n"),
               resources[k].delimiter
             ),
