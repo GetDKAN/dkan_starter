@@ -138,7 +138,12 @@ function visualization_entity_choropleth_bundle_theme($existing, $type, $theme, 
 function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type) {
   if ($type === 'visualization' && $build['#entity']->type === 'choropleth_visualization') {
     // Load libraries.
+    libraries_load('lodash');
+    libraries_load('backbone');
+    libraries_load('mustache');
+    libraries_load('csv');
     libraries_load('recline');
+    libraries_load('leaflet');
     libraries_load('leaflet_zoomtogeometries');
     libraries_load('numeral');
     libraries_load('chroma');
@@ -174,7 +179,7 @@ function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type
       $breakpoints = array_map('trim', $breakpoints);
       $settings['breakpoints'] = $breakpoints;
     }
-    
+
     // Build geojson_key.
     if (isset($build['field_ve_geojson_key'])) {
       $settings['geojson_key'] = $build['field_ve_geojson_key']['#items'][0]['value'];
@@ -199,7 +204,7 @@ function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type
       $settings['map_column'] = $geojson_name_attribute;
     }
 
-    
+
     // Build data_column.
     if (isset($build['field_data_column'])) {
       $data_columns = $build['field_data_column']['#items'][0]['value'];
@@ -213,7 +218,7 @@ function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type
     $unit_of_measure = isset($build['field_data_units']) ? $build['field_data_units']['#items'][0]['value'] : '';
 
     // Build resources files.
-    $resources = visualization_entity_load_recline_resources($build['field_uuid_resource']['#items']);
+    $resources = visualization_entity_recline_field_reference_load_resources($build['field_uuid_resource']['#items']);
 
     // Build resource js settings.
     $settings['resources'] = array();
@@ -236,7 +241,7 @@ function visualization_entity_choropleth_bundle_entity_view_alter(&$build, $type
         $resource_file = file_get_contents($resource_path);
         $resource_settings += array(
           'delimiter' => $delimiter,
-          'dataset' => $resource_file,  
+          'dataset' => $resource_file,
           'avg' => $average,
         );
       }
@@ -368,22 +373,22 @@ function visualization_entity_choropleth_bundle_form_alter(&$form, &$form_state,
   if ($form_id == 'eck__entity__form_add_visualization_choropleth_visualization' || $form_id == 'eck__entity__form_edit_visualization_choropleth_visualization') {
 
     $options_geojson = &$form['field_geojson'][LANGUAGE_NONE]['#options'];
-    
+
     $geojson_params = array('geo_file', 'field_file', 'visualization_entity_is_geojson');
     $resource_params = array('node', 'visualization_entity_choropleth_is_valid_csv');
 
     visualization_entity_filter_array_by_key($options_geojson, 'visualization_entity_preload_n_validate_file', $geojson_params);
 
     if (isset($form['field_uuid_resource'][LANGUAGE_NONE]['#options'])) {
-      $options_uuid_resources = &$form['field_uuid_resource'][LANGUAGE_NONE];  
+      $options_uuid_resources = &$form['field_uuid_resource'][LANGUAGE_NONE];
     }
     else {
       $options_uuid_resources = &$form['field_uuid_resource'][LANGUAGE_NONE][0]['target_uuid'];
     }
-    
+
     $field = field_read_field('field_uuid_resource');
     $target_type = $field['settings']['target_type'];
-    $options_uuid_resources['#options'] = visualization_entity_filter_recline_compatible_instances(
+    $options_uuid_resources['#options'] = visualization_entity_recline_field_reference_filter_compatible_instances(
       $options_uuid_resources['#options'],
       $target_type,
       'visualization_entity_choropleth_is_valid_csv'
@@ -396,7 +401,7 @@ function visualization_entity_choropleth_bundle_form_alter(&$form, &$form_state,
  *  Implementation of hook_form_validate().
  */
 function visualization_entity_choropleth_bundle_form_validate(&$form, &$form_state) {
-  $resources = visualization_entity_load_recline_resources(
+  $resources = visualization_entity_recline_field_reference_load_resources(
     $form_state['values']['field_uuid_resource'][LANGUAGE_NONE]
   );
   $data_columns = $form_state['values']['field_data_column'][LANGUAGE_NONE][0]['value'];

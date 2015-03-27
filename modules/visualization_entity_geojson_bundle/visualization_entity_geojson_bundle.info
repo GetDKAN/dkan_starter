@@ -1,10 +1,9 @@
 name = Visualization Entity Geojson Bundle
 core = 7.x
 package = NuCivic
-dependencies[] = eck
-dependencies[] = entityreference
-dependencies[] = features
-dependencies[] = options
+dependencies[] = libraries
+dependencies[] = geo_file_entity
+dependencies[] = visualization_entity_recline_field_reference
 dependencies[] = visualization_entity
 features[eck_bundle][] = visualization_geojson_visualization
 features[features_api][] = api:2

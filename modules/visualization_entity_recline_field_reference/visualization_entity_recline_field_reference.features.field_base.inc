@@ -7,7 +7,7 @@
 /**
  * Implements hook_field_default_field_bases().
  */
-function visualization_entity_field_default_field_bases() {
+function visualization_entity_recline_field_reference_field_default_field_bases() {
   $field_bases = array();
 
   // Exported field_base: 'field_uuid_resource'

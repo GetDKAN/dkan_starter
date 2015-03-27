@@ -1,14 +1,15 @@
 name = Visualization Entity Choropleth Bundle
 core = 7.x
 package = NuCivic
-dependencies[] = eck
-dependencies[] = entityreference
-dependencies[] = features
-dependencies[] = geo_file_entity_geojson_bundle
+
 dependencies[] = list
-dependencies[] = options
 dependencies[] = text
+dependencies[] = options
+dependencies[] = libraries
+dependencies[] = geo_file_entity_geojson_bundle
 dependencies[] = visualization_entity
+dependencies[] = visualization_entity_recline_field_reference
+
 features[eck_bundle][] = visualization_choropleth_visualization
 features[features_api][] = api:2
 features[field_base][] = field_average_multiple_rows

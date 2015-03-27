@@ -2,3 +2,4 @@ name = UUID Reference Select
 core = 7.x
 
 dependencies[] = uuidreference
+dependencies[] = visualization_entity_recline_field_reference

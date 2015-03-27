@@ -61,7 +61,7 @@ function uuidreference_select_options($field, $instance) {
   $options = array();
   $target_type = $field['settings']['target_type'];
   $entity_info = entity_get_info($target_type);
-  
+
   $label_key = isset($entity_info['entity keys']['label']) ? $entity_info['entity keys']['label'] : 'name';
   $uuid_key = isset($entity_info['array keys']['uuid']) ? $entity_info['array keys']['uuid'] : 'uuid';
   $query = db_select($entity_info['base table'], 'base')
