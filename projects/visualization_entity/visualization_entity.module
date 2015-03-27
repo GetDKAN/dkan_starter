@@ -13,7 +13,7 @@ include_once drupal_get_path('module', 'visualization_entity') .'/includes/utils
 function visualization_entity_menu() {
   return array(
     'visualization/%/%/iframe' => array(
-      'title' => 'Choropleth Vizualization',
+      'title' => 'Visualization',
       'page callback' => 'visualization_entity_iframe',
       'page arguments' => array(2),
       'access arguments' => array('access content'),
@@ -67,7 +67,7 @@ function visualization_entity_attach_embed_widget($markup, $element) {
   return $markup;
 }
 /**
- * Renders iframe view for choropleth visualization
+ * Renders iframe view for visualization
  * @param int $entity_id
  *   The Entity id to load
  * @return string
@@ -112,15 +112,4 @@ function in_array_match($regex, $array) {
     }
   }
   return FALSE;
-}
-
-/**
- * Implements hook_uuidreference_select_query_alter().
- */
-function visualization_entity_uuidreference_select_query_alter(&$query, $entity_type, $bundle, $field_name) {
-  if ($entity_type == 'visualization' && $field_name = 'field_uuid_resource') {
-    $bundles = visualization_entity_recline_compatible_bundles();
-    $entity_info = entity_get_info($entity_type);
-    $query->condition($entity_info['entity keys']['bundle'], array_keys($bundles));
-  }
 }
