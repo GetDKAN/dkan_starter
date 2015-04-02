@@ -17,8 +17,9 @@ postbuild-commands:
   - 'ln -s ../../../../../projects/visualization_entity docroot/sites/all/modules/nucivic/visualization_entity'
   - 'ln -s ../../../../../projects/nucivic_data_demo_front docroot/sites/all/modules/nucivic/nucivic_data_demo_front'
   - 'ln -s ../../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
-  - 'rm docroot/profiles/dkan/.gitignore'
-  - 'rm docroot/profiles/dkan/libraries/Leaflet/.gitignore'
+  - 'cd docroot/profiles/dkan; find . -type f -name .gitignore -exec rm -rf {} \;'
+  - 'cd docroot/sites/all/modules; find . -type f -name .gitignore -exec rm -rf {} \;'
+  - 'cd docroot/sites/all/libraries; find . -type f -name .gitignore -exec rm -rf {} \;'
 
 subtrees:
   data_disqus:
