@@ -8,5 +8,5 @@ files[] = SchemaTestDatabaseConnection.php
 version = "7.x-1.2"
 core = "7.x"
 project = "schema"
-datestamp = "1428004385"
+datestamp = "1428006072"
 
