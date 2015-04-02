@@ -1,9 +1,6 @@
 core = 7.x
 api = 2
 
-projects[ctools][version] = 1.4
-projects[ctools][subdir] = contrib
-
 projects[entity][version] = 1.5
 projects[entity][subdir] = contrib
 

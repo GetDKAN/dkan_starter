@@ -8,5 +8,5 @@ dependencies[] = feeds
 ; Information added by drush on 2015-04-02
 version = "master-dev"
 project = "feeds_field_fetcher"
-datestamp = "1428004383"
+datestamp = "1428006070"
 
