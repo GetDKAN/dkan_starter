@@ -1,7 +1,7 @@
 <?php
 // NuCivic Data Starter
 $aliases['local'] = array(
-  'profile' => 'dkan'
+  'profile' => 'dkan',
   'site-name' => 'NuCivic Data Starter',
   'webroot' => 'docroot',
   'uri' => 'data_starter.local'
