@@ -1,0 +1,38 @@
+[
+  {
+    "name": "data contributor",
+    "mail": "data.contributor@nucivic.com",
+    "pass": "data contributor",
+    "role": "226931607"
+  },
+  {
+    "name": "content editor",
+    "mail": "content.editor@nucivic.com",
+    "pass": "content editor",
+    "role": "254633039"
+  },
+  {
+    "name": "portal administrator",
+    "mail": "portal.administrator@nucivic.com",
+    "pass": "portal administrator",
+    "role": "27274083"
+  },
+  {
+    "name": "group organizer",
+    "mail": "group.organizer@nucivic.com",
+    "pass": "group organizer",
+    "role": "161863194"
+  },
+  {
+    "name": "storyteller",
+    "mail": "storyteller@nucivic.com",
+    "pass": "storyteller",
+    "role": "132006037"
+  },
+  {
+    "name": "visualization contributor",
+    "mail": "visualization.contributor@nucivic.com",
+    "pass": "visualization contributor",
+    "role": "27481291"
+  }
+]
