@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Installation script for USDA NAL site.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function data_starter_install_install() {
+  // Disable modules.
+  data_starter_install_module_disable();
+  // Uninstall modules.
+  data_starter_install_module_uninstall();
+  // Features revert.
+  data_starter_install_features_revert();
+  // Set variables.
+  data_starter_install_variables();
+  // Make drupal behave.
+  actions_synchronize(TRUE);
+  // Add users.
+  data_starter_install_users();
+  // Creates About page.
+  data_starter_install_content_about();
+  // Good old cache clear all.
+  cache_clear_all();
+  // Rebuild node access.
+  node_access_rebuild();
+}
