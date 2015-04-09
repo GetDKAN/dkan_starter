@@ -53,3 +53,8 @@ subtrees:
     uri: 'git@github.com:nucivic/visualization_entity.git'
     branch: master
     message: 'visualization_entity subtree from git@github.com:nucivic/visualization_entity.git'
+  visualization_entity_charts:
+    path: visualization_entity_charts
+    uri: 'git@github.com:NuCivic/visualization_entity_charts.git'
+    branch: master
+    message: 'visualization_entity_charts subtree from git@github.com:nucivic/visualization_entity_charts.git'
