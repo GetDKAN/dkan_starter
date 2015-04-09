@@ -15,6 +15,7 @@ postbuild-commands:
   - 'rm -rf docroot/sites/all/modules/nucivic/geo_file_entity'
   - 'ln -s ../../../../../projects/geo_file_entity docroot/sites/all/modules/nucivic/geo_file_entity'
   - 'ln -s ../../../../../projects/visualization_entity docroot/sites/all/modules/nucivic/visualization_entity'
+  - 'ln -s ../../../../../projects/visualization_entity_charts docroot/sites/all/modules/nucivic/visualization_entity_charts'
   - 'ln -s ../../../../../projects/nucivic_data_demo_front docroot/sites/all/modules/nucivic/nucivic_data_demo_front'
   - 'ln -s ../../../../../projects/data_starter_install docroot/sites/all/modules/nucivic/data_starter_install'
   - 'ln -s ../../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
