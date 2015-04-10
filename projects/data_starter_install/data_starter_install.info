@@ -13,6 +13,7 @@ dependencies[] = 'og_permissions_settings'
 dependencies[] = 'visualization_entity'
 dependencies[] = 'visualization_entity_choropleth_bundle'
 dependencies[] = 'visualization_entity_geojson_bundle'
+dependencies[] = 'visualization_entity_charts'
 
 dependencies[] = 'data_story_storyteller_role'
 dependencies[] = 'visualization_entity_visualization_contributor_role'

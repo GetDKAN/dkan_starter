@@ -15,6 +15,7 @@ postbuild-commands:
   - 'rm -rf docroot/sites/all/modules/nucivic/geo_file_entity'
   - 'ln -s ../../../../../projects/geo_file_entity docroot/sites/all/modules/nucivic/geo_file_entity'
   - 'ln -s ../../../../../projects/visualization_entity docroot/sites/all/modules/nucivic/visualization_entity'
+  - 'ln -s ../../../../../projects/visualization_entity_charts docroot/sites/all/modules/nucivic/visualization_entity_charts'
   - 'ln -s ../../../../../projects/data_starter_install docroot/sites/all/modules/nucivic/data_starter_install'
   - 'ln -s ../../../../../projects/data_theme_radix docroot/sites/all/themes/nucivic/data_theme_radix'
   - 'cd docroot/profiles/dkan; find . -type f -name .gitignore -exec rm -rf {} \;'
@@ -47,3 +48,8 @@ subtrees:
     uri: 'git@github.com:nucivic/visualization_entity.git'
     branch: master
     message: 'visualization_entity subtree from git@github.com:nucivic/visualization_entity.git'
+  visualization_entity_charts:
+    path: visualization_entity_charts
+    uri: 'git@github.com:NuCivic/visualization_entity_charts.git'
+    branch: master
+    message: 'visualization_entity_charts subtree from git@github.com:nucivic/visualization_entity_charts.git'

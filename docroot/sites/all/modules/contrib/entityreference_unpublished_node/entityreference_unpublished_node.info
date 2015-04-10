@@ -6,8 +6,8 @@ dependencies[] = entityreference
 dependencies[] = ctools
 
 
-; Information added by drush on 2015-04-02
+; Information added by drush on 2015-04-09
 version = "unknown"
 project = "entityreference_unpublished_node"
-datestamp = "1428006114"
+datestamp = "1428605908"
 
