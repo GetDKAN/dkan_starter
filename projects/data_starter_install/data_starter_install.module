@@ -9,9 +9,7 @@
  * Disables desired modules.
  */
 function data_starter_install_module_disable() {
-  $modules_to_disable = array(
-    'dkan_sitewide_demo_front',
-  );
+  $modules_to_disable = array();
   module_disable($modules_to_disable);
 }
 
@@ -19,9 +17,7 @@ function data_starter_install_module_disable() {
  * Uninstalls desired modules.
  */
 function data_starter_install_module_uninstall() {
-  $modules_to_uninstall = array(
-    'dkan_sitewide_demo_front',
-  );
+  $modules_to_uninstall = array();
   drupal_uninstall_modules($modules_to_uninstall);
 }
 
@@ -48,9 +44,9 @@ function data_starter_install_features_revert() {
  * Sets desired variables.
  */
 function data_starter_install_variables() {
-  theme_enable(array('nucivic_data'));
-  variable_set('admin_theme', 'nucivic_data');
-  variable_set("theme_default", 'nucivic_data');
+  theme_enable(array('data_theme_radix'));
+  variable_set('admin_theme', 'data_theme_radix');
+  variable_set("theme_default", 'data_theme_radix');
   variable_set("site_mail", "webadmin@nansen.nuamsdev.com");
   variable_set("error_level", "0");
   variable_set("default_logo", "0");
