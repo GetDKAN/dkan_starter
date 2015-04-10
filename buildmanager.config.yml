@@ -16,9 +16,8 @@ postbuild-commands:
   - 'ln -s ../../../../../projects/geo_file_entity docroot/sites/all/modules/nucivic/geo_file_entity'
   - 'ln -s ../../../../../projects/visualization_entity docroot/sites/all/modules/nucivic/visualization_entity'
   - 'ln -s ../../../../../projects/visualization_entity_charts docroot/sites/all/modules/nucivic/visualization_entity_charts'
-  - 'ln -s ../../../../../projects/nucivic_data_demo_front docroot/sites/all/modules/nucivic/nucivic_data_demo_front'
   - 'ln -s ../../../../../projects/data_starter_install docroot/sites/all/modules/nucivic/data_starter_install'
-  - 'ln -s ../../../../../projects/data_theme docroot/sites/all/themes/nucivic/nucivic_data'
+  - 'ln -s ../../../../../projects/data_theme_radix docroot/sites/all/themes/nucivic/data_theme_radix'
   - 'cd docroot/profiles/dkan; find . -type f -name .gitignore -exec rm -rf {} \;'
   - 'cd docroot/sites/all/modules; find . -type f -name .gitignore -exec rm -rf {} \;'
   - 'cd docroot/sites/all/libraries; find . -type f -name .gitignore -exec rm -rf {} \;'
@@ -34,11 +33,6 @@ subtrees:
     uri: 'git@github.com:nucivic/data_story.git'
     branch: master
     message: 'data_story subtree from git@github.com:nucivic/data_story.git'
-  data_theme:
-    path: data_theme
-    uri: 'git@github.com:nucivic/data_theme.git'
-    branch: master
-    message: 'data_theme subtree from git@github.com:nucivic/data_theme.git'
   data_workflow:
     path: data_workflow
     uri: 'git@github.com:nucivic/data_workflow.git'

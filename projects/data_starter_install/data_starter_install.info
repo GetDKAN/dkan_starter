@@ -15,7 +15,5 @@ dependencies[] = 'visualization_entity_choropleth_bundle'
 dependencies[] = 'visualization_entity_geojson_bundle'
 dependencies[] = 'visualization_entity_charts'
 
-dependencies[] = 'nucivic_data_demo_front'
-
 dependencies[] = 'data_story_storyteller_role'
 dependencies[] = 'visualization_entity_visualization_contributor_role'
