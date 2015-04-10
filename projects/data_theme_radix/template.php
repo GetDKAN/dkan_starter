@@ -17,7 +17,7 @@ require_once dirname(__FILE__) . '/includes/view.inc';
 /**
  * Theme function for iframe link.
  */
-function hhs_demo_link_iframe_formatter_original($variables) {
+function data_theme_radix_link_iframe_formatter_original($variables) {
   $link_options = $variables['element'];
   $link = l($link_options['title'], $link_options['url'], $link_options);
   return '<i class="fa fa-external-link"></i>  ' . $link;
@@ -26,7 +26,7 @@ function hhs_demo_link_iframe_formatter_original($variables) {
 /**
  * Implements theme_breadcrumb().
  */
-function hhs_demo_breadcrumb($variables) {
+function data_theme_radix_breadcrumb($variables) {
   if (drupal_is_front_page()) {
     return;
   }
@@ -69,7 +69,7 @@ function hhs_demo_breadcrumb($variables) {
  *
  * @ingroup themeable
  */
-function hhs_demo_facetapi_link_inactive($variables) {
+function data_theme_radix_facetapi_link_inactive($variables) {
   // Builds accessible markup.
   // @see http://drupal.org/node/1316580
   $accessible_vars = array(
@@ -105,7 +105,7 @@ function hhs_demo_facetapi_link_inactive($variables) {
  *
  * @ingroup themeable
  */
-function hhs_demo_facetapi_link_active($variables) {
+function data_theme_radix_facetapi_link_active($variables) {
   // Sanitizes the link text if necessary.
   $sanitize = empty($variables['options']['html']);
   $link_text = ($sanitize) ? check_plain($variables['text']) : $variables['text'];
@@ -126,7 +126,7 @@ function hhs_demo_facetapi_link_active($variables) {
 /**
  * Theme social icons.
  */
-function hhs_demo_sitewide_social_block() {
+function data_theme_radix_sitewide_social_block() {
   $path = isset($_GET['q']) ? $_GET['q'] : '<front>';
   $link = url($path, array('absolute' => TRUE));
 
@@ -186,7 +186,7 @@ function hhs_demo_sitewide_social_block() {
  *
  * https://drupal.org/files/issues/bootstrap-undefined-index-2177089-1.patch
  */
-function hhs_demo_file_widget($variables) {
+function data_theme_radix_file_widget($variables) {
   $element = $variables['element'];
   $output = '';
 
@@ -216,7 +216,7 @@ function hhs_demo_file_widget($variables) {
 /**
  * Overrides theme_user_picture().
  */
-function hhs_demo_user_picture(&$variables) {
+function data_theme_radix_user_picture(&$variables) {
   $variables['user_picture'] = '';
 
   if (variable_get('user_pictures', 0)) {

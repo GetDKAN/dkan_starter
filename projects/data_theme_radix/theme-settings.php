@@ -7,19 +7,19 @@
 /**
  * Implements theme_settings().
  */
-function hhs_demo_form_system_theme_settings_alter(&$form, &$form_state) {
+function data_theme_radix_form_system_theme_settings_alter(&$form, &$form_state) {
   // Ensure this include file is loaded when the form is rebuilt from the cache.
   $form_state['build_info']['files']['form'] = drupal_get_path('theme', 'default') . '/theme-settings.php';
 
   // Add theme settings here.
-  $form['hhs_demo_theme_settings'] = array(
+  $form['data_theme_radix_theme_settings'] = array(
     '#title' => t('Theme Settings'),
     '#type' => 'fieldset',
   );
 
   // Copyright.
   $copyright = theme_get_setting('copyright');
-  $form['hhs_demo_theme_settings']['copyright'] = array(
+  $form['data_theme_radix_theme_settings']['copyright'] = array(
     '#title' => t('Copyright'),
     '#type' => 'text_format',
     '#format' => 'html',
@@ -58,7 +58,7 @@ function hhs_demo_form_system_theme_settings_alter(&$form, &$form_state) {
     ),
   );
   // Attach custom submit handler to the form.
-  $form['#submit'][] = 'hhs_demo_settings_submit';
+  $form['#submit'][] = 'data_theme_radix_settings_submit';
 
   // Return the additional form widgets.
   return $form;
@@ -67,7 +67,7 @@ function hhs_demo_form_system_theme_settings_alter(&$form, &$form_state) {
 /**
  * Implements hook_setings_submit().
  */
-function hhs_demo_settings_submit($form, &$form_state) {
+function data_theme_radix_settings_submit($form, &$form_state) {
   $settings = array();
   // If the user entered a path relative to the system files directory for
   // for the hero unit, store a public:// URI so the theme system can handle it.
