@@ -3,7 +3,7 @@
  * @file
  * Theme and preprocess functions for forms
  */
-function hhs_demo_form_alter(&$form, &$form_state, $form_id) {
+function data_theme_radix_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'views_exposed_form':
     	$view = $form_state['view'];
