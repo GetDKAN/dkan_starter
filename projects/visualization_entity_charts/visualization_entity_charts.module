@@ -136,61 +136,6 @@ function visualization_entity_charts_libraries_info() {
     ),
   );
 
-  $libraries['recline'] = array(
-    'name' => 'Recline',
-    'vendor url' => 'http://reclinejs.com',
-    'download url' => 'https://github.com/okfn/recline/zipball/master',
-    'path' => '',
-    'version arguments' => array(
-      'file' => 'README.md',
-      'pattern' => '@v+([0-9][.][0-9])@',
-      'lines' => 49,
-    ),
-    'files' => array(
-      'css' => array(
-        'css/grid.css',
-        'css/slickgrid.css',
-        'css/flot.css',
-        'css/transform..css',
-        'css/map.css',
-        'css/multiview.css',
-        'css-site/pygments.css',
-        'vendor/bootstrap/3.2.0/css/bootstrap.css',
-      ),
-      'js' => array(
-        'vendor/bootstrap/3.2.0/js/bootstrap.js',
-        'dist/recline.js',
-      ),
-    ),
-  );
-
-  $libraries['lodash'] = array(
-    'name' => 'lodash',
-    'vendor url' => 'https://github.com/lodash/lodash',
-    'download url' => 'https://github.com/lodash/lodash/archive/master.zip',
-    'version arguments' => array(
-      'file' => 'package.json',
-      'pattern' => '/"version": "(\d+\.\d+\.\d+)"/',
-    ),
-    'files' => array(
-      'js' => array(
-        'dist/lodash.compat.min.js',
-      ),
-    ),
-  );
-
-  $libraries['backbone'] = array(
-    'name' => 'backbone',
-    'vendor url' => 'https://github.com/jashkenas/backbone',
-    'download url' => 'https://github.com/jashkenas/backbone/archive/master.zip',
-    'version' => '1.1.2',
-    'files' => array(
-      'js' => array(
-        'backbone-min.js',
-      ),
-    ),
-  );
-
   $libraries['lodash_data'] = array(
     'name' => 'lodashdata',
     'vendor url' => 'https://github.com/NuCivic/lodash.data',
@@ -202,32 +147,6 @@ function visualization_entity_charts_libraries_info() {
     'files' => array(
       'js' => array(
         'dist/lodash.data.min.js',
-      ),
-    ),
-  );
-
-  $libraries['slickgrid'] = array(
-    'name' => 'SlickGrid',
-    'vendor url' => 'https://github.com/mleibman/SlickGrid',
-    'download url' => 'https://github.com/mleibman/SlickGrid/archive/master.zip',
-    'version arguments' => array(
-      'file' => 'slick.grid.js',
-      'pattern' => '/SlickGrid v(\d+\.\d+)/',
-    ),
-    'files' => array(
-      'js' => array(
-        'lib/jquery.event.drag-2.2.js',
-        'lib/jquery.event.drop-2.2.js',
-        'slick.core.js',
-        'slick.formatters.js',
-        'slick.editors.js',
-        'slick.grid.js',
-        'lib/jquery-ui-1.8.16.custom.min.js',
-        'plugins/slick.rowselectionmodel.js',
-        'plugins/slick.rowmovemanager.js',
-      ),
-      'css' => array(
-        'slick.grid.css',
       ),
     ),
   );
@@ -247,20 +166,6 @@ function visualization_entity_charts_libraries_info() {
     ),
   );
 
-  $libraries['mustache'] = array(
-    'name' => 'mustache',
-    'vendor url' => 'http://github.com/janl/mustache.js',
-    'download url' => 'http://github.com/janl/mustache.js.zip',
-    'version arguments' => array(
-      'file' => 'package.json',
-      'pattern' => '/"version": "(\d+\.\d+\.\d+)"/',
-    ),
-    'files' => array(
-      'js' => array(
-        'mustache.min.js',
-      ),
-    ),
-  );
 
   $libraries['chosen'] = array(
     'name' => 'chosen',
@@ -291,17 +196,6 @@ function visualization_entity_charts_libraries_info() {
     'files' => array(
       'css' => array(
         'chosen.bootstrap.min.css',
-      ),
-    ),
-  );
-
-  $libraries['csv'] = array(
-    'name' => 'csv',
-    'vendor url' => 'https://github.com/okfn/csv.js',
-    'version' => '0.0.1',
-    'files' => array(
-      'js' => array(
-        'csv.js',
       ),
     ),
   );
