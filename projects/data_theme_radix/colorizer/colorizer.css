@@ -18,7 +18,7 @@ h1,h2,h3,h4 {
 #featured .tint,
 .panel-top .tint,
 .pane-dkan-sitewide-demo-front-dkan-demo-front .pane-content {
-  background-color: @tint;
+  background-color: @top_rgb;
 }
 
 .form-actions {
@@ -102,18 +102,19 @@ div.vertical-tabs ul.vertical-tabs-list li a:hover {
   background-color: @top;
 }
 .view-group-block .views-field-nid a,
-.btn-default,
 .btn-primary,
-.btn-small {
+.links .btn,
+input.btn {
   background-color: @top;
   border:1px solid @top;
   color:#ffffff;
 }
 
 .view-group-block .views-field-nid a:hover,
-.btn-default:hover,
 .btn-primary:hover,
-.btn-small:hover {
+.links .btn:hover,
+input.btn:hover,
+input[type="submit"]:hover {
   background:@bottom;
   border:1px solid @bottom;
   color:#ffffff;
@@ -122,9 +123,9 @@ div.vertical-tabs ul.vertical-tabs-list li a:hover {
 .btn-primary:focus, 
 .btn-primary:active, 
 .btn-primary.active,
-.btn:focus,
-.btn.focus,
-input[type="submit"]:hover, 
+.links .btn:focus,
+.links .btn.focus,
+input.btn:focus, 
 input[type="submit"]:focus, 
 input[type="submit"]:active {
   background: @linkactive;
