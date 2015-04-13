@@ -32,7 +32,7 @@
   display:block;
   height:auto;
   margin:0 auto 5px;
-  //max-width:220px;
+  max-width:220px;
   width:100%;
 }
 
@@ -40,7 +40,7 @@
   height:auto;
   margin:0 auto;
   max-width:190px;
-  width:100%;
+  width:100%;  
 }
 
 .view-front-page-group-grid {
@@ -117,7 +117,6 @@
   .views-exposed-widget {
     display: inline;
     padding: .5em .5em 0 0;
-    margin: 0;
     .views-widget-filter-search_api_views_fulltext,
     .views-widget-sort-by,
     .views-widget-sort-order,
@@ -128,6 +127,7 @@
       margin: 0;
       position:relative;
     }
+    &.views-reset-button,
     &.views-submit-button {
       margin: 0;
       padding: .5em .5em 0 0;
@@ -145,43 +145,5 @@
     top: 10px;
   }
 }
-.pane-data-stories-panel-pane-1 {
-  position: relative;
-  // Chrome.
-  .contextual-links-region .view-header a {
-    top: -34px;
-  }
-  .view-header a {
-    position: absolute;
-    top: 0;
-    right:0;
-    &:after {
-      content: "\f054";
-      font-family: $icon-fa;
-      paddin-left: 5px;
-    }
-  }
-}
 
-.view-public-feedback.view-display-id-panel_pane_2 {
-  font-size: 15px;
-  .item-list ul li {
-    list-style-type: none;
-    margin-left: 0;
-  }
-}
-
-.shortcuts-menu {
-  margin-top:35px;
-  margin-bottom: 35px;
-}
-
-.view-id-latest_stories {
-  line-height: 1.5em;
-  .views-field-title {
-    margin-top:1.1em;
-  }
-  .views-field-body {
-    margin-top:0.5em;
-  }
-}
+#views-exposed-form-dkan-datasets-panel-pane-1 .views-exposed-form .description { display: none;}

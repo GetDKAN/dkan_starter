@@ -9,19 +9,14 @@
   input[type="submit"] { 
     top: 2px;
   }
+  label {
+    display: none;
+  }
 } 
 
-.search-form,
-#dkan-sitewide-dataset-search-form,
-#dkan-sitewide-dataset-search-form--2,
-#region-branding #block-dkan-sitewide-dkan-sitewide-search-bar,
-#views-exposed-form-dataset-page {
-  label {
-    // Screen readers.
-    position: absolute; 
-    top:0; 
-    left:-9999px
-  }
+#region-branding #block-dkan-sitewide-dkan-sitewide-search-bar label,
+#views-exposed-form-dataset-page label {
+  display: none;
 }
 
 #block-dkan-sitewide-dkan-sitewide-search-bar {

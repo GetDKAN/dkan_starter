@@ -33,7 +33,7 @@
 	}
 }
 
-#panels-choose-layout .form-type-radio input,
+#panels-choose-layout .form-type-radio input, 
 .panels-choose-layout .form-type-radio input {
 	width: 15px;
 }
@@ -65,8 +65,8 @@
 		padding:0;
 	}
 	.pane-content {
-		//@include popblock;
-		padding: 0;
+		@include popblock;
+		padding: 20px;
 		margin-bottom: 3em;
 	}
 	.pane-page-breadcrumb {
@@ -100,54 +100,5 @@
 		inside {
 			//padding: 15px;
 		}
-	}
-}
-
-// HHS specific
-.center {
-	display: block;
-	margin: 0 auto;
-	text-align: center;
-}
-.btn-default,
-.btn-default a {
-	color: #fff;
-	&:hover,
-	&:focus {
-		color: #fff;
-		text-decoration: none;
-	}
-}
-.panel-top {
-	.inside {
-		h2,h3,h4 {
-			color: #fff;
-			font-size: 1.5em;
-			/* Better Font Rendering =========== */
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;
-			text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
-		}
-	}
-}
-@media all and (min-width:768px) {
-	.panel-top {
-		background-position-y: 30%;
-		min-height: 400px;
-		.container {
-	  	padding: 0px 0 0;
-	  }
-	}
-}
-.panel-middle {
-	.subjects a {
-		display: block;
-		font-weight: bold;
-		font-size: 1em;
-		text-align: center;
-		padding: 30px 0;
-	}
-	strong {
-		display: block;
 	}
 }

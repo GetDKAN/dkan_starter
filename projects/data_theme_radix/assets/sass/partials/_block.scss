@@ -1,16 +1,3 @@
-.radix-layouts-sidebar {
-  .panel-pane {
-    @include popblock;
-  }
-  .panel-pane.no-border {
-    box-shadow: none;
-    webkit-box-shadow: none;
-    .pane-content {
-      padding: 0;
-    }
-  }
-}
-
 // Social Links
 .pane-dkan-sitewide-dkan-sitewide-social,
 #block-dkan-sitewide-dkan-sitewide-social {
@@ -276,9 +263,4 @@ div[class*="pane-facetapi"],
     right: 0;
     z-index: 1;
   }
-}
-
-div.workbench-info-block,
-.block-workbench-block {
-  margin-bottom: 1em;
 }
