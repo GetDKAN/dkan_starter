@@ -102,6 +102,7 @@ div.vertical-tabs ul.vertical-tabs-list li a:hover {
   background-color: @top;
 }
 .view-group-block .views-field-nid a,
+.btn-default,
 .btn-primary,
 .links .btn,
 input.btn {
@@ -111,6 +112,7 @@ input.btn {
 }
 
 .view-group-block .views-field-nid a:hover,
+.btn-default:hover,
 .btn-primary:hover,
 .links .btn:hover,
 input.btn:hover,
@@ -120,9 +122,10 @@ input[type="submit"]:hover {
   color:#ffffff;
 }
 
+.btn-default:focus,
+.btn-default:active,
 .btn-primary:focus, 
-.btn-primary:active, 
-.btn-primary.active,
+.btn-primary:active,
 .links .btn:focus,
 .links .btn.focus,
 input.btn:focus, 
