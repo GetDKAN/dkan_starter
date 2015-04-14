@@ -40,7 +40,7 @@
   height:auto;
   margin:0 auto;
   max-width:190px;
-  width:100%;  
+  width:100%;
 }
 
 .view-front-page-group-grid {
@@ -147,3 +147,10 @@
 }
 
 #views-exposed-form-dkan-datasets-panel-pane-1 .views-exposed-form .description { display: none;}
+
+.view-stories {
+  .views-field-body{
+    padding-top:15px;
+    line-height: normal;
+  }
+}
