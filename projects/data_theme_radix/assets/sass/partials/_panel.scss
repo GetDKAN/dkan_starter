@@ -33,7 +33,7 @@
 	}
 }
 
-#panels-choose-layout .form-type-radio input, 
+#panels-choose-layout .form-type-radio input,
 .panels-choose-layout .form-type-radio input {
 	width: 15px;
 }
@@ -65,7 +65,6 @@
 		padding:0;
 	}
 	.pane-content {
-		@include popblock;
 		padding: 20px;
 		margin-bottom: 3em;
 	}
