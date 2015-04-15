@@ -3,7 +3,7 @@
 // --------------------------------------------------
 @mixin popblock {
   @include border-radius(3px);
-  @include box-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+  @include box-shadow(0 0 3px rgba(0, 0, 0, 0.3));
   //background-color: $white;
   margin-bottom: 20px;
   padding:0px;
@@ -69,8 +69,8 @@
   // border-color:$brand-primary;
   color: white;
 }
-%button:hover, 
-%button:focus, 
+%button:hover,
+%button:focus,
 %button:active {
   // background:$brand-secondary;
   // border-color:$brand-secondary;

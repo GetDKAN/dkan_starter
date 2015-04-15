@@ -26,6 +26,14 @@
   }
 }
 
+.shortcuts-menu {
+  margin-top: 32px;
+
+  h4 {
+    font-size: 14px;
+  }
+}
+
 // Data Story
 .view-latest-stories {
   margin-top:27px;
@@ -60,6 +68,36 @@
   }
 }
 
-.shortcuts-menu h4 {
-  font-size: 14px;
+.view-stories {
+  .views-field-body{
+    padding-top:15px;
+    line-height: normal;
+  }
 }
+
+.node-type-dataset .pane-content {
+  padding: 0 0 0 0;
+}
+
+.node-type-dataset {
+  h4, h2 {
+    font-size: 1.1em;
+  }
+}
+
+.group_additional thead > tr > th {
+  background-image: linear-gradient(#F5F5F5, #F0F0F0) !important;
+}
+
+.radix-layouts-content .pane-title{
+  font-size: 24px;
+}
+
+.view-group-block .views-field-title {
+  margin: 10px 15px;
+}
+
+.radix-layouts-content .pane-content {
+  padding-left: 0px;
+}
+

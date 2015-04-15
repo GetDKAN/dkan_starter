@@ -68,7 +68,7 @@ div.vertical-tabs ul.vertical-tabs-list li a:hover {
 .navbar-default .user-menu li.active > a:hover,
 .navbar-default .user-menu li.active > a:focus { background:@linkactive; color: #fff; }
 
-#block-dkan-sitewide-dkan-sitewide-user-menu .links a:hover, 
+#block-dkan-sitewide-dkan-sitewide-user-menu .links a:hover,
 #block-dkan-sitewide-dkan-sitewide-user-menu .links a:focus { background-color:@bottom; color: #fff; }
 
 
@@ -120,12 +120,12 @@ input[type="submit"]:hover {
   color:#ffffff;
 }
 
-.btn-primary:focus, 
+.btn-primary:focus,
 .btn-primary:active,
 .links .btn:focus,
 .links .btn.focus,
-input.btn:focus, 
-input[type="submit"]:focus, 
+input.btn:focus,
+input[type="submit"]:focus,
 input[type="submit"]:active {
   background: @linkactive;
   border-color: @linkactive;
@@ -140,8 +140,8 @@ input[type="submit"]:active {
 a.embed-link {
   background: @top;
 }
-a.embed-link:hover, 
-a.embed-link:focus, 
+a.embed-link:hover,
+a.embed-link:focus,
 a.embed-link:active {
   background: @bottom;
 }
@@ -163,7 +163,7 @@ div.autocomplete-deluxe-multiple,
 
 .radix-layouts-sidebar .pane-block .pane-content,
 .radix-layouts-content .pane-content,
-.view-front-page-group-grid .span6 span, 
+.view-front-page-group-grid .span6 span,
 .view-front-page-group-grid .col-lg-6 span,
 .horizontal-tabs ul.horizontal-tabs-list li.selected a {
   background-color: @bg;
@@ -173,7 +173,7 @@ div.autocomplete-deluxe-multiple,
   color: @text;
 }
 .radix-layouts-sidebar div[class*="pane-facetapi"] .pane-title {
-  background: #dddddd;
+  background: @toolbarborder;
   color: #333333;
 }
 .radix-layouts-sidebar div[class*="pane-facetapi"] .pane-content {
@@ -186,7 +186,7 @@ div.autocomplete-deluxe-multiple,
 
 #url-edit-prefix {
   background-color: @bg;
-  border-color: @toolbarborder; 
+  border-color: @toolbarborder;
 }
 #url-slug,
 #field-tags-wrapper .path-form .add-on {
@@ -195,7 +195,7 @@ div.autocomplete-deluxe-multiple,
   color: @bg;
 }
 
-.node-dataset #data-and-resources ul.resource-list li .heading, 
+.node-dataset #data-and-resources ul.resource-list li .heading,
 .node-dataset #data-and-resources ul.resource-list li .heading:hover {
   color: @text;
 }
