@@ -12,5 +12,5 @@ files[] = tests/schema_regression.test
 version = "7.x-1.2"
 core = "7.x"
 project = "schema"
-datestamp = "1429133834"
+datestamp = "1429136048"
 

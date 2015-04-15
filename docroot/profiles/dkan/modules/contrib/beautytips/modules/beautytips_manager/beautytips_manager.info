@@ -11,5 +11,5 @@ dependencies[] = ctools
 version = "7.x-2.0-beta2+7-dev"
 core = "7.x"
 project = "beautytips"
-datestamp = "1429133782"
+datestamp = "1429135997"
 
