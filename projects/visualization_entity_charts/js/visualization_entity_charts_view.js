@@ -9,13 +9,20 @@
       var isIframe = !$('.content').is(':visible');
       var state = $('.field-name-field-ve-settings .field-item:eq(0)').text();
       var $el;
+      var title;
+      var $body;
 
       if(state){
         state = new recline.Model.ObjectState(JSON.parse(state));
+        $body = $(document.body);
+        $body.removeClass('admin-menu');
 
-        $(document.body).removeClass('admin-menu');
-        if(isIframe){
+        if($('#iframe-shell').length){
           $el = $('#iframe-shell');
+          if(state.get('showTitle')){
+            title = $el.find('h2 a').html();
+            $body.prepend('<h2>' + title + '</h2>');
+          }
           state.set('height', $(window).height());
           state.set('width', $(window).width() - 10);
         } else {

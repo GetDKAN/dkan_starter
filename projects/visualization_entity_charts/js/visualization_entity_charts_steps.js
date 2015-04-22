@@ -167,7 +167,7 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
     },
     render: function(){
       var self = this;
-      var graphTypes = ['discreteBarChart', 'multiBarChart', 'stackedAreaChart', 'pieChart',
+      var graphTypes = ['discreteBarChart', 'multiBarChart', 'multiBarHorizontalChart', 'stackedAreaChart', 'pieChart',
         'lineChart', 'lineWithFocusChart', 'scatterChart', 'linePlusBarChart'
       ];
 

@@ -16,13 +16,11 @@ libraries[d3][download][type] = git
 libraries[d3][download][url] = "https://github.com/mbostock/d3.git"
 libraries[d3][download][revision] = "f82dd6fb414a15bca4f9c39c7c9442295ddea416"
 
-
 # GDOCS BACKEND
 libraries[gdocs][type] = libraries
 libraries[gdocs][download][type] = git
 libraries[gdocs][download][url] = "https://github.com/okfn/recline.backend.gdocs.git"
 libraries[gdocs][download][revision] = "e81bb237759353932834a38a0ec810441e0ada10"
-
 
 # LODASH DATA
 libraries[lodash_data][type] = libraries
@@ -34,7 +32,7 @@ libraries[lodash_data][download][revision] = "0dbe0701003b8a45037ab5fada630db2db
 libraries[reclineViewNvd3][type] = libraries
 libraries[reclineViewNvd3][download][type] = git
 libraries[reclineViewNvd3][download][url] = "https://github.com/NuCivic/recline.view.nvd3.js.git"
-libraries[reclineViewNvd3][download][revision] = "33acf506137648b222486171af6b9f9f6c51c10f"
+libraries[reclineViewNvd3][download][revision] = "ceda68051d3f99de88e30f9d99b3194d5e9bcafe"
 
 # CHOSEN
 libraries[chosen][type] = libraries
