@@ -196,8 +196,8 @@ div.autocomplete-deluxe-multiple,
   color: @bg;
 }
 
-.node-dataset #data-and-resources ul.resource-list li .heading, 
-.node-dataset #data-and-resources ul.resource-list li .heading:hover {
+ul.resource-list li .heading, 
+ul.resource-list li .heading:hover {
   color: @text;
 }
 
