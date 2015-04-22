@@ -6,9 +6,9 @@ tags[] = developer
 configure = admin/config/development/generate
 files[] = devel_generate.test
 
-; Information added by Drupal.org packaging script on 2015-03-10
-version = "7.x-1.5+6-dev"
+; Information added by Drupal.org packaging script on 2015-04-18
+version = "7.x-1.5+7-dev"
 core = "7.x"
 project = "devel"
-datestamp = "1426019604"
+datestamp = "1429347482"
 

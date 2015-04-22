@@ -16,8 +16,7 @@ function nuboot_radix_css_alter(&$css) {
   unset($css[$radix_path . '/assets/stylesheets/radix-style.css']);
   unset($css[$radix_path . '/assets/stylesheets/radix-print.css']);
   // Remove dkan button styles so we can use our own.
-  unset($css[drupal_get_path('module', 'dkan_dataset') . '/dkan_dataset_btn.css']);
-  unset($css[drupal_get_path('module', 'dkan_dataset') . '/dkan_dataset.css']);
+  unset($css[drupal_get_path('module', 'dkan_dataset') . '/css/dkan_dataset_btn.css']);
 }
 
 /**

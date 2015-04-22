@@ -7,9 +7,9 @@ dependencies[] = imagecache_actions
 dependencies[] = image
 
 
-; Information added by drush on 2015-04-15
+; Information added by drush on 2015-04-22
 version = "7.x-1.4+17-dev"
 core = "7.x"
 project = "imagecache_actions"
-datestamp = "1429136019"
+datestamp = "1429671897"
 
