@@ -32,7 +32,7 @@ libraries[lodash_data][download][revision] = "0dbe0701003b8a45037ab5fada630db2db
 libraries[reclineViewNvd3][type] = libraries
 libraries[reclineViewNvd3][download][type] = git
 libraries[reclineViewNvd3][download][url] = "https://github.com/NuCivic/recline.view.nvd3.js.git"
-libraries[reclineViewNvd3][download][revision] = "ceda68051d3f99de88e30f9d99b3194d5e9bcafe"
+libraries[reclineViewNvd3][download][revision] = "4f136a26b7b6bd5d8fc1ae3e74c7ce6d57c499c4"
 
 # CHOSEN
 libraries[chosen][type] = libraries

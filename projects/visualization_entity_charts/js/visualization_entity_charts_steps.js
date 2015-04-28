@@ -4,7 +4,7 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
 
 ;(function ($, my, global) {
   'use strict';
-  console.log(my);
+
   /**
    * Chart options step
    */
@@ -41,30 +41,64 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
                     '</div>' +
                   '</div>' +
                 '</div>' +
-                '<div class="col-md-5" id="controls">' +
-                  '<div id="base-controls"></div>' +
-                  '<div id="extended-controls"></div>' +
+                '<div class="col-md-5">' +
+                  '<div class="form-panel">' +
+                    '<h4 class="expander">Query Editor <span>+</span></h4>' +
+                    '<div class="expansible" style="display:none" id="query-editor"></div>' +
+                  '</div>' +
+                  '<div class="form-panel">' +
+                    '<h4 class="expander">Filter Editor<span>+</span></h4>' +
+                    '<div class="expansible" style="display:none" id="filter-editor"></div>' +
+                  '</div>' +
+                  '<div class="form-panel">' +
+                    '<h4 class="expander">Chart configuration<span>-</span></h4>' +
+                    '<div class="expansible">' +
+                      '<div id="base-controls"></div>' +
+                      '<div id="extended-controls"></div>' +
+                    '</div>' +
+                  '</div>' +
                 '</div>' +
               '</div>' +
               '<div class="col-md-12" id="controls">' +
                 '<div id="prev" class="btn btn-default pull-left">Back</div>' +
                 '<button type="submit" class="form-submit btn btn-success pull-right">Finish</button>' +
               '</div>',
+    events: {
+      '#query-editor button': 'onEditorUpdate'
+    },
     initialize: function(options){
       var self = this;
       self.options = _.defaults(options || {}, self.options);
       self.state = self.options.state;
+      self.model = self.state.get('model');
+
       self.stepInfo = {
         title: 'Preview and Adjust',
         name: 'chartOptions'
       };
     },
+    copyQueryState: function(){
+      console.log('copyQueryState');
+      var self = this;
+      self.state.set('queryState', self.state.get('model').queryState.toJSON());
+    },
     render: function(){
-      console.log('ChartOptionsView::render');
       var self = this;
       var graphType = self.state.get('graphType');
 
+      self.listenTo(self.state.get('model').queryState, 'change', self.copyQueryState);
       self.$el.html(Mustache.render(self.template, self.state.toJSON()));
+      self.$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        self.graph.render();
+      });
+
+      self.$('.expander').on('click', function(){
+        var visible = self.$(this).next().is(':visible');
+        var sp = self.$(this).find('span');
+        var sign = (!visible) ? '-' : '+' ;
+        sp.html(sign);
+        self.$(this).next().slideToggle('fast');
+      });
 
       // Common controls for all the charts.
       self.baseControls = new recline.View.nvd3.BaseControl({
@@ -84,10 +118,29 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
         model: self.state.get('model'),
         state: self.state
       });
+
+      // Pager widget
+      self.pager = new recline.View.Pager({
+        model: self.state.get('model'),
+        state: self.state
+      });
+
+      // Search wiget
+      self.queryEditor = new recline.View.nvd3.QueryEditor({
+        model: self.state.get('model').queryState,
+        state: self.state
+      });
+
+      // Filter widget
+      self.filterEditor = new recline.View.nvd3.FilterEditor({
+        model: self.state.get('model'),
+        state: self.state
+      });
+
       // Grid
       self.grid = new recline.View.SlickGrid({
         model: self.state.get('model'),
-        el: $('#grid'),
+        el: self.$('#grid'),
         options:{}
       });
       self.grid.visible = true;
@@ -96,17 +149,23 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
       self.assign(self.baseControls, '#base-controls');
       self.assign(self.extendedControls, '#extended-controls');
       self.assign(self.grid, '#grid');
+      self.assign(self.pager, '#pager');
+      self.assign(self.queryEditor, '#query-editor');
+      self.assign(self.filterEditor, '#filter-editor');
 
       // Slickgrid needs to update after tab content is displayed
       $('#grid')
-        .closest('.tab-content')
-        .prev()
-        .find('a[data-toggle="tab"]')
-        .on('shown.bs.tab', function () {
-          self.grid.grid.resizeCanvas();
-        });
+      .closest('.tab-content')
+      .prev()
+      .find('a[data-toggle="tab"]')
+      .on('shown.bs.tab', function () {
+        self.grid.grid.resizeCanvas();
+      });
 
       self.$('.chosen-select').chosen({width: '95%'});
+    },
+    onEditorUpdate: function(){
+      return false;
     },
     updateState: function(state, cb){
       cb(state);
