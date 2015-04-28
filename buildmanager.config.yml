@@ -51,5 +51,5 @@ subtrees:
   visualization_entity_charts:
     path: visualization_entity_charts
     uri: 'git@github.com:NuCivic/visualization_entity_charts.git'
-    branch: filters
+    branch: master
     message: 'visualization_entity_charts subtree from git@github.com:nucivic/visualization_entity_charts.git'
