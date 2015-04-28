@@ -47,7 +47,8 @@ function visualization_entity_charts_attach_libraries(&$element) {
   $module_path = drupal_get_path('module', 'visualization_entity_charts');
   $element['#attached']['css'][] = $module_path . '/css/ve_chart.css';
   drupal_add_js($module_path . '/js/visualization_entity_charts_steps.js', array('weight' => 100));
-  drupal_add_js($module_path . '/js/visualization_entity_charts.js', array('weight' => 101));
+  drupal_add_js($module_path . '/js/visualization_entity_charts_editors.js', array('weight' => 101));
+  drupal_add_js($module_path . '/js/visualization_entity_charts.js', array('weight' => 102));
 }
 
 /**

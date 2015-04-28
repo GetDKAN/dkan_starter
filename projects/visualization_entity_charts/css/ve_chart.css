@@ -63,6 +63,72 @@ svg {
 .relative {
   position: relative;
 }
+
+/**
+ * Panels
+ */
+.expander {
+  cursor: pointer;
+  color: #333;
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  padding: 10px 15px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  position: relative;
+}
+
+.expander span {
+  position: absolute;
+  right: 13px;
+}
+
+.expansible {
+  margin: 10px;
+}
+
+.form-panel {
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.form-panel .form-group:last-child{
+  margin-bottom: 0px;
+}
+/**
+ * Filters
+ */
+#filter-editor .form-stacked{
+  margin-bottom: 10px;
+}
+
+#query-editor .btn {
+  padding: 6px 12px;
+  border-right: none;
+}
+
+#pager li.prev.action-pagination-update a {
+  border-bottom-right-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+#pager li.next.action-pagination-update a {
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px
+}
+
+#pager li.page-range a {
+  padding: 3px;
+}
+
+#pager .pagination {
+  margin: 0px 0;
+}
+
+/**
+ * Charts thumbnails
+ */
 #chart-selector li:hover {
   border-color: #0088cc;
   cursor: pointer;

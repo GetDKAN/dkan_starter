@@ -36,6 +36,7 @@
         var graph = null;
 
         dataset.fetch().done(function(dataset){
+          dataset.queryState.set(state.get('queryState'));
           graph = new recline.View.nvd3[state.get('graphType')]({
             model: dataset,
             state: state,
