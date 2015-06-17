@@ -5,8 +5,9 @@
 ; Grab DKAN make file
 includes[dkan] = build-dkan.make
 
-; Set the default subdirectory for projects so we don't have to specifically set it each time.
+; Set the default subdirectory for projects so we don't have to specifically set it each time, but make sure dkan stays in /profiles
 defaults[projects][subdir] = contrib
+projects[dkan][subdir] = ""
 
 ; These start as all commented out, but you'll probably want to enable almost all of them depending on the project.
 
