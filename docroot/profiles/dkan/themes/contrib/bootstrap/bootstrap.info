@@ -141,9 +141,7 @@ exclude[css][] = 'modules/user/user.css'
 
 simplytest_dependencies[] = jquery_update
 
-
-; Information added by drush on 2015-04-28
+; Information added by drush on 2014-03-29
 version = "0390173732439fd60e898c7086219ab8c99c2f3d"
 project = "bootstrap"
-datestamp = "1430257130"
-
+datestamp = "1396119666"

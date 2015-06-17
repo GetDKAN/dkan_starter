@@ -53,7 +53,7 @@ function theme_dkan_dataset_release_date_view($vars) {
  * Output the resource into the node content.
  */
 function theme_dkan_dataset_resource_view($vars) {
-  $output = '<h2>' . t('Data and Resources') . '</h2>';
+  $output = '<h4>' . t('Data and Resources') . '</h4>';
   $node = entity_metadata_wrapper('node', $vars['node']);
   $nodes = $node->field_resources->value();
   $links = array();
@@ -141,7 +141,7 @@ function theme_dkan_dataset_resource_teaser_view($vars) {
     $links_data = array();
     foreach ($nodes as $node) {
       $node_wrapper = entity_metadata_wrapper('node', $node);
-      $name = isset($node->field_format['und']) ? $node_wrapper->field_format->value()->name : '';
+      $name = dkan_dataset_get_resource_format($node);
       $term = '';
       if (!isset($links_data[$name])) {
         $links_data[$name] = array(

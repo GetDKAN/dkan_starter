@@ -141,16 +141,41 @@ table.group_additional {
   }
 }
 
-table.group_additional,
-.field-name-field-additional-info table {
-  th:nth-of-type(1n),
-  td:nth-of-type(1n) {
-    width: 30%;
-    border-right: 1px solid $border;
+@media screen and (max-width: 1024px) {
+  .table-responsive > .table > thead > tr > th,
+  .table-responsive > .table > thead > tr > td,
+  .table-responsive > .table > tbody > tr > th,
+  .table-responsive > .table > tbody > tr > td,
+  .table-responsive > .table > tfoot > tr > th,
+  .table-responsive > .table > tfoot > tr > td {
+    white-space: normal;
   }
-  th:nth-of-type(2n),
+}
+.field-name-field-additional-info .field-label {
+  margin-bottom: 1em;
+}
+.group_additional,
+.field-name-field-additional-info table,
+.field-name-field-additional-info .table-responsive {
+  margin: 0;
+  td,
+  th {
+    white-space: normal;
+    width: auto;
+  }
   td:nth-of-type(2n) {
-    width: 70%;
+    @include wrap;
+  }
+  @media all and (min-width:768px) {
+    th:nth-of-type(1n),
+    td:nth-of-type(1n) {
+      width: 30%;
+      border-right: 1px solid $border;
+    }
+    th:nth-of-type(2n),
+    td:nth-of-type(2n) {
+      width: 70%;
+    }
   }
 }
 .node-form {
@@ -181,8 +206,21 @@ table thead > tr > th {
   padding:4px 8px;
 }
 
+// Striped tables.
+.table-striped > tbody > tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+.table tbody tr:hover td, 
+.table tbody tr:hover th,
+.table-striped > tbody > tr:nth-child(odd):hover {
+  background-color: #FFFEEE;
+}
+
 // Admin tables.
 .page-admin {
+  .container.main {
+    width: 100%;
+  }
   .table-bordered > thead > tr > th,
   .table-bordered > tbody > tr > th,
   .table-bordered > tbody > tr > td {
@@ -200,15 +238,8 @@ table thead > tr > th {
     display: table-cell;
     position: relative;
   }
-  .table-striped > tbody > tr:nth-child(odd) {
-    background-color: #f9f9f9;
-  }
-  .table tbody tr:hover td, 
-  .table tbody tr:hover th,
   .table tbody tr:hover td.checkbox, 
-  .table tbody tr:hover th.checkbox,
-  .table-striped tbody tr:nth-child(odd):hover td,
-  .table-striped tbody tr:nth-child(odd):hover td.checkbox {
+  .table tbody tr:hover th.checkbox {
     background-color: #FFFEEE;
   }
   table th.checkbox, 

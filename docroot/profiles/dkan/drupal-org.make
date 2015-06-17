@@ -15,6 +15,8 @@ projects[dkan_datastore][download][branch] = 7.x-1.x
 includes[dkan_dataset_make] = https://raw.githubusercontent.com/NuCivic/dkan_dataset/7.x-1.x/dkan_dataset.make
 includes[dkan_datastore_make] = https://raw.githubusercontent.com/NuCivic/dkan_datastore/7.x-1.x/dkan_datastore.make
 
+projects[file_entity][patch][2308737] = https://www.drupal.org/files/issues/file_entity-remove-field-status-check-2308737-9509141.patch
+
 ; Contrib Modules
 projects[admin_menu][version] = 3.0-rc5
 projects[admin_menu][subdir] = contrib
@@ -31,6 +33,21 @@ projects[colorizer][subdir] = contrib
 projects[diff][version] = 3.2
 projects[diff][subdir] = contrib
 
+projects[draggableviews][version] = 2.1
+projects[draggableviews][subdir] = contrib
+
+projects[entityreference_filter][version] = 1.5
+projects[entityreference_filter][subdir] = contrib
+
+projects[fieldable_panels_panes][subdir] = contrib
+projects[fieldable_panels_panes][version] = 1.6
+
+projects[honeypot][version] = 1.17
+projects[honeypot][subdir] = contrib
+
+projects[fontyourface][subdir] = contrib
+projects[fontyourface][version] = 2.8
+
 projects[imagecache_actions][download][type] = git
 projects[imagecache_actions][download][url] = "http://git.drupal.org/project/imagecache_actions.git"
 projects[imagecache_actions][download][branch] = 7.x-1.x
@@ -45,11 +62,39 @@ projects[markdowneditor][version] = 1.2
 projects[markdowneditor][patch][2045225] = http://drupal.org/files/remove-dsm-from-hook-install-2045225-1.patch
 projects[markdowneditor][subdir] = contrib
 
+projects[module_filter][version] = 2.0
+projects[module_filter][subdir] = contrib
+
 projects[og_moderation][version] = 2.2
 projects[og_moderation][patch][2231737] = https://drupal.org/files/issues/any-user-with-view-revision-can-revert-delete-2231737-1.patch
 projects[og_moderation][subdir] = contrib
 
-projects[panels][version] = 3.4
+projects[defaultconfig][version] = 1.0-alpha9
+projects[defaultconfig][subdir] = contrib
+
+projects[views_autocomplete_filters][version] = 1.1
+projects[views_autocomplete_filters][subdir] = contrib
+projects[views_autocomplete_filters][patch][2277453] = http://drupal.org/files/issues/ViewsAutocompleteFilters-no_results_on_some_environments-2277453-1.patch
+projects[views_autocomplete_filters][patch][2374709] = http://www.drupal.org/files/issues/views_autocomplete_filters-cache-2374709-2.patch
+projects[views_autocomplete_filters][patch][2317351] = http://www.drupal.org/files/issues/views_autocomplete_filters-content-pane-2317351-4.patch
+
+libraries[jquery.imagesloaded][download][type] = file
+libraries[jquery.imagesloaded][download][url] = https://github.com/desandro/imagesloaded/archive/v2.1.2.tar.gz
+libraries[jquery.imagesloaded][download][subtree] = imagesloaded-2.1.2
+
+libraries[jquery.imgareaselect][download][type] = file
+libraries[jquery.imgareaselect][download][url] = http://odyniec.net/projects/imgareaselect/jquery.imgareaselect-0.9.10.zip
+libraries[jquery.imgareaselect][download][subtree] = jquery.imgareaselect-0.9.10
+
+projects[panopoly_widgets][version] = 1.21
+projects[panopoly_widgets][subdir] = contrib
+includes[panopoly_widgets_make] = http://cgit.drupalcode.org/panopoly_widgets/plain/panopoly_widgets.make
+
+projects[panopoly_images][version] = 1.21
+projects[panopoly_images][subdir] = contrib
+includes[panopoly_images_make] = http://cgit.drupalcode.org/panopoly_images/plain/panopoly_images.make
+
+projects[panels][version] = 3.5
 projects[panels][subdir] = contrib
 
 projects[path_breadcrumbs][version] = 3.2
@@ -97,7 +142,7 @@ projects[nuboot_radix][subdir] = contrib
 projects[nuboot_radix][download][type] = git
 projects[nuboot_radix][download][url] = https://github.com/NuCivic/nuboot_radix.git
 projects[nuboot_radix][download][branch] = 7.x-1.x
-projects[nuboot_radix][download][revision] = "7d45b2200a3347a0687e5b8edaeea2f40f968c15"
+projects[nuboot_radix][download][revision] = "08d5af72e590a56a2e6ec543f82957171acae245"
 projects[nuboot_radix][type] = theme
 
 projects[radix][subdir] = contrib
