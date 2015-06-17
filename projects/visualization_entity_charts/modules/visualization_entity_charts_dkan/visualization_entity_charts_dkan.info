@@ -1,9 +1,0 @@
-name = Visualization Entity Charts DKAN
-description = Add charts to dkan
-core = 7.x
-dependencies[] = dkan_dataset
-dependencies[] = dkan_datastore
-features[features_api][] = api:2
-features[field_base][] = field_vecd_esource
-features[field_instance][] = visualization-ve_chart-field_vecd_esource
-project path = sites/all/modules/visualization_entity_charts/modules
