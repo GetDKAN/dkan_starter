@@ -5,11 +5,21 @@ build:
 # Custom commands. These are run after subtrees are updated and after the drush make
 # rebuild runs, before any changes from drush make are committed.
 postbuild-commands:
-  - 'mkdir -p docroot/sites/all/modules/nucivic'
-  - 'mkdir -p docroot/sites/all/themes/nucivic'
+# Setup a folder for contrib modules and themes.
+  - 'mkdir -p docroot/sites/all/modules/contrib'
+  - 'mkdir -p docroot/sites/all/themes/contrib'
+# Replace sites/default with our own sites/default outside of the drupal root.
   - 'rm -rf docroot/sites/default;'
   - 'ln -s ../../assets/sites/default docroot/sites/default'
-  - 'rm -rf docroot/sites/all/modules/nucivic/geo_file_entity'
+# Clean out any .gitignore files imported from other modules, libraries, and profiles.
   - 'cd docroot/profiles/dkan; find . -type f -name .gitignore -exec rm -rf {} \;'
   - 'cd docroot/sites/all/modules; find . -type f -name .gitignore -exec rm -rf {} \;'
   - 'cd docroot/sites/all/libraries; find . -type f -name .gitignore -exec rm -rf {} \;'
+# Setup custom modules folder outside of the drupal root.
+  - 'ln -s ../../../../projects/modules/custom docroot/sites/all/modules/custom'
+  - 'ln -s ../../../../projects/modules/dkan_overrides docroot/sites/all/modules/dkan_overrides'
+# Additional Examples:
+# ====================
+# Remove a module from dkan. (you want to use an alternate version or just not make it available).
+# - 'rm -rf docroot/sites/all/modules/nucivic/geo_file_entity'
+
