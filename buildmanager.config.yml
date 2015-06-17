@@ -16,8 +16,7 @@ postbuild-commands:
   - 'ln -s ../../assets/sites/default docroot/sites/default'
 # Clean out any .gitignore files imported from other modules, libraries, and profiles.
   - 'cd docroot/profiles/dkan; find . -type f -name .gitignore -exec rm -rf {} \;'
-  - 'cd docroot/sites/all/modules; find . -type f -name .gitignore -exec rm -rf {} \;'
-  - 'cd docroot/sites/all/libraries; find . -type f -name .gitignore -exec rm -rf {} \;'
+  - 'cd docroot/sites/all; find . -type f -name .gitignore -exec rm -rf {} \;'
 # Setup custom modules folder outside of the drupal root.
   - 'ln -s ../../../../projects/modules/custom docroot/sites/all/modules/custom'
   - 'ln -s ../../../../projects/modules/dkan_overrides docroot/sites/all/modules/dkan_overrides'
