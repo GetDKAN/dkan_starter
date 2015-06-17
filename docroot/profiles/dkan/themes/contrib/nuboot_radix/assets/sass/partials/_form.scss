@@ -1,7 +1,8 @@
 //
 // Styles for Forms
 // --------------------------------------------------
-input[type="submit"] {
+input[type="submit"],
+.btn-primary {
   @extend %button;
 }
 input.use-ajax-submit {
@@ -9,8 +10,16 @@ input.use-ajax-submit {
 }
 
 .ctools-dropbutton {
+  .ctools-content a,
+  input.btn,
   input[type="submit"] {
     color: #666;
+    &:hover,
+    &:focus,
+    &:active {
+      border:none;
+      color: $brand-primary;
+    }
   }
 }
 .field-type-file input[type="submit"],
@@ -103,9 +112,6 @@ fieldset.group-primary {
 .image-widget-data input.btn {
   @extend %button-attached;
 }
-.btn {
-  padding: 5px 12px;
-}
 
 .path-form.panel-default {
   border-color: transparent;
@@ -134,37 +140,6 @@ fieldset.group-primary {
   padding: 10px;
 }
 
-// .page-node-add-dataset,
-// .page-node-edit-dataset {
-//   .radix-layouts-content {
-//     #dkan-stages .stages {
-//       margin: 0 0 20px;
-//     }
-//     .pane-content {
-//       padding: 0;
-//       fieldset {
-//         border: none;
-//       }
-//     }
-//     .vertical-tabs {
-//       margin-right: 1em;
-//       padding: 1em;
-//       ul.vertical-tabs-list {
-//         width: 14em;
-//       }
-//       .vertical-tabs-panes,
-//       fieldset.vertical-tabs-pane {
-//         padding: 0;
-//       }
-//       .panel-body {
-//         padding: 5px;
-//       }
-//     }
-//     .form-actions {
-//       padding: 1em;
-//     }
-//   }
-// }
 #body-add-more-wrapper {
   .panel-body {
     padding: 0;

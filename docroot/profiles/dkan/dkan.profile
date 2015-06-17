@@ -32,7 +32,7 @@ function dkan_additional_setup() {
     'eid' => 5,
   );
   drupal_write_record('bueditor_editors', $data, array('eid'));
-
+  
   dkan_default_content_base_install();
   // Keeps us from getting notices "No module defines permission".
   module_enable(array('dkan_sitewide_roles_perms'));
@@ -53,5 +53,8 @@ function dkan_additional_setup() {
   $image_styles = image_styles();
   foreach ( $image_styles as $image_style ) {
     image_style_flush($image_style);
-  }  
+  }
+
+  // Set honeypot protection on user registration form
+  variable_set('honeypot_form_user_register_form', 1);
 }

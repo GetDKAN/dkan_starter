@@ -65,22 +65,44 @@
 }
 
 %button {
-  // background:$brand-primary;
-  // border-color:$brand-primary;
+  background:$brand-primary;
+  border-color:$brand-primary;
   color: white;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 6px 12px;
+  line-height: 1.42857143;
+  @include border-radius(4px);
 }
 %button:hover, 
 %button:focus, 
 %button:active {
-  // background:$brand-secondary;
-  // border-color:$brand-secondary;
+  background:$brand-secondary;
+  border-color:$brand-secondary;
   color: white;
+  text-decoration: none;
 }
 %button-attached {
   @include border-radius(0 $border-radius-base $border-radius-base 0);
   margin-left: -1px;
   padding: 6px 10px 5px 10px;
   vertical-align: top;
+}
+
+// Force wrap content: https://perishablepress.com/wrapping-content/
+@mixin wrap {
+  white-space: pre;           /* CSS 2.0 */
+  white-space: pre-wrap;      /* CSS 2.1 */
+  white-space: pre-line;      /* CSS 3.0 */
+  white-space: -pre-wrap;     /* Opera 4-6 */
+  white-space: -o-pre-wrap;   /* Opera 7 */
+  white-space: -moz-pre-wrap; /* Mozilla */
+  white-space: -hp-pre-wrap;  /* HP Printers */
+  word-wrap: break-word;      /* IE 5+ */    
+  word-break: break-word;
 }
 
 // Image replacement

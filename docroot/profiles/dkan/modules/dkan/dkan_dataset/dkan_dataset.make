@@ -4,16 +4,16 @@ api = 2
 ; Leaflet Draw Widget specific
 projects[leaflet_draw_widget][download][type] = git
 projects[leaflet_draw_widget][download][url] = "https://github.com/NuCivic/leaflet_draw_widget.git"
-projects[leaflet_draw_widget][download][revision] = "cf497e9aebc283a5c8185a7eba73a0232d722e66"
+projects[leaflet_draw_widget][download][revision] = "967c8bb3eb13f3b70f28a4b487074b23591f1075"
 projects[leaflet_draw_widget][subdir] = contrib
 projects[leaflet_draw_widget][type] = module
 
-includes[leaflet_draw_widget_make] = https://raw.githubusercontent.com/NuCivic/leaflet_draw_widget/cf497e9aebc283a5c8185a7eba73a0232d722e66/leaflet_widget.make
+includes[leaflet_draw_widget_make] = https://raw.githubusercontent.com/NuCivic/leaflet_draw_widget/967c8bb3eb13f3b70f28a4b487074b23591f1075/leaflet_widget.make
 
 ; Recline specific
 projects[recline][download][type] = git
 projects[recline][download][url] = https://github.com/NuCivic/recline.git
-projects[recline][download][revision] = 431ffeaf4e22845fc83d1b4361a4e1d756e055ef
+projects[recline][download][revision] = a6af472a07d520a758f14cdf836a48c33e15bf07
 projects[recline][download][branch] = 7.x-1.x
 projects[recline][subdir] = contrib
 
@@ -67,6 +67,9 @@ projects[facetapi][version] = 1.3
 
 projects[facetapi_pretty_paths][subdir] = contrib
 projects[facetapi_pretty_paths][version] = 1.1
+
+projects[facetapi_bonus][version] = 1.1
+projects[facetapi_bonus][subdir] = contrib
 
 projects[features][version] = 2.0
 projects[features][subdir] = contrib
@@ -133,7 +136,7 @@ projects[open_data_schema_map][type] = module
 projects[open_data_schema_map][download][type] = git
 projects[open_data_schema_map][download][url] = https://github.com/NuCivic/open_data_schema_map.git
 projects[open_data_schema_map][download][branch] = master
-projects[open_data_schema_map][download][revision] = ffeb4e991a52879d42115c2baa2b284551b9d4a4
+projects[open_data_schema_map][download][revision] = ae28f32ae48c986f2dad64b7fa8bfb35b90947ac
 projects[open_data_schema_map][subdir] = contrib
 
 projects[open_data_schema_map_dkan][type] = module
@@ -187,7 +190,7 @@ projects[uuid][version] = 1.0-alpha5
 projects[uuid][patch][1927474] = http://drupal.org/files/unknown-column-in-field-list-fix-1927474-2.patch
 projects[uuid][subdir] = contrib
 
-projects[views][version] = 3.10
+projects[views][version] = 3.11
 projects[views][subdir] = contrib
 
 projects[views_responsive_grid][version] = 1.3
