@@ -285,6 +285,7 @@ function open_data_schema_map_dkan_open_data_schema_apis_defaults() {
         ),
       ),
     ),
+    'outputformat' => 'json',
     'endpoint' => 'api/3/action/current_package_list_with_resources',
     'arguments' => array(
       1 => array(
@@ -573,6 +574,7 @@ function open_data_schema_map_dkan_open_data_schema_apis_defaults() {
         ),
       ),
     ),
+    'outputformat' => 'json',
     'endpoint' => 'api/3/action/group_list',
     'arguments' => array(),
   );
@@ -851,6 +853,7 @@ function open_data_schema_map_dkan_open_data_schema_apis_defaults() {
         ),
       ),
     ),
+    'outputformat' => 'json',
     'endpoint' => 'api/3/action/group_package_show',
     'arguments' => array(
       1 => array(
@@ -1134,8 +1137,19 @@ function open_data_schema_map_dkan_open_data_schema_apis_defaults() {
         ),
       ),
     ),
+    'outputformat' => 'json',
     'endpoint' => 'api/3/action/package_list',
-    'arguments' => array(),
+    'arguments' => array(
+      1 => array(
+        'field' => 'limit',
+        'required' => 0,
+        'value' => '',
+      ),
+      2 => array(
+        'field' => 'offset',
+        'required' => 0,
+      ),
+    ),
   );
   // Exported Open Data API Map: CKAN Package Show
   $open_data_schema_apis['ckan_package_show'] = array(
@@ -1412,6 +1426,7 @@ function open_data_schema_map_dkan_open_data_schema_apis_defaults() {
         ),
       ),
     ),
+    'outputformat' => 'json',
     'endpoint' => 'api/3/action/package_show',
     'arguments' => array(
       1 => array(
@@ -1519,6 +1534,7 @@ function open_data_schema_map_dkan_open_data_schema_apis_defaults() {
         'type' => 'string',
       ),
     ),
+    'outputformat' => 'json',
     'endpoint' => 'api/3/action/resource_show',
     'arguments' => array(
       1 => array(
@@ -1668,6 +1684,7 @@ function open_data_schema_map_dkan_open_data_schema_apis_defaults() {
         'type' => 'string',
       ),
     ),
+    'outputformat' => 'json',
     'endpoint' => 'data.json',
     'arguments' => array(),
   );
@@ -1698,7 +1715,7 @@ function open_data_schema_map_dkan_open_data_schema_apis_defaults() {
         'type' => 'string',
       ),
       'bureauCode' => array(
-        'value' => '018:10',
+        'value' => '',
         'type' => 'array',
       ),
       'contactPoint' => array(
@@ -1814,7 +1831,7 @@ function open_data_schema_map_dkan_open_data_schema_apis_defaults() {
         'type' => 'string',
       ),
       'programCode' => array(
-        'value' => '018:001',
+        'value' => '',
         'type' => 'array',
       ),
       'publisher' => array(
@@ -1860,6 +1877,7 @@ function open_data_schema_map_dkan_open_data_schema_apis_defaults() {
         'type' => 'string',
       ),
     ),
+    'outputformat' => 'json',
     'endpoint' => 'data.json',
     'arguments' => array(),
   );
