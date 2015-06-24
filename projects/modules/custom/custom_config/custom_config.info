@@ -1,0 +1,8 @@
+name = Custom Config
+description = Project Specific Configuration - Defaults provided by data_starter.
+core = 7.x
+package = Custom
+version = 7.x-1.0
+project = custom_config
+features[features_api][] = api:2
+features[features_master][] = modules

@@ -9,6 +9,12 @@ includes[dkan] = build-dkan.make
 defaults[projects][subdir] = contrib
 projects[dkan][subdir] = ""
 
+; Default Projects
+; ================
+projects[] = features_master
+
+; Optional Projects
+; =================
 ; These start as all commented out, but you'll probably want to enable almost all of them depending on the project.
 
 ; Development

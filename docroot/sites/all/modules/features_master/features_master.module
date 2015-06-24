@@ -1,0 +1,128 @@
+<?php
+
+// TODO: Allow modules to add and subtract master modules, without then exporting or showing a diff.
+// I.E.: Like when you want to add devel modules in your local environment.
+
+/**
+ * Implements hook_features_api().
+ */
+function features_master_features_api() {
+  return array(
+    'features_master' => array(
+      'name' => t('Master - Modules and Themes'),
+      'default_hook' => 'features_master_defaults',
+      'default_file' => FEATURES_DEFAULTS_INCLUDED,
+      'feature_source' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_features_export_options().
+ */
+function features_master_features_export_options() {
+  return array(
+    'modules' => t('Enabled Modules'),
+    // TODO: We need to get this working for themes.
+    //'themes' => t('Enabled Themes'),
+  );
+}
+
+/**
+ * Implements hook_features_export().
+ */
+function features_master_features_export($data, &$export, $module_name = '') {
+  $pipe = array();
+  foreach ($data as $component_name) {
+    if ($component_name == 'modules') {
+      $export['features']['features_master']['modules'] = 'modules';
+    }
+    if ($component_name == 'themes') {
+      $export['features']['features_master']['themes'] = 'themes';
+    }
+  }
+ return $pipe;
+}
+
+function _features_master_get_modules($feature_module = NULL) {
+  $modules = module_list();
+   if (!empty($feature_module) && !in_array($feature_module, $modules)) {
+    $modules[$feature_module] = $feature_module;
+  }
+  asort($modules);
+  // TODO: ADD OR REMOVE DEFAULTS HERE
+  return $modules;
+}
+
+function _features_master_get_themes($feature_module = NULL) {
+  $themes = list_themes();
+  //TODO: list_themes() actually retuns a lot of metadata, we shouldn't be storing.
+  // Blocker: This blocks getting themes working.
+  asort($themes);
+  // TODO: ADD OR REMOVE DEFAULTS HERE
+  return $themes;
+}
+
+/**
+ * Implements hook_features_export_render().
+ */
+function features_master_features_export_render($module, $data, $export = NULL) {
+  $code = array();
+  $code[] = '  $features_master = array();';
+  $code[] = '';
+  foreach ($data as $name) {
+     if ($name == 'modules') {
+      $system_export = features_var_export(_features_master_get_modules(), '  ');
+      $code[] = "  \$features_master['modules'] = {$system_export};";
+     }
+    if ($name == 'themes') {
+      $system_export = features_var_export(_features_master_get_themes(), '  ');
+      $code[] = "  \$features_master['themes'] = {$system_export};";
+    }
+  }
+  $code[] = '';
+  $code[] = '  return $features_master;';
+  $code = implode("\n", $code);
+  return array('features_master_defaults' => $code);
+}
+
+/**
+ * Implements hook_features_revert().
+ */
+function features_master_features_revert($module) {
+  $data = features_get_default('features_master', $module);
+  // TODO: ADD OR REMOVE DEFAULTS HERE
+  if (!empty($data['modules'])) {
+    $current_enabled_modules = module_list();
+    if ($enable_modules = array_diff_key($data['modules'], $current_enabled_modules)) {
+      foreach ($enable_modules as $module) {
+        // TODO: We could speed the process up by checking the database each time to see if a module was already enabled,
+        // perhaps as a dependency of another module just installed.
+        try {
+          $success = module_enable(array($module));
+        } catch (Exception $e) {
+          $success = false;
+          drupal_set_message(t('FEATURES MASTER: Enabling @module or one of it\'s dependencies caused an exception: @ex', array('@module' => $module, '@ex' => $e->getMessage())));
+        }
+        if (!$success) {
+          // Consider these modules as not enabled;
+          unset($enable_modules[$module]);
+          drupal_set_message(t('FEATURES MASTER: @module has unmet dependencies or some other issue and could not be enabled', array('@module' => $module)));
+        }
+      }
+      $modules_string = implode(" ,", $enable_modules);
+      drupal_set_message(t('FEATURES MASTER: The following modules were enabled successfully: @modules_string', array('@modules_string' => $modules_string)));
+
+    }
+    if ($disable_modules = array_diff_key($current_enabled_modules, $data['modules'])) {
+      foreach ($disable_modules as $module) {
+        // TODO: We don't get any return value from module_disable unfortunately. We should add a try catch here as well.
+        module_disable(array($module));
+      }
+      $modules_string = implode(" ,", $disable_modules);
+      drupal_set_message(t('FEATURES MASTER: The following modules were disabled successfully: @modules_string', array('@modules_string' => $modules_string)));
+    }
+
+    //TODO: Implement the same thing for themes.
+  }
+}
