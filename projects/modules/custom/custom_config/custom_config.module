@@ -1,5 +1,7 @@
 <?php
 /**
  * @file
- * Drupal needs this blank file.
+ * Code for the Custom Config feature.
  */
+
+include_once 'custom_config.features.inc';

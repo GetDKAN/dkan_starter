@@ -56,6 +56,7 @@ function custom_config_features_master_defaults() {
     'facetapi_bonus' => 'facetapi_bonus',
     'facetapi_pretty_paths' => 'facetapi_pretty_paths',
     'features' => 'features',
+    'features_banish' => 'features_banish',
     'features_master' => 'features_master',
     'feeds' => 'feeds',
     'feeds_field_fetcher' => 'feeds_field_fetcher',
