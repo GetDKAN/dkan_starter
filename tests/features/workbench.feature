@@ -9,8 +9,8 @@ Feature: Workbench
   ##################################################################
 
   @api
-  Scenario: View 'My workbench' page for "portal administrator" role
-    Given I am logged in as a user with the "portal administrator" role
+  Scenario Outline: View 'My workbench' page
+    Given I am logged in as a user with the "<role name>" role
     Then I should see the link "My Workbench" in the navigation region
     When I follow "My Workbench"
     Then I should see "My Content"
@@ -18,15 +18,20 @@ Feature: Workbench
     And I should see "My drafts"
     And I should see "Needs review"
 
+  Examples:
+    | role name                 |
+    | portal administrator      |
+    | content editor            |
+
   @api
-  Scenario: View 'My workbench' page for "content editor" role
-    Given I am logged in as a user with the "content editor" role
+  Scenario: View 'My workbench' page for "data contributor" role
+    Given I am logged in as a user with the "data contributor" role
     Then I should see the link "My Workbench" in the navigation region
     When I follow "My Workbench"
     Then I should see "My Content"
     And I should see "Create content"
     And I should see "My drafts"
-    And I should see "Needs review"
+    And I should not see "Needs review"
 
 
   @api @wip
