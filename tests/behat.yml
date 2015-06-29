@@ -16,16 +16,12 @@ default:
     pretty: true
   extensions:
     Behat\MinkExtension:
-      base_url: http://data_starter.local
+      base_url: http://127.0.0.1:8888
       selenium2: ~
       goutte: ~
-      show_cmd: firefox %s
     Drupal\DrupalExtension:
-      blackbox: ~
       drupal:
         drupal_root: %paths.base%/../docroot
-      drush:
-        alias: 'data_starter.local'
       api_driver: 'drupal'
       # @todo fixup these regions for use with new theme
       region_map:
@@ -39,11 +35,12 @@ default:
         message_selector: '.alert'
         error_message_selector: '.alert.alert-error'
         success_message_selector: '.alert.alert-success'
+local-vm:
+  extensions:
+    Behat\MinkExtension:
+      base_url: http://data_starter.local
+
 jenkins:
   extensions:
     Behat\MinkExtension:
       base_url: http://data_starter.local
-    Drupal\DrupalExtension:
-      drush:
-        alias: 'data_starter.local'
-      api_driver: 'drupal'
