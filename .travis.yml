@@ -27,6 +27,8 @@ script:
   - drush -y en data_starter_install
   - drush php-eval 'node_access_rebuild();'
   - drush rr
+  - drush en custom_config -y
+  - drush fra -y
   - drush cc all
   - drush --quiet --yes --root=`pwd` runserver :8888 > /dev/null 2>&1 &
   - cd ../; cd tests; composer install;
