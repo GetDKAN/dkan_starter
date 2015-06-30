@@ -366,7 +366,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       'tags' => 'field_tags',
       'publisher' => 'og_group_ref',
       'moderation' => 'workbench_moderation',
-      'date_created' => 'created',
+      'date' => 'created',
     );
 
     // Default to draft moderation state.
@@ -490,6 +490,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       'description' => 'body',
       'format' => 'field_format',
       'dataset' => 'field_dataset_ref',
+      'date' => 'created',
     );
 
     foreach ($resourcesTable as $resourceHash) {
