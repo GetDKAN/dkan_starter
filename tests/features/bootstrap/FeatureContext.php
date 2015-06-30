@@ -83,6 +83,11 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
    * HELPER FUNCTIONS
    ****************************/
 
+/**
+ * Add page to context.
+ *
+ * @param $page
+ */
   public function addPage($page) {
     $this->pages[$page['title']] = $page;
   }
