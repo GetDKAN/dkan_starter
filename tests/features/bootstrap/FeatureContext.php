@@ -507,8 +507,8 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
           $node->{$drupal_field} = $value;
 
         } elseif ($key == 'dataset') {
-          if( $nid = getNidByTitle($value)) {
-            $node->{$drupal_field}['und'][0]['target_id'] = $datasetNode->nid;
+          if( $nid = $this->getNidByTitle($value, 'dataset')) {
+            $node->{$drupal_field}['und'][0]['target_id'] = $nid;
           }else {
             throw new Exception(sprintf("Dataset node not found."));
           }
