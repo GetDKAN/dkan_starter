@@ -482,9 +482,54 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   /**
    * @Given resources:
    */
-  public function resources(TableNode $table)
+  public function addResources(TableNode $resourcesTable)
   {
-    throw new PendingException();
+    // Map readable field names to drupal field names.
+    $field_map = array(
+      'title' => 'title',
+      'description' => 'body',
+      'format' => 'field_format',
+      'dataset' => 'field_dataset_ref',
+    );
+
+    foreach ($resourcesTable as $resourceHash) {
+      $node = new stdClass();
+      $node->type = 'resource';
+      foreach($resourceHash as $key => $value) {
+        $drupal_field = $field_map[$key];
+
+        if(!isset($field_map[$key])) {
+          throw new Exception(sprintf("Resource's field %s doesn't exist, or hasn't been mapped. See FeatureContext::addDatasets for mappings.", $key));
+
+        } elseif ($key == 'format') {
+          $value = $this->explode_list($value);
+          $node->{$drupal_field} = $value;
+
+        } elseif ($key == 'dataset') {
+          if( $nid = getNidByTitle($value)) {
+            $node->{$drupal_field}['und'][0]['target_id'] = $datasetNode->nid;
+          }else {
+            throw new Exception(sprintf("Dataset node not found."));
+          }
+
+        } else {
+          // Default behavior.
+          // PHP 5.4 supported notation.
+          $node->{$drupal_field} = $value;
+        }
+      }
+    }
+
+    $created_node = $this->getDriver()->createNode($node);
+
+    // Add the created node to the datasets array.
+    $this->resources[$created_node->nid] = $created_node;
+
+    // Add the url to the page array for easy navigation.
+    $this->addPage(array(
+      'title' => $created_node->title,
+      'url' => '/node/' . $created_node->nid
+    ));
   }
 
   /**
