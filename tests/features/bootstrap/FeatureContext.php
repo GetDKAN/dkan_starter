@@ -363,42 +363,64 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       'author' => 'author',
       'title' => 'title',
       'description' => 'body',
-      'publisher' => 'og_group_ref',
-      'published' => 'published',
-      'resource format' => 'resource format',
       'tags' => 'field_tags',
+      'publisher' => 'og_group_ref',
+      'moderation' => 'workbench_moderation',
+      'date_created' => 'created',
     );
 
-    foreach ($datasetsTable as $groupHash) {
+    // Default to draft moderation state.
+    $workbench_moderation_state = 'draft';
+
+    foreach ($datasetsTable as $datasetHash) {
       $node = new stdClass();
-      $node->type = 'group';
-      foreach($groupHash as $field => $value) {
-        if(isset($field_map[$field])) {
-          switch ($field) {
-
-            case 'tags':
-            case 'publisher':
-              $value = $this->explode_list($value);
-
+      $node->type = 'dataset';
+      foreach($datasetHash as $key => $value) {
+        if(!isset($field_map[$key])) {
+          throw new Exception(sprintf("Dataset's field %s doesn't exist, or hasn't been mapped. See FeatureContext::addDatasets for mappings.", $key));
+        } else if($key == 'author') {
+          $user = user_load_by_name($value);
+          if(!isset($user)) {
+            $value = $user->uid;
           }
-          $drupal_field = $field_map[$field];
+          $drupal_field = $field_map[$key];
+          $node->$drupal_field = $value;
+
+        } else if($key == 'tags' || $key == 'publisher') {
+          $value = $this->explode_list($value);
+          $drupal_field = $field_map[$key];
+          $node->$drupal_field = $value;
+
+        } else if($key == 'moderation') {
+          switch($value){
+            case 'Needs Review':
+            $workbench_moderation_state = 'needs_review';
+            break;
+            case 'Published':
+            $workbench_moderation_state = 'published';
+            break;
+          }
+        } else {
+          // Defalut behavior, map stait to field map.
+          $drupal_field = $field_map[$key];
           $node->$drupal_field = $value;
         }
-        else {
-          throw new Exception(sprintf("Dataset's field %s doesn't exist, or hasn't been mapped. See FeatureContext::addDatasets for mappings.", $field));
-        }
       }
-      $created_node = $this->getDriver()->createNode($node);
-
-      // Add the created node to the datasets array.
-      $this->datasets[$created_node->nid] = $created_node;
-
-      // Add the url to the page array for easy navigation.
-      $this->addPage(array(
-        'title' => $created_node->title,
-        'url' => '/node/' . $created_node->nid
-      ));
     }
+
+    $created_node = $this->getDriver()->createNode($node);
+
+    // Manage moderation state.
+    workbench_moderation_moderate($created_node, 'needs_review');
+
+    // Add the created node to the datasets array.
+    $this->datasets[$created_node->nid] = $created_node;
+
+    // Add the url to the page array for easy navigation.
+    $this->addPage(array(
+      'title' => $created_node->title,
+      'url' => '/node/' . $created_node->nid
+    ));
   }
 
   /**
