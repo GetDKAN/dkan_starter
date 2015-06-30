@@ -153,6 +153,34 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     $array = array_map('trim', $array);
     return is_array($array) ? $array : array();
   }
+
+  /**
+   * Get dataset nid by title from context.
+   *
+   * @param $nodeTitle title of the node.
+   * @param $type type of nodo look for.
+   *
+   * @return Node ID or FALSE
+   */
+  private function getNidByTitle($nodeTitle, $type)
+  {
+    $context = array();
+    switch($type) {
+    case 'dataset':
+      $context = $this->datasets;
+      break;
+    case 'resource':
+      $context = $this->resources;
+    }
+
+    foreach($context as $key => $node) {
+      if($node->title == $nodeTitle) {
+        return $key;
+      }
+    }
+     return FALSE;
+  }
+
   /*****************************
    * CUSTOM STEPS
    *****************************/
