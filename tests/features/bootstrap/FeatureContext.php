@@ -35,8 +35,9 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
    * HOOKS
    ******************************/
 
-
-  /** @AfterStep */
+  /**
+  * @AfterStep
+  */
   public function debugStepsAfter(AfterStepScope $scope)
   {
     // Tests tagged with @debugEach will perform each step and wait for [ENTER] to proceed.
