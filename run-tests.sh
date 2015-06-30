@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
-
-# Store the working directory so we can switch back.
-PWD=`pwd`
-echo $PWD
-cd tests
+set -e
 
 if [ -z "$1" ];
 then
@@ -13,13 +9,24 @@ else
   URL=$1
 fi
 
-# USE
+echo "RUN_TESTS =============>"
+
+# Store the working directory so we can switch back.
+PWD=`pwd`
+echo "  > $PWD"
+cd tests
+echo  "  > changed directory to "`pwd`
+
+# USE ENV params so that we can set the base URL via command line, which bin/beheat doesn't support in a nice way.
 ENV_PARAMS='BEHAT_PARAMS='\''{"extensions":{"Behat\\MinkExtension":{"base_url":"'$URL'"}}}'\'
 # --expand doesn't work / was removed in behat 3.x See https://github.com/Behat/Behat/issues/723
 FORMAT_SETTINGS='--format-settings='\''{"expand": true}'\'
 CMD="bin/behat --colors features/ -v"
-echo "Running $ENV_PARAMS $CMD $FORMAT_SETTINGS ${@:2}"
 
-eval $ENV_PARAMS $CMD
+RUN="$ENV_PARAMS $CMD $FORMAT_SETTINGS ${@:2}"
+echo "  > Running Command: $RUN\n"
 
+set -v
+eval $RUN
+set +v
 cd $PWD

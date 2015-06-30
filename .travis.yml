@@ -29,6 +29,7 @@ script:
   - drush rr
   - drush cc all
   - drush --quiet --yes --root=`pwd` runserver :8888 > /dev/null 2>&1 &
+  - cd ../; cd tests; composer install;
   - cd ../; ./run-tests.sh http://127.0.0.1:8888
 
 notifications:
