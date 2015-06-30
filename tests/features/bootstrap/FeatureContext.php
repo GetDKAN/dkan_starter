@@ -363,6 +363,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       'author' => 'author',
       'title' => 'title',
       'description' => 'body',
+      'language' => 'language',
       'tags' => 'field_tags',
       'publisher' => 'og_group_ref',
       'moderation' => 'workbench_moderation',
@@ -375,6 +376,8 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     foreach ($datasetsTable as $datasetHash) {
       $node = new stdClass();
       $node->type = 'dataset';
+      $node->language = LANGUAGE_NONE;
+
       foreach($datasetHash as $key => $value) {
         if(!isset($field_map[$key])) {
           throw new Exception(sprintf("Dataset's field %s doesn't exist, or hasn't been mapped. See FeatureContext::addDatasets for mappings.", $key));
@@ -488,6 +491,8 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     $field_map = array(
       'title' => 'title',
       'description' => 'body',
+      'author' => 'author',
+      'language' => 'language',
       'format' => 'field_format',
       'dataset' => 'field_dataset_ref',
       'date' => 'created',
@@ -496,11 +501,21 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     foreach ($resourcesTable as $resourceHash) {
       $node = new stdClass();
       $node->type = 'resource';
+      $node->language = LANGUAGE_NONE;
+
       foreach($resourceHash as $key => $value) {
         $drupal_field = $field_map[$key];
 
         if(!isset($field_map[$key])) {
           throw new Exception(sprintf("Resource's field %s doesn't exist, or hasn't been mapped. See FeatureContext::addDatasets for mappings.", $key));
+
+        } else if($key == 'author') {
+          $user = user_load_by_name($value);
+          if(!isset($user)) {
+            $value = $user->uid;
+          }
+          $drupal_field = $field_map[$key];
+          $node->$drupal_field = $value;
 
         } elseif ($key == 'format') {
           $value = $this->explode_list($value);
