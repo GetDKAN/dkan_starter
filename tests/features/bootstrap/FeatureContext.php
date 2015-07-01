@@ -178,7 +178,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
         return $key;
       }
     }
-     return FALSE;
+    return FALSE;
   }
 
   /*****************************
@@ -375,6 +375,8 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
 
     foreach ($datasetsTable as $datasetHash) {
       $node = new stdClass();
+
+      // Defaults
       $node->type = 'dataset';
       $node->language = LANGUAGE_NONE;
 
@@ -396,10 +398,10 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
 
         } else if($key == 'moderation') {
           switch($value){
-            case 'Needs Review':
+          case 'Needs Review':
             $workbench_moderation_state = 'needs_review';
             break;
-            case 'Published':
+          case 'Published':
             $workbench_moderation_state = 'published';
             break;
           }
@@ -409,21 +411,21 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
           $node->$drupal_field = $value;
         }
       }
+
+      $created_node = $this->getDriver()->createNode($node);
+
+      // Manage moderation state.
+      workbench_moderation_moderate($created_node, 'needs_review');
+
+      // Add the created node to the datasets array.
+      $this->datasets[$created_node->nid] = $created_node;
+
+      // Add the url to the page array for easy navigation.
+      $this->addPage(array(
+        'title' => $created_node->title,
+        'url' => '/node/' . $created_node->nid
+      ));
     }
-
-    $created_node = $this->getDriver()->createNode($node);
-
-    // Manage moderation state.
-    workbench_moderation_moderate($created_node, 'needs_review');
-
-    // Add the created node to the datasets array.
-    $this->datasets[$created_node->nid] = $created_node;
-
-    // Add the url to the page array for easy navigation.
-    $this->addPage(array(
-      'title' => $created_node->title,
-      'url' => '/node/' . $created_node->nid
-    ));
   }
 
   /**
@@ -496,11 +498,17 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       'format' => 'field_format',
       'dataset' => 'field_dataset_ref',
       'date' => 'created',
+      'moderation' => 'workbench_moderation',
     );
+
+    // Default to draft moderation state.
+    $workbench_moderation_state = 'draft';
 
     foreach ($resourcesTable as $resourceHash) {
       $node = new stdClass();
       $node->type = 'resource';
+
+      // Defaults
       $node->language = LANGUAGE_NONE;
 
       foreach($resourceHash as $key => $value) {
@@ -528,24 +536,38 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
             throw new Exception(sprintf("Dataset node not found."));
           }
 
+        } else if($key == 'moderation') {
+          // No need to define 'Draft' state as it is used as default.
+          switch($value){
+          case 'Needs Review':
+            $workbench_moderation_state = 'needs_review';
+            break;
+          case 'Published':
+            $workbench_moderation_state = 'published';
+            break;
+          }
+
         } else {
           // Default behavior.
           // PHP 5.4 supported notation.
           $node->{$drupal_field} = $value;
         }
       }
+
+      $created_node = $this->getDriver()->createNode($node);
+
+      // Manage moderation state.
+      workbench_moderation_moderate($created_node, $workbench_moderation_state);
+
+      // Add the created node to the datasets array.
+      $this->resources[$created_node->nid] = $created_node;
+
+      // Add the url to the page array for easy navigation.
+      $this->addPage(array(
+        'title' => $created_node->title,
+        'url' => '/node/' . $created_node->nid
+      ));
     }
-
-    $created_node = $this->getDriver()->createNode($node);
-
-    // Add the created node to the datasets array.
-    $this->resources[$created_node->nid] = $created_node;
-
-    // Add the url to the page array for easy navigation.
-    $this->addPage(array(
-      'title' => $created_node->title,
-      'url' => '/node/' . $created_node->nid
-    ));
   }
 
   /**
@@ -780,6 +802,4 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   {
     throw new PendingException();
   }
-
-
 }
