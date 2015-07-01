@@ -79,6 +79,32 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
      //print  $this->scenario->getTitle();
    }
 
+  /**
+   * @BeforeScenario @mail
+   */
+  public function beforeMail()
+  {
+    // Store the original system to restore after the scenario.
+    echo("Setting Testing Mail System\n");
+    $this->originalMailSystem = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
+    // Set the test system.
+    variable_set('mail_system', array('default-system' => 'TestingMailSystem'));
+    // Flush the email buffer.
+    variable_set('drupal_test_email_collector', array());
+  }
+
+  /**
+   * @AfterScenario @mail
+   */
+  public function afterMail()
+  {
+    echo("Restoring Mail System\n");
+    // Restore the default system.
+    variable_set('mail_system', $this->originalMailSystem);
+    // Flush the email buffer.
+    variable_set('drupal_test_email_collector', array());
+  }
+
   /****************************
    * HELPER FUNCTIONS
    ****************************/
@@ -630,19 +656,55 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   }
 
   /**
-   * @Then :arg1 user should receive an email
+   * @Then :username user should receive an email
    */
-  public function userShouldReceiveAnEmail($arg1)
+  public function userShouldReceiveAnEmail($username)
+  {
+    if($user = user_load_by_name($username)) {
+      // We can't use variable_get() because $conf is only fetched once per
+      // scenario.
+      $variables = array_map('unserialize', db_query("SELECT name, value FROM {variable} WHERE name = 'drupal_test_email_collector'")->fetchAllKeyed());
+      $this->activeEmail = FALSE;
+      foreach ($variables['drupal_test_email_collector'] as $message) {
+        if ($message['to'] == $user->mail) {
+          $this->activeEmail = $message;
+          return TRUE;
+        }
+      }
+      throw new Exception(sprintf("No Email for " . $username . "found."));
+    } else {
+      throw new Exception(sprintf("User %s not found.", $username));
+    }
+  }
+
+  /**
+   * @Then all :username should receive an email
+   */
+  public function allShouldReceiveAnEmail($username)
   {
     throw new PendingException();
   }
 
   /**
-   * @Then all :arg1 should receive an email
+   * @Then the :emailAddress should recieve an email containing :content
    */
-  public function allShouldReceiveAnEmail($arg1)
+  public function theEmailToShouldContain($emailAddress, $content)
   {
-    throw new PendingException();
+    // We can't use variable_get() because $conf is only fetched once per
+    // scenario.
+    $variables = array_map('unserialize', db_query("SELECT name, value FROM {variable} WHERE name = 'drupal_test_email_collector'")->fetchAllKeyed());
+    $this->activeEmail = FALSE;
+    foreach ($variables['drupal_test_email_collector'] as $message) {
+      if ($message['to'] == $emailAddress) {
+        $this->activeEmail = $message;
+        if (strpos($message['body'], $content) !== FALSE ||
+          strpos($message['subject'], $content) !== FALSE) {
+            return TRUE;
+          }
+        throw new \Exception('Did not find expected content in message body or subject.');
+      }
+    }
+    throw new \Exception(sprintf('Did not find expected message to %s', $emailAddress));
   }
 
   /**
