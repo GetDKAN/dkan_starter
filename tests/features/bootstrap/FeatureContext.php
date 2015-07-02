@@ -538,14 +538,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
 
         } else if($key == 'moderation') {
           // No need to define 'Draft' state as it is used as default.
-          switch($value){
-          case 'Needs Review':
-            $workbench_moderation_state = 'needs_review';
-            break;
-          case 'Published':
-            $workbench_moderation_state = 'published';
-            break;
-          }
+          $workbench_moderation_state = $value;
 
         } else {
           // Default behavior.

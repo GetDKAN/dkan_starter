@@ -112,8 +112,8 @@ Feature: Workbench
       | name   |
       | Health |
     And datasets:
-      | title      | author  | moderation    | date         | tags   |
-      | Dataset 01 | Gabriel | Needs Review  | Feb 01, 2015 | Health |
+      | title      | author  | moderation   | date         | tags   |
+      | Dataset 01 | Gabriel | needs_review | Feb 01, 2015 | Health |
     And "Format" terms:
       | name |
       | csv |
