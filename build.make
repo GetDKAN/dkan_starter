@@ -39,27 +39,14 @@ projects[] = features_master
 ; ======
 ;projects[] = search_api_solr
 
-; DKAN
+; DATA WORKFLOW
 ; =====
-; override nuboot_radix, temporary till merged
-;projects[nuboot_radix][download][type] = git
-;projects[nuboot_radix][download][url] = https://github.com/NuCivic/nuboot_radix.git
-;projects[nuboot_radix][download][branch] = 7.x-1.x
-;projects[nuboot_radix][download][revision] = "137ae6ac98298b16c1f746626bd0821dbae7e6f4"
-;projects[nuboot_radix][type] = theme
-
-; override open_data_schema_map, temporary till merged.
-; @todo also remove rm command from buildmanager
-;projects[open_data_schema_map][type] = module
-;projects[open_data_schema_map][download][type] = git
-;projects[open_data_schema_map][download][url] = https://github.com/NuCivic/open_data_schema_map.git
-;projects[open_data_schema_map][download][branch] = draft_for_file_caching
+projects[data_workflow][type] = module
+projects[data_workflow][download][type] = git
+projects[data_workflow][download][url] = git@github.com:NuCivic/data_workflow.git
+projects[data_workflow][download][branch] = master
 
 
-;projects[dkan_migrate_base][type] = module
-;projects[dkan_migrate_base][download][type] = git
-;projects[dkan_migrate_base][download][url] = https://github.com/NuCivic/dkan_migrate_base.git
-;projects[dkan_migrate_base][download][branch] = single_migration_class
 
 ; Performance
 ; ===========
