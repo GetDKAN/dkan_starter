@@ -35,8 +35,9 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
    * HOOKS
    ******************************/
 
-
-  /** @AfterStep */
+  /**
+  * @AfterStep
+  */
   public function debugStepsAfter(AfterStepScope $scope)
   {
     // Tests tagged with @debugEach will perform each step and wait for [ENTER] to proceed.
@@ -82,6 +83,11 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
    * HELPER FUNCTIONS
    ****************************/
 
+/**
+ * Add page to context.
+ *
+ * @param $page
+ */
   public function addPage($page) {
     $this->pages[$page['title']] = $page;
   }
@@ -147,6 +153,34 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     $array = array_map('trim', $array);
     return is_array($array) ? $array : array();
   }
+
+  /**
+   * Get dataset nid by title from context.
+   *
+   * @param $nodeTitle title of the node.
+   * @param $type type of nodo look for.
+   *
+   * @return Node ID or FALSE
+   */
+  private function getNidByTitle($nodeTitle, $type)
+  {
+    $context = array();
+    switch($type) {
+    case 'dataset':
+      $context = $this->datasets;
+      break;
+    case 'resource':
+      $context = $this->resources;
+    }
+
+    foreach($context as $key => $node) {
+      if($node->title == $nodeTitle) {
+        return $key;
+      }
+    }
+    return FALSE;
+  }
+
   /*****************************
    * CUSTOM STEPS
    *****************************/
@@ -329,32 +363,53 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       'author' => 'author',
       'title' => 'title',
       'description' => 'body',
-      'publisher' => 'og_group_ref',
-      'published' => 'published',
-      'resource format' => 'resource format',
+      'language' => 'language',
       'tags' => 'field_tags',
+      'publisher' => 'og_group_ref',
+      'moderation' => 'workbench_moderation',
+      'date' => 'created',
     );
 
-    foreach ($datasetsTable as $groupHash) {
+    // Default to draft moderation state.
+    $workbench_moderation_state = 'draft';
+
+    foreach ($datasetsTable as $datasetHash) {
       $node = new stdClass();
-      $node->type = 'group';
-      foreach($groupHash as $field => $value) {
-        if(isset($field_map[$field])) {
-          switch ($field) {
 
-            case 'tags':
-            case 'publisher':
-              $value = $this->explode_list($value);
+      // Defaults
+      $node->type = 'dataset';
+      $node->language = LANGUAGE_NONE;
 
+      foreach($datasetHash as $key => $value) {
+        if(!isset($field_map[$key])) {
+          throw new Exception(sprintf("Dataset's field %s doesn't exist, or hasn't been mapped. See FeatureContext::addDatasets for mappings.", $key));
+        } else if($key == 'author') {
+          $user = user_load_by_name($value);
+          if(!isset($user)) {
+            $value = $user->uid;
           }
-          $drupal_field = $field_map[$field];
+          $drupal_field = $field_map[$key];
+          $node->$drupal_field = $value;
+
+        } else if($key == 'tags' || $key == 'publisher') {
+          $value = $this->explode_list($value);
+          $drupal_field = $field_map[$key];
+          $node->$drupal_field = $value;
+
+        } else if($key == 'moderation') {
+          $workbench_moderation_state = $value;
+
+        } else {
+          // Defalut behavior, map stait to field map.
+          $drupal_field = $field_map[$key];
           $node->$drupal_field = $value;
         }
-        else {
-          throw new Exception(sprintf("Dataset's field %s doesn't exist, or hasn't been mapped. See FeatureContext::addDatasets for mappings.", $field));
-        }
       }
+
       $created_node = $this->getDriver()->createNode($node);
+
+      // Manage moderation state.
+      workbench_moderation_moderate($created_node, $workbench_moderation_state);
 
       // Add the created node to the datasets array.
       $this->datasets[$created_node->nid] = $created_node;
@@ -426,9 +481,80 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   /**
    * @Given resources:
    */
-  public function resources(TableNode $table)
+  public function addResources(TableNode $resourcesTable)
   {
-    throw new PendingException();
+    // Map readable field names to drupal field names.
+    $field_map = array(
+      'title' => 'title',
+      'description' => 'body',
+      'author' => 'author',
+      'language' => 'language',
+      'format' => 'field_format',
+      'dataset' => 'field_dataset_ref',
+      'date' => 'created',
+      'moderation' => 'workbench_moderation',
+    );
+
+    // Default to draft moderation state.
+    $workbench_moderation_state = 'draft';
+
+    foreach ($resourcesTable as $resourceHash) {
+      $node = new stdClass();
+      $node->type = 'resource';
+
+      // Defaults
+      $node->language = LANGUAGE_NONE;
+
+      foreach($resourceHash as $key => $value) {
+        $drupal_field = $field_map[$key];
+
+        if(!isset($field_map[$key])) {
+          throw new Exception(sprintf("Resource's field %s doesn't exist, or hasn't been mapped. See FeatureContext::addDatasets for mappings.", $key));
+
+        } else if($key == 'author') {
+          $user = user_load_by_name($value);
+          if(!isset($user)) {
+            $value = $user->uid;
+          }
+          $drupal_field = $field_map[$key];
+          $node->$drupal_field = $value;
+
+        } elseif ($key == 'format') {
+          $value = $this->explode_list($value);
+          $node->{$drupal_field} = $value;
+
+        } elseif ($key == 'dataset') {
+          if( $nid = $this->getNidByTitle($value, 'dataset')) {
+            $node->{$drupal_field}['und'][0]['target_id'] = $nid;
+          }else {
+            throw new Exception(sprintf("Dataset node not found."));
+          }
+
+        } else if($key == 'moderation') {
+          // No need to define 'Draft' state as it is used as default.
+          $workbench_moderation_state = $value;
+
+        } else {
+          // Default behavior.
+          // PHP 5.4 supported notation.
+          $node->{$drupal_field} = $value;
+        }
+      }
+
+      $created_node = $this->getDriver()->createNode($node);
+
+      // Manage moderation state.
+      workbench_moderation_moderate($created_node, $workbench_moderation_state);
+
+      // Add the created node to the datasets array.
+      $this->resources[$created_node->nid] = $created_node;
+
+      // Add the url to the page array for easy navigation.
+      $this->addPage(array(
+        'title' => $created_node->title,
+        'url' => '/node/' . $created_node->nid
+      ));
+    }
   }
 
   /**
@@ -663,6 +789,4 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   {
     throw new PendingException();
   }
-
-
 }

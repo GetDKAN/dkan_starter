@@ -98,6 +98,39 @@ Feature: Workbench
   Scenario: Search/filter content associated with the groups I belong to
     Given I am on the homepage
 
+  @api
+  Scenario: As a Content Editor I want to Publish datasets posted by a Data Contributor
+    Given pages:
+      | title        | url                          |
+      | Datasets     | dataset                      |
+      | Needs Review | admin/workbench/needs-review |
+    Given users:
+      | name    | mail             | roles                |
+      | Jaz     | jaz@test.com     | data contributor     |
+      | Gabriel | gabriel@test.com | content editor       |
+    And "tags" terms:
+      | name   |
+      | Health |
+    And datasets:
+      | title      | author  | moderation   | date         | tags   |
+      | Dataset 01 | Gabriel | needs_review | Feb 01, 2015 | Health |
+    And "Format" terms:
+      | name |
+      | csv |
+    And resources:
+      | title       | format | dataset    |
+      | Resource 01 | csv    | Dataset 01 |
+    Given I am logged in as "Gabriel"
+    And I am on "Needs Review" page
+    Then I should see "Dataset 01"
+    Given I click "Change to Published" in the "Dataset 01" row
+    Then I should not see "Dataset 01"
+    Given I am on "Dataset 01" page
+    Then I should see "Revision state: Published"
+    Given I am an anonymous user
+    And I am on "Dataset 01" page
+    Given I should not see the error message "Access denied. You must log in to view this page."
+
   @api @wip
   Scenario: Publish multiple content associated with the groups I belong to at the same time
     Given I am on the homepage
@@ -137,5 +170,3 @@ Feature: Workbench
   @api @wip
   Scenario: View a reports on drafts that haven't moved to published for more than 48 hours
     Given I am on the homepage
-
-
