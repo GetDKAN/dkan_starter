@@ -8,9 +8,31 @@ Feature: Workbench
   # AUTHENTICATED ( PORTAL ADMINISTRATORS + CONTENT EDITORS + DATA CONTRIBUTORS )
   ##################################################################
 
-  @api @wip
-  Scenario: View 'My workbench' page
-    Given I am on the homepage
+  @api
+  Scenario Outline: View 'My workbench' page
+    Given I am logged in as a user with the "<role name>" role
+    Then I should see the link "My Workbench" in the navigation region
+    When I follow "My Workbench"
+    Then I should see "My Content"
+    And I should see "Create content"
+    And I should see "My drafts"
+    And I should see "Needs review"
+
+  Examples:
+    | role name                 |
+    | portal administrator      |
+    | content editor            |
+
+  @api
+  Scenario: View 'My workbench' page for "data contributor" role
+    Given I am logged in as a user with the "data contributor" role
+    Then I should see the link "My Workbench" in the navigation region
+    When I follow "My Workbench"
+    Then I should see "My Content"
+    And I should see "Create content"
+    And I should see "My drafts"
+    And I should not see "Needs review"
+
 
   @api @wip
   Scenario: View basic profile information

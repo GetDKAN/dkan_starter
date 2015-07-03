@@ -22,14 +22,15 @@ default:
       drupal:
         drupal_root: %paths.base%/../docroot
       api_driver: 'drupal'
-      # @todo fixup these regions for use with new theme
+      # @todo fixup these regions for use with new theme. Updated navigation only
       region_map:
-        navigation: '.region-navigation'
+        navigation: '.navigation-wrapper'
         breadcrumb: '.breadcrumb'
         left_sidebar: '.panel-col-first'
         search_area: '.panel-col-last'
         dropdown_links: '.comment-main .links.inline.dropdown-menu'
         comment: '.comment-main'
+
       selectors:
         message_selector: '.alert'
         error_message_selector: '.alert.alert-error'
