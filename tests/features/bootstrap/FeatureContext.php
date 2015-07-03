@@ -397,14 +397,8 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
           $node->$drupal_field = $value;
 
         } else if($key == 'moderation') {
-          switch($value){
-          case 'Needs Review':
-            $workbench_moderation_state = 'needs_review';
-            break;
-          case 'Published':
-            $workbench_moderation_state = 'published';
-            break;
-          }
+          $workbench_moderation_state = $value;
+
         } else {
           // Defalut behavior, map stait to field map.
           $drupal_field = $field_map[$key];
@@ -415,7 +409,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       $created_node = $this->getDriver()->createNode($node);
 
       // Manage moderation state.
-      workbench_moderation_moderate($created_node, 'needs_review');
+      workbench_moderation_moderate($created_node, $workbench_moderation_state);
 
       // Add the created node to the datasets array.
       $this->datasets[$created_node->nid] = $created_node;
