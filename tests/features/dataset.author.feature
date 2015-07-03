@@ -8,6 +8,11 @@ Feature: Dataset Features
 
 
   Background:
+    Given pages:
+      | title        | url                          |
+      | Datasets     | dataset                      |
+      | Needs Review | admin/workbench/needs-review |
+      | My drafts    | admin/workbench/drafts       |
     Given users:
       | name    | mail             | roles                |
       | John    | john@test.com    | portal administrator |
@@ -29,18 +34,25 @@ Feature: Dataset Features
       | Jaz     | Group 01 | member               | Pending           |
       | Admin   | Group 02 | administrator member | Active            |
       | Celeste | Group 02 | member               | Active            |
+    And "Tags" terms:
+      | name   |
+      | Health |
+      | Gov    |
     And datasets:
-      | title      | format | author  | published        | Date         | tags   |
-      | Dataset 01 | CSV    | Gabriel | Yes              | Feb 01, 2015 | Health |
-      | Dataset 02 | XLS    | Gabriel | Yes              | Mar 13, 2015 | Gov    |
-      | Dataset 03 | CSV    | Katie   | Yes              | Feb 17, 2013 | Health |
-      | Dataset 04 | CSV    | Celeste | No, Draft        | Dic 21, 2015 | Gov    |
-      | Dataset 05 | CSV    | Katie   | No, Needs review | Dic 21, 2015 | Gov    |
+      | title      | author  | moderation   | date         | tags   |
+      | Dataset 01 | Gabriel | published    | Feb 01, 2015 | Health |
+      | Dataset 02 | Gabriel | published    | Mar 13, 2015 | Gov    |
+      | Dataset 03 | Katie   | published    | Feb 17, 2013 | Health |
+      | Dataset 04 | Celeste | draft        | Dic 21, 2015 | Gov    |
+      | Dataset 05 | Katie   | needs_review | Dic 21, 2015 | Gov    |
+    And "Format" terms:
+      | name |
+      | csv  |
     And resources:
-      | title       | dataset    | published |
-      | Resource 01 | Dataset 01 | Yes       |
-      | Resource 02 | Dataset 01 | Yes       |
-      | Resource 03 | Dataset 02 | Yes       |
+      | title       | dataset    | moderation | format |
+      | Resource 01 | Dataset 01 | published  | csv    |
+      | Resource 02 | Dataset 01 | published  | csv    |
+      | Resource 03 | Dataset 02 | published  | csv    |
 
   @api @wip
   Scenario: Create dataset as draft
@@ -79,7 +91,28 @@ Feature: Dataset Features
   Scenario: Unpublish own dataset
     Given I am on the homepage
 
-  @api @wip
+  @api @mail
+  Scenario: As a Content Editor I want to receive an email notification when "Data Contributor" add a Dataset that "Needs Review".
+    Given I am logged in as "Katie"
+    And I am on "Datasets" page
+    When I click "Add Dataset"
+    And I fill in the following:
+      | Title                     | Dataset That Needs Review |
+      | Description               | Test Behat Dataset 06     |
+      | autocomplete-deluxe-input | Health                    |
+      | Moderation state          | needs_review              |
+    And I press "Next: Add data"
+    And I fill in the following:
+      | Title                     | Resource 061            |
+      | Description               | Test Behat Resource 061 |
+      | autocomplete-deluxe-input | CSV                     |
+    And I press "Save"
+    Then I should see the success message "Resource Resource 061 has been created."
+    When I click "Back to dataset"
+    Then I should see "Revision state: Needs Review"
+    And user Gabriel should receive an email containing "Please review the recent update at"
+
+  @api @mail
   Scenario: Request dataset review (Change dataset status from 'Draft' to 'Needs review')
     Given I am logged in as "Celeste"
     And I am on "My drafts" page
