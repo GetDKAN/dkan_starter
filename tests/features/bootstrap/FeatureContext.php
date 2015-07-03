@@ -656,7 +656,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   }
 
   /**
-   * @Then :username user should receive an email
+   * @Then user :username should receive an email
    */
   public function userShouldReceiveAnEmail($username)
   {
@@ -678,6 +678,32 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   }
 
   /**
+   * @Then user :username should receive an email containing :content
+   */
+  public function userShouldReceiveAnEmailContaining($username, $content)
+  {
+    if($user = user_load_by_name($username)) {
+      // We can't use variable_get() because $conf is only fetched once per
+      // scenario.
+      $variables = array_map('unserialize', db_query("SELECT name, value FROM {variable} WHERE name = 'drupal_test_email_collector'")->fetchAllKeyed());
+      $this->activeEmail = FALSE;
+      foreach ($variables['drupal_test_email_collector'] as $message) {
+        if ($message['to'] == $user->mail) {
+          $this->activeEmail = $message;
+          if (strpos($message['body'], $content) !== FALSE ||
+            strpos($message['subject'], $content) !== FALSE) {
+              return TRUE;
+            }
+          throw new \Exception('Did not find expected content in message body or subject.');
+        }
+      }
+      throw new Exception(sprintf("No Email for " . $username . " found."));
+    } else {
+      throw new Exception(sprintf("User %s not found.", $username));
+    }
+  }
+
+  /**
    * @Then all :username should receive an email
    */
   public function allShouldReceiveAnEmail($username)
@@ -688,7 +714,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   /**
    * @Then the :emailAddress should recieve an email containing :content
    */
-  public function theEmailToShouldContain($emailAddress, $content)
+  public function theEmailAddressShouldRecieveAnEmailContaining($emailAddress, $content)
   {
     // We can't use variable_get() because $conf is only fetched once per
     // scenario.
