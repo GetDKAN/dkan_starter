@@ -388,6 +388,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     $field_map = array(
       'author' => 'author',
       'title' => 'title',
+      'author' => 'uid',
       'description' => 'body',
       'language' => 'language',
       'tags' => 'field_tags',
@@ -411,11 +412,10 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
           throw new Exception(sprintf("Dataset's field %s doesn't exist, or hasn't been mapped. See FeatureContext::addDatasets for mappings.", $key));
         } else if($key == 'author') {
           $user = user_load_by_name($value);
-          if(!isset($user)) {
-            $value = $user->uid;
+          if($user) {
+            $drupal_field = $field_map[$key];
+            $node->$drupal_field = $user->uid;
           }
-          $drupal_field = $field_map[$key];
-          $node->$drupal_field = $value;
 
         } else if($key == 'tags' || $key == 'publisher') {
           $value = $this->explode_list($value);
@@ -513,7 +513,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     $field_map = array(
       'title' => 'title',
       'description' => 'body',
-      'author' => 'author',
+      'author' => 'uid',
       'language' => 'language',
       'format' => 'field_format',
       'dataset' => 'field_dataset_ref',
