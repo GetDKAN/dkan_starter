@@ -31,8 +31,21 @@ Feature: Workbench
     Then I should see "My Content"
     And I should see "Create content"
     And I should see "My drafts"
-    And I should not see "Needs review"
+    And I should see "Needs review"
 
+  @api
+  Scenario: View 'Stale drafts' menu item for "portal administrator" role
+    Given I am logged in as a user with the "portal administrator" role
+    Then I should see the link "My Workbench" in the navigation region
+    When I follow "My Workbench"
+    Then I should see "Stale drafts"
+
+  @api
+  Scenario: View 'Stale reviews' menu item for "portal administrator" role
+    Given I am logged in as a user with the "portal administrator" role
+    Then I should see the link "My Workbench" in the navigation region
+    When I follow "My Workbench"
+    Then I should see "Stale reviews"
 
   @api @wip
   Scenario: View basic profile information
