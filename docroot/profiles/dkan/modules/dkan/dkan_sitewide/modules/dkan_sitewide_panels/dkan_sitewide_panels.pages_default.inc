@@ -286,29 +286,6 @@ function dkan_sitewide_panels_default_page_manager_handlers() {
     $display->content['new-5771913e-f897-497d-9d56-f76f6b207b18'] = $pane;
     $display->panels['contentmain'][0] = 'new-5771913e-f897-497d-9d56-f76f6b207b18';
     $pane = new stdClass();
-    $pane->pid = 'new-946aa864-9804-47da-b71f-39d47aef4ebd';
-    $pane->panel = 'contentmain';
-    $pane->type = 'block';
-    $pane->subtype = 'workbench-block';
-    $pane->shown = TRUE;
-    $pane->access = array();
-    $pane->configuration = array(
-      'override_title' => 0,
-      'override_title_text' => '',
-      'override_title_heading' => 'h2',
-    );
-    $pane->cache = array();
-    $pane->style = array(
-      'settings' => NULL,
-    );
-    $pane->css = array();
-    $pane->extras = array();
-    $pane->position = 1;
-    $pane->locks = array();
-    $pane->uuid = '946aa864-9804-47da-b71f-39d47aef4ebd';
-    $display->content['new-946aa864-9804-47da-b71f-39d47aef4ebd'] = $pane;
-    $display->panels['contentmain'][1] = 'new-946aa864-9804-47da-b71f-39d47aef4ebd';
-    $pane = new stdClass();
     $pane->pid = 'new-25ca95bb-18cd-4175-8cbd-5d44b3b08e20';
     $pane->panel = 'sidebar';
     $pane->type = 'block';
