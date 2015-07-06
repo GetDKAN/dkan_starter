@@ -43,8 +43,8 @@ Feature: Dataset Features
       | Dataset 01 | Gabriel | published    | Feb 01, 2015 | Health |
       | Dataset 02 | Gabriel | published    | Mar 13, 2015 | Gov    |
       | Dataset 03 | Katie   | published    | Feb 17, 2013 | Health |
-      | Dataset 04 | Celeste | draft        | Dic 21, 2015 | Gov    |
-      | Dataset 05 | Katie   | needs_review | Dic 21, 2015 | Gov    |
+      | Dataset 04 | Celeste | draft        | Jun 21, 2015 | Gov    |
+      | Dataset 05 | Katie   | needs_review | Jun 21, 2015 | Gov    |
     And "Format" terms:
       | name |
       | csv  |
@@ -116,10 +116,10 @@ Feature: Dataset Features
   Scenario: Request dataset review (Change dataset status from 'Draft' to 'Needs review')
     Given I am logged in as "Celeste"
     And I am on "My drafts" page
-    Then I should see "Dataset 04"
     And I should see "Change to Needs Review" in the "Dataset 04" row
     When I click "Change to Needs Review" in the "Dataset 04" row
-    Then I should see "Needs Review" as "Moderation state" in the "Dataset 04" row
+    Then I should see "Needs Review" in the "Dataset 04" row
+    And user Gabriel should receive an email containing "Please review the recent update at"
 
   @api @wip
   Scenario: Revert review request (Change dataset status from 'Needs review' to 'Draft')
