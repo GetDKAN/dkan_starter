@@ -435,7 +435,8 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       $created_node = $this->getDriver()->createNode($node);
 
       // Manage moderation state.
-      workbench_moderation_moderate($created_node, $workbench_moderation_state);
+      // Requires this patch https://www.drupal.org/node/2393771
+      workbench_moderation_moderate($created_node, $workbench_moderation_state, $created_node->uid);
 
       // Add the created node to the datasets array.
       $this->datasets[$created_node->nid] = $created_node;
