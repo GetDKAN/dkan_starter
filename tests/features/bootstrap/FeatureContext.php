@@ -406,6 +406,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       // Defaults
       $node->type = 'dataset';
       $node->language = LANGUAGE_NONE;
+      $node->is_new = TRUE;
 
       foreach($datasetHash as $key => $value) {
         if(!isset($field_map[$key])) {
@@ -433,6 +434,17 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       }
 
       $created_node = $this->getDriver()->createNode($node);
+
+      // Make the node author as the revision author.
+      // This is needed for workbench views filtering.
+      $created_node->log = $created_node->uid;
+      $created_node->revision_uid = $created_node->uid;
+      db_update('node_revision')
+        ->fields(array(
+          'uid' => $created_node->uid,
+        ))
+        ->condition('nid', $created_node->nid, '=')
+        ->execute();
 
       // Manage moderation state.
       // Requires this patch https://www.drupal.org/node/2393771
@@ -569,6 +581,17 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       }
 
       $created_node = $this->getDriver()->createNode($node);
+
+      // Make the node author as the revision author.
+      // This is needed for workbench views filtering.
+      $created_node->log = $created_node->uid;
+      $created_node->revision_uid = $created_node->uid;
+      db_update('node_revision')
+        ->fields(array(
+          'uid' => $created_node->uid,
+        ))
+        ->condition('nid', $created_node->nid, '=')
+        ->execute();
 
       // Manage moderation state.
       workbench_moderation_moderate($created_node, $workbench_moderation_state);
