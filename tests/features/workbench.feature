@@ -79,6 +79,94 @@ Background:
     When I follow "My Workbench"
     Then I should see "Stale reviews"
 
+  @api
+  Scenario: As a Data Contributor I want to moderate my own Datasets
+    Given users:
+      | name                    | mail                              | roles                     |
+      | datacontributor1        | datacontributor1@test.com         | data contributor          |
+      | contenteditor1          | contenteditor1@test.com           | content editor            |
+      | portaladministrator1    | portaladministrator1@test.com     | portal administrator      |
+    And "tags" terms:
+      | name   |
+      | Health |
+    And datasets:
+      | title      | author                 | moderation    | date         | tags   |
+      | Dataset 01 | datacontributor1       | draft         | Feb 01, 2015 | Health |
+    And "Format" terms:
+      | name  |
+      | csv   |
+    And resources:
+      | title       | format | dataset    |
+      | Resource 01 | csv    | Dataset 01 |
+    Given I am logged in as "datacontributor1"
+    And I am on "Dataset 01" page
+    When I follow "Moderate"
+    Then I should see "Needs Review" in the "#edit-state" element
+    And I should not see "Published" in the "#edit-state" element
+    And I press "Apply"
+    And I should see "Draft --> Needs Review"
+
+  @api
+  Scenario: As a Content Editor I want to Publish datasets posted by a Data Contributor
+    Given users:
+      | name                    | mail                              | roles                     |
+      | datacontributor1        | datacontributor1@test.com         | data contributor          |
+      | contenteditor1          | contenteditor1@test.com           | content editor            |
+      | portaladministrator1    | portaladministrator1@test.com     | portal administrator      |
+    And "tags" terms:
+      | name   |
+      | Health |
+    And datasets:
+      | title      | author                 | moderation            | date         | tags   |
+      | Dataset 01 | datacontributor1       | needs_review          | Feb 01, 2015 | Health |
+    And "Format" terms:
+      | name  |
+      | csv   |
+    And resources:
+      | title       | format | dataset    |
+      | Resource 01 | csv    | Dataset 01 |
+    Given I am logged in as "contenteditor1"
+    And I am on "Dataset 01" page
+    When I follow "Moderate"
+    Then I should see "Published" in the "#edit-state" element
+    And I press "Apply"
+    And I should see "Needs Review --> Published"
+    Given I am an anonymous user
+    And I am on "Dataset 01" page
+    Given I should not see the error message "Access denied. You must log in to view this page."
+
+  @api
+  Scenario: As a Portal Administrator I want to moderate all content
+    Given users:
+      | name                    | mail                              | roles                     |
+      | datacontributor1        | datacontributor1@test.com         | data contributor          |
+      | contenteditor1          | contenteditor1@test.com           | content editor            |
+      | portaladministrator1    | portaladministrator1@test.com     | portal administrator      |
+    And "tags" terms:
+      | name   |
+      | Health |
+    And datasets:
+      | title      | author                 | moderation    | date         | tags   |
+      | Dataset 01 | datacontributor1       | draft         | Feb 01, 2015 | Health |
+    And "Format" terms:
+      | name  |
+      | csv   |
+    And resources:
+      | title       | format | dataset    |
+      | Resource 01 | csv    | Dataset 01 |
+    Given I am logged in as "portaladministrator1"
+    And I am on "Dataset 01" page
+    When I follow "Moderate"
+    Then I should see "Needs Review" in the "#edit-state" element
+    And I should see "Published" in the "#edit-state" element
+    When I follow "Edit draft"
+    And I fill in "Description" with "Dataset 01 edited"
+    And I press "Finish"
+    Then I should see "Dataset Dataset 01 has been updated"
+    Given I am an anonymous user
+    And I am on "Dataset 01" page
+    Given I should not see the error message "Access denied. You must log in to view this page."
+
   @api @wip
   Scenario: View basic profile information
     Given I am on the homepage
@@ -130,7 +218,6 @@ Background:
   @api @wip
   Scenario: View all content associated with the groups I belong to
     Given I am on the homepage
-
   @api @wip
   Scenario: View list of content with 'Draft' status associated with the groups I belong to
     Given I am on the homepage
@@ -142,34 +229,6 @@ Background:
   @api @wip
   Scenario: Search/filter content associated with the groups I belong to
     Given I am on the homepage
-
-  @api
-  Scenario: As a Content Editor I want to Publish datasets posted by a Data Contributor
-    Given pages:
-      | title        | url                          |
-      | Datasets     | dataset                      |
-      | Needs Review | admin/workbench/needs-review |
-    And "tags" terms:
-      | name   |
-      | Health |
-    And datasets:
-      | title      | author  | moderation   | date         | tags   |
-      | Dataset 01 | Gabriel | needs_review | Feb 01, 2015 | Health |
-    And "Format" terms:
-      | name |
-      | csv |
-    And resources:
-      | title       | format | dataset    |
-      | Resource 01 | csv    | Dataset 01 |
-    Given I am logged in as "Gabriel"
-    And I am on "Dataset 01" page
-    When I follow "Moderate"
-    Then I should see "Published" in the "#edit-state" element
-    When I press "Apply"
-    Then I should see "Needs Review --> Published"
-    Given I am an anonymous user
-    And I am on "Dataset 01" page
-    Given I should not see the error message "Access denied. You must log in to view this page."
 
   @api @wip
   Scenario: Publish multiple content associated with the groups I belong to at the same time
@@ -210,40 +269,3 @@ Background:
   @api @wip
   Scenario: View a reports on drafts that haven't moved to published for more than 48 hours
     Given I am on the homepage
-
-  ##################################################################
-  # EMAIL NOTIFICATION
-  ##################################################################
-
-  @api @mail
-  Scenario: As a Content Editor I want to receive an email notification when "Data Contributor" add a Dataset that "Needs Review".
-    Given I am logged in as "Katie"
-    And I am on "Datasets" page
-    When I click "Add Dataset"
-    And I fill in the following:
-      | Title                     | Dataset That Needs Review |
-      | Description               | Test Behat Dataset 06     |
-      | autocomplete-deluxe-input | Health                    |
-    And I press "Next: Add data"
-    And I fill in the following:
-      | Title                     | Resource 061            |
-      | Description               | Test Behat Resource 061 |
-      | autocomplete-deluxe-input | CSV                     |
-    And I press "Save"
-    Then I should see the success message "Resource Resource 061 has been created."
-    And I click "Back to dataset"
-    Then I follow "Moderate"
-    Then I should see "Needs Review" in the "#edit-state" element
-    And I should not see "Published" in the "#edit-state" element
-    And I press "Apply"
-    And I should see "Draft --> Needs Review"
-    And user Gabriel should receive an email containing "Please review the recent update at"
-
-  @api @mail
-  Scenario: Request dataset review (Change dataset status from 'Draft' to 'Needs review')
-    Given I am logged in as "Celeste"
-    And I am on "My drafts" page
-    And I should see "Change to Needs Review" in the "Dataset 04" row
-    When I click "Change to Needs Review" in the "Dataset 04" row
-    Then I should see "Needs Review" in the "Dataset 04" row
-    And user Gabriel should receive an email containing "Please review the recent update at"
