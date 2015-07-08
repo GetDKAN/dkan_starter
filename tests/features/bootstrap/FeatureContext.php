@@ -79,6 +79,32 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
      //print  $this->scenario->getTitle();
    }
 
+  /**
+   * @BeforeScenario @mail
+   */
+  public function beforeMail()
+  {
+    // Store the original system to restore after the scenario.
+    echo("Setting Testing Mail System\n");
+    $this->originalMailSystem = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
+    // Set the test system.
+    variable_set('mail_system', array('default-system' => 'TestingMailSystem'));
+    // Flush the email buffer.
+    variable_set('drupal_test_email_collector', array());
+  }
+
+  /**
+   * @AfterScenario @mail
+   */
+  public function afterMail()
+  {
+    echo("Restoring Mail System\n");
+    // Restore the default system.
+    variable_set('mail_system', $this->originalMailSystem);
+    // Flush the email buffer.
+    variable_set('drupal_test_email_collector', array());
+  }
+
   /****************************
    * HELPER FUNCTIONS
    ****************************/
@@ -362,6 +388,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     $field_map = array(
       'author' => 'author',
       'title' => 'title',
+      'author' => 'uid',
       'description' => 'body',
       'language' => 'language',
       'tags' => 'field_tags',
@@ -379,17 +406,17 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       // Defaults
       $node->type = 'dataset';
       $node->language = LANGUAGE_NONE;
+      $node->is_new = TRUE;
 
       foreach($datasetHash as $key => $value) {
         if(!isset($field_map[$key])) {
           throw new Exception(sprintf("Dataset's field %s doesn't exist, or hasn't been mapped. See FeatureContext::addDatasets for mappings.", $key));
         } else if($key == 'author') {
           $user = user_load_by_name($value);
-          if(!isset($user)) {
-            $value = $user->uid;
+          if($user) {
+            $drupal_field = $field_map[$key];
+            $node->$drupal_field = $user->uid;
           }
-          $drupal_field = $field_map[$key];
-          $node->$drupal_field = $value;
 
         } else if($key == 'tags' || $key == 'publisher') {
           $value = $this->explode_list($value);
@@ -408,8 +435,20 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
 
       $created_node = $this->getDriver()->createNode($node);
 
+      // Make the node author as the revision author.
+      // This is needed for workbench views filtering.
+      $created_node->log = $created_node->uid;
+      $created_node->revision_uid = $created_node->uid;
+      db_update('node_revision')
+        ->fields(array(
+          'uid' => $created_node->uid,
+        ))
+        ->condition('nid', $created_node->nid, '=')
+        ->execute();
+
       // Manage moderation state.
-      workbench_moderation_moderate($created_node, $workbench_moderation_state);
+      // Requires this patch https://www.drupal.org/node/2393771
+      workbench_moderation_moderate($created_node, $workbench_moderation_state, $created_node->uid);
 
       // Add the created node to the datasets array.
       $this->datasets[$created_node->nid] = $created_node;
@@ -487,7 +526,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     $field_map = array(
       'title' => 'title',
       'description' => 'body',
-      'author' => 'author',
+      'author' => 'uid',
       'language' => 'language',
       'format' => 'field_format',
       'dataset' => 'field_dataset_ref',
@@ -542,6 +581,17 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       }
 
       $created_node = $this->getDriver()->createNode($node);
+
+      // Make the node author as the revision author.
+      // This is needed for workbench views filtering.
+      $created_node->log = $created_node->uid;
+      $created_node->revision_uid = $created_node->uid;
+      db_update('node_revision')
+        ->fields(array(
+          'uid' => $created_node->uid,
+        ))
+        ->condition('nid', $created_node->nid, '=')
+        ->execute();
 
       // Manage moderation state.
       workbench_moderation_moderate($created_node, $workbench_moderation_state);
@@ -630,19 +680,81 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   }
 
   /**
-   * @Then :arg1 user should receive an email
+   * @Then user :username should receive an email
    */
-  public function userShouldReceiveAnEmail($arg1)
+  public function userShouldReceiveAnEmail($username)
+  {
+    if($user = user_load_by_name($username)) {
+      // We can't use variable_get() because $conf is only fetched once per
+      // scenario.
+      $variables = array_map('unserialize', db_query("SELECT name, value FROM {variable} WHERE name = 'drupal_test_email_collector'")->fetchAllKeyed());
+      $this->activeEmail = FALSE;
+      foreach ($variables['drupal_test_email_collector'] as $message) {
+        if ($message['to'] == $user->mail) {
+          $this->activeEmail = $message;
+          return TRUE;
+        }
+      }
+      throw new Exception(sprintf("No Email for " . $username . "found."));
+    } else {
+      throw new Exception(sprintf("User %s not found.", $username));
+    }
+  }
+
+  /**
+   * @Then user :username should receive an email containing :content
+   */
+  public function userShouldReceiveAnEmailContaining($username, $content)
+  {
+    if($user = user_load_by_name($username)) {
+      // We can't use variable_get() because $conf is only fetched once per
+      // scenario.
+      $variables = array_map('unserialize', db_query("SELECT name, value FROM {variable} WHERE name = 'drupal_test_email_collector'")->fetchAllKeyed());
+      $this->activeEmail = FALSE;
+      foreach ($variables['drupal_test_email_collector'] as $message) {
+        if ($message['to'] == $user->mail) {
+          $this->activeEmail = $message;
+          if (strpos($message['body'], $content) !== FALSE ||
+            strpos($message['subject'], $content) !== FALSE) {
+              return TRUE;
+            }
+          throw new \Exception('Did not find expected content in message body or subject.');
+        }
+      }
+      throw new Exception(sprintf("No Email for " . $username . " found."));
+    } else {
+      throw new Exception(sprintf("User %s not found.", $username));
+    }
+  }
+
+  /**
+   * @Then all :username should receive an email
+   */
+  public function allShouldReceiveAnEmail($username)
   {
     throw new PendingException();
   }
 
   /**
-   * @Then all :arg1 should receive an email
+   * @Then the :emailAddress should recieve an email containing :content
    */
-  public function allShouldReceiveAnEmail($arg1)
+  public function theEmailAddressShouldRecieveAnEmailContaining($emailAddress, $content)
   {
-    throw new PendingException();
+    // We can't use variable_get() because $conf is only fetched once per
+    // scenario.
+    $variables = array_map('unserialize', db_query("SELECT name, value FROM {variable} WHERE name = 'drupal_test_email_collector'")->fetchAllKeyed());
+    $this->activeEmail = FALSE;
+    foreach ($variables['drupal_test_email_collector'] as $message) {
+      if ($message['to'] == $emailAddress) {
+        $this->activeEmail = $message;
+        if (strpos($message['body'], $content) !== FALSE ||
+          strpos($message['subject'], $content) !== FALSE) {
+            return TRUE;
+          }
+        throw new \Exception('Did not find expected content in message body or subject.');
+      }
+    }
+    throw new \Exception(sprintf('Did not find expected message to %s', $emailAddress));
   }
 
   /**
