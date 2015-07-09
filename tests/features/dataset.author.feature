@@ -91,36 +91,6 @@ Feature: Dataset Features
   Scenario: Unpublish own dataset
     Given I am on the homepage
 
-  @api @mail
-  Scenario: As a Content Editor I want to receive an email notification when "Data Contributor" add a Dataset that "Needs Review".
-    Given I am logged in as "Katie"
-    And I am on "Datasets" page
-    When I click "Add Dataset"
-    And I fill in the following:
-      | Title                     | Dataset That Needs Review |
-      | Description               | Test Behat Dataset 06     |
-      | autocomplete-deluxe-input | Health                    |
-      | Moderation state          | needs_review              |
-    And I press "Next: Add data"
-    And I fill in the following:
-      | Title                     | Resource 061            |
-      | Description               | Test Behat Resource 061 |
-      | autocomplete-deluxe-input | CSV                     |
-    And I press "Save"
-    Then I should see the success message "Resource Resource 061 has been created."
-    When I click "Back to dataset"
-    Then I should see "Revision state: Needs Review"
-    And user Gabriel should receive an email containing "Please review the recent update at"
-
-  @api @mail
-  Scenario: Request dataset review (Change dataset status from 'Draft' to 'Needs review')
-    Given I am logged in as "Celeste"
-    And I am on "My drafts" page
-    And I should see "Change to Needs Review" in the "Dataset 04" row
-    When I click "Change to Needs Review" in the "Dataset 04" row
-    Then I should see "Needs Review" in the "Dataset 04" row
-    And user Gabriel should receive an email containing "Please review the recent update at"
-
   @api @wip
   Scenario: Revert review request (Change dataset status from 'Needs review' to 'Draft')
     Given I am logged in as "Katie"
