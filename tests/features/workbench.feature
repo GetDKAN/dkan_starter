@@ -1,6 +1,38 @@
 
 Feature: Workbench
 
+Background:
+  Given pages:
+    | title        | url                          |
+    | Datasets     | dataset                      |
+    | Needs Review | admin/workbench/needs-review |
+    | My drafts    | admin/workbench/drafts       |
+  Given users:
+    | name    | mail             | roles                |
+    | Katie   | katie@test.com   | data contributor     |
+    | Celeste | celeste@test.com | data contributor     |
+    | Gabriel | gabriel@test.com | content editor       |
+    | Jaz     | jaz@test.com     | data contributor     |
+  And "Tags" terms:
+    | name   |
+    | Health |
+    | Gov    |
+  And datasets:
+    | title      | author  | moderation   | date         | tags   |
+    | Dataset 01 | Gabriel | published    | Feb 01, 2015 | Health |
+    | Dataset 02 | Gabriel | published    | Mar 13, 2015 | Gov    |
+    | Dataset 03 | Katie   | published    | Feb 17, 2013 | Health |
+    | Dataset 04 | Celeste | draft        | Jun 21, 2015 | Gov    |
+    | Dataset 05 | Katie   | needs_review | Jun 21, 2015 | Gov    |
+  And "Format" terms:
+    | name |
+    | csv  |
+  And resources:
+    | title       | dataset    | moderation | format |
+    | Resource 01 | Dataset 01 | published  | csv    |
+    | Resource 02 | Dataset 01 | published  | csv    |
+    | Resource 03 | Dataset 02 | published  | csv    |
+
   # If this is just dataset moderation, move it to the dataset features.
   # TODO: The Workbench functionality is not part of DKAN. Needs definition.
 
@@ -117,10 +149,6 @@ Feature: Workbench
       | title        | url                          |
       | Datasets     | dataset                      |
       | Needs Review | admin/workbench/needs-review |
-    Given users:
-      | name    | mail             | roles                |
-      | Jaz     | jaz@test.com     | data contributor     |
-      | Gabriel | gabriel@test.com | content editor       |
     And "tags" terms:
       | name   |
       | Health |
@@ -134,12 +162,11 @@ Feature: Workbench
       | title       | format | dataset    |
       | Resource 01 | csv    | Dataset 01 |
     Given I am logged in as "Gabriel"
-    And I am on "Needs Review" page
-    Then I should see "Dataset 01"
-    Given I click "Change to Published" in the "Dataset 01" row
-    Then I should not see "Dataset 01"
-    Given I am on "Dataset 01" page
-    Then I should see "Revision state: Published"
+    And I am on "Dataset 01" page
+    When I follow "Moderate"
+    Then I should see "Published" in the "#edit-state" element
+    When I press "Apply"
+    Then I should see "Needs Review --> Published"
     Given I am an anonymous user
     And I am on "Dataset 01" page
     Given I should not see the error message "Access denied. You must log in to view this page."
@@ -183,3 +210,40 @@ Feature: Workbench
   @api @wip
   Scenario: View a reports on drafts that haven't moved to published for more than 48 hours
     Given I am on the homepage
+
+  ##################################################################
+  # EMAIL NOTIFICATION
+  ##################################################################
+
+  @api @mail
+  Scenario: As a Content Editor I want to receive an email notification when "Data Contributor" add a Dataset that "Needs Review".
+    Given I am logged in as "Katie"
+    And I am on "Datasets" page
+    When I click "Add Dataset"
+    And I fill in the following:
+      | Title                     | Dataset That Needs Review |
+      | Description               | Test Behat Dataset 06     |
+      | autocomplete-deluxe-input | Health                    |
+    And I press "Next: Add data"
+    And I fill in the following:
+      | Title                     | Resource 061            |
+      | Description               | Test Behat Resource 061 |
+      | autocomplete-deluxe-input | CSV                     |
+    And I press "Save"
+    Then I should see the success message "Resource Resource 061 has been created."
+    And I click "Back to dataset"
+    Then I follow "Moderate"
+    Then I should see "Needs Review" in the "#edit-state" element
+    And I should not see "Published" in the "#edit-state" element
+    And I press "Apply"
+    And I should see "Draft --> Needs Review"
+    And user Gabriel should receive an email containing "Please review the recent update at"
+
+  @api @mail
+  Scenario: Request dataset review (Change dataset status from 'Draft' to 'Needs review')
+    Given I am logged in as "Celeste"
+    And I am on "My drafts" page
+    And I should see "Change to Needs Review" in the "Dataset 04" row
+    When I click "Change to Needs Review" in the "Dataset 04" row
+    Then I should see "Needs Review" in the "Dataset 04" row
+    And user Gabriel should receive an email containing "Please review the recent update at"
