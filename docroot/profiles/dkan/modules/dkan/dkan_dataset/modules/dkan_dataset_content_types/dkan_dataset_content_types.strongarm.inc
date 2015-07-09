@@ -192,7 +192,7 @@ function dkan_dataset_content_types_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'node_options_dataset';
   $strongarm->value = array(
-    0 => 'moderation',
+    0 => 'status',
     1 => 'revision',
   );
   $export['node_options_dataset'] = $strongarm;
@@ -202,7 +202,7 @@ function dkan_dataset_content_types_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'node_options_resource';
   $strongarm->value = array(
-    0 => 'moderation',
+    0 => 'status',
     1 => 'revision',
   );
   $export['node_options_resource'] = $strongarm;

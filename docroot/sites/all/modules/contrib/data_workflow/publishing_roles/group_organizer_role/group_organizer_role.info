@@ -1,0 +1,17 @@
+name = NuCivic Data Group Organizer Role
+description = Collection of permissions and settings for NuCivic Data Group Organizer Role
+core = 7.x
+package = NUCIVIC
+version = 7.x-1.0
+project = group_organizer_role
+dependencies[] = dkan_dataset
+dependencies[] = features
+dependencies[] = features_roles_permissions
+dependencies[] = og
+dependencies[] = og_moderation
+dependencies[] = og_ui
+dependencies[] = role_export
+features[features_api][] = api:2
+features[roles_permissions][] = group organizer
+features[user_role][] = group organizer
+project path = sites/all/modules/nucivic/data_workflow/publishing_roles
