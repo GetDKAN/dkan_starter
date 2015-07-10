@@ -1673,7 +1673,8 @@ function workbench_moderation_moderate($node, $state, $uid = NULL) {
     $user = user_load($uid);
   }
 
-  $old_revision = $node->workbench_moderation['my_revision'];
+  $old_revision = isset($node->workbench_moderation) ? $node->workbench_moderation['my_revision'] : new stdClass();
+  $old_revision_state = isset($old_revision->state) ? $old_revision->state : '';
 
   // Get the number of revisions for this node with vids greater than $node->vid
   $vid_count = db_select('node_revision', 'r')
@@ -1685,7 +1686,7 @@ function workbench_moderation_moderate($node, $state, $uid = NULL) {
 
   // Build a history record.
   $new_revision = (object) array(
-    'from_state' => $old_revision->state,
+    'from_state' => $old_revision_state,
     'state' => $state,
     'nid' => $node->nid,
     'vid' => $node->vid,
@@ -1761,7 +1762,7 @@ function workbench_moderation_moderate($node, $state, $uid = NULL) {
   }
 
   // Notify other modules that the state was changed.
-  module_invoke_all('workbench_moderation_transition', $node, $old_revision->state, $state);
+  module_invoke_all('workbench_moderation_transition', $node, $old_revision_state, $state);
 }
 
 /**
