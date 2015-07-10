@@ -43,7 +43,6 @@ function custom_config_features_master_defaults() {
     'dkan_sitewide_demo_front' => 'dkan_sitewide_demo_front',
     'dkan_sitewide_menu' => 'dkan_sitewide_menu',
     'dkan_sitewide_panels' => 'dkan_sitewide_panels',
-    'dkan_sitewide_roles_perms' => 'dkan_sitewide_roles_perms',
     'dkan_sitewide_search_db' => 'dkan_sitewide_search_db',
     'dkan_sitewide_user' => 'dkan_sitewide_user',
     'double_field' => 'double_field',
