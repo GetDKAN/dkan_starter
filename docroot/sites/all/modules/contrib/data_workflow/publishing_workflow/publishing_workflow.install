@@ -18,12 +18,6 @@ function publishing_workflow_install() {
 
   $item_id = menu_link_save($item);
 
- // Ensure dataset and resource have "moderation" states.
-
-  $states = array('published', 'moderation', 'revision');
-  foreach (array('dataset', 'resources') as $type) {
-    variable_set('node_options_' . $type, $states);
-  }
 }
 
 /**
@@ -50,4 +44,11 @@ function publishing_workflow_enable() {
   }
   // Delete editor role
   user_role_delete($editor_role);
+
+ // Ensure dataset and resource have "moderation" states.
+
+  $states = array('published', 'moderation', 'revision');
+  foreach (array('dataset', 'resource') as $type) {
+    variable_set('node_options_' . $type, $states);
+  }
 }
