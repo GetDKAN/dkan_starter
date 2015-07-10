@@ -19,12 +19,10 @@ function custom_config_features_master_defaults() {
     'bueditor' => 'bueditor',
     'chosen' => 'chosen',
     'colorizer' => 'colorizer',
-    'content_editor_role' => 'content_editor_role',
     'contextual' => 'contextual',
     'ctools' => 'ctools',
     'custom_config' => 'custom_config',
     'data' => 'data',
-    'data_contributor_role' => 'data_contributor_role',
     'date' => 'date',
     'date_api' => 'date_api',
     'date_popup' => 'date_popup',
@@ -126,7 +124,6 @@ function custom_config_features_master_defaults() {
     'path_breadcrumbs' => 'path_breadcrumbs',
     'path_breadcrumbs_ui' => 'path_breadcrumbs_ui',
     'pathauto' => 'pathauto',
-    'portal_administrator_role' => 'portal_administrator_role',
     'publishing_workflow' => 'publishing_workflow',
     'r4032login' => 'r4032login',
     'radix_layouts' => 'radix_layouts',
@@ -167,9 +164,6 @@ function custom_config_features_master_defaults() {
     'views_content' => 'views_content',
     'views_responsive_grid' => 'views_responsive_grid',
     'views_ui' => 'views_ui',
-    'workbench' => 'workbench',
-    'workbench_moderation' => 'workbench_moderation',
-    'workbench_email' => 'workbench_email',
   );
 
   return $features_master;
