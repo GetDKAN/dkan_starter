@@ -168,7 +168,9 @@ function custom_config_features_master_defaults() {
     'views_content' => 'views_content',
     'views_responsive_grid' => 'views_responsive_grid',
     'views_ui' => 'views_ui',
+    'workbench' => 'workbench',
     'workbench_moderation' => 'workbench_moderation',
+    'workbench_email' => 'workbench_email',
   );
 
   return $features_master;
