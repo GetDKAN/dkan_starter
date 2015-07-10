@@ -1,6 +1,11 @@
 Feature: Workbench
 
   Background:
+    Given pages:
+      | title        | url                          |
+      | Datasets     | dataset                      |
+      | Needs Review | admin/workbench/needs-review |
+      | My drafts    | admin/workbench/drafts       |
     Given users:
       | name                    | mail                              | roles                     |
       | datacontributor1        | datacontributor1@test.com         | data contributor          |
