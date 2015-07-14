@@ -60,20 +60,15 @@ projects[og_moderation][patch][2231737] = https://drupal.org/files/issues/any-us
 
 projects[defaultconfig][version] = 1.0-alpha9
 
+projects[panelizer][version] = 3.1
+
 projects[views_autocomplete_filters][version] = 1.1
 projects[views_autocomplete_filters][patch][2277453] = http://drupal.org/files/issues/ViewsAutocompleteFilters-no_results_on_some_environments-2277453-1.patch
 projects[views_autocomplete_filters][patch][2374709] = http://www.drupal.org/files/issues/views_autocomplete_filters-cache-2374709-2.patch
 projects[views_autocomplete_filters][patch][2317351] = http://www.drupal.org/files/issues/views_autocomplete_filters-content-pane-2317351-4.patch
 
-libraries[jquery.imagesloaded][download][type] = file
-libraries[jquery.imagesloaded][download][url] = https://github.com/desandro/imagesloaded/archive/v2.1.2.tar.gz
-libraries[jquery.imagesloaded][download][subtree] = imagesloaded-2.1.2
-
-libraries[jquery.imgareaselect][download][type] = file
-libraries[jquery.imgareaselect][download][url] = http://odyniec.net/projects/imgareaselect/jquery.imgareaselect-0.9.10.zip
-libraries[jquery.imgareaselect][download][subtree] = jquery.imgareaselect-0.9.10
-
 projects[panopoly_widgets][version] = 1.21
+projects[panopoly_widgets][patch][] = patches/panopoly_widgets_overrides.patch
 includes[panopoly_widgets_make] = http://cgit.drupalcode.org/panopoly_widgets/plain/panopoly_widgets.make
 
 projects[panopoly_images][version] = 1.21
@@ -106,7 +101,6 @@ projects[bootstrap][download][version] = 3.x
 projects[bootstrap][download][type] = git
 projects[bootstrap][download][revision] = "0390173732439fd60e898c7086219ab8c99c2f3d"
 
-projects[nuboot][subdir] = contrib
 projects[nuboot][download][type] = git
 projects[nuboot][download][url] = https://github.com/NuCivic/nuboot.git
 projects[nuboot][download][revision] = "fbd7ea2c2f1fa45a5f5a10b4215950940335879e"

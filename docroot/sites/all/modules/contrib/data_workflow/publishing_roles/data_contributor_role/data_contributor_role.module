@@ -1,0 +1,22 @@
+<?php
+/**
+ * @file
+ * Drupal needs this blank file.
+ */
+
+/**
+* Implements hook_form_alter().
+*/
+function data_contributor_role_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  if (in_array('data contributor', $user->roles)) {
+    $cts = array('dataset', 'resource');
+    if (isset($form['#node']) && in_array($form['#node']->type, $cts)) {
+      // hide options if user has access and node not published.
+      $node = $form['#node'];
+      if (!isset($node->status) || !$node->status) {
+        $form['options']['#access'] = FALSE;
+      }
+    }
+  }
+}

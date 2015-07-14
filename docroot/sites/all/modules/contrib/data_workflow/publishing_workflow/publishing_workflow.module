@@ -1,0 +1,99 @@
+<?php
+/**
+ * @file
+ * Code for the NuCivic workflow feature.
+ */
+
+include_once 'publishing_workflow.features.inc';
+
+/**
+ * Implements hook_permission().
+ */
+function publishing_workflow_permission() {
+  return array(
+    'access unpublished data' => array(
+      'title' => t('Access Unpublished Data'),
+      'description' => t('Grant access to unpublished data page.'),
+    ),
+    'access stale reviews page' => array(
+      'title' => t('Access Stale Reviews Page'),
+      'description' => t('Grant access to stale reviews page.'),
+    ),
+    'access stale drafts page' => array(
+      'title' => t('Access Stale Drafts Page'),
+      'description' => t('Grant access to stale drafts page.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function publishing_workflow_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  switch ($form_id) {
+    case 'resource_node_form':
+    case 'dataset_node_form':
+      $roles = array_keys($user->roles);
+      $is_editor = in_array('254633039', $roles);
+      $is_portal_admin = in_array('27274083', $roles);
+      $is_administrator = $user->uid == 1;
+      $node = $form['#node'];
+      // Change published status only for new nodes.
+      if (!isset($node->nid)) {
+      	$status = $is_portal_admin || $is_editor || $is_administrator ? 1 : 0;
+        $form['options']['status']['#default_value'] = $status;
+      }
+
+      // Hide promote and sticky options for content editor.
+      if ($is_editor) {
+        $form['options']['promote']['#type'] = 'hidden';
+        $form['options']['sticky']['#type'] = 'hidden';
+      }
+      break;
+  }
+}
+/**
+ * Implements hook_rules_action_info().
+ */
+function publishing_workflow_rules_action_info() {
+  $items = array();
+  $items['publishing_workflow_reviewers'] = array(
+    'label' => t('Get reviewers for a specific node'),
+    'group' => t('Data Workflow'),
+    'parameter' => array(
+        'node' => array('type' => 'node', 'label' => t('Node')),
+    ),
+    'provides' => array(
+      'reviewers' => array('type' => 'list<user>', 'label' => t('List of reviewers')),
+    ),
+  );
+  return $items;
+}
+
+/**
+ * Returns a list of content editors that have access to the node being edited.
+ */
+function publishing_workflow_reviewers($node){
+  $reviewers = array();
+  $content_editor_role = user_role_load_by_name('content editor');
+  $editors_query =  db_select('users_roles', 'ur')
+                 ->fields('ur', array('uid'))
+                 ->condition('rid', $content_editor_role->rid)
+                 ->execute();
+  foreach ($editors_query as $editor) {
+    $editor = user_load($editor->uid);
+    $has_access = og_node_access('update', $node, $editor);
+    $has_access = $has_access || node_access('update', $node, $editor);
+    if ($has_access) {
+      array_push($reviewers, $editor);
+    }
+  }
+  return array('reviewers' => $reviewers);
+}
+
+function publishing_workflow_block_info_alter(&$blocks, $theme, $code_blocks) {
+  if ($blocks['workbench']['block']['region'] == 'content') {
+    $blocks['workbench']['block']['status'] = 0;
+  }
+}

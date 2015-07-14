@@ -12,6 +12,7 @@ projects[dkan][subdir] = ""
 ; Default Projects
 ; ================
 projects[] = features_master
+projects[] = features_banish
 
 ; Optional Projects
 ; =================

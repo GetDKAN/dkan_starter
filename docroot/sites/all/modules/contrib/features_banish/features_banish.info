@@ -1,0 +1,13 @@
+name = Features Banish
+description = Provides a bookmark entity and basic UI and administration interface for managing bookmarks.
+core = 7.x
+package = Features
+dependencies[] = features
+configure = admin/structure/features/settings
+
+; Information added by Drupal.org packaging script on 2015-05-21
+version = "7.x-1.0"
+core = "7.x"
+project = "features_banish"
+datestamp = "1432185182"
+
