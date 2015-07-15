@@ -30,6 +30,7 @@ $handler->display->display_options['pager']['options']['expose']['items_per_page
 $handler->display->display_options['style_plugin'] = 'views_accordion';
 $handler->display->display_options['style_options']['collapsible'] = 1;
 $handler->display->display_options['style_options']['row-start-open'] = 'none';
+$handler->display->display_options['style_options']['autoheight'] = 0;
 $handler->display->display_options['row_plugin'] = 'fields';
 /* No results behavior: Global: Text area */
 $handler->display->display_options['empty']['area']['id'] = 'area';
@@ -66,18 +67,6 @@ $handler->display->display_options['fields']['nid_1']['relationship'] = 'field_r
 $handler->display->display_options['fields']['nid_1']['group_type'] = 'count_distinct';
 $handler->display->display_options['fields']['nid_1']['ui_name'] = 'Resources Ref';
 $handler->display->display_options['fields']['nid_1']['exclude'] = TRUE;
-/* Field: Content revision: Log message */
-$handler->display->display_options['fields']['log']['id'] = 'log';
-$handler->display->display_options['fields']['log']['table'] = 'node_revision';
-$handler->display->display_options['fields']['log']['field'] = 'log';
-$handler->display->display_options['fields']['log']['exclude'] = TRUE;
-/* Field: Workbench Moderation: Moderation history link */
-$handler->display->display_options['fields']['workbench_moderation_history_link']['id'] = 'workbench_moderation_history_link';
-$handler->display->display_options['fields']['workbench_moderation_history_link']['table'] = 'node';
-$handler->display->display_options['fields']['workbench_moderation_history_link']['field'] = 'workbench_moderation_history_link';
-$handler->display->display_options['fields']['workbench_moderation_history_link']['relationship'] = 'nid';
-$handler->display->display_options['fields']['workbench_moderation_history_link']['exclude'] = TRUE;
-$handler->display->display_options['fields']['workbench_moderation_history_link']['hide_alter_empty'] = FALSE;
 /* Field: Content: Title */
 $handler->display->display_options['fields']['title']['id'] = 'title';
 $handler->display->display_options['fields']['title']['table'] = 'node';
@@ -85,46 +74,25 @@ $handler->display->display_options['fields']['title']['field'] = 'title';
 $handler->display->display_options['fields']['title']['relationship'] = 'nid';
 $handler->display->display_options['fields']['title']['label'] = '';
 $handler->display->display_options['fields']['title']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['title']['alter']['text'] = '[title]([nid_1])';
+$handler->display->display_options['fields']['title']['alter']['text'] = '[title] ([nid_1] resources)';
 $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
 $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
 $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+/* Field: Content: Edit link */
+$handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+$handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
+$handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+$handler->display->display_options['fields']['edit_node']['relationship'] = 'nid';
+$handler->display->display_options['fields']['edit_node']['label'] = 'Edit';
 /* Field: Moderation state */
 $handler->display->display_options['fields']['state']['id'] = 'state';
 $handler->display->display_options['fields']['state']['table'] = 'workbench_moderation_node_history';
 $handler->display->display_options['fields']['state']['field'] = 'state';
 $handler->display->display_options['fields']['state']['ui_name'] = 'Moderation state';
 $handler->display->display_options['fields']['state']['label'] = 'Moderation state';
-$handler->display->display_options['fields']['state']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['state']['alter']['text'] = '<div>[state]</div><div>[workbench_moderation_history_link]</div>';
+$handler->display->display_options['fields']['state']['alter']['text'] = '<div>[state]</div>';
 $handler->display->display_options['fields']['state']['hide_alter_empty'] = FALSE;
 $handler->display->display_options['fields']['state']['machine_name'] = 0;
-/* Field: Content: Type */
-$handler->display->display_options['fields']['type']['id'] = 'type';
-$handler->display->display_options['fields']['type']['table'] = 'node';
-$handler->display->display_options['fields']['type']['field'] = 'type';
-$handler->display->display_options['fields']['type']['relationship'] = 'nid';
-$handler->display->display_options['fields']['type']['exclude'] = TRUE;
-$handler->display->display_options['fields']['type']['alter']['word_boundary'] = FALSE;
-$handler->display->display_options['fields']['type']['alter']['ellipsis'] = FALSE;
-/* Field: User: Name */
-$handler->display->display_options['fields']['name']['id'] = 'name';
-$handler->display->display_options['fields']['name']['table'] = 'users';
-$handler->display->display_options['fields']['name']['field'] = 'name';
-$handler->display->display_options['fields']['name']['relationship'] = 'uid';
-$handler->display->display_options['fields']['name']['label'] = 'Revised by';
-$handler->display->display_options['fields']['name']['exclude'] = TRUE;
-/* Field: Content: Updated date */
-$handler->display->display_options['fields']['changed']['id'] = 'changed';
-$handler->display->display_options['fields']['changed']['table'] = 'node';
-$handler->display->display_options['fields']['changed']['field'] = 'changed';
-$handler->display->display_options['fields']['changed']['relationship'] = 'nid';
-$handler->display->display_options['fields']['changed']['label'] = 'Last updated';
-$handler->display->display_options['fields']['changed']['exclude'] = TRUE;
-$handler->display->display_options['fields']['changed']['alter']['word_boundary'] = FALSE;
-$handler->display->display_options['fields']['changed']['alter']['ellipsis'] = FALSE;
-$handler->display->display_options['fields']['changed']['date_format'] = 'time ago';
-$handler->display->display_options['fields']['changed']['second_date_format'] = 'long';
 /* Field: Workbench Moderation: Moderation links */
 $handler->display->display_options['fields']['moderation_actions']['id'] = 'moderation_actions';
 $handler->display->display_options['fields']['moderation_actions']['table'] = 'workbench_moderation_node_history';
@@ -335,4 +303,3 @@ $handler->display->display_options['path'] = 'admin/workbench/drafts';
 $handler->display->display_options['menu']['type'] = 'tab';
 $handler->display->display_options['menu']['title'] = 'My drafts';
 $handler->display->display_options['menu']['weight'] = '98';
-
