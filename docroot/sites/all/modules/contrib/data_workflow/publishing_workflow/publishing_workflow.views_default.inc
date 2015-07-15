@@ -603,3 +603,18 @@ function publishing_workflow_views_default_views() {
 
   return $export;
 }
+
+/**
+ * Implementes hook_views_default_views_alter(&$views).
+ *
+ * Load all views from /views folder. Overriding any existing views if any.
+ */
+function publishing_workflow_views_default_views_alter(&$views) {
+  $files = file_scan_directory(drupal_get_path('module', 'publishing_workflow'). '/views', '/.*\.view.inc$/');
+  foreach ($files as $filepath => $file) {
+    require $filepath;
+    if (isset($view)) {
+      $views[$view->name] = $view;
+    }
+  }
+}
