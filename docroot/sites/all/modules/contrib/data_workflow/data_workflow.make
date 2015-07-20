@@ -41,3 +41,9 @@ projects[workbench_email][version] = 3.3
 projects[workbench_email][subdir] = contrib
 projects[workbench_email][patch][2391233] = https://www.drupal.org/files/issues/workbench_email-2391233-3.patch
 projects[workbench_email][patch][2529016] = https://www.drupal.org/files/issues/workbench_email-skip_filter_anonymous-2529016.patch
+
+projects[views_accordion][version] = 1.1
+projects[views_accordion][subdir] = contrib
+
+projects[views_field_view][version] = 1.1
+projects[views_field_view][subdir] = contrib
