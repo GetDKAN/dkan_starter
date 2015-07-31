@@ -83,7 +83,9 @@ Feature: Workbench
     Then I should see "My Content"
     And I should see "Create content"
     And I should see "My drafts"
+    And I should see an ".link-badge" element
     And I should see "Needs review"
+    And I should see an ".link-badge" element
 
   Examples:
     | role name                 |
@@ -106,6 +108,7 @@ Feature: Workbench
     Then I should see the link "My Workbench" in the navigation region
     When I follow "My Workbench"
     Then I should see "Stale drafts"
+    And I should see an ".link-badge" element
 
   @api
   Scenario: View 'Stale reviews' menu item for "portal administrator" role
@@ -113,6 +116,7 @@ Feature: Workbench
     Then I should see the link "My Workbench" in the navigation region
     When I follow "My Workbench"
     Then I should see "Stale reviews"
+    And I should see an ".link-badge" element
 
 
 ##################################################################
