@@ -28,6 +28,7 @@ function custom_config_features_master_defaults() {
     'date_popup' => 'date_popup',
     'dblog' => 'dblog',
     'defaultconfig' => 'defaultconfig',
+    'devinci' => 'devinci',
     'diff' => 'diff',
     'dkan' => 'dkan',
     'dkan_dataset' => 'dkan_dataset',
