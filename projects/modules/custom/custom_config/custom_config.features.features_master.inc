@@ -52,6 +52,8 @@ function custom_config_features_master_defaults() {
     'entityreference' => 'entityreference',
     'entityreference_filter' => 'entityreference_filter',
     'entityreference_unpublished_node' => 'entityreference_unpublished_node',
+    'environment' => 'environment',
+    'environment_indicator' => 'environment_indicator',
     'eva' => 'eva',
     'facetapi' => 'facetapi',
     'facetapi_bonus' => 'facetapi_bonus',
