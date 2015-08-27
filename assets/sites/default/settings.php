@@ -1,14 +1,9 @@
 <?php
 
-$conf['install_profile'] = 'dkan';
-
-// IMPORTANT. Local settings include comes first so we can fake acquia env variables on local.
-// See settings.local.demo.php for how to setup your local environment.
-if (!(function_exists('acquia_hosting_db_choose_active') || file_exists('/var/www/site-php'))) {
-  $settings_local = DRUPAL_ROOT . '/' . conf_path() . '/settings.local.php';
-  if (file_exists($settings_local)) {
-    include $settings_local;
-  }
+// Load a local settings.php file if one exists. It should declare the ENVIRONMENT constant to be 'local'.
+$settings_local = DRUPAL_ROOT . '/' . conf_path() . '/settings.local.php';
+if (file_exists($settings_local)) {
+  include $settings_local;
 }
 
 // Setup standard environments using devinci
