@@ -10,6 +10,7 @@
  * @throws \Exception
  */
 function devinci_set_env($env_map = false) {
+  global $databases, $conf;
 
   if ($env_map === FALSE) {
     $env_map = array(
@@ -20,6 +21,7 @@ function devinci_set_env($env_map = false) {
       'local' => 'local',
     );
   }
+
   // First check if the ENVIRONMENT constant is already set.
   if (defined('ENVIRONMENT')) {
     $env = ENVIRONMENT;
@@ -31,24 +33,23 @@ function devinci_set_env($env_map = false) {
   // If not, check for acquia settings.
   elseif ($acquia_env = devinci_get_acquia_env($env_map)) {
     $env = $acquia_env;
-    include DRUPAL_ROOT . '/' . conf_path() . '/acquia.tools.inc';
+    require __DIR__ . '/acquia.tools.inc';
   }
   // Check for pantheon settings.
   elseif ($pantheon_env = devinci_get_pantheon_env($env_map)) {
     $env = $pantheon_env;
-    include DRUPAL_ROOT . '/' . conf_path() . '/pantheon.tools.inc';
+    require __DIR__ . '/pantheon.tools.inc';
   }
   else {
     $env = null;
   }
-
   // Finally check for a local environment settings file to allow custom logic.
   if (file_exists(DRUPAL_ROOT . '/' . conf_path() . '/environment.settings.php')) {
     include DRUPAL_ROOT . '/' . conf_path() . '/environment.settings.php';
   }
   // If no custom file, then go ahead and define ENVIRONMENT as long as it wasn't already defined.
   elseif (!defined('ENVIRONMENT')) {
-    throw new Exception("No ENVIRONMENT defined");
+    define('ENVIRONMENT', $env);  
   }
 }
 
@@ -64,12 +65,12 @@ function devinci_set_env($env_map = false) {
  */
 function devinci_get_acquia_env($env_map) {
   // Check for acquia environment settings.
-  if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
-    if (in_array($_ENV['AH_SITE_ENVIRONMENT'], $env_map)) {
-      return $env_map[$_ENV['AH_SITE_ENVIRONMENT']];
+  if ($acquia_env = getenv('AH_SITE_ENVIRONMENT')) {
+    if (in_array($acquia_env, $env_map)) {
+      return $env_map[$acquia_env];
     }
     else {
-      throw new Exception("Acquia environment mapping not found: {$_ENV['AH_SITE_ENVIRONMENT']}");
+      throw new Exception("Acquia environment mapping not found: $acquia_env");
     }
   }
   // No acquia environment found (not on acquia).
