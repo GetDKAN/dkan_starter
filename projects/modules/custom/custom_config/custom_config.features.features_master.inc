@@ -155,6 +155,7 @@ function custom_config_features_master_defaults() {
     'services' => 'services',
     'simple_gmap' => 'simple_gmap',
     'strongarm' => 'strongarm',
+    'syslog' => 'syslog',
     'system' => 'system',
     'tablefield' => 'tablefield',
     'taxonomy' => 'taxonomy',

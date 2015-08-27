@@ -34,7 +34,8 @@ switch(ENVIRONMENT) {
     );
     $conf['features_master_temp_disabled_modules'] = array(
       'acquia_purge',
-      'acquia_solr'
+      'acquia_solr',
+      'syslog',
     );
     break;
 
