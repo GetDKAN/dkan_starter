@@ -69,15 +69,23 @@ function devinci_custom_environment_switch($target_env, $current_env) {
   switch($target_env) {
 
     case 'local':
+      drupal_flush_all_caches();
+      features_master_features_revert('custom_config');
       break;
 
     case 'dev':
+      drupal_flush_all_caches();
+      features_master_features_revert('custom_config');
       break;
 
     case 'test':
+      drupal_flush_all_caches();
+      features_master_features_revert('custom_config');
       break;
 
     case 'live':
+      drupal_flush_all_caches();
+      features_master_features_revert('custom_config');
       break;
   }
 }
