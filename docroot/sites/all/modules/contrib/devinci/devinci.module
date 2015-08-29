@@ -18,22 +18,14 @@ function devinci_init() {
  */
 function devinci_environment() {
   $environments = array();
-
+  // Environment module already creates environments for 'development' and 'production'.
   $environments['local'] = array(
     'label' => t('Local'),
     'description' => t('Local development environment'),
   );
-  $environments['dev'] = array(
-    'label' => t('Development'),
-    'description' => t('Development modules are enabled, but use local for most dev.'),
-  );
   $environments['test'] = array(
     'label' => t('Testing site'),
     'description' => t('Testing sites are used for QA or automated testing.'),
-  );
-  $environments['live'] = array(
-    'label' => t('Live site'),
-    'description' => t('Live sites are in full production and browsable on the web.'),
   );
 
   return $environments;
@@ -57,7 +49,7 @@ function devinci_environment_indicator_matched_indicator_alter(&$env) {
       $env['color'] = '#208f00';
       break;
 
-    case 'dev':
+    case 'development':
       $env['color'] = '#e07a00';
       break;
 
@@ -65,7 +57,7 @@ function devinci_environment_indicator_matched_indicator_alter(&$env) {
       $env['color'] = '#c41e02';
       break;
 
-    case 'live':
+    case 'production':
       $env['color'] = '#5e5e5e';
       break;
   }

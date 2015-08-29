@@ -14,11 +14,11 @@ function devinci_set_env($env_map = false) {
 
   if ($env_map === FALSE) {
     $env_map = array(
-      'dev' => 'dev',
-      'test' => 'test',
-      'live' => 'live',
-      'prod' => 'live',
       'local' => 'local',
+      'dev' => 'development',
+      'test' => 'test',
+      'live' => 'production',
+      'prod' => 'production',
     );
   }
 
@@ -49,7 +49,7 @@ function devinci_set_env($env_map = false) {
   }
   // If no custom file, then go ahead and define ENVIRONMENT as long as it wasn't already defined.
   elseif (!defined('ENVIRONMENT')) {
-    define('ENVIRONMENT', $env);  
+    define('ENVIRONMENT', $env);
   }
 }
 
@@ -66,11 +66,13 @@ function devinci_set_env($env_map = false) {
 function devinci_get_acquia_env($env_map) {
   // Check for acquia environment settings.
   if ($acquia_env = getenv('AH_SITE_ENVIRONMENT')) {
-    if (in_array($acquia_env, $env_map)) {
+    if (array_key_exists($acquia_env, $env_map)) {
       return $env_map[$acquia_env];
     }
     else {
-      throw new Exception("Acquia environment mapping not found: $acquia_env");
+      // Print a simple warning and exit.
+      print "Acquia environment mapping not found: $acquia_env";
+      exit();
     }
   }
   // No acquia environment found (not on acquia).
@@ -89,12 +91,14 @@ function devinci_get_acquia_env($env_map) {
  */
 function devinci_get_pantheon_env($env_map) {
   // Check for pantheon environment settings.
-  if (isset($_ENV["PANTHEON_ENVIRONMENT"])) {
-    if (in_array($_ENV["PANTHEON_ENVIRONMENT"], $env_map)) {
-      return $env_map[$_ENV["PANTHEON_ENVIRONMENT"]];
+  if ($pantheon_env = genenv('PANTHEON_ENVIRONMENT')) {
+    if (array_key_exists($pantheon_env, $env_map)) {
+      return $env_map[$pantheon_env];
     }
     else {
-      throw new Exception("Pantheon environment mapping not found: {$_ENV["PANTHEON_ENVIRONMENT"]}");
+      // Print a simple warning and exit.
+      print "Pantheon environment mapping not found: {$_ENV["PANTHEON_ENVIRONMENT"]}";
+      exit();
     }
   }
   // No pantheon environment found (not on pantheon).
