@@ -1,0 +1,26 @@
+Installation
+================================================================================
+
+Acquia Purge has been designed from the ground up to be extremely simple and
+almost failsafe to use. The module provides the /means/ to purge all load
+balancers on Acquia Cloud and focuses on doing that well, where the Expire
+module remains responsible for telling what needs to be purged. Setting up both
+modules shouldn't take long:
+
+1. Ensure you are not running incompatible modules like purge, varnish or boost.
+
+2. Download expire and acquia_purge into your site.
+   e.g.: drush dl expire acquia_purge
+
+3. Enable both modules.
+   e.g.: drush en expire acquia_purge
+
+4. Assign the "purge on-screen" permission to editor roles to give them a
+   visually indicative progress bar upon saving content. Purges still happen
+   without this permission on the background (triggered via AJAX).
+
+5. It's highly recommended to visit the status report page or to run
+   "drush ap-diagnosis", in which Acquia Purge will perform diagnostic tests.
+
+Do you have any questions, bugs or comments? Feel free to lookup common
+questions in the FAQ.txt file or file a issue on Drupal.org.

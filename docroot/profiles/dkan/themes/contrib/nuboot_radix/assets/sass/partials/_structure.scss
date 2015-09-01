@@ -4,19 +4,24 @@
 body {
   font-family:$font-family-sans-serif;
   line-height:1.35em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 body.modal-open {
   overflow: visible !important;
 }
 .branding {
   position: relative;
+  .logo {
+    margin: 20px 0;
+  }
 }
 .site-name {
   display: inline-block;
   float: left;
   font-size: 2em;
   line-height: 1.15em;
-  margin: 38px 20px 5px;
+  margin: 50px 20px 0;
   @media(max-width:460px) {
     clear: left;
     float: none;
@@ -25,7 +30,7 @@ body.modal-open {
 }
 .site-slogan {
   clear: left;
-  padding-bottom: 10px;
+  margin-bottom: 20px;
 }
 h1 {
   font-size: 30px;
@@ -38,6 +43,10 @@ h1,h2,h3,h4 {
 }
 h3.media-heading {
   margin:.5em 0;
+}
+h4 {
+  margin-top: 2em;
+  margin-bottom: .5em;
 }
 
 a {
@@ -269,6 +278,7 @@ dl {
   overflow:hidden;
 }
 dt {
+  clear: both;
   margin:0;
   padding:8px 5px;
   float:left;

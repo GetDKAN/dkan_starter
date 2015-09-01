@@ -14,6 +14,7 @@ stylesheets-conditional[lte IE 9][all][] = assets/stylesheets/ie.css
 scripts[] = assets/javascripts/radix-script.js
 
 ; Regions
+regions[sidebar_first] = Sidebar
 regions[content] = Content
 
 ; Features
@@ -21,9 +22,7 @@ features[] = logo
 features[] = name
 features[] = favicon
 
-; Information added by Drupal.org packaging script on 2015-03-02
-version = "7.x-3.0-rc2"
-core = "7.x"
+; Information added by drush on 2015-06-03
+version = "f26d28784bd123c55d04e91b636d02e802bbdee9"
 project = "radix"
-datestamp = "1425325991"
-
+datestamp = "1433345029"

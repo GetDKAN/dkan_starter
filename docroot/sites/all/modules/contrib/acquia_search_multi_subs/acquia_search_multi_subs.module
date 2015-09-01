@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * @file
+ * Allows automatic switching of Solr servers based on the current environemnt.
+ */
+
+include_once dirname(__FILE__) . '/acquia_search_multi_subs.common.inc';
+
+/**
+ * Implements hook_init().
+ *
+ * Includes the two module-specific include files and calls their init functions
+ * if their respective module is enabled.
+ *
+ * @see acquia_search_multi_subs_apachesolr_init()
+ * @see acquia_search_multi_subs_searchapi_init()
+ */
+function acquia_search_multi_subs_init() {
+  if (module_exists('search_api_acquia')) {
+    include_once dirname(__FILE__) . '/lib/Drupal/SearchApiSolr/acquia_search_multi_subs.searchapisolr.inc';
+    acquia_search_multi_subs_searchapi_init();
+  }
+  if (module_exists('acquia_search')) {
+    include_once dirname(__FILE__) . '/lib/Drupal/Apachesolr/acquia_search_multi_subs.apachesolr.inc';
+    acquia_search_multi_subs_apachesolr_init();
+  }
+}
+
+/**
+ * Implements hook_acquia_subscription_status().
+ *
+ * Needed to reinforce our overridden config settings.
+ */
+function acquia_search_multi_subs_acquia_subscription_status($active, $subscription = FALSE) {
+  if ($active) {
+    acquia_search_multi_subs_init();
+  }
+}
+
+/**
+ * Implements hook_menu().
+ *
+ * @return array
+ */
+function acquia_search_multi_subs_menu() {
+  $items = array();
+  $items['admin/config/system/acquia-search-multi-subs/refresh-status'] = array(
+    'title' => 'Manual update check',
+    'page callback' => 'acquia_search_multi_subs_agent_refresh_status',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+
+/**
+ * Menu callback for 'admin/config/system/acquia-search-multi-subs/refresh-status'.
+ *
+ * We use this in our message when a user only has 1 core. It's useful so they do not have to go to the system page
+ */
+function acquia_search_multi_subs_agent_refresh_status() {
+  // Refresh subscription information, so we are sure about our update status.
+  // We send a heartbeat here so that all of our status information gets
+  // updated locally via the return data.
+  acquia_agent_check_subscription();
+  // Return to the setting page (or destination)
+  $destination = drupal_get_destination();
+  if ($destination) {
+    drupal_goto($destination);
+  }
+  else {
+    drupal_goto('admin/config/system/acquia-agent');
+  }
+}
+
+/**
+ * Implements hook_search_api_service_info_alter().
+ *
+ * Overrides the service class used to connect to Acquia Search.
+ */
+function acquia_search_multi_subs_search_api_service_info_alter(array &$service_info) {
+  $service_info['acquia_search_service']['class'] = 'SearchApiAcquiaSearchMultiService';
+}

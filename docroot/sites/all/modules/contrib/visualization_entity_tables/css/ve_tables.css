@@ -1,0 +1,77 @@
+.entity-visualization h1 {
+  display: none;
+}
+
+#iframe-shell h2 {
+  display: none;
+}
+
+h2.veTitle {
+  font-size: 18px;
+  margin-top: 0px;
+  padding: 20px;
+  margin-bottom:0px;
+}
+
+#iframe-shell .region-content {
+  margin: 0px;
+}
+
+#iframe-shell a {
+    pointer-events:none;
+}
+
+#iframe-shell a:hover,
+#iframe-shell a:visited,
+#iframe-shell a:link,
+#iframe-shell a:active
+{
+    text-decoration: none;
+}
+
+body, html {
+  height: 100% !important;
+  padding-top: 0px;
+}
+
+#iframe-shell .region-content {
+  margin: 0 !important;
+}
+
+.field-name-field-ve-settings{
+  display: none;
+}
+
+#ve-table .slick-viewport .slick-cell {
+  color: #4D4D4D;
+  font-size: 16px;
+}
+
+#ve-table .slick-column-name {
+  font-size: 16px;
+}
+
+/* Show vertical and horizontal scrollbars. */
+
+.ve-table-wrapper {
+    height: 500px;
+    width: 100%;
+    overflow: scroll;
+}
+
+#iframe-shell {
+    overflow: hidden;
+}
+
+.ve-table-wrapper #ve-table,
+.ve-table-wrapper #ve-table .grid-canvas,
+.ve-table-wrapper #ve-table .slick-viewport,
+.ve-table-wrapper #ve-table .slick-header {
+    overflow: visible !important;
+}
+
+/* Throbber element */
+#ve-loading {
+  text-align: center;
+  margin: 15px 0;
+}

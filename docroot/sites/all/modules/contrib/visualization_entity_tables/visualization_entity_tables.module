@@ -1,0 +1,70 @@
+<?php
+/**
+ * @file
+ * Code for the Visualization Entity Tables feature.
+ */
+
+include_once 'visualization_entity_tables.features.inc';
+
+/**
+ * Implements hook_form_alter().
+ */
+function visualization_entity_tables_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'eck__entity__form_add_visualization_ve_table':
+    case 'eck__entity__form_edit_visualization_ve_table':
+      visualization_entity_tables_attach_libraries($form);
+      $module_path = drupal_get_path('module', 'visualization_entity_tables');
+      drupal_add_js($module_path . '/js/visualization_entity_tables_edit.js', array('weight' => 102));
+      break;
+  }
+}
+
+
+/**
+ * Attach needed libraries to an element.
+ */
+function visualization_entity_tables_attach_libraries(&$element) {
+  $libraries = array(
+    'lodash',
+    'backbone',
+    'recline',
+    'gdocs',
+    'csv',
+    'mustache',
+    'slickgrid',
+  );
+
+  foreach ($libraries as $library) {
+    $element['#attached']['libraries_load'][] = array($library);
+  }
+
+  $module_path = drupal_get_path('module', 'visualization_entity_tables');
+  $element['#attached']['css'][] = $module_path . '/css/ve_tables.css';
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function visualization_entity_tables_entity_view($entity, $type, $view_mode, $langcode) {
+  if ($type == 'visualization' && $entity->type == 've_table') {
+    $entity->content['#suffix'] = '<div id="ve-table"></div>';
+    visualization_entity_tables_attach_libraries($entity->content);
+    $wrapper = entity_metadata_wrapper('visualization', $entity);
+    $settings = json_decode($wrapper->field_ve_settings->value());
+    $resource = $settings->source;
+    // Get value of Show title field.
+    $title_wrapper = entity_metadata_wrapper('visualization', $entity);
+    $showTitle = $title_wrapper->field_show_title->raw();
+    if($showTitle) {
+      $showTitle = $showTitle[0];
+    }
+    else {
+      $showTitle = 0;
+    }
+
+    drupal_add_js(array('visualizationEntityTables' => array('resource' => $settings->source, 'resize' => $settings->resize)), 'setting');
+    drupal_add_js(array('visualizationEntityTables' => array('showTitle'=> $showTitle)), 'setting');
+    drupal_add_js(drupal_get_path('module', 'visualization_entity_tables') . '/js/visualization_entity_tables_view.js', array('weight' => 101));
+  }
+}

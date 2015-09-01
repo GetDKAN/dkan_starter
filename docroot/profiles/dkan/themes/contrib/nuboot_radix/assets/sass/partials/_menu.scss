@@ -40,9 +40,8 @@
     li > a {
       color: #FFFFFF;
       display: block;
-      font-size:12px;
       line-height: 20px;
-      padding:15px 10px;
+      padding:15px;
       &:active,
       &:hover,
       &:focus {
@@ -118,9 +117,8 @@
   .links a {
     color: #FFFFFF;
     display: block;
-    font-size:12px;
     line-height: 20px;
-    padding:15px 10px;
+    padding:15px;
     &:hover,
     &:focus {
       background: $brand-secondary;
@@ -143,8 +141,9 @@
 .navbar .nav > li > a {
   text-shadow:none;
 }
+
 // Large screen.
-@media(min-width:768px){
+@media(min-width:768px) {
   .container > .navbar-header {
     margin-left:0;
   }
@@ -219,7 +218,7 @@ a.embed-link {
   //background:$brand-primary;
   color: #fff;
   display: inline-block;
-  padding:5px 15px 5px 30px;
+  padding:5px 15px 5px 35px;
   position:relative;
   margin:1em 0;
   text-decoration: none;
@@ -248,9 +247,7 @@ textarea.embed-code {
 ul.action-links {
   margin:1em 15px;
 }
-.data-explorer .btn {
-  border:1px solid $smoke;
-}
+
 .btn:active, 
 .btn.active {
   @include box-shadow(none);

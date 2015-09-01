@@ -79,12 +79,12 @@ Feature: Widgets
       And I click "Add new pane"
       Then I should see "Please select a category from the left"
     When I click on the text " Add table"
-      And I fill in "tablefield_0_cell_0_0" with "date"
-      And I fill in "tablefield_0_cell_0_1" with "price"
-      And I fill in "tablefield_0_cell_1_0" with "05/05/15"
-      And I fill in "tablefield_0_cell_1_1" with "12.3"
-      And I fill in "tablefield_0_cell_2_0" with "05/06/15"
-      And I fill in "tablefield_0_cell_2_1" with "9.3"
+      And I fill in "field-basic-table-table-und-0-tablefield-cell-0-0" with "date"
+      And I fill in "field-basic-table-table-und-0-tablefield-cell-0-1" with "price"
+      And I fill in "field-basic-table-table-und-0-tablefield-cell-1-0" with "05/05/15"
+      And I fill in "field-basic-table-table-und-0-tablefield-cell-1-1" with "12.3"
+      And I fill in "field-basic-table-table-und-0-tablefield-cell-2-0" with "05/06/15"
+      And I fill in "field-basic-table-table-und-0-tablefield-cell-2-1" with "9.3"
       And I press "Finish"
       And I press "Save"
       Then I should see "date"
@@ -113,8 +113,8 @@ Feature: Widgets
   #     And I press "Next"
   #     And I wait for "2" seconds
   #     And I press "Finish"
-    #   And I press "Save"
-    # Then I should see "Testing video"
+  #     And I press "Save"
+  #   Then I should see "Testing video"
 
   @api @javascript
   Scenario: Adds "New Spotlight Widget" block to home page using panels ipe editor
@@ -128,6 +128,7 @@ Feature: Widgets
       And I fill in "field_basic_spotlight_items[und][0][link]" with "http://demo.getdkan.com"
       And I attach the file "dkan_logo.png" to "files[field_basic_spotlight_items_und_0_fid]"
       And I press "Finish"
+      And I wait for "2" seconds
       And I press "Save"
       Then I should see "First spot" in the "content"
 

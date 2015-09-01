@@ -101,6 +101,7 @@ settings[bootstrap_region_well-footer] = ''
 scripts[] = assets/javascripts/radix-script.js
 scripts[] = assets/javascripts/sitewide.js
 scripts[] = assets/javascripts/svgeezy.min.js
+scripts[] = assets/javascripts/respond.min.js
 
 ; ; Disable BootstrapCDN if using Bootstrap source files in your sub-theme.
 settings[cdn_bootstrap] = 0

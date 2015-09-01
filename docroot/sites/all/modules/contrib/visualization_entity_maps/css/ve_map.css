@@ -1,0 +1,20 @@
+.field-name-field-ve-map-settings {
+  display: none;
+}
+
+#ve-map-form .pane-content{
+  overflow: auto;
+}
+
+#ve-map-form .stages li {
+  width: 50%;
+}
+
+#ve-map-form input[type="radio"],
+#ve-map-form input[type="checkbox"] {
+  margin-right: 0.5em;
+}
+
+#ve-map-form .form-group-hidden {
+  display: none;
+}

@@ -303,6 +303,14 @@ function radix_button($variables) {
     $element['#attributes']['class'][] = 'btn-primary';
   }
 
+  if (!empty($element['#button_icon'])) {
+    $value  = theme('radix_icon', array('icon' => $element['#button_icon']));
+    $value .= ' ';
+    $value .= '<span class="button-text">' . check_plain($element['#value']) . '</span>';
+
+    return '<button' . drupal_attributes($element['#attributes']) . '>' . $value . '</button>';
+  }
+
   return '<input' . drupal_attributes($element['#attributes']) . ' />';
 }
 
@@ -342,7 +350,7 @@ function radix_fieldset($variables) {
   if (!empty($element['#description'])) {
     $output .= '<p class="help-block">' . $element['#description'] . '</p>';
   }
-  $output .= $element['#children'];
+  $output .= render($element['#children']);
   if (isset($element['#value'])) {
     $output .= $element['#value'];
   }

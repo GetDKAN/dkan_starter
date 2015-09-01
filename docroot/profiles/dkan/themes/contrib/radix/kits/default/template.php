@@ -4,7 +4,9 @@
  * Theme functions
  */
 
+require_once dirname(__FILE__) . '/includes/theme.inc';
 require_once dirname(__FILE__) . '/includes/structure.inc';
+require_once dirname(__FILE__) . '/includes/field.inc';
 require_once dirname(__FILE__) . '/includes/comment.inc';
 require_once dirname(__FILE__) . '/includes/form.inc';
 require_once dirname(__FILE__) . '/includes/menu.inc';

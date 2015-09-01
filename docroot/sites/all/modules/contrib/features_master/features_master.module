@@ -1,8 +1,5 @@
 <?php
 
-// TODO: Allow modules to add and subtract master modules, without then exporting or showing a diff.
-// I.E.: Like when you want to add devel modules in your local environment.
-
 /**
  * Implements hook_features_api().
  */
@@ -49,8 +46,8 @@ function _features_master_get_modules($feature_module = NULL) {
    if (!empty($feature_module) && !in_array($feature_module, $modules)) {
     $modules[$feature_module] = $feature_module;
   }
+  features_master_temporary_modules_alter($modules, 'export');
   asort($modules);
-  // TODO: ADD OR REMOVE DEFAULTS HERE
   return $modules;
 }
 
@@ -91,7 +88,7 @@ function features_master_features_export_render($module, $data, $export = NULL) 
  */
 function features_master_features_revert($module) {
   $data = features_get_default('features_master', $module);
-  // TODO: ADD OR REMOVE DEFAULTS HERE
+  features_master_temporary_modules_alter($data['modules'], 'revert');
   if (!empty($data['modules'])) {
     $current_enabled_modules = module_list();
     if ($enable_modules = array_diff_key($data['modules'], $current_enabled_modules)) {
@@ -125,4 +122,42 @@ function features_master_features_revert($module) {
 
     //TODO: Implement the same thing for themes.
   }
+}
+
+/**
+ * Alter the list of modules using variables.
+ *
+ * @param $modules
+ * @param $mode
+ *   Either 'revert' or 'export'. 'revert' will add/remove temporary modules. 'export' does the opposite.
+ * @throws \Exception
+ */
+function features_master_temporary_modules_alter(&$modules, $mode) {
+  // Handle temporary enabling and disabling of modules.
+  if ($mode == 'revert') {
+    $add_modules = variable_get('features_master_temp_enabled_modules', array(''));
+    $rm_modules = variable_get('features_master_temp_disabled_modules', array(''));
+  }
+  // Reverse the adding and removing if in export mode.
+  elseif ($mode == 'export') {
+    $rm_modules = variable_get('features_master_temp_enabled_modules', array(''));
+    $add_modules = variable_get('features_master_temp_disabled_modules', array(''));
+  }
+  else {
+    throw new Exception("features_master_temporary_modules_alter: mode not recognized.");
+  }
+
+  foreach ($rm_modules as $module) {
+    if (in_array($module, $modules)) {
+      unset($modules[$module]);
+    }
+  }
+
+  // Add the temporarily enabled modules
+  foreach ($add_modules as $module) {
+    if (!in_array($module, $modules)) {
+      $modules[$module] = $module;
+    }
+  }
+  //TODO: Maybe replace this with a drupal_alter so that other modules could effect this without the need for variables.
 }

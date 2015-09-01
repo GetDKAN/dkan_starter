@@ -13,8 +13,16 @@ body.overlay {
   color: @titleslogan;
 }
 h1,h2,h3,h4 {
-  color: @text;
+  color: @title;
 }
+
+.front .panel-top h1.pane-title,
+.front .panel-top h2.pane-title,
+.front .panel-top h3.pane-title,
+.front .panel-top h4.pane-title {
+  color: @herotitle
+}
+
 .pane-dkan-sitewide-demo-front-dkan-demo-front .pane-content,
 #featured .tint,
 .panel-top .tint {
@@ -171,7 +179,7 @@ div.autocomplete-deluxe-multiple,
 }
 
 .panel-default > .panel-heading {
-  color: @text;
+  color: @title;
   background-color: @toolbarborder;
   border-color: @toolbarborder;
 }
@@ -188,7 +196,7 @@ div.autocomplete-deluxe-multiple,
 }
 .radix-layouts-sidebar .pane-title {
   background: @toolbarborder;
-  color: @text;
+  color: @title;
 }
 .radix-layouts-sidebar div[class*="pane-facetapi"] .pane-title {
   background: #dddddd;
@@ -199,7 +207,7 @@ div.autocomplete-deluxe-multiple,
 }
 
 .horizontal-tabs ul.horizontal-tabs-list .selected strong {
-  color: @text;
+  color: @title;
 }
 
 #url-edit-prefix {
@@ -215,7 +223,7 @@ div.autocomplete-deluxe-multiple,
 
 ul.resource-list li .heading, 
 ul.resource-list li .heading:hover {
-  color: @text;
+  color: @title;
 }
 
 .footer {

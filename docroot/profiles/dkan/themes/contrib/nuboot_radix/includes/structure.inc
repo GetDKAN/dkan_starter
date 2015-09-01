@@ -30,9 +30,35 @@ function nuboot_radix_js_alter(&$javascript) {
 }
 
 /**
+ * Implements hook_preprocess().
+ */
+function nuboot_radix_preprocess(&$variables, $hook) {
+  // Panel heading tag.
+  $variables['title_heading'] = 'h2';
+}
+
+/**
  * Implements template_preprocess_page().
  */
 function nuboot_radix_preprocess_page(&$variables) {
+  // Logo file -- assumes default file is logo.svg.
+  $logo = theme_get_setting('toggle_logo');
+  $theme = variable_get('theme_default');
+  $default = theme_get_setting('default_logo');
+  $logo_fid = theme_get_setting('svg_logo');
+  $logo_file = !empty($logo_fid) ? file_load($logo_fid) : FALSE;
+  if ($logo) {
+    if ($default) {
+      $variables['logo'] = '/' . drupal_get_path('theme', $theme ) . '/logo.svg';
+    }
+    elseif($logo_file) {
+      $logo_uri = $logo_file->uri;
+      $variables['logo'] = file_create_url($logo_uri);
+    }
+    else {
+      $variables['logo'] = file_create_url(theme_get_setting('logo_path'));
+    }
+  }
   // Add copyright to theme.
   if ($copyright = theme_get_setting('copyright')) {
     $variables['copyright'] = isset($copyright['value']) ? check_markup($copyright['value'], $copyright['format']) : '';

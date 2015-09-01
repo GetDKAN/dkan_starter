@@ -8,6 +8,7 @@
  * Implements theme_settings().
  */
 function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
+  //drupal_set_message('<pre>' . print_r($form, TRUE) . '</pre>');
   // Ensure this include file is loaded when the form is rebuilt from the cache.
   $form_state['build_info']['files']['form'] = drupal_get_path('theme', 'nuboot_radix') . '/theme-settings.php';
 
@@ -34,8 +35,8 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
   );
   // Upload field.
   $form['hero']['hero_file'] = array(
-    '#type'     => 'managed_file',
-    '#title'    => t('Upload a new photo for the hero section background'),
+    '#type' => 'managed_file',
+    '#title' => t('Upload a new photo for the hero section background'),
     '#description' => t('<p>The hero unit is the large featured area located on the front page. 
       This theme supplies a default background image for this area. You may upload a different 
       photo here and it will replace the default background image.</p><p>Max. file size: 2 MB
@@ -47,6 +48,7 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
       'file_validate_extensions' => array('gif png jpg jpeg'),
     ),
   );
+
   // Solid color background.
   $form['hero']['background_option'] = array(
     '#type' => 'textfield',
@@ -57,6 +59,18 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
     '#element_validate' => array('_background_option_setting'),
   );
 
+  // Add svg logo option.
+  $form['logo']['settings']['svg_logo'] = array(
+    '#type' => 'managed_file',
+    '#title' => t('Upload an .svg version of your logo'),
+    '#description' => t('<p>Be sure to also add a .png version of your logo with the <em>Upload logo image</em> field above for older browsers that do not support .svg files. Both files should have the same name, only the suffix should change (i.e. logo.png & logo.svg).</p>'),
+    '#required' => FALSE,
+    '#upload_location' => file_default_scheme() . '://',
+    '#default_value' => theme_get_setting('svg_logo'), 
+    '#upload_validators' => array(
+      'file_validate_extensions' => array('svg'),
+    ),
+  );
   // Return the additional form widgets.
   return $form;
 }

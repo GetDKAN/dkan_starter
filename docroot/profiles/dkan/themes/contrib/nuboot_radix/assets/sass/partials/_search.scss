@@ -7,16 +7,15 @@
 #dkan-sitewide-dataset-search-form,
 #dkan-sitewide-dataset-search-form--2 {
   input[type="submit"] { 
-    top: 2px;
+    top: 3px;
   }
   label {
-    display: none;
+    @extend %screenreader;
   }
 } 
 
-#region-branding #block-dkan-sitewide-dkan-sitewide-search-bar label,
-#views-exposed-form-dataset-page label {
-  display: none;
+#region-branding #block-dkan-sitewide-dkan-sitewide-search-bar label {
+  @extend %screenreader;
 }
 
 #block-dkan-sitewide-dkan-sitewide-search-bar {
@@ -30,7 +29,7 @@
     }
     input.form-control {
       width:170px;
-      height: 34px;
+      height: 36px;
       margin: 0;
     }
   }
@@ -39,6 +38,9 @@
   .views-exposed-form .form-submit {
     margin:22px 0 0;
     text-shadow: none;
+  }
+  input[type="submit"] {
+    top: 3px;
   }
 }
 

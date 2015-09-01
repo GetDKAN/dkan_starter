@@ -4,7 +4,9 @@ api = 2
 ; Set the default subdirectory for projects.
 defaults[projects][subdir] = contrib
 
-; DKAN
+; DKAN core modules
+
+;Moved featured groups view
 projects[dkan_dataset][subdir] = dkan
 projects[dkan_dataset][download][type] = git
 projects[dkan_dataset][download][url] = https://github.com/NuCivic/dkan_dataset.git
@@ -15,8 +17,30 @@ projects[dkan_datastore][download][type] = git
 projects[dkan_datastore][download][url] = https://github.com/NuCivic/dkan_datastore.git
 projects[dkan_datastore][download][branch] = 7.x-1.x
 
+; NuCivic Visualization tools
+
+projects[visualization_entity][download][type] = git
+projects[visualization_entity][download][url] = https://github.com/NuCivic/visualization_entity.git
+projects[visualization_entity][download][branch] = master
+projects[visualization_entity][type] = module
+
+projects[visualization_entity_charts][download][type] = git
+projects[visualization_entity_charts][download][url] = https://github.com/NuCivic/visualization_entity_charts.git
+projects[visualization_entity_charts][download][branch] = master
+projects[visualization_entity_charts][type] = module
+
+; Includes, since we're doing non-recusive
+
 includes[dkan_dataset_make] = https://raw.githubusercontent.com/NuCivic/dkan_dataset/7.x-1.x/dkan_dataset.make
 includes[dkan_datastore_make] = https://raw.githubusercontent.com/NuCivic/dkan_datastore/7.x-1.x/dkan_datastore.make
+
+includes[visualization_entity_make] = https://raw.githubusercontent.com/NuCivic/visualization_entity/master/visualization_entity.make
+includes[visualization_entity_charts_make] = https://raw.githubusercontent.com/NuCivic/visualization_entity_charts/master/visualization_entity_charts.make
+
+; This module is part of dkan now so the internal makefile should be referenced instead of the one from the repo.
+includes[dkan_data_story_make] = https://raw.githubusercontent.com/NuCivic/dkan_data_story/master/dkan_data_story.make
+
+; Patches to other modules
 
 projects[file_entity][patch][2308737] = https://www.drupal.org/files/issues/file_entity-remove-field-status-check-2308737-9509141.patch
 
@@ -26,9 +50,12 @@ projects[admin_menu][version] = 3.0-rc5
 projects[bueditor][version] = 1.7
 projects[bueditor][patch][1931862] = http://drupal.org/files/dont-render-bueditor-for-plain-text-textareas.patch
 
-projects[colorizer][version] = 1.4
+projects[colorizer][version] = 1.7
 projects[colorizer][patch][2227651] = https://www.drupal.org/files/issues/colorizer-add-rgb-vars-2227651-4b.patch
-projects[colorizer][patch][2444249] = https://www.drupal.org/files/issues/colorizer-2444249.patch
+
+projects[conditional_styles][version] = 2.2
+
+projects[conditional_styles][version] = 2.2
 
 projects[diff][version] = 3.2
 
@@ -67,16 +94,19 @@ projects[views_autocomplete_filters][patch][2277453] = http://drupal.org/files/i
 projects[views_autocomplete_filters][patch][2374709] = http://www.drupal.org/files/issues/views_autocomplete_filters-cache-2374709-2.patch
 projects[views_autocomplete_filters][patch][2317351] = http://www.drupal.org/files/issues/views_autocomplete_filters-content-pane-2317351-4.patch
 
-projects[panopoly_widgets][version] = 1.21
-projects[panopoly_widgets][patch][] = patches/panopoly_widgets_overrides.patch
+
+projects[panopoly_widgets][version] = 1.25
 includes[panopoly_widgets_make] = http://cgit.drupalcode.org/panopoly_widgets/plain/panopoly_widgets.make
+projects[panopoly_widgets][patch][1] = patches/panopoly_widgets_overrides.patch
+projects[panopoly_widgets][patch][2] = patches/panopoly_widgets_add_jquery_ui_tabs.patch
+
 
 projects[panopoly_images][version] = 1.21
 includes[panopoly_images_make] = http://cgit.drupalcode.org/panopoly_images/plain/panopoly_images.make
 
 projects[panels][version] = 3.5
 
-projects[path_breadcrumbs][version] = 3.2
+projects[path_breadcrumbs][version] = 3.3
 
 projects[pathauto][version] = 1.2
 
@@ -87,8 +117,17 @@ projects[r4032login][version] = 1.7
 projects[rules][version] = 2.3
 
 projects[restws][version] = 2.3
+projects[restws][patch][2484829] = https://www.drupal.org/files/issues/restws-fix-format-extension-2484829-53.patch
 
 projects[schema][version] = 1.2
+
+projects[adminrole][version] = 1.0
+
+projects[admin_menu_source][version] = 1.0
+projects[admin_menu_source][subdir] = contrib
+
+projects[menu_token][version] = 1.0-beta5
+projects[menu_token][subdir] = contrib
 
 ; Deprecated
 projects[delta][version] = 3.0-beta11
@@ -97,22 +136,23 @@ projects[delta][version] = 3.0-beta11
 projects[omega][version] = 3.1
 projects[omega][patch][1828552] = http://drupal.org/files/1828552-omega-hook_views_mini_pager.patch
 
-projects[bootstrap][download][version] = 3.x
-projects[bootstrap][download][type] = git
-projects[bootstrap][download][revision] = "0390173732439fd60e898c7086219ab8c99c2f3d"
+;projects[bootstrap][download][version] = 3.x
+;projects[bootstrap][download][type] = git
+;projects[bootstrap][download][revision] = "0390173732439fd60e898c7086219ab8c99c2f3d"
 
-projects[nuboot][download][type] = git
-projects[nuboot][download][url] = https://github.com/NuCivic/nuboot.git
-projects[nuboot][download][revision] = "fbd7ea2c2f1fa45a5f5a10b4215950940335879e"
-projects[nuboot][download][branch] = 7.x-1.x
+;projects[nuboot][download][type] = git
+;projects[nuboot][download][url] = https://github.com/NuCivic/nuboot.git
+;projects[nuboot][download][revision] = "fbd7ea2c2f1fa45a5f5a10b4215950940335879e"
+;projects[nuboot][download][branch] = 7.x-1.x
 
 projects[nuboot_radix][download][type] = git
 projects[nuboot_radix][download][url] = https://github.com/NuCivic/nuboot_radix.git
 projects[nuboot_radix][download][branch] = 7.x-1.x
-projects[nuboot_radix][download][revision] = "08d5af72e590a56a2e6ec543f82957171acae245"
 projects[nuboot_radix][type] = theme
 
+; Need to bring in fix from https://www.drupal.org/node/2473455; remove once next radix release is out
 projects[radix][type] = theme
+projects[radix][download][revision] = "f26d28784bd123c55d04e91b636d02e802bbdee9"
 
 ; Libraries
 libraries[font_awesome][type] = libraries

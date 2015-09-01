@@ -16,9 +16,12 @@ function panopoly_widgets_init() {
   // Load the seven theme CSS for the media browser. This is done
   // because the seven theme may not be the admin theme, but the
   // media browser assumes that it is....
-  if (arg(0) == 'media' && arg(1) == 'browser' && $GLOBALS['theme'] != 'seven') {
-    drupal_add_css(drupal_get_path('theme', 'seven') . '/reset.css', array('basename' => 'seven_reset', 'group' => CSS_THEME));
-    drupal_add_css(drupal_get_path('theme', 'seven') . '/style.css', array('basename' => 'seven_style', 'group' => CSS_THEME));
+  if (arg(0) == 'media' && arg(1) == 'browser') {
+    if ($GLOBALS['theme'] != 'seven') {
+      drupal_add_css(drupal_get_path('theme', 'seven') . '/reset.css', array('basename' => 'seven_reset', 'group' => CSS_THEME));
+      drupal_add_css(drupal_get_path('theme', 'seven') . '/style.css', array('basename' => 'seven_style', 'group' => CSS_THEME));
+    }
+
     drupal_add_css(drupal_get_path('module', 'panopoly_widgets') . '/panopoly-widgets-media-browser.css', array('group' => CSS_THEME));
   }
 }
@@ -88,6 +91,8 @@ function panopoly_widgets_page_build(&$page) {
 
   // Add our custom javascript to the footer to override other things.
   drupal_add_js(drupal_get_path('module', 'panopoly_widgets') . '/panopoly-widgets.js', array('scope' => 'footer'));
+  drupal_add_library('system', 'ui.tabs');
+  drupal_add_js(drupal_get_path('module', 'panopoly_widgets') . '/panopoly-widgets-spotlight.js', array('scope' => 'footer'));
 
   // If jquery_update was used to update jQuery UI to version 1.9 or higher
   // than we need to load a plugin to add the '.rotate' function to the tabs
@@ -556,6 +561,26 @@ function panopoly_widgets_views_pre_view(&$view, &$display_id, &$args) {
     if (empty($view->exposed_input) || (empty($view->exposed_input['nid']) && empty($view->exposed_input['title']))) {
       $view->executed = TRUE;
     }
+  }
+}
+
+/**
+ * Implements hook_views_default_views_alter().
+ */
+function panopoly_widgets_views_default_views_alter(&$views) {
+  // If the locale module is enabled, ensure the "Add content item" widget's
+  // View will respect current language settings for the content.
+  if (module_exists('locale') && array_key_exists('panopoly_widgets_general_content', $views)) {
+    /** @var views_display $piece_of_content */
+    $piece_of_content =& $views['panopoly_widgets_general_content']->display['piece_of_content'];
+
+    $piece_of_content->handler->display->display_options['filters']['language']['id'] = 'language';
+    $piece_of_content->handler->display->display_options['filters']['language']['table'] = 'node';
+    $piece_of_content->handler->display->display_options['filters']['language']['field'] = 'language';
+    $piece_of_content->handler->display->display_options['filters']['language']['value'] = array(
+      '***CURRENT_LANGUAGE***' => '***CURRENT_LANGUAGE***',
+      'und' => 'und',
+    );
   }
 }
 

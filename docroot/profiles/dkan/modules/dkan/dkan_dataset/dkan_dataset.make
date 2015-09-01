@@ -13,7 +13,6 @@ includes[leaflet_draw_widget_make] = https://raw.githubusercontent.com/NuCivic/l
 ; Recline specific
 projects[recline][download][type] = git
 projects[recline][download][url] = https://github.com/NuCivic/recline.git
-projects[recline][download][revision] = a6af472a07d520a758f14cdf836a48c33e15bf07
 projects[recline][download][branch] = 7.x-1.x
 projects[recline][subdir] = contrib
 
@@ -21,7 +20,7 @@ includes[recline_make] = https://raw.githubusercontent.com/NuCivic/recline/431ff
 
 ; Contrib Modules
 projects[autocomplete_deluxe][subdir] = contrib
-projects[autocomplete_deluxe][version] = 2.0-beta3
+projects[autocomplete_deluxe][version] = 2.1
 
 projects[beautytips][download][type] = git
 projects[beautytips][download][branch] = 7.x-2.x
@@ -100,7 +99,7 @@ projects[imagecache_actions][download][revision] = cd19d2a
 projects[imagecache_actions][subdir] = contrib
 projects[imagecache_actions][type] = module
 
-projects[jquery_update][version] = 2.3
+projects[jquery_update][version] = 2.6
 projects[jquery_update][subdir] = contrib
 
 projects[libraries][version] = 2.1
@@ -124,6 +123,7 @@ projects[multistep][type] = module
 
 projects[og][version] = 2.7
 projects[og][patch][1090438] = http://drupal.org/files/issues/og-add_users_and_entities_with_drush-1090438-12.patch
+projects[og][patch][2549071] = https://www.drupal.org/files/issues/og_actions-bug-vbo-delete.patch
 projects[og][subdir] = contrib
 
 projects[og_extras][download][type] = git
@@ -172,10 +172,10 @@ projects[remote_stream_wrapper][subdir] = contrib
 projects[select_or_other][version] = 2.20
 projects[select_or_other][subdir] = contrib
 
-projects[search_api][version] = 1.11
+projects[search_api][version] = 1.15
 projects[search_api][subdir] = contrib
 
-projects[search_api_db][version] = 1.2
+projects[search_api_db][version] = 1.4
 projects[search_api_db][subdir] = contrib
 
 projects[strongarm][version] = 2.0
@@ -194,7 +194,7 @@ projects[views][subdir] = contrib
 projects[views_responsive_grid][version] = 1.3
 projects[views_responsive_grid][subdir] = contrib
 
-projects[views_bulk_operations][version] = 3.2
+projects[views_bulk_operations][version] = 3.3
 projects[views_bulk_operations][subdir] = contrib
 
 

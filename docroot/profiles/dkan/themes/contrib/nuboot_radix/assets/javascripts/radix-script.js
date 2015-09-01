@@ -38,6 +38,9 @@
   }
 
   $(document).ready(function() {
+    //Change with a png image the svg in old browsers (IE8,...)
+    svgeezy.init('nocheck', 'png');
+
     // Allow main menu dropdown-toggle to be clickable.
     $('#main-menu .dropdown > a.dropdown-toggle').once('radix-dropdown', function(){
       $(this).click(function(e) {
