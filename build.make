@@ -44,27 +44,27 @@ projects[] = search_api_solr
 ; =====
 projects[dkan_migrate_base][type] = module
 projects[dkan_migrate_base][download][type] = git
-projects[dkan_migrate_base][url] = git@github.com:NuCivic/dkan_migrate_base.git
-projects[dkan_migrate_base][branch] = master
+projects[dkan_migrate_base][download][url] = git@github.com:NuCivic/dkan_migrate_base.git
+projects[dkan_migrate_base][download][branch] = master
 
 ; DKAN Harvest
 ; =====
 projects[dkan_harvest][type] = module
 projects[dkan_harvest][download][type] = git
-projects[dkan_harvest][url] = git@github.com:NuCivic/dkan_harvest.git
-projects[dkan_harvest][branch] = master
+projects[dkan_harvest][download][url] = git@github.com:NuCivic/dkan_harvest.git
+projects[dkan_harvest[download][branch] = master
 
 ; Additional Visualization Entity Components
 ; =====
 projects[visualization_entity_maps][type] = module
 projects[visualization_entity_maps][download][type] = git
-projects[visualization_entity_maps][url] = git@github.com:NuCivic/visualization_entity_maps.git
-projects[visualization_entity_maps][branch] = master
+projects[visualization_entity_maps][download][url] = git@github.com:NuCivic/visualization_entity_maps.git
+projects[visualization_entity_maps][download][branch] = master
 
 projects[visualization_entity_tables][type] = module
 projects[visualization_entity_tables][download][type] = git
-projects[visualization_entity_tables][url] = git@github.com:NuCivic/visualization_entity_tables.git
-projects[visualization_entity_tables][branch] = master
+projects[visualization_entity_tables][download][url] = git@github.com:NuCivic/visualization_entity_tables.git
+projects[visualization_entity_tables][download][branch] = master
 
 ; Performance
 ; ===========
