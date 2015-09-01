@@ -29,16 +29,16 @@ projects[] = features_banish
 
 ; Acquia
 ; ======
-;projects[] = acquia_connector
+projects[] = acquia_connector
 ; Acquia Expire integration
-;projects[] = acquia_purge
+projects[] = acquia_purge
 ; Acquia Search modules
-;projects[] = search_api_acquia
-;projects[] = acquia_search_multi_subs
+projects[] = search_api_acquia
+projects[] = acquia_search_multi_subs
 
 ; Search
 ; ======
-;projects[] = search_api_solr
+projects[] = search_api_solr
 
 ; DKAN Migrate Base
 ; =====
@@ -54,14 +54,17 @@ projects[dkan_harvest][download][type] = git
 projects[dkan_harvest][url] = git@github.com:NuCivic/dkan_harvest.git
 projects[dkan_harvest][branch] = master
 
-; DATA WORKFLOW
+; Additional Visualization Entity Components
 ; =====
-projects[data_workflow][type] = module
-projects[data_workflow][download][type] = git
-projects[data_workflow][download][url] = git@github.com:NuCivic/data_workflow.git
-projects[data_workflow][download][branch] = master
+projects[visualization_entity_maps][type] = module
+projects[visualization_entity_maps][download][type] = git
+projects[visualization_entity_maps][url] = git@github.com:NuCivic/visualization_entity_maps.git
+projects[visualization_entity_maps][branch] = master
 
-
+projects[visualization_entity_tables][type] = module
+projects[visualization_entity_tables][download][type] = git
+projects[visualization_entity_tables][url] = git@github.com:NuCivic/visualization_entity_tables.git
+projects[visualization_entity_tables][branch] = master
 
 ; Performance
 ; ===========
