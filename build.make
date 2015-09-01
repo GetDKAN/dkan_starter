@@ -54,6 +54,17 @@ projects[dkan_harvest][download][type] = git
 projects[dkan_harvest][url] = git@github.com:NuCivic/dkan_harvest.git
 projects[dkan_harvest][branch] = master
 
+; Additional Visualization Entity Components
+; =====
+projects[visualization_entity_maps][type] = module
+projects[visualization_entity_maps][download][type] = git
+projects[visualization_entity_maps][url] = git@github.com:NuCivic/visualization_entity_maps.git
+projects[visualization_entity_maps][branch] = master
+
+projects[visualization_entity_tables][type] = module
+projects[visualization_entity_tables][download][type] = git
+projects[visualization_entity_tables][url] = git@github.com:NuCivic/visualization_entity_tables.git
+projects[visualization_entity_tables][branch] = master
 
 ; Performance
 ; ===========
