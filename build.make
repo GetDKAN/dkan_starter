@@ -52,7 +52,7 @@ projects[dkan_migrate_base][download][branch] = master
 projects[dkan_harvest][type] = module
 projects[dkan_harvest][download][type] = git
 projects[dkan_harvest][download][url] = git@github.com:NuCivic/dkan_harvest.git
-projects[dkan_harvest[download][branch] = master
+projects[dkan_harvest][download][branch] = master
 
 ; Additional Visualization Entity Components
 ; =====
