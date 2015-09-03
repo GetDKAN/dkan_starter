@@ -1,0 +1,4 @@
+name = Devinci
+description = Provides integration with devinci automation.
+package = Development
+core = 7.x

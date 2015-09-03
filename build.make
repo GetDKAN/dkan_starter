@@ -11,8 +11,11 @@ projects[dkan][subdir] = ""
 
 ; Default Projects
 ; ================
-projects[] = features_master
+projects[] = devinci
+projects[] = environment
+projects[] = environment_indicator
 projects[] = features_banish
+projects[] = features_master
 
 ; Optional Projects
 ; =================
@@ -20,9 +23,10 @@ projects[] = features_banish
 
 ; Development
 ; ===========
-;projects[] = devel
-;projects[] = environment
-;projects[] = maillog
+projects[] = devel
+projects[] = environment
+projects[] = environment_indicator
+projects[] = maillog
 ;projects[] = shield
 ;projects[] = features_override
 ;projects[] = security_review

@@ -3,6 +3,10 @@ language: php
 php:
   - 5.4
 
+env:
+  # Set the devinci environment.
+  - ENVIRONMENT=test
+
 mysql:
   database: data_starter
   username: root
