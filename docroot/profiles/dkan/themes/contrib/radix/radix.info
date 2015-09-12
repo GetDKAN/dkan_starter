@@ -22,7 +22,9 @@ features[] = logo
 features[] = name
 features[] = favicon
 
-; Information added by drush on 2015-06-03
-version = "f26d28784bd123c55d04e91b636d02e802bbdee9"
+; Information added by Drupal.org packaging script on 2015-07-27
+version = "7.x-3.0-rc4"
+core = "7.x"
 project = "radix"
-datestamp = "1433345029"
+datestamp = "1438012143"
+

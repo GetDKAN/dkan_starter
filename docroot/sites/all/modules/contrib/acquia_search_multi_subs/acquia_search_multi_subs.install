@@ -46,6 +46,7 @@ function acquia_search_multi_subs_uninstall() {
       $server->save();
     }
   }
+  variable_del('acquia_search_multi_subs_subscription_cache_time');
 }
 
 /**

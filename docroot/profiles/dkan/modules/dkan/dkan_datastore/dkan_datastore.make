@@ -7,6 +7,7 @@ projects[feeds][download][revision] = e7f7f3987bd10a37010e6d1fa3d4d1b50e67c4cb
 projects[feeds][download][branch] = 7.x-2.x
 projects[feeds][patch][1428272] = http://drupal.org/files/feeds-encoding_support_CSV-1428272-52.patch
 projects[feeds][patch][1127696] = http://drupal.org/files/issues/1127696-97.patch
+projects[feeds][patch][2531706] = https://www.drupal.org/files/issues/feeds-cache-table-exists-2531706-1.patch
 projects[feeds][subdir] = contrib
 projects[feeds][type] = module
 

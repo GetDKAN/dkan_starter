@@ -104,19 +104,24 @@ function features_master_features_revert($module) {
         if (!$success) {
           // Consider these modules as not enabled;
           unset($enable_modules[$module]);
-          drupal_set_message(t('FEATURES MASTER: @module has unmet dependencies or some other issue and could not be enabled', array('@module' => $module)));
+          drupal_set_message(t('FEATURES MASTER: @module has unmet dependencies, is not installed, or has some other issue and could not be enabled', array('@module' => $module)));
         }
       }
-      $modules_string = implode(" ,", $enable_modules);
-      drupal_set_message(t('FEATURES MASTER: The following modules were enabled successfully: @modules_string', array('@modules_string' => $modules_string)));
 
+      if(empty($enable_modules)){
+        drupal_set_message(t('FEATURES MASTER: No modules were enabled, either there was an error enabling them or none were set to enable.'));
+      }
+      else {
+        $modules_string = implode(", ", $enable_modules);
+        drupal_set_message(t('FEATURES MASTER: The following modules were enabled successfully: @modules_string', array('@modules_string' => $modules_string)));
+      }
     }
     if ($disable_modules = array_diff_key($current_enabled_modules, $data['modules'])) {
       foreach ($disable_modules as $module) {
         // TODO: We don't get any return value from module_disable unfortunately. We should add a try catch here as well.
         module_disable(array($module));
       }
-      $modules_string = implode(" ,", $disable_modules);
+      $modules_string = implode(", ", $disable_modules);
       drupal_set_message(t('FEATURES MASTER: The following modules were disabled successfully: @modules_string', array('@modules_string' => $modules_string)));
     }
 
@@ -135,13 +140,13 @@ function features_master_features_revert($module) {
 function features_master_temporary_modules_alter(&$modules, $mode) {
   // Handle temporary enabling and disabling of modules.
   if ($mode == 'revert') {
-    $add_modules = variable_get('features_master_temp_enabled_modules', array(''));
-    $rm_modules = variable_get('features_master_temp_disabled_modules', array(''));
+    $add_modules = variable_get('features_master_temp_enabled_modules', array());
+    $rm_modules = variable_get('features_master_temp_disabled_modules', array());
   }
   // Reverse the adding and removing if in export mode.
   elseif ($mode == 'export') {
-    $rm_modules = variable_get('features_master_temp_enabled_modules', array(''));
-    $add_modules = variable_get('features_master_temp_disabled_modules', array(''));
+    $rm_modules = variable_get('features_master_temp_enabled_modules', array());
+    $add_modules = variable_get('features_master_temp_disabled_modules', array());
   }
   else {
     throw new Exception("features_master_temporary_modules_alter: mode not recognized.");

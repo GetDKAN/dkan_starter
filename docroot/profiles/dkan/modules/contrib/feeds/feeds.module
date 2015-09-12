@@ -864,7 +864,13 @@ function _feeds_feeds_processor_targets_alter(array &$targets, $entity_type, $bu
  * Implements hook_flush_caches().
  */
 function feeds_flush_caches() {
-  return array('cache_feeds_http');
+  // The update to add the table needs to have run.
+  include_once DRUPAL_ROOT . '/includes/install.inc';
+
+  if (drupal_get_installed_schema_version('feeds') >= 7212) {
+    return array('cache_feeds_http');
+  }
+  return array();
 }
 
 /**

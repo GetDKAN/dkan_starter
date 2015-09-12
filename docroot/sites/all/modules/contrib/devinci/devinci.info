@@ -2,3 +2,10 @@ name = Devinci
 description = Provides integration with devinci automation.
 package = Development
 core = 7.x
+
+; Information added by Drupal.org packaging script on 2015-08-29
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "devinci"
+datestamp = "1440873240"
+

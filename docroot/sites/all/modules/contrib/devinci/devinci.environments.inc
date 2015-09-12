@@ -91,7 +91,7 @@ function devinci_get_acquia_env($env_map) {
  */
 function devinci_get_pantheon_env($env_map) {
   // Check for pantheon environment settings.
-  if ($pantheon_env = getenv('PANTHEON_ENVIRONMENT')) {
+  if ($pantheon_env = genenv('PANTHEON_ENVIRONMENT')) {
     if (array_key_exists($pantheon_env, $env_map)) {
       return $env_map[$pantheon_env];
     }
