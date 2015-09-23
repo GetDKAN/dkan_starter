@@ -3483,6 +3483,8 @@ ul.action-links { margin: 1em 15px; }
 .view-dkan-groups-featured .row, .pane-dkan-groups-featured .row { text-align: center; }
 .view-dkan-groups-featured .row div[class*='views-column'], .pane-dkan-groups-featured .row div[class*='views-column'] { margin-bottom: 1.25em; }
 
+.view-admin-content table { margin-top: 0; }
+
 input.use-ajax-submit { margin-right: 10px; }
 
 button.btn, .form-control { line-height: 1.4em; height: 36px; }

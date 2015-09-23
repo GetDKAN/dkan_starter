@@ -4,7 +4,7 @@ api = 2
 projects[entity][version] = 1.5
 projects[entity][subdir] = contrib
 
-projects[features][version] = 2.0
+projects[features][version] = 2.6
 projects[features][subdir] = contrib
 
 projects[eck][version] = 2.0-rc3

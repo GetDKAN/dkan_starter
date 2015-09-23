@@ -37,8 +37,7 @@ includes[dkan_datastore_make] = https://raw.githubusercontent.com/NuCivic/dkan_d
 includes[visualization_entity_make] = https://raw.githubusercontent.com/NuCivic/visualization_entity/master/visualization_entity.make
 includes[visualization_entity_charts_make] = https://raw.githubusercontent.com/NuCivic/visualization_entity_charts/master/visualization_entity_charts.make
 
-; This module is part of dkan now so the internal makefile should be referenced instead of the one from the repo.
-includes[dkan_data_story_make] = https://raw.githubusercontent.com/NuCivic/dkan_data_story/master/dkan_data_story.make
+includes[dkan_data_story_make] = modules/dkan/dkan_data_story/dkan_data_story.make
 
 ; Patches to other modules
 
@@ -63,7 +62,7 @@ projects[draggableviews][version] = 2.1
 
 projects[entityreference_filter][version] = 1.5
 
-projects[fieldable_panels_panes][version] = 1.6
+projects[fieldable_panels_panes][version] = 1.7
 
 projects[honeypot][version] = 1.17
 
@@ -101,7 +100,7 @@ projects[panopoly_widgets][patch][1] = patches/panopoly_widgets_overrides.patch
 projects[panopoly_widgets][patch][2] = patches/panopoly_widgets_add_jquery_ui_tabs.patch
 
 
-projects[panopoly_images][version] = 1.21
+projects[panopoly_images][version] = 1.27
 includes[panopoly_images_make] = http://cgit.drupalcode.org/panopoly_images/plain/panopoly_images.make
 
 projects[panels][version] = 3.5
