@@ -41,8 +41,7 @@ function visualization_entity_maps_attach_libraries(&$element) {
 
   $module_path = drupal_get_path('module', 'visualization_entity_maps');
   $element['#attached']['css'][] = $module_path . '/css/ve_map.css';
-  drupal_add_js($module_path . '/js/visualization_entity_maps_steps.js', array('weight' => 100));
-  drupal_add_js($module_path . '/js/visualization_entity_maps.js', array('weight' => 102));
+  $element['#attached']['css'][] = $module_path . '/css/ve_map_edit.css';
 }
 
 /**
@@ -82,6 +81,9 @@ function visualization_entity_maps_theme($existing, $type, $theme, $path) {
 function template_preprocess_eck__entity__form_add_visualization_ve_map(&$vars) {
   $form = $vars['form'];
   $form = visualization_entity_maps_attach_libraries($form);
+  $module_path = drupal_get_path('module', 'visualization_entity_maps');
+  drupal_add_js($module_path . '/js/visualization_entity_maps_steps.js', array('weight' => 100));
+  drupal_add_js($module_path . '/js/visualization_entity_maps.js', array('weight' => 102));
   unset($vars['form']['actions']);
   unset($vars['form']['submit']);
 }
@@ -92,6 +94,9 @@ function template_preprocess_eck__entity__form_add_visualization_ve_map(&$vars) 
 function template_preprocess_eck__entity__form_edit_visualization_ve_map(&$vars) {
   $form = $vars['form'];
   $form = visualization_entity_maps_attach_libraries($form);
+  $module_path = drupal_get_path('module', 'visualization_entity_maps');
+  drupal_add_js($module_path . '/js/visualization_entity_maps_steps.js', array('weight' => 100));
+  drupal_add_js($module_path . '/js/visualization_entity_maps.js', array('weight' => 102));
   unset($vars['form']['actions']);
   unset($vars['form']['submit']);
 }

@@ -173,6 +173,88 @@ function visualization_entity_tables_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'visualization-ve_table-field_ve_table_numrecords'
+  $field_instances['visualization-ve_table-field_ve_table_numrecords'] = array(
+    'bundle' => 've_table',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 8,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'visualization',
+    'field_name' => 'field_ve_table_numrecords',
+    'label' => 'Number of records to show per page',
+    'required' => 0,
+    'settings' => array(
+      'max' => '',
+      'min' => 0,
+      'prefix' => '',
+      'suffix' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'number',
+      'settings' => array(),
+      'type' => 'number',
+      'weight' => 12,
+    ),
+  );
+
+  // Exported field_instance: 'visualization-ve_table-field_ve_table_pager'
+  $field_instances['visualization-ve_table-field_ve_table_pager'] = array(
+    'bundle' => 've_table',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'Pager will be shown only when the total number of records is larger than the page size.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 7,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'visualization',
+    'field_name' => 'field_ve_table_pager',
+    'label' => 'Use pager',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 11,
+    ),
+  );
+
   // Exported field_instance: 'visualization-ve_table-field_ve_table_resize'
   $field_instances['visualization-ve_table-field_ve_table_resize'] = array(
     'bundle' => 've_table',
@@ -218,10 +300,13 @@ function visualization_entity_tables_field_default_field_instances() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Description');
+  t('Number of records to show per page');
+  t('Pager will be shown only when the total number of records is larger than the page size.');
   t('Resize columns to fit data');
   t('Resource');
   t('Settings');
   t('Show Title');
+  t('Use pager');
 
   return $field_instances;
 }

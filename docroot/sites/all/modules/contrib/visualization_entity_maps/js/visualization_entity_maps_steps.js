@@ -64,7 +64,9 @@ this.recline.View = this.recline.View || {};
       };
       state.set('model', new recline.Model.Dataset(source));
       state.set('source', source);
+      $('<div class="alert alert-info loader">Loading <span class="spin"></span></div>').insertAfter('#steps');
       state.get('model').fetch().done(function(){
+        $('.loader').empty().hide();
         cb(state);
       });
     }
@@ -80,34 +82,46 @@ this.recline.View = this.recline.View || {};
     '<p><input type="radio" id="type-latlon" name="control-map-type" value="latlon" {{^sourceGeopoint}}checked{{/sourceGeopoint}}>' +
     '<label for="type-geopoint">Latitude and Longitude fields</label></p></div>' +
     '<div class="form-group form-group-latlon {{#sourceGeopoint}}form-group-hidden{{/sourceGeopoint}}">' +
-    '<label for="control-map-latfield">Latitude Field</label>' +
-    '<select id="control-map-latfield" class="form-control">' +
-    '{{#fields}}' +
-    '<option value="{{value}}" {{#latSelected}}selected{{/latSelected}}>{{name}}</option>' +
-    '{{/fields}}' +
-    '</select>' +
-    '<label for="control-map-lonfield">Longitude Field</label>' +
-    '<select id="control-map-lonfield" class="form-control">' +
-    '{{#fields}}' +
-    '<option value="{{value}}" {{#lonSelected}}selected{{/lonSelected}}>{{name}}</option>' +
-    '{{/fields}}' +
-    '</select>' +
+      '<label for="control-map-latfield">Latitude Field</label>' +
+      '<select id="control-map-latfield" class="form-control">' +
+      '{{#fields}}' +
+        '<option value="{{value}}" {{#latSelected}}selected{{/latSelected}}>{{name}}</option>' +
+      '{{/fields}}' +
+      '</select>' +
+      '<label for="control-map-lonfield">Longitude Field</label>' +
+      '<select id="control-map-lonfield" class="form-control">' +
+      '{{#fields}}' +
+      '<option value="{{value}}" {{#lonSelected}}selected{{/lonSelected}}>{{name}}</option>' +
+      '{{/fields}}' +
+      '</select>' +
     '</div>' +
     '<div class="form-group form-group-geopoint {{^sourceGeopoint}}form-group-hidden{{/sourceGeopoint}}"">' +
-    '<label for="control-map-geopoint">Geopoint Field</label>' +
-    '<select id="control-map-geopoint" class="form-control">' +
-    '{{#fields}}' +
-    '<option value="{{value}}" {{#geomSelected}}selected{{/geomSelected}}>{{name}}</option>' +
-    '{{/fields}}' +
-    '</select>' +
+      '<label for="control-map-geopoint">Geopoint Field</label>' +
+      '<select id="control-map-geopoint" class="form-control">' +
+      '{{#fields}}' +
+        '<option value="{{value}}" {{#geomSelected}}selected{{/geomSelected}}>{{name}}</option>' +
+      '{{/fields}}' +
+      '</select>' +
     '</div>' +
     '<div class="form-group">' +
-    '<input type="checkbox" id="control-map-cluster" value="1" {{#cluster}}checked{{/cluster}}>' +
-    '<label for="control-map-cluster">Enable clustering</label>' +
+      '<label for="control-map-tooltipfield">Tooltip fields</label>' +
+      '<select id="control-map-tooltipfield" class="form-control chosen-select form-select" multiple>' +
+      '{{#fields}}' +
+        '<option value="{{value}}" {{#tooltipSelected}}selected{{/tooltipSelected}}>{{name}}</option>' +
+      '{{/fields}}' +
+      '</select>' +
+    '</div>' +
+    '<div class="form-group">' +
+      '<input type="checkbox" id="control-map-cluster" value="{{cluster}}" {{#cluster}}checked{{/cluster}}>' +
+      '<label for="control-map-cluster">Enable clustering</label>' +
+    '</div>' +
+    '<div class="form-group">' +
+      '<input type="checkbox" id="control-map-show-title" value="1" {{#showTitle}}checked{{/showTitle}}>' +
+      '<label for="control-map-show-title">Show title</label>' +
     '</div>' +
     '<div id="controls">' +
-    '<div id="prev" class="btn btn-default pull-left">Back</div>' +
-    '<button type="submit" class="form-submit btn btn-success pull-right">Finish</button>' +
+      '<div id="prev" class="btn btn-default pull-left">Back</div>' +
+      '<button type="submit" class="form-submit btn btn-success pull-right">Finish</button>' +
     '</div>',
     events: {
       'change [name="control-map-type"]': 'toggleDepFields',
@@ -115,7 +129,9 @@ this.recline.View = this.recline.View || {};
       'change #control-map-lonfield': 'changeLongitude',
       'change #control-map-geopoint': 'changeGeopoint',
       'change #control-map-cluster': 'changeCluster',
+      'change #control-map-show-title': 'changeTitle',
       'change #control-map-type': 'changeMapType',
+      'change #control-map-tooltipfield': 'changeTooltip',
     },
     initialize: function(options) {
       var self = this;
@@ -136,10 +152,20 @@ this.recline.View = this.recline.View || {};
     changeGeopoint: function(){
       this.updateField({fieldName: 'geomField', id: 'control-map-geopoint'});
     },
+    changeTooltip: function(){
+      this.updateField({fieldName: 'tooltipField', id: 'control-map-tooltipfield'});
+    },
     changeCluster: function(){
       var self = this;
       var mapState = {};
       mapState.cluster = self.$('#control-map-cluster').prop('checked');
+      self.state.set('mapState', _.extend(self.state.get('mapState') || {}, mapState));
+      self.state.trigger('change');
+    },
+    changeTitle: function(){
+      var self = this;
+      var mapState = {};
+      mapState.showTitle = self.$('#control-map-show-title').prop('checked');
       self.state.set('mapState', _.extend(self.state.get('mapState') || {}, mapState));
       self.state.trigger('change');
     },
@@ -158,6 +184,8 @@ this.recline.View = this.recline.View || {};
         latField: null,
         lonField: null,
         cluster: false,
+        tooltipField: null,
+        showTitle: true
       }
       var mapState = self.state.get('mapState');
       if (mapState) {
@@ -165,6 +193,7 @@ this.recline.View = this.recline.View || {};
       }
 
       var fields = [];
+
       self.state.get('model')
         .fields
         .each(function(field) {
@@ -174,12 +203,14 @@ this.recline.View = this.recline.View || {};
             latSelected: field.id === mapForm.latField,
             lonSelected: field.id === mapForm.lonField,
             geomSelected: field.id === mapForm.geomField,
+            tooltipSelected: _.contains(mapForm.tooltipField, field.id),
           });
         });
       mapForm.fields = fields;
       mapForm.sourceGeopoint = mapForm.geomField || !mapState;
 
       self.$el.html(Mustache.render(self.template, mapForm));
+      self.$('.chosen-select').chosen();
     },
     updateState: function(state, cb) {
       var self = this;
@@ -187,7 +218,9 @@ this.recline.View = this.recline.View || {};
         lonField: null,
         latField: null,
         geomField: null,
+        tooltipField: null,
         cluster: null,
+        showTitle: true
       };
       var sourceType = null;
       if(self.$('#type-geopoint').prop('checked')) {
@@ -196,12 +229,15 @@ this.recline.View = this.recline.View || {};
         sourceType = self.$('#type-latlon').val();
       }
       mapState.cluster = self.$('#control-map-cluster').prop('checked');
+      mapState.showTitle = self.$('#control-map-show-title').prop('checked');
       if (sourceType == 'geopoint') {
         mapState.geomField = self.$('#control-map-geopoint').val();
       } else if (sourceType == 'latlon') {
         mapState.lonField = self.$('#control-map-lonfield').val();
         mapState.latField = self.$('#control-map-latfield').val();
       }
+      mapState.tooltipField = self.$('#control-map-tooltipfield').val();
+
       state.set('mapState', mapState);
       cb(state);
       $('#eck-entity-form-add-visualization-ve-map').submit();

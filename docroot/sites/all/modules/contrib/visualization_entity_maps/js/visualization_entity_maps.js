@@ -26,6 +26,7 @@ var sharedObject;
           // Hack: check if the file exists before fetch.
           // CSV.JS does not return an ajax promise then
           // we can't know if the request fails.
+          $('<div class="alert alert-info loader">Loading <span class="spin"></span></div>').insertAfter('#steps');
           $.get(state.get('model').url)
             .done(function() {
               model.fetch().done(init);
@@ -34,6 +35,7 @@ var sharedObject;
               sharedObject = {state: state};
             })
             .fail(function() {
+              $('.loader').empty().hide();
               sharedObject = {state: state};
               sharedObject.state.set({step:0});
               init();
@@ -69,6 +71,7 @@ var sharedObject;
       }
 
       function init() {
+        $('.loader').empty().hide();
         var msv = new MultiStageView({
           state: state,
           el: $('#steps')
@@ -102,7 +105,6 @@ var sharedObject;
           $sourceField.val(Drupal.settings.basePath + 'node/' + uuid + '/download');
         });
         sharedObject.state.on('change', function() {
-          console.log(sharedObject.state.toJSON());
           $('#edit-field-ve-map-settings-und-0-value').val(JSON.stringify(sharedObject.state.toJSON()));
         });
 
