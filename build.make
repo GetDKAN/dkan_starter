@@ -70,26 +70,37 @@ projects[visualization_entity_tables][download][type] = git
 projects[visualization_entity_tables][download][url] = git@github.com:NuCivic/visualization_entity_tables.git
 projects[visualization_entity_tables][download][branch] = master
 
+
 ; Performance
 ; ===========
-;projects[] = expire
-;projects[] = memcache
-;projects[] = entitycache
-;projects[] = admin_views
+projects[] = expire
+projects[] = memcache
+projects[] = entitycache
+projects[] = admin_views
 
 ; Security
 ; ==========
-;projects[] = securepages
+projects[] = securepages
 
 ; Other
 ; ======
-;projects[] = google_analytics
-;projects[] = google_tag
+projects[] = google_analytics
+projects[] = google_tag
 
 ;projects[] = entity
 
 ; NuCivic
 ; =======
+projects[dkan_acquia_expire][type] = module
+projects[dkan_acquia_expire][download][type] = git
+projects[dkan_acquia_expire][download][url] = git@github.com:NuCivic/dkan_acquia_expire.git
+projects[dkan_acquia_expire][download][branch] = master
+
+projects[dkan_acquia_search_solr][type] = module
+projects[dkan_acquia_search_solr][download][type] = git
+projects[dkan_acquia_search_solr][download][url] = git@github.com:NuCivic/dkan_acquia_search_solr.git
+projects[dkan_acquia_search_solr][download][branch] = master
+
 ;projects[nucivic_data_devops][type] = module
 ;projects[nucivic_data_devops][download][type] = git
 ;projects[nucivic_data_devops][download][url] = git@github.com:NuCivic/nucivic_data_devops.git
