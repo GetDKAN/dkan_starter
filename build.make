@@ -44,22 +44,22 @@ projects[] = acquia_search_multi_subs
 ; ======
 projects[] = search_api_solr
 
+; DKAN Migrate
+; ============
+projects[] = migrate
 ; DKAN Migrate Base
-; =====
 projects[dkan_migrate_base][type] = module
 projects[dkan_migrate_base][download][type] = git
 projects[dkan_migrate_base][download][url] = git@github.com:NuCivic/dkan_migrate_base.git
-projects[dkan_migrate_base][download][branch] = master
-
+projects[dkan_migrate_base][download][branch] = 7.x-1.x
 ; DKAN Harvest
-; =====
 projects[dkan_harvest][type] = module
 projects[dkan_harvest][download][type] = git
 projects[dkan_harvest][download][url] = git@github.com:NuCivic/dkan_harvest.git
 projects[dkan_harvest][download][branch] = 7.x-1.x
 
 ; Additional Visualization Entity Components
-; =====
+; ==========================================
 projects[visualization_entity_maps][type] = module
 projects[visualization_entity_maps][download][type] = git
 projects[visualization_entity_maps][download][url] = git@github.com:NuCivic/visualization_entity_maps.git
@@ -84,5 +84,13 @@ projects[visualization_entity_tables][download][branch] = master
 ; Other
 ; ======
 ;projects[] = google_analytics
-;projects[] = migrate
+;projects[] = google_tag
+
 ;projects[] = entity
+
+; NuCivic
+; =======
+;projects[nucivic_data_devops][type] = module
+;projects[nucivic_data_devops][download][type] = git
+;projects[nucivic_data_devops][download][url] = git@github.com:NuCivic/nucivic_data_devops.git
+;projects[nucivic_data_devops][download][branch] = master
