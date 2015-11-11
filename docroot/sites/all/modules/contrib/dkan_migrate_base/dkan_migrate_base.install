@@ -5,6 +5,24 @@
  */
 
 /**
+ * Implements hook_install().
+ */
+function dkan_migrate_base_install() {
+  $table = _dkan_migrate_base_data_json_table();
+  dkan_migrate_base_add_modified_column($table);
+}
+
+/**
+ * Implements hook_enable().
+ */
+function dkan_migrate_base_enable() {
+  dkan_migrate_base_migrations_enable();
+
+  $table = _dkan_migrate_base_data_json_table('datajson_dataset_base');
+  dkan_migrate_base_add_modified_column($table);
+}
+
+/**
  * Implements hook_disable().
  */
 function dkan_migrate_base_disable() {
@@ -12,29 +30,20 @@ function dkan_migrate_base_disable() {
 }
 
 /**
- * Implements hook_install().
+ * Gets migration table name.
  */
-function dkan_migrate_base_install() {
-  $modified = array(
-    'type' => 'varchar',
-    'length' => 32,
-    'not null' => TRUE,
-    'default' => '',
-    'description' => 'Field added by dkan_migrate_base',
+function _dkan_migrate_base_data_json_table($migration) {
+  $map = new MigrateSQLMap(
+    $migration,
+    array(
+      'uuid' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'id',
+      ),
+    ),
+    MigrateDestinationNode::getKeySchema()
   );
-  db_add_field('migrate_map_dkan_harvest_data_json', 'modified', $modified);
-}
-
-/**
- * Adds column to migrate_map_dkan_harvest_data_json.
- */
-function dkan_migrate_base_update_7001(&$sandbox) {
-  $modified = array(
-    'type' => 'varchar',
-    'length' => 32,
-    'not null' => TRUE,
-    'default' => '',
-    'description' => 'Field added by dkan_migrate_base',
-  );
-  db_add_field('migrate_map_dkan_harvest_data_json', 'modified', $modified);
+  return $map->getMapTable();
 }

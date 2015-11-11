@@ -16,6 +16,16 @@ function dkan_migrate_base_migrations_disable() {
 }
 
 /**
+ * Registers DKAN migrations.
+ */
+function dkan_migrate_base_migrations_enable() {
+  Migration::registerMigration('ckan_dataset_base');
+  Migration::registerMigration('ckan_group_base');
+  Migration::registerMigration('ckan_resource_base');
+  Migration::registerMigration('datajson_dataset_base');
+}
+
+/**
  * Creates resource list from CKAN site.
  *
  * CKAN has no resource_list endpiont. This function creates a file that mimics
@@ -89,4 +99,21 @@ function dkan_migrate_base_iso_interval_to_timestamp($date) {
     'to' => $to,
     'from' => $from
   );
+}
+
+/**
+ * Adds a modfied temporal column to a migrate map table.
+ */
+function dkan_migrate_base_add_modified_column($table) {
+  $field = 'modified';
+  $field_schema = array(
+    'type' => 'varchar',
+    'length' => 32,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'Field added by dkan_migrate_base',
+  );
+  if (db_table_exists($table) && !db_field_exists($table, $field)) {
+    db_add_field($table, $field, $field_schema);
+  }
 }
