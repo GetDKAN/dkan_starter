@@ -10,7 +10,6 @@ mysql:
   encoding: utf8
 
 install:
-  - cd test
   - composer install
   - mysql -e 'create database dkan_travis;'
 
@@ -35,8 +34,7 @@ before_script:
   - drush en -y open_data_federal_extras
   - drush en -y dkan_migrate_base
   - drush en -y dkan_migrate_base_example
-  - cd dkan_migrate_base/test
-  - composer install
+  - cd dkan_migrate_base
 
 script:
-  - bin/phpunit --bootstrap=boot.php DKANMigrateBaseTest.php
+  - bin/phpunit --configuration tests

@@ -73,7 +73,7 @@ class DataJSONList extends MigrateList {
       return array_keys($ids);
     }
   }
-  
+
   /**
    * Implements MigrateList::__toString().
    */
@@ -102,12 +102,13 @@ class DataJSONItem extends MigrateItem {
    */
   public function getItem($id) {
 
+    $migration = Migration::currentMigration();
+
     if ($cache = cache_get('dkan_harvest_ids')) {
       $files = $cache->data;
       $file = $files[$id];
 
       $json = file_get_contents($file);
-      $migration = Migration::currentMigration();
       // Test if file exists.
       if ($json === FALSE) {
         $message = t('Loading of !objecturl failed:', array('!objecturl' => $id));

@@ -75,4 +75,10 @@ h2.veTitle {
   font-size: 12px;
 }
 
+.leaflet-popup-content {
+    margin: 13px 19px !important;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 20px !important;
+}
 

@@ -48,61 +48,76 @@ function visualization_entity_tables_attach_libraries(&$element) {
  */
 function visualization_entity_tables_entity_view($entity, $type, $view_mode, $langcode) {
   if ($type == 'visualization' && $entity->type == 've_table') {
+    if(visualization_entity_resource_accesible($entity, 'field_uuid_resource')){
 
+      $entity->content['#suffix'] = '<div id="ve-table"></div>';
+      visualization_entity_tables_attach_libraries($entity->content);
+      $wrapper = entity_metadata_wrapper('visualization', $entity, array('bundle' => 've_table'));
+      $settings = json_decode($wrapper->field_ve_settings->value());
+      $resource = $settings->source;
 
-    $entity->content['#suffix'] = '<div id="ve-table"></div>';
-    visualization_entity_tables_attach_libraries($entity->content);
-    $wrapper = entity_metadata_wrapper('visualization', $entity, array('bundle' => 've_table'));
-
-    // For any reason the wrapper doesn't contain this field.
-    // Using field_uuid_resource from the wrapper throws an error.
-
-    $resource_uuid = $entity->field_uuid_resource[LANGUAGE_NONE][0]['target_uuid'];
-    $nids = entity_get_id_by_uuid('node', array($resource_uuid));
-    $node = node_load(current($nids));
-    $resource_wrapper = entity_metadata_wrapper('node', $node);
-    $fileType = $resource_wrapper->field_upload->value();
-    $fileType = $fileType->filemime;
-    $nid = $nids[$resource_uuid];
-    $datastore = $table = FALSE;
-    if (module_exists('dkan_datastore_api') && module_exists('feeds_flatstore_processor') && function_exists('dkan_datastore_api_get_feeds_source')) {
-      $source_id = dkan_datastore_api_get_feeds_source($nid);
-      if ($table = feeds_flatstore_processor_table_name($source_id, $nid)) {
-        if (db_table_exists($table)) {
-          $datastore = !!$table;
+      if(!empty($entity->field_uuid_resource[LANGUAGE_NONE][0]['target_uuid'])) {
+        $settings->resource_uuid = $resource_uuid = $entity->field_uuid_resource[LANGUAGE_NONE][0]['target_uuid'];
+      } else {
+        $re = "/\\/node\\/([a-zA-Z0-9-]+)\\/download/";
+        if(preg_match($re, $resource, $matches)) {
+          $resource_uuid = $matches[1];
         }
       }
-    }
 
-    $settings = json_decode($wrapper->field_ve_settings->value());
-    $settings->resource_uuid = $resource_uuid;
-    $resource = $settings->source;
+      $nids = entity_get_id_by_uuid('node', array($resource_uuid));
+      $datastore = $table = FALSE;
 
-    // Get value of Show title field.
-    $title_wrapper = entity_metadata_wrapper('visualization', $entity);
-    $showTitle = $title_wrapper->field_show_title->raw();
-    if($showTitle) {
-      $showTitle = $showTitle[0];
-    }
-    else {
-      $showTitle = 0;
-    }
+      if(!empty($nids)){
+        $node = node_load(current($nids));
 
-    drupal_add_js(array(
-        'visualizationEntityTables' => array(
-          'resource' => $settings->source,
-          'resize' => $settings->resize,
-          'showTitle'=> $showTitle,
-          'pager'=> $settings->pager,
-          'numRecords'=> $settings->numRecords,
-          'datastore' => $datastore,
-          'resource_uuid' => $settings->resource_uuid,
-          'fileType' => $fileType,
-        )
-      ),
-    'setting');
-    $recline_module_path = drupal_get_path('module', 'recline');
-    drupal_add_js($recline_module_path . '/backend.ckan_get.js', array('type' => 'file', 'scope' => 'footer'));
-    drupal_add_js(drupal_get_path('module', 'visualization_entity_tables') . '/js/visualization_entity_tables_view.js', array('weight' => 101));
+        $resource_wrapper = entity_metadata_wrapper('node', $node);
+        $fileType = $resource_wrapper->field_upload->value();
+        $fileType = $fileType->filemime;
+        $nid = $nids[$resource_uuid];
+
+        if($resource_wrapper->field_datastore_status->value() == 1) {
+          if (module_exists('dkan_datastore_api') && module_exists('feeds_flatstore_processor') && function_exists('dkan_datastore_api_get_feeds_source')) {
+            $source_id = dkan_datastore_api_get_feeds_source($nid);
+            if ($table = feeds_flatstore_processor_table_name($source_id, $nid)) {
+              if (db_table_exists($table)) {
+                $datastore = !!$table;
+              }
+            }
+          }
+        }
+      }
+
+      $settings->resource_uuid = $resource_uuid;
+
+      // Get value of Show title field.
+      $title_wrapper = entity_metadata_wrapper('visualization', $entity);
+      $showTitle = $title_wrapper->field_show_title->raw();
+      if($showTitle) {
+        $showTitle = $showTitle[0];
+      }
+      else {
+        $showTitle = 0;
+      }
+
+      drupal_add_js(array(
+          'visualizationEntityTables' => array(
+            'resource' => $settings->source,
+            'resize' => $settings->resize,
+            'showTitle'=> $showTitle,
+            'pager'=> $settings->pager,
+            'numRecords'=> $settings->numRecords,
+            'datastore' => $datastore,
+            'resource_uuid' => $settings->resource_uuid,
+            'fileType' => $fileType,
+          )
+        ),
+      'setting');
+      $recline_module_path = drupal_get_path('module', 'recline');
+      drupal_add_js($recline_module_path . '/backend.ckan_get.js', array('type' => 'file', 'scope' => 'footer'));
+      drupal_add_js(drupal_get_path('module', 'visualization_entity_tables') . '/js/visualization_entity_tables_view.js', array('weight' => 101));
+    } else {
+      drupal_access_denied();
+    }
   }
 }

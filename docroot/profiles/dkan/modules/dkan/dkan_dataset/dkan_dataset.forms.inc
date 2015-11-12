@@ -178,6 +178,9 @@ function dkan_dataset_form_alter(&$form, &$form_state, $form_id) {
         $form['prefix']['#type'] = 'item';
         $form['prefix']['#weight'] = '-20';
         $form['prefix']['#markup'] = dkan_form_create_stages('dataset-additional', arg(1));
+        if (isset($form['actions']['submit'])) {
+          $form['actions']['submit']['#submit'] = array('dkan_dataset_dataset_body_submit', 'node_form_submit');
+        }
       }
     }
     else {
@@ -199,6 +202,11 @@ function dkan_dataset_form_alter(&$form, &$form_state, $form_id) {
     // Get langcode for field_dataset_ref.
     $field_dataset_ref_langcode = dkan_dataset_form_field_language($form, 'field_dataset_ref');
     $form['field_dataset_ref'][$field_dataset_ref_langcode]['#description'] = t('Dataset that this resource is attached to.');
+    $dataset_options = $form['field_dataset_ref'][$field_dataset_ref_langcode]['#options'];
+    $fix_apostrophes = function($value) {
+      return html_entity_decode($value, ENT_QUOTES, "UTF-8");
+    };
+    $form['field_dataset_ref'][$field_dataset_ref_langcode]['#options'] = array_map($fix_apostrophes, $dataset_options);
 
     // Get langcode for field_upload.
     $field_upload_langcode = dkan_dataset_form_field_language($form, 'field_upload');
@@ -313,6 +321,20 @@ function dkan_dataset_resource_additional_form_submit($form, &$form_state) {
   if ($query = drupal_get_query_parameters()) {
     if (isset($query['dataset'])) {
       drupal_goto('node/' . $query['dataset'] . '/edit', array('query' => array('additional' => 1)));
+    }
+  }
+}
+
+/**
+ * Resource node form submit handler.
+ */
+function dkan_dataset_dataset_body_submit($form, &$form_state) {
+  // Fixes body getting dropped in "Additional info" form.
+  if (isset($form_state['build_info']['args'][0]->body['und']['0']['value'])) {
+    if ($form_state['build_info']['args'][0]->body['und']['0']['value']) {
+      $form_state['values']['body']['und'][0]['value'] = $form_state['build_info']['args'][0]->body['und']['0']['value'];
+      $form_state['values']['body']['und'][0]['summary'] = $form_state['build_info']['args'][0]->body['und']['0']['summary'];
+      $form_state['values']['body']['und'][0]['format'] = $form_state['build_info']['args'][0]->body['und']['0']['format'];
     }
   }
 }

@@ -17,6 +17,16 @@ function dkan_harvest_disable() {
 }
 
 /**
+ * Implements hook_enable().
+ */
+function dkan_harvest_enable() {
+  Migration::registerMigration('dkan_harvest_data_json');
+
+  $table = _dkan_migrate_base_data_json_table('dkan_harvest_data_json');
+  dkan_migrate_base_add_modified_column($table);
+}
+
+/**
  * Changes length of uuid field to support URLs.
  */
 function dkan_harvest_update_7001(&$sandbox) {
