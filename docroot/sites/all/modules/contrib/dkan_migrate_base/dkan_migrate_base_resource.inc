@@ -35,6 +35,7 @@ class MigrateCkanResourceBase extends MigrateCkanBase {
       "file" => "file",
     );
 
+    $this->endpoint = isset($arguments['endpoint']) ? $arguments['endpoint'] : dirname(__FILE__) . '/modules/dkan_migrate_base_example/data/';
     $list_url = isset($arguments['list_url']) ? $arguments['list_url'] : 'resource_list';
     $item_url = isset($arguments['item_url']) ? $arguments['item_url'] : 'resource_show?id=:id';
     $this->page = isset($arguments['page']) ? $arguments['page'] : '';
@@ -44,7 +45,7 @@ class MigrateCkanResourceBase extends MigrateCkanBase {
     if ($list_url == 'resource_list') {
       $file_name = 'public://ckan-migrate-resource_list_' . get_class($this);
       if (!file_exists($file_name)) {
-        drupal_set_message('ID list resource_show downloaded locally as %filename', array('%filename' => $filename));
+        drupal_set_message(t('ID list resource_show downloaded locally as %filename', array('%filename' => $file_name)));
         // CKAN doesn't have a resource_list endpoint. This function fakes it.
         dkan_migrate_base_create_resource_list($this->endpoint, $file_name, TRUE);
         variable_set('dkan_resource_list_' . get_class($this), date('r', time()));

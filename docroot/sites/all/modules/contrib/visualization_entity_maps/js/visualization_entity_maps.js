@@ -96,7 +96,7 @@ var sharedObject;
             msv.render();
           }
         });
-        var $resourceField = $('#edit-field-ve-map-uuid-resource-und-0-target-uuid');
+        var $resourceField = $('#edit-field-uuid-resource-und-0-target-uuid');
 
         $resourceField.on('autocompleteSelect', function(event, node) {
           var re = /\[(.*?)\]/;

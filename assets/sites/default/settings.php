@@ -30,7 +30,15 @@ require DRUPAL_ROOT . "/sites/all/modules/contrib/devinci/devinci.environments.i
 // Note that you can define your own custom env mappings if you
 // have additional/custom environments on acquia for instance, then
 // pass the map array to devinci_set_env($env_map).
-devinci_set_env();
+$env_map = array(
+  'local' => 'local',
+  'dev' => 'development',
+  'test' => 'test',
+  'live' => 'production',
+  'prod' => 'production',
+  'ra' => 'production',
+);
+devinci_set_env($env_map);
 
 /********************************************************
  * OPTIONAL: Setup default settings for ALL environments.
@@ -107,10 +115,15 @@ switch(ENVIRONMENT) {
     // Features Master also supports temporarily disabling modules.
     // This will disable modules in the local environment, but INCLUDE them
     // when exporting using features_master.
-    $conf['features_master_temp_disabled_modules'] = array(
+     $conf['features_master_temp_disabled_modules'] = array(
       'acquia_purge',
-      'acquia_solr',
       'syslog',
+      'dkan_acquia_expire',
+      'expire',
+      'dkan_acquia_search_solr',
+      'search_api_solr',
+      'search_api_acquia',
+      'nucivic_data_devops',
     );
     // Show ALL errors when working locally.
     $conf['error_level'] = ERROR_REPORTING_DISPLAY_ALL;
@@ -130,7 +143,7 @@ switch(ENVIRONMENT) {
       'devel',
       'field_ui',
       'maillog',
-      'stage_file_proxy',
+      // 'stage_file_proxy',
       'views_ui',
     );
     // Enable git support for the environment indicator to show current branch.
@@ -143,7 +156,7 @@ switch(ENVIRONMENT) {
   case 'test':
     $conf['features_master_temp_enabled_modules'] = array(
       'maillog',
-      'stage_file_proxy',
+      // 'stage_file_proxy',
     );
     $conf['error_level'] = ERROR_REPORTING_HIDE;
 
@@ -179,9 +192,9 @@ switch(ENVIRONMENT) {
     exit();
 }
 
-/*******************************************
- * OPTIONAL: Perform tasks when swtiching environments.
- *******************************************/
+/******************************************************
+ * OPTIONAL: Perform tasks when switching environments.
+ *****************************************************/
 /* For environment switching to work, ensure environment.module is enabled and
  * use either hook_environment_switch() in a custom module, or simply define
  * devinci_custom_environment_switch() in settings.php as shown below.
@@ -215,3 +228,17 @@ function devinci_custom_environment_switch($target_env, $current_env) {
       break;
   }
 }
+
+/****************************
+ * OPTIONAL: Acquia Settings.
+ ***************************/
+/* This are acquia specific settings 
+ */
+//include "settings.acquia.php";
+
+/*****************************
+ * OPTIONAL: NuCivic Settings.
+ ****************************/
+/* This are nucivic specific settings 
+ */
+//include "settings.nucivic.php";

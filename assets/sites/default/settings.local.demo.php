@@ -1,5 +1,7 @@
 <?php
 
+define('ENVIRONMENT', 'local');
+
 $databases = array (
   'default' => 
   array (
