@@ -204,6 +204,11 @@ function devinci_custom_environment_switch($target_env, $current_env) {
   switch($target_env) {
 
     case 'local':
+      // Set the search server to use the local solr server instead of acquia's
+      db_query("UPDATE search_api_index set server = 'local_solr_server' where server = 'dkan_acquia_solr'");
+      //db_query("DELETE FROM search_api_index where server IS NULL");
+      db_query("UPDATE search_api_server set enabled = 0 WHERE machine_name <> 'local_solr_server'");
+
       // Example: Clear all caches. (drush cc all)
       drupal_flush_all_caches();
       // Example: Revert a features_master module, which is assumed to be called
