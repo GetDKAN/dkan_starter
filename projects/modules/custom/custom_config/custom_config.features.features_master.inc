@@ -34,8 +34,6 @@ function custom_config_features_master_defaults() {
     'devinci' => 'devinci',
     'diff' => 'diff',
     'dkan' => 'dkan',
-    'dkan_acquia_expire' => 'dkan_acquia_expire',
-    'dkan_acquia_search_solr' => 'dkan_acquia_search_solr',
     'dkan_data_dashboard' => 'dkan_data_dashboard',
     'dkan_data_story' => 'dkan_data_story',
     'dkan_data_story_storyteller_role' => 'dkan_data_story_storyteller_role',
