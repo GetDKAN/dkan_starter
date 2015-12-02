@@ -1,13 +1,13 @@
 name = Features Banish
-description = Provides a bookmark entity and basic UI and administration interface for managing bookmarks.
+description = Allows developers to exclude features components from being exported or even showing up in the features UI.
 core = 7.x
 package = Features
 dependencies[] = features
 configure = admin/structure/features/settings
 
-; Information added by Drupal.org packaging script on 2015-05-21
-version = "7.x-1.0"
+; Information added by Drupal.org packaging script on 2015-11-30
+version = "7.x-1.1"
 core = "7.x"
 project = "features_banish"
-datestamp = "1432185182"
+datestamp = "1448906341"
 

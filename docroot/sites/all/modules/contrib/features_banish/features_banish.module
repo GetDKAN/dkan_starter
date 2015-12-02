@@ -63,9 +63,8 @@ function features_banish_get_banished($component = NULL) {
 
     // Allow non-features modules and settings.php to add specific items
     // that should be banished.
-    variable_get('features_banish_items', array());
+    $banished = variable_get('features_banish_items', array());
 
-    $banished = array();
     // If any modules have features_banish settings, merge them.
     foreach($features as $feature) {
       $info = isset($feature->info['features_banish']) ? $feature->info['features_banish'] : array();
@@ -88,6 +87,9 @@ function features_banish_get_banished($component = NULL) {
  * Add a list of banished items to the features settings form.
  */
 function features_banish_form_features_settings_form_alter(&$form, &$form_values) {
+
+  // TODO: Check the patch status by calling module_hook_info().
+
   $form['features_banish'] = array(
     '#type' => 'fieldset',
     '#title' => t('Banished Items'),

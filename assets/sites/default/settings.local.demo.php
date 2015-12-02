@@ -7,15 +7,14 @@ $databases = array (
   array (
     'default' => 
     array (
-      'database' => '',
-      'username' => '',
-      'password' => '',
-      'host' => '127.0.0.1',
-      'port' => '3306',
+      'database' => 'drupal',
+      'username' => 'root',
+      'password' => 'strongpassword',
+      'host' => 'localhost',
       'driver' => 'mysql',
       'prefix' => '',
     ),
   ),
 );
 
-$base_url = 'http://127.0.0.1:8888';
+// $base_url = 'http://127.0.0.1:8888';
