@@ -15,6 +15,6 @@ switch(ENVIRONMENT) {
       array(
         'nucivic_data_devops',
       )
-    )
+    );
     break;
 }
