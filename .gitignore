@@ -4,7 +4,6 @@
 /files/*
 /cache
 
-
 # ** Only works in OSs that support newer versions of fnmatch (Bash 4+)
 /docroot/sites/default/**/files
 /docroot/sites/default/**/private
@@ -47,3 +46,8 @@ Thumbs.db
 # PHPStorm #
 ############
 .idea
+
+# Ahoy #
+########
+/backups
+/backups/*

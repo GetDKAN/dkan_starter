@@ -9,12 +9,13 @@ $databases = array (
     array (
       'database' => 'drupal',
       'username' => 'root',
-      'password' => 'strongpassword',
-      'host' => 'localhost',
+      'password' => 'admin123',
+      'host' => '#HOST',
+      'port' => '#DB_PORT',
       'driver' => 'mysql',
       'prefix' => '',
     ),
   ),
 );
 
-// $base_url = 'http://127.0.0.1:8888';
+$base_url = 'http://#HOST:#WEB_PORT';
