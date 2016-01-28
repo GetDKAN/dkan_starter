@@ -10,11 +10,11 @@ Feature: User
       | Katie         | /users/katie  |
     Given users:
       | name    | mail                | roles                |
-      | John    | john@example.com    | administrator        |
-      | Badmin  | admin@example.com   | administrator        |
-      | Gabriel | gabriel@example.com | authenticated user   |
+      | John    | john@example.com    | site manager         |
+      | Badmin  | admin@example.com   | site manager         |
+      | Gabriel | gabriel@example.com | content creator      |
       | Jaz     | jaz@example.com     | editor               |
-      | Katie   | katie@example.com   | authenticated user   |
+      | Katie   | katie@example.com   | content creator      |
       | Martin  | martin@example.com  | editor               |
       | Celeste | celeste@example.com | editor               |
     Given groups:
@@ -53,22 +53,16 @@ Feature: User
     And I click "About" in the "tabs" region
     Then I should see "This is my profile"
 
-
-  # TODO: Currently, profile of the current user only lists datasets of user that are published, and not published
-  #             content is now shown, tests currently only count for published datasets.
-
   @api @javascript
-  Scenario: View the list of own published and unpublished datasets on profile
+  Scenario: View the list of own published datasets on profile
     Given I am logged in as "Katie"
     And I am on "Katie" page
     Then I should see "2" items in the "content" region
 
-  # TODO: Check if resources are shown on user profile
-  @api @fixme
-  Scenario: View the list of own published and unpublished resources on profile
-    Given I am on the homepage
-
-  # TODO: Needs definition.
-  @api @fixme
+  @api @fixme @testBug
+    # TODO: Needs definition.
+    #       This would take a long time to test manually, having to wait N minutes each time it's run.
+    #       A possible solution to this would be to edit the cookies directly and speed up the waiting time
+    #       that way. That would take time to figure out, would this test be worth the time?
   Scenario: User should be logged out automatically after N minutes
     Given I am on the homepage

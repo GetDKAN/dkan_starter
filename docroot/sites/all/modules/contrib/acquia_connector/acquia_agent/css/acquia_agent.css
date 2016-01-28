@@ -123,6 +123,9 @@ div.an-pg-banner{
   text-align: right;
   padding-left: 1em;
 }
+div.an-pg-banner img {
+  max-width: none;
+}
 
 #acquia-agent-settings-form-banner{
   padding-top: 1em;

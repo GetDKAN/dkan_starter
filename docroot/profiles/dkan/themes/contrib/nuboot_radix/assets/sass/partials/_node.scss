@@ -211,6 +211,10 @@
 .node-type-group {
   .horizontal-tabs {
     margin: 0;
+    #edit-field-image-und-0-remove-button {
+      @include border-radius($border-radius-base);
+      margin-left: 5px;
+    }
   }
 }
 

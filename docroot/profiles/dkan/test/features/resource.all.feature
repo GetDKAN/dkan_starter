@@ -4,11 +4,11 @@ Feature: Resource
   Background:
     Given users:
       | name    | mail                | roles                |
-      | John    | john@example.com    | administrator        |
-      | Badmin  | admin@example.com   | administrator        |
-      | Gabriel | gabriel@example.com | authenticated user   |
+      | John    | john@example.com    | site manager         |
+      | Badmin  | admin@example.com   | site manager         |
+      | Gabriel | gabriel@example.com | content creator      |
       | Jaz     | jaz@example.com     | editor               |
-      | Katie   | katie@example.com   | authenticated user   |
+      | Katie   | katie@example.com   | content creator      |
       | Martin  | martin@example.com  | editor               |
       | Celeste | celeste@example.com | editor               |
     Given groups:
@@ -37,7 +37,7 @@ Feature: Resource
       | xls     |
     And resources:
       | title       | publisher | format | dataset    | author   | published | description |
-      | Resource 01 | Group 01  | cvs    | Dataset 01 | Katie    | Yes       | No          |
+      | Resource 01 | Group 01  | cvs    | Dataset 01 | Katie    | Yes       | Old Body    |
       | Resource 02 | Group 01  | xls    | Dataset 01 | Katie    | Yes       | No          |
       | Resource 03 | Group 01  | xls    | Dataset 02 | Celeste  | No        | Yes         |
       | Resource 04 | Group 01  | cvs    | Dataset 01 | Katie    | No        | Yes         |
@@ -49,68 +49,76 @@ Feature: Resource
     And I follow "Datasets"
     And I click "Dataset 01"
     When I click "Resource 01"
-    # License information should be shown
     Then I am on the "Resource 01" page
 
-  # TODO: DKAN Extension does not currently support visualization entities for resources
-  #       and should be added in later
-
-  @api @fixme
+  @api @fixme @testBug
+    # TODO: Visualization for resources is added, and accessible on the resource's page
+    #       Checking the visualization of a resource being correct is not yet defined, need feedback
+    #       For example, how should the graph be verified that it is a graph and correctly displaying the data?
+    #       Check against a base graph and see if it matches? Seems like it would be complicated to verify
   Scenario: View published resource data as a Graph
     Given I am on "Resource 01" page
     When I click "Graph"
     Then I should view the "resource" content as "graph"
 
-  # TODO: DKAN Extension does not currently support visualization entities for resources
-  #       and should be added in later
-
-  @api @fixme
+  @api @fixme @testBug
+    # TODO: Visualization for resources is added, and accessible on the resource's page
+    #       Checking the visualization of a resource being correct is not yet defined, need feedback
+    #       For example, how should the grid be verified that it is a grid and correctly displaying the data?
+    #       Check against a base grid and see if it matches? Seems like it would be complicated to verify
   Scenario: View published resource data as a Grid
     Given I am on "Resource 01" page
     When I click "Grid"
     Then I should view the "resource" content as "grid"
 
-  # TODO: DKAN Extension does not currently support visualization entities for resources
-  #       and should be added in later
-
-  @api @fixme
+  @api @fixme @testBug
+    # TODO: Visualization for resources is added, and accessible on the resource's page
+    #       Checking the visualization of a resource being correct is not yet defined, need feedback
+    #       For example, how should the map be verified that it is a map and correctly displaying the data?
+    #       Check against a base map and see if it matches? Seems like it would be complicated to verify
   Scenario: View published resource data as Map
     Given I am on "Resource 01" page
     When I click "Map"
     Then I should view the "resource" content as "map"
 
-  # TODO: DKAN Extension does not currently support visualization entities for resources
-  #       and should be added in later
-
-  @api @fixme
+  @api @fixme @testBug
+    #TODO: Need to have test data api set up for new resources for this test
+    #      This functionality is tested in another module, test again here?
+    #      See:     https://github.com/NuCivic/dkan_datastore/blob/7.x-1.x/tests/dkan_datastore.test
+    #      And See: https://github.com/NuCivic/dkan_dataset/compare/310_dataset_rest_api
   Scenario: View the Data API information for a published resource
-    Given I am on "Resource 01" page
-    When I press "Data API"
+    Given I am on "Resource 02" page
+    When I click "Data API"
     Then I should see "The Resource ID for this resource is"
     And I should see "Example Query"
 
-
-  # TODO: Permissions for anonymous users to view revisions are not set (they cannot access revisions)
-
-  @api @fixme
+  @api
   Scenario: View previous revisions of published resource
+    Given I am logged in as a user with the "administrator" role
+    And I am on "Resource 01" page
+    And I click "Edit"
+    And I fill in "Test" for "Description"
+    And I press "Save"
+    And I am an anonymous user
     Given I am on "Resource 01" page
     When I click "Revisions"
-    Then I should see the list of revisions
+    Then I should see "current revision"
 
-  # TODO: Permissions for anonymous users to view revisions are not set (they cannot access revisions)
-
-  @api @fixme
+  @api
   Scenario: Compare revisions of published resource
+    Given I am logged in as a user with the "administrator" role
+    And I am on "Resource 01" page
+    And I click "Edit"
+    And I fill in "Test" for "Description"
+    And I press "Save"
+    And I am an anonymous user
     Given I am on "Resource 01" page
-    And I press "Revisions"
-    When I select "revision 1"
-    And I select "revision 2"
+    And I click "Revisions"
     And I press "Compare"
-    Then I should see the revisions diff
+    Then I should see "Old Body"
 
-  # TODO: Needs definition.
-
-  @api @fixme
+  @api @fixme @testBug
+    #TODO: Needs definition and feedback, not sure where to test this
+    #       Does this get tested with the visualization tests for maps?
   Scenario: View resource data on map automatically if lat and long info is present
     Given I am on the homepage

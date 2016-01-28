@@ -219,7 +219,7 @@ function acquia_search_environment_connected($environment) {
  * Delete environment page access.
  */
 function acquia_search_environment_delete_access($environment) {
-  if (strstr($environment['env_id'], ACQUIA_SEARCH_ENVIRONMENT_ID)) {
+  if ($environment['env_id'] == ACQUIA_SEARCH_ENVIRONMENT_ID) {
     return FALSE;
   }
   // Fall back to the original check.
