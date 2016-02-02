@@ -102,6 +102,8 @@ function _features_master_get_permissions($orphans_only = false) {
   $exported_perms = _features_master_exported_permissions();
   $current_perms = _features_master_get_db_permissions();
   $hook_perms = _features_master_hook_permissions();
+  $orphan_perms = array();
+
 
   // Check each permission from the hooks and add it if it doesn't exist.
   foreach ($hook_perms as $perm_name => $hook_details) {
