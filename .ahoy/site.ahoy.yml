@@ -21,8 +21,38 @@ commands:
       ahoy site reinstall
 
   remake:
-    usage: Rebuild all the dkan projects from the drupal-org.make file using drush buildmanager.
-    cmd: drush bmb --no-subtree-updates --verbose
+    usage: Rebuild all the dkan projects from the build.make file.
+    cmd: |
+      # Building in a new directory so dkan .ahoy folder keeps being available
+      ahoy drush -y make build.make --no-recursion --no-cache --verbose docroot_new
+      rm -rf docroot
+      mv docroot_new docroot
+      # No recursive prevents dkan build to happen. Run it now from dkan remake.
+      ahoy dkan remake
+      ahoy site post_build
+
+  post_build:
+    usage: Runs (what used to be buildmanager) post build commands.
+    cmd: |
+      # Setup a folder for contrib modules and themes.
+      mkdir -p docroot/sites/all/modules/contrib
+      mkdir -p docroot/sites/all/themes/contrib
+      # Replace the default .htaccess file with our own that includes a working non-www to www example for acquia.
+      rm -rf docroot/.htaccess
+      ln -s ../assets/.htaccess docroot/.htaccess
+      # Replace sites/default with our own sites/default outside of the drupal root.
+      rm -rf docroot/sites/default;
+      ln -s ../../assets/sites/default docroot/sites/default
+      # Clean out any .gitignore files imported from other modules, libraries, and profiles.
+      find docroot/profiles/dkan -type f -name .gitignore -exec rm -rf {} \;
+      find docroot/sites/all -type f -name .gitignore -exec rm -rf {} \;
+      # Clean out any CHANGELOG.txt files.
+      find . -type f -name CHANGELOG.txt -exec rm -rf {} \;
+      # Setup custom modules folder outside of the drupal root.
+      rm -rf docroot/sites/all/modules/custom
+      rm -rf docroot/sites/all/modules/dkan_overrides
+      ln -s ../../../../projects/modules/custom docroot/sites/all/modules/custom
+      ln -s ../../../../projects/modules/dkan_overrides docroot/sites/all/modules/dkan_overrides
 
   reinstall:
     usage: Reinstall the site from scratch (dkan + custom_config + environment).
