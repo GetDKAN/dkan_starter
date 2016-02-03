@@ -7,11 +7,11 @@ $databases = array (
   array (
     'default' => 
     array (
-      'database' => 'drupal',
-      'username' => 'root',
-      'password' => 'admin123',
-      'host' => '#HOST',
-      'port' => '#DB_PORT',
+      'database' => '',
+      'username' => '',
+      'password' => '',
+      'host' => '',
+      'port' => '',
       'driver' => 'mysql',
       'prefix' => '',
     ),

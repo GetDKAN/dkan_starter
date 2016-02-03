@@ -4,15 +4,24 @@ commands:
   setup:
     usage: Setups site settings
     cmd: |
+      rm -f assets/sites/default/settings.docker.php
       rm -f assets/sites/default/settings.local.php
-      cp assets/sites/default/settings.local.demo.php assets/sites/default/settings.local.php
-      ahoy docker up
-      HOST=`ahoy docker ip`
-      DB_PORT=`ahoy docker ps | grep _db_ | awk 'BEGIN { FS=":"; } { print $2; }' | awk 'BEGIN { FS="->";} { print $1}'`
-      WEB_PORT=`ahoy docker ps | grep _web_ | awk 'BEGIN { FS=":"; } { print $3; }' | awk 'BEGIN { FS="->";} { print $1}'`
-      sed -i "s|#HOST|$HOST|g" assets/sites/default/settings.local.php
-      sed -i "s|#DB_PORT|$DB_PORT|g" assets/sites/default/settings.local.php
-      sed -i "s|#WEB_PORT|$WEB_PORT|g" assets/sites/default/settings.local.php
+      if [ "$AHOY_CMD_PROXY" == "DOCKER" ]; then
+        cp assets/sites/default/settings.docker.demo.php assets/sites/default/settings.docker.php
+        ahoy docker up
+        darwin=false;
+        case "`uname`" in
+          Darwin*) darwin=true ;;
+        esac
+        if $darwin; then
+          HOST=`ahoy docker ip`
+          WEB_PORT=`ahoy docker ps | grep _web_ | awk 'BEGIN { FS=":"; } { print $3; }' | awk 'BEGIN { FS="->";} { print $1}'`
+          printf "\n\$base_url = 'http://$HOST:$WEB_PORT';" >> assets/sites/default/settings.docker.php
+        fi
+      else
+        cp assets/sites/default/settings.local.demo.php assets/sites/default/settings.local.php
+        echo "Please fill assets/sites/default/settings.local.php with your db credentials"
+      fi
 
   drupal-rebuild:
     usage: Remakes and reinstall site.
@@ -69,22 +78,27 @@ commands:
         ahoy confirm "{{args}} site folder alredy exists."
         echo ".. skipping installation"; exit 1;
       fi
-      mkdir {{args}}
-      cd {{args}}
-      wget https://github.com/NuCivic/data_starter/archive/master.tar.gz
-      tar -xvzf master.tar.gz --strip 1
-      rm master.tar.gz
+      {
+        hub clone NuCivic/{{args}}
+        echo "NuCivic/{{args}} Github repo cloned"
+      } || {
+        mkdir {{args}}
+        cd {{args}}
+        wget https://github.com/NuCivic/data_starter/archive/master.tar.gz
+        tar -xvzf master.tar.gz --strip 1
+        rm master.tar.gz
       
-      echo "Site {{args}} initiated at ../{{args}}"
-      git init .
-      git add . -A
-      git commit -m "{{args}} codebase setup"
-      hub create -p NuCivic/{{args}}
-      git push origin master
-      echo "NuCivic/{{args}} Github repo initiated"
+        echo "Site {{args}} initiated at ../{{args}}"
+        git init .
+        git add . -A
+        git commit -m "{{args}} codebase setup"
+        hub create -p NuCivic/{{args}}
+        git push origin master
+        echo "NuCivic/{{args}} Github repo created"
+      }
 
   dkan:
-    usage: Upgrades/Downgrades dkan to a certain tag 'ahoy site dkan tag 7.x-1.10'
+    usage: Upgrades/Downgrades dkan to a certain tag 'ahoy site dkan tag 7.x-1.10' or branch 'ahoy site dkan branch 7.x-1.x'
     cmd: |
       IFS=' ' read -r -a args <<< "{{args}}"
       tag_new=${args[0]}
@@ -105,8 +119,8 @@ commands:
         git branch -D "$pr_branch"
       fi
       git checkout -b "$pr_branch"
-      sed -i "s/$tag_old/$tag_new/g" build-dkan.make
-      sed -i "s/$version_old/$version_new/g" build-dkan.make
+      sed "s/$tag_old/$tag_new/g" build-dkan.make > build-dkan.make.new; rm build-dkan.make; mv build-dkan.make.new build-dkan.make
+      sed "s/$version_old/$version_new/g" build-dkan.make > build-dkan.make.new; rm build-dkan.make; mv build-dkan.make.new build-dkan.make
       git add . -A
       git commit -m "Updates build-dkan.make from $tag_old $version_old to $tag_new $version_new"
       ahoy site remake
