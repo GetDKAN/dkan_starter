@@ -9,9 +9,11 @@
  * Implements hook_harvest_sources().
  */
 function dkan_harvest_example_harvest_sources() {
+  $path = drupal_get_path('module', 'dkan_harvest_example');
+
   $sources = array(
     'data.mo.gov' => array(
-      'remote' => 'https://data.mo.gov/data.json',
+      'remote' => $path . '/data.json',
       'type' => 'data.json',
       'filters' => array(
         'theme' => array('Health'),

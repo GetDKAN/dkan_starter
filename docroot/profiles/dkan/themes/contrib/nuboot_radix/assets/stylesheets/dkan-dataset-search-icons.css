@@ -1,3 +1,10 @@
+/**
+ * @file
+ * Styles for the facet_icons icons appearing on the search page
+ *
+ * See the facet_icons theme function and the facet_icons module in modules/dkan/dkan_sitewide/modules
+ */
+
 @font-face {
     font-family: 'dkan-dataset-search';
     src:    url('../fonts/dkan-dataset-search.eot?rrliwl');
@@ -22,6 +29,10 @@
     /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+[class^="icon-dkan-"]:hover, [class*=" icon-dkan-"]:hover,
+[class^="icon-dkan-"]:active, [class*=" icon-dkan-"]:active {
+    text-decoration: none;
 }
 .icon-dkan:before {
     content: "\e906";

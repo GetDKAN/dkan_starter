@@ -3189,7 +3189,7 @@ form .description { margin: 2px 0; color: #555555; }
 fieldset legend { float: left; line-height: 1em; margin: 0; }
 fieldset .panel-body { clear: both; }
 
-html.js input.form-autocomplete { background: url('../images/throbber.gif?1448306103') no-repeat right 8px #fff !important; }
+html.js input.form-autocomplete { background: url('../images/throbber.gif?1446755567') no-repeat right 8px #fff !important; }
 html.js input.throbbing { background-position: right -122px !important; }
 html.js fieldset.collapsed { height: auto; border-left-width: 1px; border-right-width: 1px; }
 
@@ -3634,7 +3634,7 @@ div[class*="pane-facetapi"] ul li.leaf a:hover, .region-sidebar-first .block-fac
 div[class*="pane-facetapi"] ul li.leaf a:hover:after, .region-sidebar-first .block-facetapi ul li.leaf a:hover:after, .block-facetapi ul li.leaf a:hover:after { content: "\f055"; color: #5cb85c; font-family: "FontAwesome"; position: absolute; top: 4px; right: 6px; }
 div[class*="pane-facetapi"] ul li.leaf a img, .region-sidebar-first .block-facetapi ul li.leaf a img, .block-facetapi ul li.leaf a img { height: 1.5em; width: 1.5; margin-right: 0.5em; }
 div[class*="pane-facetapi"] ul li.leaf a.facetapi-active, .region-sidebar-first .block-facetapi ul li.leaf a.facetapi-active, .block-facetapi ul li.leaf a.facetapi-active { background: #ccc; border-bottom: 1px solid #fff; color: #333; z-index: 0; }
-div[class*="pane-facetapi"] ul li.leaf a.facetapi-active:before, .region-sidebar-first .block-facetapi ul li.leaf a.facetapi-active:before, .block-facetapi ul li.leaf a.facetapi-active:before { content: ''; position: absolute; border-style: solid; border-width: 13px 0 13px 13px; border-color: transparent #ccc; display: block; width: 0; z-index: 1; right: -13px; top: 0; }
+div[class*="pane-facetapi"] ul li.leaf a.facetapi-active:before, .region-sidebar-first .block-facetapi ul li.leaf a.facetapi-active:before, .block-facetapi ul li.leaf a.facetapi-active:before { content: ''; position: absolute; border-style: solid; border-width: 15px 0 15px 15px; border-color: transparent #ccc; display: block; width: 0; z-index: 1; right: -15px; top: 0; }
 div[class*="pane-facetapi"] ul li.leaf a.facetapi-active:after, .region-sidebar-first .block-facetapi ul li.leaf a.facetapi-active:after, .block-facetapi ul li.leaf a.facetapi-active:after { content: "\f00d"; font-family: "FontAwesome"; position: absolute; top: 3px; right: 6px; }
 div[class*="pane-facetapi"] ul li.leaf a.facetapi-active:hover:after, .region-sidebar-first .block-facetapi ul li.leaf a.facetapi-active:hover:after, .block-facetapi ul li.leaf a.facetapi-active:hover:after { color: red; }
 div[class*="pane-facetapi"] a.facetapi-limit-link, .region-sidebar-first .block-facetapi a.facetapi-limit-link, .block-facetapi a.facetapi-limit-link { display: block; padding: 5px 30px 5px 5px; position: relative; }
