@@ -8,6 +8,11 @@
 /docroot/sites/default/**/files
 /docroot/sites/default/**/private
 
+
+# Ignore the dkan test composer folder.
+/docroot/profiles/dkan/test/vendor
+/docroot/profiles/dkan/test/assets
+
 # Packages #
 ############
 *.7z
