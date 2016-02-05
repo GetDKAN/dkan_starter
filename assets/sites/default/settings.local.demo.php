@@ -3,17 +3,17 @@
 define('ENVIRONMENT', 'local');
 
 $databases = array (
-  'default' => 
+  'default' =>
   array (
-    'default' => 
+    'default' =>
     array (
-      'database' => '',
-      'username' => '',
-      'password' => '',
-      'host' => '',
-      'port' => '',
+      'database' => '#DB_NAME',
+      'username' => '#DB_USER',
+      'password' => '#DB_PASS',
+      'host' => '#DB_HOST',
+      'port' => '#DB_PORT',
       'driver' => 'mysql',
-      'prefix' => '',
+      'prefix' => 'asdf',
     ),
   ),
 );
