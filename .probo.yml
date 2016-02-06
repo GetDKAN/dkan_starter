@@ -17,15 +17,25 @@ steps:
       echo ""
       echo "-------> Run 'bash dkan-init.sh':"
       echo ""
-      # Create the proper folder structure
+      # Install dependencies like ahoy.
       time bash dkan/dkan-init.sh dkan --deps-only
+      echo ""
+      echo "-------> Setup the settings.local.php file and install a fresh database."
+      echo ""
+      # Setup the database.
       ahoy site setup --db-user=root --db-pass=strongpassword --db-host=127.0.0.1 --db-port=3306 --db-name=dkan
       ahoy site reinstall
-      #Set a symlink so that probo can serve the site.
+
+      echo ""
+      echo "-------> Enable modules and reset environment"
+      echo ""
+      ahoy drush -y en custom_config environment devinci
+      ahoy drush env-switch local --force
 
       echo ""
       echo "-------> Symlink ./docroot to var/www/html:"
       echo ""
+      #Set a symlink so that probo can serve the site.
       ln -s $SRC_DIR/docroot /var/www/html
       chmod -R 777 /var/www/html/sites/default/files
 
