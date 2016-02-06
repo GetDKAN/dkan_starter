@@ -29,8 +29,8 @@ steps:
       echo ""
       echo "-------> Enable modules and reset environment"
       echo ""
-      ahoy drush -y en custom_config environment devinci
-      ahoy drush env-switch local --force
+      #ahoy drush -y en custom_config environment devinci
+      #ahoy drush env-switch local --force
 
       echo ""
       echo "-------> Symlink ./docroot to var/www/html:"
