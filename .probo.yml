@@ -19,7 +19,7 @@ steps:
       echo ""
       # Create the proper folder structure
       time bash dkan/dkan-init.sh dkan --deps-only
-      ahoy site setup --db_user=root --db_pass=strongpassword --db-host=127.0.0.1 --db-port=3306 --db_name=dkan
+      ahoy site setup --db-user=root --db-pass=strongpassword --db-host=127.0.0.1 --db-port=3306 --db-name=dkan
       ahoy site reinstall
       #Set a symlink so that probo can serve the site.
 
