@@ -17,7 +17,11 @@ machine:
   environment:
     # For xvfb / selenium setup (not sure why)
     #DISPLAY: ':99.0'
-    DATABASE_URL: mysql://ubuntu:@127.0.0.1:3306/circle_test
+    DB_USER: ubuntu:
+    DB_HOST: 127.0.0.1
+    DB_PASS: ''
+    DB_PORT: 3306
+    DB_NAME: circle_test
 ## Customize checkout
 ## Note: Only post is supported.
 checkout:
@@ -45,7 +49,9 @@ dependencies:
   override:
     - printenv
     - mkdir $CIRCLE_ARTIFACTS/junit
-    - 'bash dkan-init.sh dkan --deps --build=$DATABASE_URL'
+    - bash dkan-init.sh dkan --deps-only
+    - ahoy site setup
+    - ahoy site reinstall
     # Run a webserver using drush.
     - 'ahoy drush --yes runserver :8888':
         background: true
