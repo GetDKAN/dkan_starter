@@ -49,7 +49,7 @@ dependencies:
   override:
     - printenv
     - mkdir $CIRCLE_ARTIFACTS/junit
-    - bash dkan-init.sh dkan --deps-only
+    - bash dkan/dkan-init.sh dkan --deps-only
     - ahoy site setup
     - ahoy site reinstall
     # Run a webserver using drush.
