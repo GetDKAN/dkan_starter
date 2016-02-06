@@ -17,7 +17,7 @@ machine:
   environment:
     # For xvfb / selenium setup (not sure why)
     #DISPLAY: ':99.0'
-    DB_USER: ubuntu:
+    DB_USER: ubuntu
     DB_HOST: 127.0.0.1
     DB_PASS: ''
     DB_PORT: 3306
