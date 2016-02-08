@@ -13,7 +13,7 @@ $databases = array (
       'host' => '#DB_HOST',
       'port' => '#DB_PORT',
       'driver' => 'mysql',
-      'prefix' => 'asdf',
+      'prefix' => '',
     ),
   ),
 );
