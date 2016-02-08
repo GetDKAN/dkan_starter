@@ -116,7 +116,7 @@ switch(ENVIRONMENT) {
       // the custom_config feature master list.
       // 'field_ui',
       'maillog',
-      'stage_file_proxy',
+      // 'stage_file_proxy',
       'views_ui',
     );
     // Features Master also supports temporarily disabling modules.
@@ -130,7 +130,7 @@ switch(ENVIRONMENT) {
       'dkan_acquia_search_solr',
       'search_api_solr',
       'search_api_acquia',
-      'nucivic_data_devops',
+      // 'nucivic_data_devops',
     );
     // Show ALL errors when working locally.
     $conf['error_level'] = ERROR_REPORTING_DISPLAY_ALL;
