@@ -33,6 +33,9 @@ function custom_config_user_default_permissions() {
     'name' => 'access media browser',
     'roles' => array(
       'administrator' => 'administrator',
+      'content creator' => 'content creator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'media',
   );
@@ -60,6 +63,7 @@ function custom_config_user_default_permissions() {
     'name' => 'administer @font-your-face',
     'roles' => array(
       'administrator' => 'administrator',
+      'site manager' => 'site manager',
     ),
     'module' => 'fontyourface',
   );
@@ -78,6 +82,7 @@ function custom_config_user_default_permissions() {
     'name' => 'administer file types',
     'roles' => array(
       'administrator' => 'administrator',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -87,6 +92,8 @@ function custom_config_user_default_permissions() {
     'name' => 'administer files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -114,6 +121,7 @@ function custom_config_user_default_permissions() {
     'name' => 'administer media browser',
     'roles' => array(
       'administrator' => 'administrator',
+      'content creator' => 'content creator',
     ),
     'module' => 'media',
   );
@@ -132,6 +140,7 @@ function custom_config_user_default_permissions() {
     'name' => 'bypass file access',
     'roles' => array(
       'administrator' => 'administrator',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -159,6 +168,8 @@ function custom_config_user_default_permissions() {
     'name' => 'create fieldable basic_file',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -168,6 +179,8 @@ function custom_config_user_default_permissions() {
     'name' => 'create fieldable fieldable_panels_pane',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -177,6 +190,8 @@ function custom_config_user_default_permissions() {
     'name' => 'create fieldable image',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -186,6 +201,8 @@ function custom_config_user_default_permissions() {
     'name' => 'create fieldable map',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -195,6 +212,8 @@ function custom_config_user_default_permissions() {
     'name' => 'create fieldable quick_links',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -204,6 +223,8 @@ function custom_config_user_default_permissions() {
     'name' => 'create fieldable spotlight',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -213,6 +234,8 @@ function custom_config_user_default_permissions() {
     'name' => 'create fieldable table',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -222,6 +245,8 @@ function custom_config_user_default_permissions() {
     'name' => 'create fieldable text',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -231,6 +256,8 @@ function custom_config_user_default_permissions() {
     'name' => 'create fieldable video',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -240,6 +267,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete any audio files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -249,6 +278,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete any document files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -258,6 +289,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete any image files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -267,6 +300,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete any video files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -276,6 +311,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete fieldable basic_file',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -285,6 +322,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete fieldable fieldable_panels_pane',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -294,6 +333,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete fieldable image',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -303,6 +344,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete fieldable map',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -312,6 +355,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete fieldable quick_links',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -321,6 +366,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete fieldable spotlight',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -330,6 +377,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete fieldable table',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -339,6 +388,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete fieldable text',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -348,6 +399,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete fieldable video',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -357,6 +410,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete own audio files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -366,6 +421,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete own document files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -375,6 +432,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete own image files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -384,6 +443,8 @@ function custom_config_user_default_permissions() {
     'name' => 'delete own video files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -393,6 +454,8 @@ function custom_config_user_default_permissions() {
     'name' => 'download any audio files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -402,6 +465,8 @@ function custom_config_user_default_permissions() {
     'name' => 'download any document files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -411,6 +476,8 @@ function custom_config_user_default_permissions() {
     'name' => 'download any image files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -420,6 +487,8 @@ function custom_config_user_default_permissions() {
     'name' => 'download any video files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -429,6 +498,8 @@ function custom_config_user_default_permissions() {
     'name' => 'download own audio files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -438,6 +509,8 @@ function custom_config_user_default_permissions() {
     'name' => 'download own document files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -447,6 +520,8 @@ function custom_config_user_default_permissions() {
     'name' => 'download own image files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -456,6 +531,8 @@ function custom_config_user_default_permissions() {
     'name' => 'download own video files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -465,6 +542,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit any audio files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -474,6 +553,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit any document files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -483,6 +564,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit any image files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -492,6 +575,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit any video files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -501,6 +586,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit fieldable basic_file',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -510,6 +597,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit fieldable fieldable_panels_pane',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -519,6 +608,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit fieldable image',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -528,6 +619,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit fieldable map',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -537,6 +630,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit fieldable quick_links',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -546,6 +641,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit fieldable spotlight',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -555,6 +652,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit fieldable table',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -564,6 +663,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit fieldable text',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -573,6 +674,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit fieldable video',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'fieldable_panels_panes',
   );
@@ -582,6 +685,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit own audio files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -591,6 +696,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit own document files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -600,6 +707,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit own image files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -609,6 +718,8 @@ function custom_config_user_default_permissions() {
     'name' => 'edit own video files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -654,6 +765,9 @@ function custom_config_user_default_permissions() {
     'name' => 'use manualcrop',
     'roles' => array(
       'administrator' => 'administrator',
+      'content creator' => 'content creator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'manualcrop',
   );
@@ -663,6 +777,9 @@ function custom_config_user_default_permissions() {
     'name' => 'view files',
     'roles' => array(
       'administrator' => 'administrator',
+      'content creator' => 'content creator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -672,6 +789,9 @@ function custom_config_user_default_permissions() {
     'name' => 'view own files',
     'roles' => array(
       'administrator' => 'administrator',
+      'content creator' => 'content creator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -681,6 +801,8 @@ function custom_config_user_default_permissions() {
     'name' => 'view own private files',
     'roles' => array(
       'administrator' => 'administrator',
+      'editor' => 'editor',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
@@ -690,6 +812,7 @@ function custom_config_user_default_permissions() {
     'name' => 'view private files',
     'roles' => array(
       'administrator' => 'administrator',
+      'site manager' => 'site manager',
     ),
     'module' => 'file_entity',
   );
