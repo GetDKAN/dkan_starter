@@ -224,6 +224,7 @@ function devinci_custom_environment_switch($target_env, $current_env) {
       features_master_features_revert('custom_config');
       features_revert_module('dkan_dataset_groups');
       features_revert_module('dkan_dataset_content_types');
+      features_revert_module('dkan_permissions');
       break;
 
     case 'development':
@@ -233,6 +234,7 @@ function devinci_custom_environment_switch($target_env, $current_env) {
       features_master_features_revert('custom_config');
       features_revert_module('dkan_dataset_groups');
       features_revert_module('dkan_dataset_content_types');
+      features_revert_module('dkan_permissions');
   }
 }
 
