@@ -18,4 +18,5 @@ $databases = array (
   ),
 );
 
-$base_url = 'http://#HOST:#WEB_PORT';
+# Uncomment this if needed, but not enabled by default.
+#$base_url = 'http://#HOST:#WEB_PORT';
