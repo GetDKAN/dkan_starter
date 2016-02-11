@@ -26,6 +26,7 @@ class AcquiaSearchService extends DrupalApacheSolrService {
    *  The nonce used in the request.
    */
   protected function prepareRequest(&$url, &$options, $use_data = TRUE) {
+    // Add a unique request ID to the URL.
     $id = uniqid();
     if (!stristr($url,'?')) {
       $url .= "?";
@@ -34,6 +35,12 @@ class AcquiaSearchService extends DrupalApacheSolrService {
       $url .= "&";
     }
     $url .= 'request_id=' . $id;
+    // If we're hosted on Acquia, and have an Acquia request ID,
+    // append it to the request so that we map Solr queries to Acquia search requests.
+    if (isset($_ENV['HTTP_X_REQUEST_ID'])) {
+      $xid = empty($_ENV['HTTP_X_REQUEST_ID']) ? '-' : $_ENV['HTTP_X_REQUEST_ID'];
+      $url .= '&x-request-id=' . rawurlencode($xid);
+    }
     if ($use_data && isset($options['data'])) {
       list($cookie, $nonce) = acquia_search_auth_cookie($url, $options['data'], NULL, $this->env_id);
     }

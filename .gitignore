@@ -4,10 +4,14 @@
 /files/*
 /cache
 
-
 # ** Only works in OSs that support newer versions of fnmatch (Bash 4+)
 /docroot/sites/default/**/files
 /docroot/sites/default/**/private
+
+
+# Ignore the dkan test composer folder.
+/docroot/profiles/dkan/test/vendor
+/docroot/profiles/dkan/test/assets
 
 # Packages #
 ############
@@ -47,3 +51,8 @@ Thumbs.db
 # PHPStorm #
 ############
 .idea
+
+# Ahoy #
+########
+/backups
+/backups/*

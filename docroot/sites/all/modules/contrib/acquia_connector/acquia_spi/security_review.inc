@@ -422,7 +422,7 @@ function acquia_spi_security_review_check_admin_permissions() {
   foreach ($untrusted_permissions as $rid => $permissions) {
     $intersect = array_intersect($all_keys, array_keys($permissions));
     foreach ($intersect as $permission) {
-      if (isset($all_permissions[$permission]['restrict access'])) {
+      if (!empty($all_permissions[$permission]['restrict access'])) {
         $check_result_value[$rid][] = $permission;
       }
     }
@@ -541,10 +541,7 @@ function acquia_spi_security_review_check_executable_php($last_check = NULL) {
     $check_result_value[] = 'outdated_core';
   }
   else {
-    $contents = file_get_contents($directory . '/.htaccess');
-    // Text from includes/file.inc.
-    $expected = file_htaccess_lines(FALSE);
-    if (trim($contents) !== trim($expected)) {
+    if (!_acquia_spi_security_review_htaccess_analyze($directory)) {
       $result = FALSE;
       $check_result_value[] = 'incorrect_htaccess';
     }
@@ -555,6 +552,89 @@ function acquia_spi_security_review_check_executable_php($last_check = NULL) {
   }
 
   return array('result' => $result, 'value' => $check_result_value);
+}
+
+/**
+ * Helper function to analyze .htaccess in specified directory.
+ * @param $directory string
+ * @return bool
+ */
+function _acquia_spi_security_review_htaccess_analyze($directory) {
+  $contents = file_get_contents($directory . '/.htaccess');
+  // Text from includes/file.inc.
+  $expected = file_htaccess_lines(FALSE);
+  if (trim($contents) !== trim($expected)) {
+    $expected = _acquia_spi_security_review_htaccess_parse($expected);
+    $contents = _acquia_spi_security_review_htaccess_parse($contents);
+    if (!empty($expected) && !empty($contents)) {
+      foreach ($expected as $key => $value) {
+        if (is_array($value)) {
+          if (!isset($contents[$key])) {
+            return FALSE;
+          }
+          foreach ($value as $k => $v) {
+            if (array_search($v, $contents[$key]) === FALSE) {
+              return FALSE;
+            }
+          }
+        }
+        else {
+          if (array_search($value, $contents) === FALSE) {
+            return FALSE;
+          }
+        }
+      }
+    }
+    else {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+
+/**
+ * Helper function to parse .htaccess data into nested array.
+ * @param $htaccess string
+ *  .htaccess file content
+ * @return array
+ *  Array of parsed data. Nested sections converted into two-dimensional array.
+ */
+function _acquia_spi_security_review_htaccess_parse($htaccess) {
+  $result = array();
+
+  // Remove full-line comments
+  $htaccess = preg_replace('/^\s*#.*$/mui', '', $htaccess);
+  $htaccess = explode("\n", $htaccess);
+
+  $section = array();
+  $section_key = array();
+  foreach ($htaccess as $key => $value) {
+    $value = trim($value);
+    if ($value) {
+      // .htaccess section begin
+      if (preg_match('/^<([^\\s]+)\s+(.+)>.*$/ui', $value, $regs)) {
+        $section[] = strtolower($regs[1]);
+        $section_key[] = strtolower($regs[1]) . '-' . strtolower($regs[2]);
+      }
+      // .htaccess section end
+      elseif (count($section) && preg_match('/^<\/' . preg_quote($section[count($section) - 1], '/') . '>.*$/ui', $value, $regs)) {
+        array_pop($section);
+        array_pop($section_key);
+      }
+      // Regular value
+      else {
+        $value = preg_replace(array('/\s*#.+/ui', '/\s+/ui'), array('', ' '), $value);
+        if (count($section)) {
+          $result[implode('-', $section_key)][] = $value;
+        }
+        else {
+          $result[] = $value;
+        }
+      }
+    }
+  }
+
+  return $result;
 }
 
 /**
@@ -623,7 +703,7 @@ function acquia_spi_security_review_check_views_access($last_check = NULL) {
   // Load and loop through every view, checking the access type in displays.
   $views = views_get_all_views();
   foreach ($views as $view) {
-    if ($view->disabled !== TRUE) {
+    if (empty($view->disabled)) {
       // Access is set in display options of a display.
       foreach ($view->display as $display_name => $display) {
         if (isset($display->display_options['access']) && $display->display_options['access']['type'] == 'none') {

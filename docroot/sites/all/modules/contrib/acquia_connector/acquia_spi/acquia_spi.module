@@ -90,7 +90,7 @@ function acquia_spi_boot() {
   $interval = variable_get('acquia_spi_cron_interval', 60);
   // Determine if the required interval has passed.
   $now = REQUEST_TIME;
-  if ((($now - $last) > ($interval * 60))) {
+  if ((($now - $last) > ($interval * 60)) && lock_acquire(__FUNCTION__)) {
     $platform = acquia_spi_get_platform();
     acquia_spi_data_store_set(array('platform' => $platform));
     variable_set('acquia_spi_boot_last', $now);

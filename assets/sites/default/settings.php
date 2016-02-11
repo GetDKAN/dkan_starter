@@ -19,10 +19,13 @@
  *    companies beside acquia and pantheon.
  */
 $settings_local = DRUPAL_ROOT . '/' . conf_path() . '/settings.local.php';
+$settings_docker = DRUPAL_ROOT . '/' . conf_path() . '/settings.docker.php';
 if (file_exists($settings_local)) {
   include $settings_local;
 }
-
+else if (file_exists($settings_docker)) {
+  include $settings_docker;
+}
 /******************************************************
  * REQUIRED: Setup standard environments using devinci.
  ******************************************************/
@@ -113,7 +116,7 @@ switch(ENVIRONMENT) {
       // the custom_config feature master list.
       // 'field_ui',
       'maillog',
-      'stage_file_proxy',
+      // 'stage_file_proxy',
       'views_ui',
     );
     // Features Master also supports temporarily disabling modules.
@@ -127,7 +130,7 @@ switch(ENVIRONMENT) {
       'dkan_acquia_search_solr',
       'search_api_solr',
       'search_api_acquia',
-      'nucivic_data_devops',
+      // 'nucivic_data_devops',
     );
     // Show ALL errors when working locally.
     $conf['error_level'] = ERROR_REPORTING_DISPLAY_ALL;
@@ -219,22 +222,19 @@ function devinci_custom_environment_switch($target_env, $current_env) {
       // 'custom_config'. Update to the name of your master module. This saves
       // the step of manually reverting when switching environments.
       features_master_features_revert('custom_config');
+      features_revert_module('dkan_dataset_groups');
+      features_revert_module('dkan_dataset_content_types');
+      features_revert_module('dkan_permissions');
       break;
 
     case 'development':
-      drupal_flush_all_caches();
-      features_master_features_revert('custom_config');
-      break;
-
     case 'test':
-      drupal_flush_all_caches();
-      features_master_features_revert('custom_config');
-      break;
-
     case 'production':
       drupal_flush_all_caches();
       features_master_features_revert('custom_config');
-      break;
+      features_revert_module('dkan_dataset_groups');
+      features_revert_module('dkan_dataset_content_types');
+      features_revert_module('dkan_permissions');
   }
 }
 

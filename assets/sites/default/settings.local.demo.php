@@ -3,18 +3,20 @@
 define('ENVIRONMENT', 'local');
 
 $databases = array (
-  'default' => 
+  'default' =>
   array (
-    'default' => 
+    'default' =>
     array (
-      'database' => 'drupal',
-      'username' => 'root',
-      'password' => 'strongpassword',
-      'host' => 'localhost',
+      'database' => '#DB_NAME',
+      'username' => '#DB_USER',
+      'password' => '#DB_PASS',
+      'host' => '#DB_HOST',
+      'port' => '#DB_PORT',
       'driver' => 'mysql',
       'prefix' => '',
     ),
   ),
 );
 
-// $base_url = 'http://127.0.0.1:8888';
+# Uncomment this if needed, but not enabled by default.
+#$base_url = 'http://#HOST:#WEB_PORT';

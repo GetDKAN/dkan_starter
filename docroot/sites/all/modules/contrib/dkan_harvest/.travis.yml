@@ -34,6 +34,7 @@ before_script:
   - drush en -y dkan_migrate_base
   - drush en -y dkan_harvest
   - drush en -y dkan_harvest_test
+  - drush en -y dkan_harvest_example
   - cd dkan_harvest/test
   - composer install
 

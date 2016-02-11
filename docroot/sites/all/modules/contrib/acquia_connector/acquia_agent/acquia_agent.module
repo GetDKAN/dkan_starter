@@ -208,24 +208,28 @@ function acquia_agent_init() {
 
     $activated = acquia_agent_check_subscription();
 
-    if ($activated) {
+    if ($activated && user_access('administer site configuration')) {
       $text = t('Your site has been automatically connected to Acquia. <a href="!url">Change subscription</a>', array('!url' => url('admin/config/system/acquia-agent/setup')));
       drupal_set_message($text, 'status', FALSE);
     }
   }
+}
 
-  $request = ltrim(request_uri(), DIRECTORY_SEPARATOR);
+/**
+ * Implementation of hook_page_build().
+ */
+function acquia_agent_page_build(&$page) {
   $hide_signup_messages = variable_get('acquia_agent_hide_signup_messages', 0);
-  if (!$hide_signup_messages &&
-    (arg(0) != 'overlay-ajax') && (arg(3) != 'acquia-agent') &&
-    empty($_POST) &&  user_access('administer site configuration') &&
-    (!acquia_agent_has_credentials()) &&
-    (strpos($request, variable_get('file_public_path', conf_path() . DIRECTORY_SEPARATOR . 'files')) !== 0)) {
-    $text = 'Sign up for Acquia Cloud Free, a free Drupal sandbox to experiment with new features, test your code quality, and apply continuous integration best practices. Check out the <a href="!acquia-free">epic set of dev features and tools</a> that come with your free subscription.<br/>If you have an Acquia Subscription, <a href="!settings">connect now</a>. Otherwise, you can turn this message off by disabling the Acquia Subscription modules.';
+  // Display a signup message to administrators if the site isn't connected to
+  // the Acquia Network.
+  if (!$hide_signup_messages && arg(3) != 'acquia-agent' && user_access('administer site configuration') && !acquia_agent_has_credentials()) {
+    $message = '';
+    $message .= t('Sign up for Acquia Cloud Free, a free Drupal sandbox to experiment with new features, test your code quality, and apply continuous integration best practices. Check out the <a href="!acquia-free">epic set of dev features and tools</a> that come with your free subscription.<br/>', array('!acquia-free' => url('https://www.acquia.com/acquia-cloud-free')));
+    $message .= t('If you have an Acquia Subscription, <a href="!settings">connect now</a>. Otherwise, you can turn this message off by disabling the Acquia Subscription modules.', array('!settings' => url('admin/config/system/acquia-agent/setup')));
     if (isset($_SERVER['AH_SITE_GROUP'])) {
-      $text = '<a href="!settings">Connect your site to Acquia now</a>. <a href="!more">Learn more</a>.';
+      $message .= t('<a href="!settings">Connect your site to Acquia now</a>. <a href="!more">Learn more</a>.', array('!settings' => url('admin/config/system/acquia-agent/setup')));
     }
-    $message = t($text, array('!acquia-free' => url('https://www.acquia.com/acquia-cloud-free'), '!settings' => url('admin/config/system/acquia-agent/setup')));
+
     drupal_set_message($message, 'warning', FALSE);
   }
 }
@@ -542,7 +546,7 @@ function acquia_agent_help($path, $arg) {
       $output .= '<dt>' . t('Receive updates from Acquia Insight') . '</dt>';
       $output .= '<dd>' . t('Receive dynamic updates on the Network Settings page from Acquia.com about your subscription and new features.') . '</dd>';
       $output .= '<dt>' . t('Allow Insight to update list of approved variables.') . '</dt>';
-      $output .= '<dd>' . t('As part of the Acquia Insight service, some variables can be corrected to their recommended settings from within the Insight system. The list of variables that can be corrected can also be updated at your discretion.') . '</dd>';
+      $output .= '<dd>' . t('As part of the Acquia Insight service, some variables can be corrected to their recommended settings from within the Insight system. The list of variables that can be corrected can also be updated at your discretion. <a href="!url">Learn more</a>', array('!url' => url('https://docs.acquia.com/network/enhance/fix', array('external' => TRUE, 'fragment' => 'scope')))) . '</dd>';
       $output .= '</dl>';
       return $output;
   }
