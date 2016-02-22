@@ -4,22 +4,6 @@
  */
 
 if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
-  /**
-   * Acquia specific config per environment
-   */
-  switch(ENVIRONMENT) {
-    case 'development':
-    case 'test':
-    case 'production':
-      $conf['features_master_temp_enabled_modules'] = array_merge(
-        $conf['features_master_temp_enabled_modules'],
-        array(
-          'dkan_acquia_expire',
-          'dkan_acquia_search_solr'
-        )
-      );
-      break;
-  }
   // Set 2 session cookies, one secure and one not.
   $conf['https'] = FALSE;
   // Enable https redirection.

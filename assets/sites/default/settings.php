@@ -207,34 +207,21 @@ switch(ENVIRONMENT) {
  * devinci_custom_environment_switch() in settings.php as shown below.
  */
 function devinci_custom_environment_switch($target_env, $current_env) {
-
   switch($target_env) {
-
     case 'local':
       // Set the search server to use the local solr server instead of acquia's
       db_query("UPDATE search_api_index set server = 'local_solr_server' where server = 'dkan_acquia_solr'");
       //db_query("DELETE FROM search_api_index where server IS NULL");
       db_query("UPDATE search_api_server set enabled = 0 WHERE machine_name <> 'local_solr_server'");
 
-      // Example: Clear all caches. (drush cc all)
-      drupal_flush_all_caches();
-      // Example: Revert a features_master module, which is assumed to be called
-      // 'custom_config'. Update to the name of your master module. This saves
-      // the step of manually reverting when switching environments.
-      features_master_features_revert('custom_config');
-      features_revert_module('dkan_dataset_groups');
-      features_revert_module('dkan_dataset_content_types');
-      features_revert_module('dkan_permissions');
-      break;
-
     case 'development':
     case 'test':
     case 'production':
-      drupal_flush_all_caches();
+      drupal_flush_all_caches();  
       features_master_features_revert('custom_config');
-      features_revert_module('dkan_dataset_groups');
       features_revert_module('dkan_dataset_content_types');
-      features_revert_module('dkan_permissions');
+      features_revert_module('dkan_permissions');    
+      break;
   }
 }
 

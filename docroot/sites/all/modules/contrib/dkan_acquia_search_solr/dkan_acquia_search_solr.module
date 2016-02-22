@@ -55,9 +55,31 @@ function dkan_acquia_search_solr_default_search_api_server_alter(array &$default
   if (!$server_override = variable_get('dkan_acquia_search_solr_override', false)) {
     // No override is set so enable the acquia server.
     $defaults["dkan_acquia_solr"]->enabled = true;
+    dkan_acquia_search_solr_set_acquia_search_from_subscription($defaults['dkan_acquia_solr']);
   }
   else {
     $defaults[$server_override]->enabled = true;
   }
+}
+
+function dkan_acquia_search_solr_set_acquia_search_from_subscription(array &$server) {
+    dpm($server);
+    $options = array();
+    // Modify connection details live on every connect so we do not need to
+    // resave the server details if we make modifications in settings.php.
+    $identifier = acquia_agent_settings('acquia_identifier');
+    $subscription = acquia_agent_settings('acquia_subscription_data');
+
+    // Get our override if we have one. Otherwise use the default.
+    $search_host = variable_get('acquia_search_host', 'search.acquia.com');
+    if (!empty($subscription['heartbeat_data']['search_service_colony'])) {
+      $search_host = $subscription['heartbeat_data']['search_service_colony'];
+    }
+
+    // Get our solr path
+    $search_path = variable_get('acquia_search_path', '/solr/' . $identifier);
+
+    $options['host'] = $search_host;
+    $options['path'] = $search_path;
 
 }
