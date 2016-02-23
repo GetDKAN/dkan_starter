@@ -6,12 +6,20 @@
 
 include_once 'dkan_acquia_search_solr.features.inc';
 
+/*
+ * Implements hook_environment_switch.
+ */
+function dkan_acquia_search_solr_environment_switch($target_env, $source_env) {
+  features_revert_module('dkan_dataset_groups');
+  features_revert_module('dkan_sitewide_search_db');
+  features_revert_module('dkan_data_story');
+  features_revert_module('dkan_acquia_search_solr');
+}
 
 /**
  * Implements hook_default_search_api_index_alter().
  */
 function dkan_acquia_search_solr_default_search_api_index_alter(array &$defaults) {
-
   // List of the possible search api indexes.
   $index_list = array(
     "stories_index",
@@ -32,9 +40,10 @@ function dkan_acquia_search_solr_default_search_api_index_alter(array &$defaults
   }
 }
 
+/**
+ * Implements hook_default_search_api_server_alter().
+ */
 function dkan_acquia_search_solr_default_search_api_server_alter(array &$defaults) {
-
-
   // List of the possible search api indexes.
   $server_list = array(
     "groups_server",
@@ -55,16 +64,17 @@ function dkan_acquia_search_solr_default_search_api_server_alter(array &$default
   if (!$server_override = variable_get('dkan_acquia_search_solr_override', false)) {
     // No override is set so enable the acquia server.
     $defaults["dkan_acquia_solr"]->enabled = true;
-    dkan_acquia_search_solr_set_acquia_search_from_subscription($defaults['dkan_acquia_solr']);
+    $defaults["dkan_acquia_solr"]->options = _reset_acquia_search_from_subscription(
+      $defaults['dkan_acquia_solr']->options
+    );
+    // dkan_acquia_search_solr_set_acquia_search_from_subscription($defaults['dkan_acquia_solr']);
   }
   else {
     $defaults[$server_override]->enabled = true;
   }
 }
 
-function dkan_acquia_search_solr_set_acquia_search_from_subscription(array &$server) {
-    dpm($server);
-    $options = array();
+function _reset_acquia_search_from_subscription($options) {
     // Modify connection details live on every connect so we do not need to
     // resave the server details if we make modifications in settings.php.
     $identifier = acquia_agent_settings('acquia_identifier');
@@ -82,4 +92,24 @@ function dkan_acquia_search_solr_set_acquia_search_from_subscription(array &$ser
     $options['host'] = $search_host;
     $options['path'] = $search_path;
 
+    // Unset derived key so search_api_acquia sets this instead.
+    if (isset($options['derived_key'])) {
+      unset($options['derived_key']);
+    }
+    
+    // Remove stupid overrides from features export. :facepalm:.
+    if (isset($options['acquia_override_subscription'])) {
+      $unset = array(
+        'acquia_override_selector',
+        'acquia_override_subscription_id',
+        'acquia_override_subscription_key',
+        'acquia_override_subscription_corename',
+      );
+      foreach ($unset as $k) {
+        if (isset($options['acquia_override_subscription'][$k])) {
+          unset($options['acquia_override_subscription'][$k]);
+        }
+      }
+    }
+    return $options;
 }

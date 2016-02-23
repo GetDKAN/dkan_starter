@@ -9,4 +9,4 @@ default:
         wd_host: http://browser:4444/wd/hub
     Drupal\DrupalExtension:
       drupal:
-        drupal_root: %paths.base%/../../../../docroot
+        drupal_root: %paths.base%/../../docroot

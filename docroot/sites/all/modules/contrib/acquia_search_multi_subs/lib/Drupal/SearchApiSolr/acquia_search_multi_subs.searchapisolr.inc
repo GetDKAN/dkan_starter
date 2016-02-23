@@ -89,9 +89,9 @@ function acquia_search_multi_subs_searchapi_init() {
       }
       // Loop over all the available search cores.
       foreach ($available_search_cores as $available_search_core) {
-        if ($available_search_core['core_id'] == $expected_core_name) {
+        if (strtolower($available_search_core['core_id']) == strtolower($expected_core_name)) {
           // If the core is already the same, don't do anything.
-          if ($available_search_core['core_id'] != $environment_core_name) {
+          if (strtolower($available_search_core['core_id']) != strtolower($environment_core_name)) {
             acquia_search_multi_subs_searchapi_set_default_core($server, $available_search_core);
             watchdog('acquia_search_multi_subs', 'Switched Search API solr server "@server_name" from core @old_core_id to @new_core_id', array('@server_name' => $server->name, '@old_core_id' => $environment_core_name, '@new_core_id' => $available_search_core['core_id']), WATCHDOG_NOTICE);
           }

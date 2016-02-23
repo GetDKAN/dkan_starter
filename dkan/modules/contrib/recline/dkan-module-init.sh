@@ -1,6 +1,6 @@
 
 # Name of the current module.
-DKAN_MODULE="open_data_schema_map"
+DKAN_MODULE="recline"
 
 # DKAN branch to use
 DKAN_BRANCH="7.x-1.x"

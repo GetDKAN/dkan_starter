@@ -54,11 +54,13 @@ function acquia_search_multi_subs_get_expected_search_cores($acquia_identifier, 
     // The possible core name suffixes are [current site folder name] and 'default'.
     $core_suffixes = array_unique(array($sites_foldername, 'default'));
     foreach ($core_suffixes as $core_suffix) {
-      // Fix the $core_suffix: alphanumeric only, and max length == 16
+      // Fix the $core_suffix: alphanumeric only
       $core_suffix = preg_replace('@[^a-zA-Z0-9]+@', '', $core_suffix);
-      $core_suffix = substr($core_suffix, 0, 16);
-      // Add WXYZ-12345.[env].[sitefolder] option.
-      $expected_core_names[] = $acquia_identifier . '.' . $site_environment . '.' . $core_suffix;
+      // We first add a 60-char-length indexname, which is the Solr index name limit.
+      $expected_core_names[] = substr($acquia_identifier . '.' . $site_environment . '.' . $core_suffix, 0, 60);
+      // Before 17-nov-2015 (see BZ-2778) the suffix limit was 16 chars; add this as well for backwards compatibility.
+      $expected_core_names[] = $acquia_identifier . '.' . $site_environment . '.' . substr($core_suffix, 0, 16);
+
       // Add WXYZ-12345_[sitename][env] option.
       if (!empty($site_name) && $sites_foldername == 'default') {
         // Replace any weird characters that might appear in the sitegroup name or
@@ -294,24 +296,30 @@ function acquia_search_multi_subs_form_validate(array $element, &$form_state) {
     if ($form_values['acquia_override_subscription_corename'] == '') {
       $form_state['values']['acquia_override_subscription_corename'] = $form_values['acquia_override_subscription_id'];
     }
+    $identifier = $form_values['acquia_override_subscription_id'];
+    $key = $form_values['acquia_override_subscription_key'];
   }
   elseif ($form_values['acquia_override_selector'] == 'default') {
-    // Delete all possible index variables from the Acquia Multi Subs module, since
-    // we revert to default for this Search Environment
+    // Revert all acquia_override_subscription_* variables to the default for
+    // this Search Environment.
+    // TODO: Is this needed?
     $form_state['values']['acquia_override_subscription_id'] = acquia_agent_settings('acquia_identifier');
     $form_state['values']['acquia_override_subscription_key'] = acquia_agent_settings('acquia_key');
     $form_state['values']['acquia_override_subscription_corename'] = acquia_agent_settings('acquia_identifier');
+    $identifier = acquia_agent_settings('acquia_identifier');
+    $key = acquia_agent_settings('acquia_key');
   }
   else {
+    // Revert id and key overrides to match the current subscription in use,
+    // and revert the overridden corename to the selected one.
+    // TODO: Is this needed?
     $form_state['values']['acquia_override_subscription_id'] = acquia_agent_settings('acquia_identifier');
     $form_state['values']['acquia_override_subscription_key'] = acquia_agent_settings('acquia_key');
     $form_state['values']['acquia_override_subscription_corename'] = $form_values['acquia_override_selector'];
+    $identifier = acquia_agent_settings('acquia_identifier');
+    $key = acquia_agent_settings('acquia_key');
   }
-
-  // Set the identifier and key.
-  $identifier = $form_values['acquia_override_subscription_id'];
-  $key = $form_values['acquia_override_subscription_key'];
-
+  // Check if the picked subscription id/key are valid.
   $subscription = acquia_agent_get_subscription(array(), $identifier, $key);
   if (!is_array($subscription)) {
     form_error($element['acquia_override_subscription_key'], t('This combination of ID and key is not valid.'));

@@ -1,6 +1,6 @@
 
 # Name of the current module.
-DKAN_MODULE="open_data_schema_map"
+DKAN_MODULE="visualization_entity"
 
 # DKAN branch to use
 DKAN_BRANCH="7.x-1.x"
@@ -33,5 +33,5 @@ ahoy dkan module-make $DKAN_MODULE
 ahoy dkan reinstall
 ahoy drush en $DKAN_MODULE -y
 
- #Fix for behat bug not recognizing symlinked feature files or files outside it's root. See https://jira.govdelivery.com/browse/CIVIC-1005
-#cp dkan_workflow/test/features/dkan_workflow.feature dkan/test/features/.
+#Fix for behat bug not recognizing symlinked feature files or files outside it's root. See https://jira.govdelivery.com/browse/CIVIC-1005
+# cp dkan_workflow/test/features/dkan_workflow.feature dkan/test/features/.
