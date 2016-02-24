@@ -123,14 +123,14 @@ switch(ENVIRONMENT) {
     // This will disable modules in the local environment, but INCLUDE them
     // when exporting using features_master.
      $conf['features_master_temp_disabled_modules'] = array(
+      'acquia_agent',
       'acquia_purge',
       'syslog',
       'dkan_acquia_expire',
       'expire',
-      'dkan_acquia_search_solr',
       'search_api_solr',
       'search_api_acquia',
-      // 'nucivic_data_devops',
+      'dkan_acquia_search_solr',
     );
     // Show ALL errors when working locally.
     $conf['error_level'] = ERROR_REPORTING_DISPLAY_ALL;
@@ -199,6 +199,21 @@ switch(ENVIRONMENT) {
     exit();
 }
 
+/****************************
+ * OPTIONAL: Acquia Settings.
+ ***************************/
+/* This are acquia specific settings 
+ */
+include "settings.acquia.php";
+
+/*****************************
+ * OPTIONAL: NuCivic Settings.
+ ****************************/
+/* This are nucivic specific settings 
+ */
+include "settings.nucivic.php";
+
+
 /******************************************************
  * OPTIONAL: Perform tasks when switching environments.
  *****************************************************/
@@ -207,47 +222,21 @@ switch(ENVIRONMENT) {
  * devinci_custom_environment_switch() in settings.php as shown below.
  */
 function devinci_custom_environment_switch($target_env, $current_env) {
-
   switch($target_env) {
-
     case 'local':
       // Set the search server to use the local solr server instead of acquia's
       db_query("UPDATE search_api_index set server = 'local_solr_server' where server = 'dkan_acquia_solr'");
       //db_query("DELETE FROM search_api_index where server IS NULL");
       db_query("UPDATE search_api_server set enabled = 0 WHERE machine_name <> 'local_solr_server'");
 
-      // Example: Clear all caches. (drush cc all)
-      drupal_flush_all_caches();
-      // Example: Revert a features_master module, which is assumed to be called
-      // 'custom_config'. Update to the name of your master module. This saves
-      // the step of manually reverting when switching environments.
-      features_master_features_revert('custom_config');
-      features_revert_module('dkan_dataset_groups');
-      features_revert_module('dkan_dataset_content_types');
-      features_revert_module('dkan_permissions');
-      break;
-
     case 'development':
     case 'test':
     case 'production':
       drupal_flush_all_caches();
       features_master_features_revert('custom_config');
-      features_revert_module('dkan_dataset_groups');
       features_revert_module('dkan_dataset_content_types');
+      features_revert_module('dkan_dataset_groups');
       features_revert_module('dkan_permissions');
+      break;
   }
 }
-
-/****************************
- * OPTIONAL: Acquia Settings.
- ***************************/
-/* This are acquia specific settings 
- */
-//include "settings.acquia.php";
-
-/*****************************
- * OPTIONAL: NuCivic Settings.
- ****************************/
-/* This are nucivic specific settings 
- */
-//include "settings.nucivic.php";

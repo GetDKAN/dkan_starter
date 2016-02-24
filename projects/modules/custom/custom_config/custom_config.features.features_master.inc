@@ -11,6 +11,7 @@ function custom_config_features_master_defaults() {
   $features_master = array();
 
   $features_master['modules'] = array(
+    'acquia_agent' => 'acquia_agent',
     'acquia_purge' => 'acquia_purge',
     'admin_menu' => 'admin_menu',
     'admin_menu_source' => 'admin_menu_source',
