@@ -123,6 +123,7 @@ switch(ENVIRONMENT) {
     // This will disable modules in the local environment, but INCLUDE them
     // when exporting using features_master.
      $conf['features_master_temp_disabled_modules'] = array(
+      'acquia_agent',
       'acquia_purge',
       'syslog',
       'dkan_acquia_expire',
@@ -231,11 +232,11 @@ function devinci_custom_environment_switch($target_env, $current_env) {
     case 'development':
     case 'test':
     case 'production':
-      drupal_flush_all_caches();  
+      drupal_flush_all_caches();
       features_master_features_revert('custom_config');
       features_revert_module('dkan_dataset_content_types');
       features_revert_module('dkan_dataset_groups');
-      features_revert_module('dkan_permissions');    
+      features_revert_module('dkan_permissions');
       break;
   }
 }
