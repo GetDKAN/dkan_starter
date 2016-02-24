@@ -100,7 +100,6 @@ projects[dkan_acquia_search_solr][type] = module
 projects[dkan_acquia_search_solr][download][type] = git
 projects[dkan_acquia_search_solr][download][url] = https://github.com/NuCivic/dkan_acquia_search_solr.git
 projects[dkan_acquia_search_solr][download][branch] = master
-projects[dkan_acquia_search_solr][patch][1] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan_acquia_search_solr/pull/1.diff
 
 ;projects[nucivic_data_devops][type] = module
 ;projects[nucivic_data_devops][download][type] = git
