@@ -127,10 +127,9 @@ switch(ENVIRONMENT) {
       'syslog',
       'dkan_acquia_expire',
       'expire',
-      'dkan_acquia_search_solr',
       'search_api_solr',
       'search_api_acquia',
-      // 'nucivic_data_devops',
+      'dkan_acquia_search_solr',
     );
     // Show ALL errors when working locally.
     $conf['error_level'] = ERROR_REPORTING_DISPLAY_ALL;
@@ -199,6 +198,21 @@ switch(ENVIRONMENT) {
     exit();
 }
 
+/****************************
+ * OPTIONAL: Acquia Settings.
+ ***************************/
+/* This are acquia specific settings 
+ */
+include "settings.acquia.php";
+
+/*****************************
+ * OPTIONAL: NuCivic Settings.
+ ****************************/
+/* This are nucivic specific settings 
+ */
+include "settings.nucivic.php";
+
+
 /******************************************************
  * OPTIONAL: Perform tasks when switching environments.
  *****************************************************/
@@ -220,21 +234,8 @@ function devinci_custom_environment_switch($target_env, $current_env) {
       drupal_flush_all_caches();  
       features_master_features_revert('custom_config');
       features_revert_module('dkan_dataset_content_types');
+      features_revert_module('dkan_dataset_groups');
       features_revert_module('dkan_permissions');    
       break;
   }
 }
-
-/****************************
- * OPTIONAL: Acquia Settings.
- ***************************/
-/* This are acquia specific settings 
- */
-//include "settings.acquia.php";
-
-/*****************************
- * OPTIONAL: NuCivic Settings.
- ****************************/
-/* This are nucivic specific settings 
- */
-//include "settings.nucivic.php";
