@@ -36,3 +36,7 @@ commands:
   site:
     usage: A series of commands for site development
     import: nucivic-ahoy/site.ahoy.yml
+
+  remote:
+    usage: A series of commands for site remote management
+    import: nucivic-ahoy/remote.ahoy.yml
