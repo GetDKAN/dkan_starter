@@ -1,0 +1,25 @@
+ahoyapi: v1
+version: 0.0.0
+commands:
+  deploy:
+    usage: Runs the data_starter custom deployment step.
+    cmd: |
+      echo "TODO: custom deploy steps."
+
+  setup:
+    usage: Sets up all the step
+    cmd: |
+      echo "TODO: custom setup steps."
+
+  remake:
+    usage: Rebuild all the dkan projects from the build.make file + custom postbuild.
+    cmd: |
+      set -e
+      ahoy site remake
+      ahoy custom post-build
+
+  post-build:
+    usage: Runs custom post-build commands.
+    cmd: |
+      echo "TODO: custom postbuild steps."
+
