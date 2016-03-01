@@ -8,6 +8,7 @@ commands:
       alias={{args}}
       alias=${alias#@}
       ahoy drush @$alias -y si dkan
+      ahoy drush @$alias cc drush
       ahoy drush @$alias -y en custom_config environment devinci
       ahoy remote deploy $alias
       ahoy drush @$alias search-api-index datasets
@@ -21,7 +22,10 @@ commands:
       set -e
       alias={{args}}
       alias=${alias#@}
+      ahoy drush @$alias cc drush
       target_env=`ahoy cmd-proxy drush @$alias php-eval "'echo ENVIRONMENT;'"`
+      ahoy drush @$alias cc drush
+      ahoy drush @$alias -y fr --force custom_config
       ahoy drush @$alias env-switch $target_env --force
       ahoy drush @$alias cc drush
       ahoy drush @$alias rr

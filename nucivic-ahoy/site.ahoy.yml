@@ -247,3 +247,48 @@ commands:
       rm -rf nucivic-ahoy/.git
       rm -rf nucivic-ahoy/.gitignore
     hide: true
+
+  files-link:
+    usage: Links files.
+    cmd: ahoy cmd-proxy ln -s ../../../$(ahoy site name).prod.files/files docroot/sites/default/files
+    hide: true
+
+  files-fix-permissions:
+    usage: Fix the permissiosn for the files.
+    cmd: |
+      ahoy cmd-proxy mkdir -p docroot/sites/default/files
+      ahoy cmd-proxy find docroot/sites/default/files/ -type d -exec 'chmod o+rwx {} \;'
+      ahoy cmd-proxy find docroot/sites/default/files/ -type f -exec 'chmod o+rw {} \;'
+    hide: true
+
+  test:
+    usage: Run the tests for site
+    cmd: |
+      # Store the arguments as a bash array.
+      ARGS=( "{{args}}" )
+      BEHAT_FOLDER=tests
+      ALT_CONFIG_FILE="behat.local.yml"
+      # Crazy bash to get rid of the carriage return. (docker issue)
+      BEHAT_ENV=$(echo $(ahoy cmd-proxy printenv HOSTNAME) | tr -d "\r" )
+      SKIP_COMPOSER_FLAG="--skip-composer"
+      if [[ ! "${ARGS[@]}" == *"$SKIP_COMPOSER_FLAG"* ]]; then
+        echo "Installing behat dependencies.."
+        ahoy cmd-proxy "cd $BEHAT_FOLDER && composer install --prefer-source --no-interaction"
+      else
+        echo "Skipping composer install.."
+        ARGS=( "${ARGS[@]/$SKIP_COMPOSER_FLAG}" )
+      fi
+      if [ -f "$BEHAT_FOLDER/$ALT_CONFIG_FILE" ]; then
+        echo "Using $BEHAT_FOLDER/$ALT_CONFIG_FILE .."
+        CONFIG=" -c $ALT_CONFIG_FILE"
+      elif [ "$BEHAT_ENV" == "cli" ]; then
+        echo "Using behat.docker.yml config .."
+        CONFIG=" -c behat.docker.yml"
+      elif [ "$CI" == "true" ]; then
+        echo "Using behat.circleci.yml config .."
+        CONFIG=" -c behat.circleci.yml"
+      else
+        echo "$BEHAT_ENV"
+        echo "Using behat.yml .."
+      fi
+      ahoy cmd-proxy "cd $BEHAT_FOLDER && bin/behat $CONFIG ${ARGS[@]}"
