@@ -40,3 +40,7 @@ commands:
   remote:
     usage: A series of commands for site remote management
     import: nucivic-ahoy/remote.ahoy.yml
+
+  custom:
+    usage: A series of custom commands specific to a project.
+    import: .ahoy/custom.ahoy.yml
