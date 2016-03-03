@@ -30,8 +30,10 @@ set -e
 bash /tmp/dkan-init.sh $DKAN_MODULE $@ --skip-reinstall --branch=$DKAN_BRANCH
 ahoy dkan module-link $DKAN_MODULE
 ahoy dkan module-make $DKAN_MODULE
+chmod +w docroot/sites/default/settings.php
+echo '$databases["default"]["default"]["pdo"] = array(PDO::MYSQL_ATTR_LOCAL_INFILE => 1, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1);' >> docroot/sites/default/settings.php
+chmod -w docroot/sites/default/settings.php
 ahoy dkan reinstall
 ahoy drush en $DKAN_MODULE -y
-
-#Fix for behat bug not recognizing symlinked feature files or files outside it's root. See https://jira.govdelivery.com/browse/CIVIC-1005
-#cp dkan_workflow/test/features/dkan_workflow.feature dkan/test/features/.
+ahoy drush en dkan_datastore_fast_import -y
+cp dkan_datastore/modules/dkan_datastore_fast_import/test/features/dkan_datastore_fast_import.feature dkan/test/features/.

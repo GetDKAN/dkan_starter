@@ -1,0 +1,12 @@
+name = File Resumable Upload
+description = Adds large files multiple and resumable upload to the File field widget.
+dependencies[] = file
+package = Fields
+core = 7.x
+
+; Information added by Drupal.org packaging script on 2016-02-26
+version = "7.x-1.3+6-dev"
+core = "7.x"
+project = "file_resup"
+datestamp = "1456478303"
+
