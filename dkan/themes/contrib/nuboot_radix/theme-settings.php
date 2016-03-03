@@ -8,7 +8,6 @@
  * Implements theme_settings().
  */
 function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
-  //drupal_set_message('<pre>' . print_r($form, TRUE) . '</pre>');
   // Ensure this include file is loaded when the form is rebuilt from the cache.
   $form_state['build_info']['files']['form'] = drupal_get_path('theme', 'nuboot_radix') . '/theme-settings.php';
 
@@ -34,6 +33,7 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
     '#group' => 'general',
   );
   // Upload field.
+  $hero = theme_get_setting('hero_file', 'nuboot_radix');
   $form['hero']['hero_file'] = array(
     '#type' => 'managed_file',
     '#title' => t('Upload a new photo for the hero section background'),
@@ -43,7 +43,7 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
       <br>Recommended pixel size: 1920 x 400<br>Allowed extensions: .png .jpg .jpeg</p>'),
     '#required' => FALSE,
     '#upload_location' => file_default_scheme() . '://theme/backgrounds/',
-    '#default_value' => theme_get_setting('hero_file', 'nuboot_radix'),
+    '#default_value' => !empty($hero) ? $hero : NULL,
     '#upload_validators' => array(
       'file_validate_extensions' => array('gif png jpg jpeg'),
     ),
@@ -71,6 +71,9 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
       'file_validate_extensions' => array('svg'),
     ),
   );
+  
+  $form['#submit'][] = 'nuboot_radix_hero_system_theme_settings_form_submit';
+
   // Return the additional form widgets.
   return $form;
 }
@@ -97,4 +100,27 @@ function _background_option_setting($element, &$form, &$form_state) {
       form_error($element, t('Must be a valid hexadecimal CSS color value.'));
     }
   }
+}
+
+/**
+ * Submit function for theme settings form.
+ */
+function nuboot_radix_hero_system_theme_settings_form_submit(&$form, &$form_state) {
+  if ($form_state['values']['hero_file']) {
+    $fid = $form_state['values']['hero_file'];
+    _nuboot_radix_file_set_permanent($fid);
+  }
+  if ($form_state['values']['svg_logo']) {
+    $fid = $form_state['values']['svg_logo'];
+    _nuboot_radix_file_set_permanent($fid);
+  }
+}
+
+/**
+ *  Sets file to FILE_STATUS_PERMANENT so it won't be erased by cron.
+ */
+function _nuboot_radix_file_set_permanent($fid) {
+  $file = file_load($fid);
+  $file->status = FILE_STATUS_PERMANENT;
+  file_save($file);
 }

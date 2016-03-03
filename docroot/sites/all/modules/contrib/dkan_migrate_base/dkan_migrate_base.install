@@ -5,21 +5,10 @@
  */
 
 /**
- * Implements hook_install().
- */
-function dkan_migrate_base_install() {
-  $table = _dkan_migrate_base_data_json_table();
-  dkan_migrate_base_add_modified_column($table);
-}
-
-/**
  * Implements hook_enable().
  */
 function dkan_migrate_base_enable() {
   dkan_migrate_base_migrations_enable();
-
-  $table = _dkan_migrate_base_data_json_table('datajson_dataset_base');
-  dkan_migrate_base_add_modified_column($table);
 }
 
 /**
@@ -31,6 +20,8 @@ function dkan_migrate_base_disable() {
 
 /**
  * Gets migration table name.
+ *
+ * This is used in dkan_harvest.
  */
 function _dkan_migrate_base_data_json_table($migration) {
   $map = new MigrateSQLMap(
