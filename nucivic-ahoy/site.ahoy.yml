@@ -98,7 +98,9 @@ commands:
       ln -s ../../assets/sites/default docroot/sites/default
       # Clean out any .gitignore files imported from other modules, libraries, and profiles.
       find dkan -type f -name .gitignore -exec rm -rf {} \;
+      find dkan -type d -name .git -exec rm -rf {} \;
       find docroot/sites/all -type f -name .gitignore -exec rm -rf {} \;
+      find docroot/sites/all -type d -name .git -exec rm -rf {} \;
       # Clean out any CHANGELOG.txt files.
       find . -type f -name CHANGELOG.txt -exec rm -rf {} \;
       # Setup custom modules folder outside of the drupal root.
