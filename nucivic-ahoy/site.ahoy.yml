@@ -66,6 +66,8 @@ commands:
     usage: Rebuild all the dkan projects from the build.make file.
     cmd: |
       set -e
+      TEMP=$AHOY_CMD_PROXY
+      AHOY_CMD_PROXY=''
       # Building in a new directory
       ahoy drush -y make build.make --no-recursion --no-cache --verbose docroot_new
       rm -rf docroot
@@ -78,6 +80,7 @@ commands:
       # No recursive prevents dkan build to happen. Run it now from dkan remake.
       ahoy dkan remake
       ahoy site post-build
+      AHOY_CMD_PROXY=$TEMP
 
   post-build:
     usage: Runs (what used to be buildmanager) post build commands.
@@ -86,8 +89,10 @@ commands:
       mkdir -p docroot/sites/all/modules/contrib
       mkdir -p docroot/sites/all/themes/contrib
       # Replace the default .htaccess file with our own that includes a working non-www to www example for acquia.
-      rm -rf docroot/.htaccess
-      ln -s ../assets/.htaccess docroot/.htaccess
+      if [ -f assets/.htaccess ]; then
+        rm -rf docroot/.htaccess
+        ln -s ../assets/.htaccess docroot/.htaccess
+      fi
       # Replace sites/default with our own sites/default outside of the drupal root.
       rm -rf docroot/sites/default;
       ln -s ../../assets/sites/default docroot/sites/default
@@ -121,16 +126,14 @@ commands:
         hub clone NuCivic/{{args}}
         echo "NuCivic/{{args}} Github repo cloned"
       } || {
-        mkdir {{args}}
+        git clone 'ssh://github.com/NuCivic/data_starter_private' {{args}} --depth=1
         cd {{args}}
-        wget https://github.com/NuCivic/data_starter/archive/master.tar.gz
-        tar -xvzf master.tar.gz --strip 1
-        rm master.tar.gz
-      
+        rm -rf .git
         echo "Site {{args}} initiated at ../{{args}}"
         git init .
         git add . -A
         git commit -m "{{args}} codebase setup"
+        command -v hub >/dev/null 2>&1 || { echo >&2 "Hub not installed, please create repo, push code and create PR manually."; exit 1; }
         hub create -p NuCivic/{{args}}
         git push origin master
         echo "NuCivic/{{args}} Github repo created"
@@ -160,9 +163,9 @@ commands:
       git checkout -b "$pr_branch"
       sed "s/$tag_old/$tag_new/g" build-dkan.make > build-dkan.make.new; rm build-dkan.make; mv build-dkan.make.new build-dkan.make
       sed "s/$version_old/$version_new/g" build-dkan.make > build-dkan.make.new; rm build-dkan.make; mv build-dkan.make.new build-dkan.make
-      git add . -A
-      git commit -m "Updates build-dkan.make from $tag_old $version_old to $tag_new $version_new"
       ahoy site remake
+      git add . -A
+      git commit -m "Updates build-dkan.make from $tag_old $version_old to $tag_new $version_new"      
       command -v hub >/dev/null 2>&1 || { echo >&2 "Hub not installed, please push code and create PR manually."; exit 1; }
       git push origin "$pr_branch";
       hub pull-request
