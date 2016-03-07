@@ -11,10 +11,7 @@ commands:
       ahoy drush @$alias cc drush
       ahoy drush @$alias -y en custom_config environment devinci
       ahoy remote deploy $alias
-      ahoy drush @$alias search-api-index datasets
-      ahoy drush @$alias search-api-index groups_di
-      ahoy drush @$alias search-api-index stories_index
-
+      ahoy remote update-indexes $alias
 
   deploy:
     usage: Standarized deploy process for Nucivic Data.
@@ -29,3 +26,14 @@ commands:
       ahoy drush @$alias env-switch $target_env --force
       ahoy drush @$alias cc drush
       ahoy drush @$alias rr
+
+  update-indexes:
+    usage: Updates search api indexes
+    cmd: |
+      set -e
+      alias={{args}}
+      alias=${alias#@}
+      ahoy drush @$alias cc drush
+      ahoy drush @$alias search-api-index datasets
+      ahoy drush @$alias search-api-index groups_di
+      ahoy drush @$alias search-api-index stories_index

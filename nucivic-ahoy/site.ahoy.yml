@@ -119,27 +119,23 @@ commands:
   new:
     usage: Sets new client site from data-starter
     cmd: |
+      set -e
       cd ..
       if [ -d {{args}} ]; then
         ahoy confirm "{{args}} site folder alredy exists."
         echo ".. skipping installation"; exit 1;
       fi
-      {
-        hub clone NuCivic/{{args}}
-        echo "NuCivic/{{args}} Github repo cloned"
-      } || {
-        git clone 'ssh://github.com/NuCivic/data_starter_private' {{args}} --depth=1
-        cd {{args}}
-        rm -rf .git
-        echo "Site {{args}} initiated at ../{{args}}"
-        git init .
-        git add . -A
-        git commit -m "{{args}} codebase setup"
-        command -v hub >/dev/null 2>&1 || { echo >&2 "Hub not installed, please create repo, push code and create PR manually."; exit 1; }
-        hub create -p NuCivic/{{args}}
-        git push origin master
-        echo "NuCivic/{{args}} Github repo created"
-      }
+      git clone 'git@github.com:NuCivic/data_starter_private.git' {{args}} --depth=1
+      cd {{args}}
+      rm -rf .git
+      echo "Site {{args}} initiated at ../{{args}}"
+      git init .
+      git add . -A
+      git commit -m "{{args}} codebase setup"
+      command -v hub >/dev/null 2>&1 || { echo >&2 "Hub not installed, please create repo, push code and create PR manually."; exit 1; }
+      hub create -p NuCivic/{{args}}
+      git push origin master
+      echo "NuCivic/{{args}} Github repo created"
 
   dkan:
     usage: Upgrades/Downgrades dkan to a certain tag 'ahoy site dkan tag 7.x-1.10' or branch 'ahoy site dkan branch 7.x-1.x'
