@@ -1,6 +1,8 @@
 <?php
 // NuCivic Data Starter
 $aliases['local'] = array(
+  '#name' => 'changeme',
+  'root' => '/var/www/docroot',
   'profile' => 'dkan',
   'site-name' => 'NuCivic Data Starter',
   'webroot' => 'docroot',
