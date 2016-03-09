@@ -44,11 +44,11 @@ dependencies:
   override:
     - printenv
     - mkdir $CIRCLE_ARTIFACTS/junit
-    - bash dkan/dkan-init.sh dkan --deps-only
-    - ahoy site setup --db-user=ubuntu --db-pass='' --db-host=127.0.0.1 --db-port=3306 --db-name=circle_test
-    - ahoy site reinstall
+    - PATH=/home/ubuntu/.config/composer/vendor/bin:$PATH bash dkan/dkan-init.sh dkan --deps-only
+    - PATH=/home/ubuntu/.config/composer/vendor/bin:$PATH ahoy site setup --db-user=ubuntu --db-pass='' --db-host=127.0.0.1 --db-port=3306 --db-name=circle_test
+    - PATH=/home/ubuntu/.config/composer/vendor/bin:$PATH ahoy site reinstall
     # Run a webserver using drush.
-    - 'ahoy drush --yes runserver :8888':
+    - 'PATH=/home/ubuntu/.config/composer/vendor/bin:$PATH ahoy drush --yes runserver :8888':
         background: true
 
     # Setup display for selenium
