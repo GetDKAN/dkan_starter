@@ -1,6 +1,4 @@
 
-![NuData](http://f.cl.ly/items/1k0q1z1D0d2x173P0F24/data-sm.png)
-
 NuCivic Data Starter is the open source code repository on Github that NuCivic uses as the tempalte for the NuCivic Data software-as-a-service platform; it is comprised of the DKAN Drupal Distribution for open data management, plus several popular additional features, configurations that streamline the process of managing and supporting the code in a Drupal platform-as-a-service (PaaS) cloud hosting environment, and configurations that assist with typical government data and security standards compliance.
 
 Free demos of NuCivic Data Starter can be requested by filling out the form at http://nucivic.com/products/nudata/demo/.
