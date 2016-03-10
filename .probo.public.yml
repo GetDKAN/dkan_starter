@@ -1,0 +1,56 @@
+steps:
+  - name: Setup QA site
+    # Currently this "Script" is not documented in probo's docs, but it fixes the issue of
+    # Probo reporting back immediately that probo is completely ready when it's not. Note that
+    # we need to use 'script:' instead of 'command:'
+    plugin: Script
+    script: |
+      # Fail right away.
+      set -e
+      # Start in the right folder of our checkout (/src)
+      cd $SRC_DIR
+
+      echo ""
+      echo "Build $BUILD_ID "
+      echo ""
+
+      echo ""
+      echo "-------> Run 'bash dkan-init.sh':"
+      echo ""
+      # Install dependencies like ahoy.
+      time bash dkan/dkan-init.sh dkan --deps-only
+      echo ""
+      echo "-------> Setup the settings.local.php file and install a fresh database."
+      echo ""
+      # Setup the database.
+      $DB_HOST="127.0.0.1"
+      $DB_USER="root"
+      $DB_PORT="3306"
+      $DB_NAME="dkan"
+      $DB_PASS="strongpassword"
+      sed  \
+        -e s/#DB_HOST/$DB_HOST/g \
+        -e s/#DB_USER/$DB_USER/g \
+        -e s/#DB_PASS/$DB_PASS/g \
+        -e s/#DB_PORT/$DB_PORT/g \
+        -e s/#DB_NAME/$DB_NAME/g \
+        assets/sites/default/settings.local.demo.php > assets/sites/default/settings.local.php
+      ahoy dkan reinstall
+      ahoy drush -y en custom_config environment devinci
+      ahoy drush env-switch --force local
+
+      echo ""
+      echo "-------> Symlink ./docroot to var/www/html:"
+      echo ""
+      #Set a symlink so that probo can serve the site.
+      ln -s $SRC_DIR/docroot /var/www/html
+      chmod -R 777 /var/www/html/sites/default/files
+
+      echo ""
+      echo "The url of this build should be at:"
+      echo " https://$BUILD_ID.probo.build"
+      echo ""
+      echo "Known Issues (1/22/2016):"
+      echo " - Site may give a SQL error on initial load. Give it a few seconds and then refresh and it should work. This is due to the container apache waking up before the MYSQL. Probo.ci knows, but they say it's not at the top of the priority since few are having that issue."
+      echo " - You should usually choose: the Build Permalink (blue button) for doing site QA. If you don't any new commits may blow away the site while you are viewing it as well as the data. 'View Site' Green button shows the latest build, so it can change while you are interacting with it."
+      echo ""
