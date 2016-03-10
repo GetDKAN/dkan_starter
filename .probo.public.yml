@@ -23,11 +23,11 @@ steps:
       echo "-------> Setup the settings.local.php file and install a fresh database."
       echo ""
       # Setup the database.
-      $DB_HOST="127.0.0.1"
-      $DB_USER="root"
-      $DB_PORT="3306"
-      $DB_NAME="dkan"
-      $DB_PASS="strongpassword"
+      DB_HOST="127.0.0.1"
+      DB_USER="root"
+      DB_PORT="3306"
+      DB_NAME="dkan"
+      DB_PASS="strongpassword"
       sed  \
         -e s/#DB_HOST/$DB_HOST/g \
         -e s/#DB_USER/$DB_USER/g \
