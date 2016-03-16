@@ -77,6 +77,9 @@ commands:
       mv docroot/profiles/dkan ./
       ln -s ../../dkan docroot/profiles/dkan
       rm -rf dkan_old
+      if [ -f overrides.make ]; then
+        cat overrides.make >> dkan/drupal-org.make
+      fi
       # No recursive prevents dkan build to happen. Run it now from dkan remake.
       ahoy dkan remake
       ahoy site post-build
@@ -108,6 +111,8 @@ commands:
       rm -rf docroot/sites/all/modules/dkan_overrides
       ln -s ../../../../projects/modules/custom docroot/sites/all/modules/custom
       ln -s ../../../../projects/modules/dkan_overrides docroot/sites/all/modules/dkan_overrides
+      ahoy site self-update
+      ahoy dkan self-update
 
   reinstall:
     usage: Reinstall the site from scratch (dkan + custom_config + environment).
@@ -199,7 +204,7 @@ commands:
       ahoy cmd-proxy exec mkdir -p backups
       site=$(ahoy site name)
       asset="https://s3.amazonaws.com/nucivic-data-backups-scrubbed/$site.prod.sanitized.sql.gz"
-      perl nucivic-ahoy/.scripts/s3curl.pl --id local $asset > backups/sanitized.sql.gz
+      LC_TIME=en_US.UTF-8 perl nucivic-ahoy/.scripts/s3curl.pl --id local $asset > backups/sanitized.sql.gz
       echo ""
       echo "Unpacking the sanitized database."
       echo ""
@@ -211,7 +216,7 @@ commands:
       ahoy cmd-proxy exec mkdir -p backups
       site=$(ahoy site name)
       asset="https://s3.amazonaws.com/nucivic-data-backups-scrubbed/$site.prod.files.tar.gz"
-      perl nucivic-ahoy/.scripts/s3curl.pl --id local $asset > backups/$site.prod.files.tar.gz
+      LC_TIME=en_US.UTF-8 perl nucivic-ahoy/.scripts/s3curl.pl --id local $asset > backups/$site.prod.files.tar.gz
       echo ""
       echo "Unpacking the files asset."
       echo ""
