@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Cloud Hook: drush-env-switch
 #
