@@ -21,6 +21,7 @@ commands:
       set -e
       alias={{args}}
       alias=${alias#@}
+      ahoy cmd-proxy drush @$alias dl -n registry_rebuild
       ahoy cmd-proxy drush @$alias cc drush
       target_env=`ahoy cmd-proxy drush @$alias php-eval "'echo ENVIRONMENT;'"`
       ahoy cmd-proxy drush @$alias cc drush

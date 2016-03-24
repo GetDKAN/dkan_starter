@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ * Provides integration between your Drupal site and Acquia's hosted search
+ * service via the Search API Solr module.
+ */
+
+/**
+ * Implements hook_enable().
+ */
+function search_api_acquia_enable() {
+  search_api_acquia_set_version();
+}
+
+/**
+ * Implements hook_cron().
+ */
+function search_api_acquia_cron() {
+  search_api_acquia_set_version();
+}
+
+/**
+ * Sets the version of this module in a system variable.
+ *
+ * The version is used to construct the User Agent in requests to the backend.
+ * This allows Acquia to determine which module is being used to generate the
+ * search query which helps in debugging.
+ */
+function search_api_acquia_set_version() {
+  // Cache the version in a variable so we can send it at no extra cost.
+  $version = variable_get('search_api_acquia', '7.x');
+  $info = system_get_info('module', 'search_api_acquia');
+  // Send the version, or at least the core compatibility as a fallback.
+  $new_version = isset($info['version']) ? (string) $info['version'] : (string) $info['core'];
+  if ($version != $new_version) {
+    variable_set('search_api_acquia_version', $new_version);
+  }
+}
+
+/**
+ * Implements hook_search_api_service_info().
+ */
+function search_api_acquia_search_api_service_info() {
+  return array(
+    'acquia_search_service' => array(
+      'name' => t('Acquia Search'),
+      'description' => t('<p>Index items using the Acquia Search service.<p>'),
+      'class' => 'SearchApiAcquiaSearchService',
+    ),
+  );
+}

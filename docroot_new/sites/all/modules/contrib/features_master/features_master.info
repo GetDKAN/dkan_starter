@@ -1,0 +1,12 @@
+name = Features Master
+description = Export the lists of enabled modules and themes using features.
+package = Development
+dependencies[] = features
+core = 7.x
+
+; Information added by Drupal.org packaging script on 2016-01-28
+version = "7.x-1.0"
+core = "7.x"
+project = "features_master"
+datestamp = "1454000040"
+
