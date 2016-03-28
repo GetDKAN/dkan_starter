@@ -375,6 +375,8 @@ function fontyourface_enable_font(&$font) {
  */
 function fontyourface_disable_font(&$font) {
 
+  fontyourface_set_css_selector($font, "");
+  
   db_update('fontyourface_font')
     ->fields(array('enabled' => 0))
     ->condition('fid', $font->fid)

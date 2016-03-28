@@ -1,8 +1,0 @@
-<?php
-
-/**
- * Implements hook_install().
- */
-function dkan_install() {
-
-}
