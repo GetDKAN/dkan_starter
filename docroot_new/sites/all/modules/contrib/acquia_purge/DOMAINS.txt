@@ -1,0 +1,120 @@
+Domain detection
+================================================================================
+
+Whenever Acquia Purge tries to wipe pages (e.g. "news" or "<front>") from your
+site it has to reconstruct URLs and determine which domains associated to your
+site should be cleaned. On most simple Drupal sites running on Acquia Cloud it
+will be immediately adequate and it will just purge your primary domain name.
+
+However, it is often necessary to tell Acquia Purge what domains it should wipe
+as the automatically detected list grows too large. This often happens with
+multi-site setups or single sites with many aliased domain names. To protect
+your site and servers you should aim to purge no more than 1-4 domains,
+but the module will self-shutdown whenever it detects more then 8 domains.
+
+How domain detection works
+--------------------------------------------------------------------------------
+The module does a good job in detecting 80% of the right domains and performs a
+series of checks and tests automatically. To better understand what data it uses
+to determine the domains, it's good to know what things it checks:
+
+1. Take all hardcoded domains in $conf['acquia_purge_domains'] and stop finding.
+
+If not overridden the automatic detection starts:
+2. Take the current HTTP_HOST the user is using to visit the site.
+3. Interpret the domain name found in $base_url when it is different.
+4. Interpret any domains (without path) found in sites/sites.php.
+5. Add all domains on the "Domains" page of the Acquia Cloud subscription.
+
+Listing the domains
+--------------------------------------------------------------------------------
+You can easily list the domains that will be purged using "drush ap-domains"
+or its alias "drush apdo". When you didn't hardcode domains in settings.php or
+in sites.php, the detection will use environment parameters. Therefore it's
+important to always pass --uri to Drush to simulate real-world usage:
+
+  $ drush ap-domains --uri="http://www.site.com"
+  www.site.com
+
+Overriding/hardcoding domains
+--------------------------------------------------------------------------------
+Whenever the domains aren't right, put this in settings.php:
+
+/**
+ * Override domain detection in Acquia Purge.
+ */
+if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
+  if ($_ENV['AH_SITE_ENVIRONMENT'] == 'prod') {
+    $conf['acquia_purge_domains'] = array(
+      'www.site.com',
+      'www.site.nl',
+      'www.site.de',
+    );
+  }
+}
+
+How to purge domain access and simple multi-site sites?
+--------------------------------------------------------------------------------
+The Domain Access module isn't officially supported yet, although it is on our
+roadmap. However, you can make it work fairly easily by taking the "incoming"
+host name in the URL and assuming that to be the right (and only) domain to be
+purged. This will also work for simple multi-sites but it is of importance to
+test every individual site using the "drush ap-domains" command (with --uri).
+
+/**
+ * Override domain detection in Acquia Purge: hardcode the incoming domain.
+ */
+if (isset($_SERVER['HTTP_HOST']) && (!empty($_SERVER['HTTP_HOST']))) {
+  $conf['acquia_purge_domains'] = array($_SERVER['HTTP_HOST']);
+}
+
+How to purge multi-sites?
+--------------------------------------------------------------------------------
+Often a multi-site setup is a shared document root and codebase where multiple
+domain names end up connecting to a different database and serving different
+content. Theoretically Acquia Purge has no issues purging these sites but the
+standard domain detection will probably detect too much and cause each site to
+purge paths on the other.
+
+The module will automatically reverse parse a file called sites/sites.php, which
+is the recommended way of linking directories to domain names in multi-site
+setups. As this documents which domains belongs to which site, Acquia purge is
+able to work out what domains it should purge automatically.
+
+Imagine you have three sites:
+  * fruit.com (sites/fruit)
+  * apples.fruit.com (sites/apples)
+  * oranges.fruit.com (sites/oranges)
+
+On the "Domains" page of your Acquia Cloud subscription you have documented all
+of these domains. Now if you set up sites.php to make this work, it should look
+roughly like this:
+
+if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
+  switch ($_ENV['AH_SITE_ENVIRONMENT']) {
+    case 'test':
+    $sites['dev.fruit.com'] = 'fruit';
+    $sites['editorial.dev.fruit.com'] = 'fruit';
+    $sites['dev.apples.fruit.com'] = 'apples';
+    $sites['dev.oranges.fruit.com'] = 'oranges';
+    break;
+
+    case 'test':
+    $sites['test.fruit.com'] = 'fruit';
+    $sites['editorial.test.fruit.com'] = 'fruit';
+    $sites['test.apples.fruit.com'] = 'apples';
+    $sites['test.oranges.fruit.com'] = 'oranges';
+    break;
+
+    case 'prod':
+    $sites['fruit.com'] = 'fruit';
+    $sites['editorial.fruit.com'] = 'fruit';
+    $sites['apples.fruit.com'] = 'apples';
+    $sites['oranges.fruit.com'] = 'oranges';
+    break;
+  }
+}
+
+Please note that Acquia Purge won't be able to work with the more complex use
+cases that sites.php supports, like ports and or subdirectories:
+$sites['8080.www.drupal.org.mysite.test'] = 'example.com';

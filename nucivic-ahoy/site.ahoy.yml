@@ -143,8 +143,13 @@ commands:
       echo "NuCivic/{{args}} Github repo created"
 
   dkan:
-    usage: Upgrades/Downgrades dkan to a certain tag 'ahoy site dkan tag 7.x-1.10' or branch 'ahoy site dkan branch 7.x-1.x'
+    usage: Upgrades/Downgrades dkan to a certain tag 'ahoy site dkan tag 7.x-1.10' or branch 'ahoy site dkan branch 7.x-1.x'. If no arguments are provided it outputs current dkan version.
     cmd: |
+      EMPTY="{{args}}"
+      if [[ -z "${EMPTY// }" ]]; then
+        echo $(grep -iE 'projects\[dkan\]\[download\]\[(branch|tag)\]' docroot/profiles/dkan/build-dkan.make|cut -d '=' -f2|sed 's/ //g')
+        exit 0
+      fi
       IFS=' ' read -r -a args <<< "{{args}}"
       tag_new=${args[0]}
       version_new=${args[1]}
@@ -171,7 +176,7 @@ commands:
       git commit -m "Updates build-dkan.make from $tag_old $version_old to $tag_new $version_new"      
       command -v hub >/dev/null 2>&1 || { echo >&2 "Hub not installed, please push code and create PR manually."; exit 1; }
       git push origin "$pr_branch";
-      hub pull-request
+      hub pull-request -m "Updates DKAN from $tag_old $version_old to $tag_new $version_new"
 
   mysql-dump-sanitized:
     usage: Creates a dump of a sanitazed version of the site db
