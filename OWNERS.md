@@ -8,7 +8,7 @@ Teams
 ------
 
 * **Product** - The DKAN product team, internally at NuCivic called "Mars". Generally responsible for the product itself, releases, and functional tests.
-* **DevOps** - The NuCivic DevOps team, internally at NuCivic  called "Pluto". Generally responsile for development environments, testing frameworks, and automation.
+* **Engineerng** - The NuCivic Engineering team, internally at NuCivic  called "Pluto". Generally responsile for development environments, testing frameworks, and automation.
 
 
 Owners
@@ -17,12 +17,12 @@ Owners
 ## Structure
 Pluto owns the structure so can change folders or architecture of Data Starter.
 
-### Pluto
+### Engineering
 Pluto owns most of the folders and files that are part of the automation.
 
 - `DEFAULT`
 
-### Mars 
+### Product 
 
 - `projects/modules/` (Any non-DKAN OOB modules + custom_config module)
 - `tests/features` (Any non-DKAN OOB features)
