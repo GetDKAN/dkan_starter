@@ -30,7 +30,7 @@ circle.yml
 run-tests.sh
 ```
 
-## Mars 
+### Mars 
 ```
 projects/modules/
 tests/features
@@ -40,7 +40,7 @@ drupal-org-core.make
 overrides.make
 ```
 
-## NA
+### NA
 These folders are automated.
 ```
 dkan/
