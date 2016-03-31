@@ -18,27 +18,17 @@ Owners
 Pluto owns the structure so can change folders or architecture of Data Starter.
 
 ### Pluto
-```bash
-assets/
-config/ 
-hooks/common/
-tests/
-.ahoy.yml
-.probo.yml
-build.make
-circle.yml
-run-tests.sh
-```
+Pluto owns most of the folders and files that are part of the automation.
+
+- `DEFAULT`
 
 ### Mars 
-```
-projects/modules/
-tests/features
-README.md
-build-dkan.make
-drupal-org-core.make
-overrides.make
-```
+
+- `projects/modules/` (Any non-DKAN OOB modules + custom_config module)
+- `tests/features` (Any non-DKAN OOB features)
+- `build-dkan.make` (Modules added to project)
+- `drupal-org-core.make` (Drupal core version)
+- `overrides.make` (Overrides of DKAN or DKAN contrib modules)
 
 ### NA
 These folders are automated.
@@ -50,10 +40,9 @@ docroot/
 Implementers
 ------
 Client Implementation can update these on behalf of Product
-```
-config/
-projects/modules/
-tests/features/
-drupal-org-core.make
-overrides.make
-```
+
+- `config/`
+- `projects/modules/`
+- `tests/features/`
+- `drupal-org-core.make`
+- `overrides.make`
