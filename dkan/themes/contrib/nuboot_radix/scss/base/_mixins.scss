@@ -47,7 +47,7 @@
     position: absolute;
     right:10px;
     width:25px;
-    top: 4px;
+    top: 2px;
   }
 }
 @mixin h4 {
@@ -129,4 +129,37 @@
   .btn-primary {
     margin: 0 auto 1.5em;
   }
+}
+
+@mixin item-list {
+  a {
+    border: 1px solid $border;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    &:hover {
+      color: #ffffff;
+      text-decoration: none;
+      background: $brand-primary;
+    }
+  }
+  &:first-of-type a {
+    @include border-radius(4px 4px 0px 0px);
+  }
+  &:last-of-type a {
+    @include border-radius(0px 0px 4px 4px);
+  }
+}
+
+@mixin pointer {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 17px 0 17px 15px;
+  border-color: transparent $smoke;
+  display: block;
+  width: 0;
+  z-index: 1;
+  right: -15px;
+  top: 0;
 }

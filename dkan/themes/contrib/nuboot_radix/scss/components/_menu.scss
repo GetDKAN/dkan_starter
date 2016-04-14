@@ -3,6 +3,10 @@
 // --------------------------------------------------
 .navigation-wrapper .container {
   overflow: visible;
+  padding: 0;
+  .navbar-collapse {
+    overflow: visible;
+  }
 }
 
 .container > .navbar-header, .container > .navbar-collapse {
@@ -63,6 +67,17 @@
       }
     }
   }
+  .navbar-toggle {
+    border-color: #ffffff;
+    &:hover,
+    &:focus {
+      background-color: rgba(0, 0, 0, .25);
+    }
+    .icon-bar {
+      background-color: #ffffff;
+    }
+  }
+
   @media all and (min-width:768px) {
     .user-menu {
       float: right;
@@ -88,6 +103,7 @@
     }
   }
 }
+
 @media all and (max-width:767px) {
   .nav > li {
     clear: both;

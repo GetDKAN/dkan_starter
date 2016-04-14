@@ -136,7 +136,7 @@ function file_resup_upload() {
     drupal_exit();
   }
   $file = $_FILES['resup_chunk'];
-  if ($file['error'] != UPLOAD_ERR_OK || !is_uploaded_file($file['tmp_name']) || $file['size'] > file_resup_chunksize()) {
+  if ($file['error'] != UPLOAD_ERR_OK || !is_uploaded_file($file['tmp_name']) || !$file['size'] || $file['size'] > file_resup_chunksize()) {
     drupal_exit();
   }
 
@@ -187,7 +187,7 @@ function file_resup_upload() {
       ->condition('upload_id', $upload_id)
       ->condition('uploaded_chunks', $chunk_number - 1)
       ->execute();
-    if (!$affected || !($contents = file_get_contents($file['tmp_name'])) || !fwrite($fp, $contents)) {
+    if (!$affected || ($contents = file_get_contents($file['tmp_name'])) === FALSE || !fwrite($fp, $contents)) {
       throw new Exception();
     }
   }

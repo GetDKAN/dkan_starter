@@ -191,6 +191,7 @@ switch(ENVIRONMENT) {
     $conf['cache'] = 1;
     $conf['preprocess_js'] = 1;
     $conf['preprocess_css'] = 1;
+    $conf['pathauto_update_action'] = 1;
     break;
 
   default:

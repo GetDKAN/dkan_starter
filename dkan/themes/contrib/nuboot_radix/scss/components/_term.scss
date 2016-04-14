@@ -5,7 +5,7 @@
 .field-name-field-tags .field-item {
   display:inline-block;
 }
-.field-type-taxonomy-term-reference {
+.field-name-field-tags {
   label {
     display: block;
   }
@@ -53,9 +53,23 @@
       }
     }
     a:hover,
-    a:after:hover {
+    a:hover:after {
+      background: #fff;
       color:#000;
       text-decoration:none;
     }
   }
+}
+
+.field-name-field-topic {
+  .field-item { 
+    margin: 0 1.5em .5em 0;
+    .field-item {
+      margin: 0;
+    }
+  }
+}
+.field-name-field-topic-icon span::before, 
+.view-dkan-datasets .field-name-field-topic-icon span::before {
+  font-size: 18px;
 }

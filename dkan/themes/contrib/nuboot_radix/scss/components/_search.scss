@@ -1,4 +1,9 @@
-.search-form,
+#views-exposed-form-dkan-datasets-panel-pane-1 {
+  .views-exposed-form .views-widget-filter-search_api_views_fulltext {
+    max-width: 400px;
+  }
+}
+
 #dkan-sitewide-dataset-search-form,
 #dkan-sitewide-dataset-search-form--2 {
   @include searchbox;
@@ -38,38 +43,72 @@
   }
 }
 
-
-.facet-icon {
-  font-size: 1.7em;
+.facetapi-terms span[class*=font-icon-select]:before,
+.icon-dkan.facet-icon:before {
+  font-family: 'DKAN-Topics';
+  font-size: 24px;
   padding-right: .3em;
   vertical-align: middle;
 }
 
-.search-result-icon {
-  font-size: 2.6em;
-  margin-top: 0.7em;
-  display: block;
+.node-search-result {
+  .icon-dkan.facet-icon:before {
+    font-size: 42px;
+    margin-top: 0.7em;
+    display: block;
+  }
+  .resource-list li {
+    display: inline-block;
+  }
+  .icon-container {
+    text-align: center;
+  }
 }
 
-.node-search-result .icon-container {
-  text-align: center;
-}
-
-.search-result-description {
+.search-result {
   ul.resource-list {
     margin-top: 0.9em;
+
+    li {
+      display: inline-block;
+      a,
+      &:first-child {
+        margin-left: 0px;
+      }
+    }
   }
-  .resource-list li:first-child {
-    margin-left: 0px;
+  .dataset-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li {
+      list-style: none;
+      font-size: 0.9em;
+      font-style: italic;
+      color: #999;
+      margin-bottom: 0.5em;
+      &:before {
+        content: "\e97e";
+        font-family: 'DKAN-Topics';
+        font-style: normal;
+        margin-right: .5em;
+      }
+    }
   }
-  .resource-list li a{
-    margin-left: 0px;
-  }
-  .group-membership{
+  .group-membership {
     font-size: 0.9em;
     font-style: italic;
     color: #999;
     margin-bottom: 0.5em;
+    &:before {
+      content: "\e981";
+      font-family: 'DKAN-Topics';
+      font-style: normal;
+      margin-right: .5em;
+    }
+  }
+  &.search-result-group .group-membership {
+    display: none;
   }
   p {
     margin-bottom: 0px;

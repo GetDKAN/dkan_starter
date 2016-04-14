@@ -55,6 +55,7 @@
 
 // FACET Blocks
 .radix-layouts-sidebar {
+  .ctools-collapsible-container,
   div[class*="pane-facetapi"],
   .block-facetapi {
     &.pane-block,
@@ -80,7 +81,7 @@
       font-size: 16px;
       font-weight: normal;
       position: relative;
-      padding: 9px 16px;
+      padding: 9px 21px 9px 12px;
       border-bottom-color: rgba(255, 255, 255, 0.1);
       &:after {
         font-family: "fontawesome";
@@ -143,33 +144,22 @@
           color:$brand-success;
           font-family:$icon-fa;
           position:absolute;
-          top:8px;
+          top:6px;
           right:6px;
         }
         img {
-          height: 1.5em;
-          width: 1.5;
-          margin-right: 0.5em;
+          height: 25px;
+          width: 25px;
+          margin: 0 16px 0 0;
         }
       }
       a.facetapi-active {
-        //background:rgba(black, 0.15);
         background:$smoke;
         color:#333;
         z-index:0;
       }
       a.facetapi-active:before {
-        //@include transform(scalex(.8)); //remove jagged edge
-        content: '';
-        position: absolute;
-        border-style: solid;
-        border-width: 17px 0 17px 15px;
-        border-color: transparent $smoke;
-        display: block;
-        width: 0;
-        z-index: 1;
-        right: -15px;
-        top: 0;
+        @include pointer;
       }
       a.facetapi-active:after {
         content:"\f00d";
@@ -198,21 +188,53 @@
       content:"\f151";
     }
   }
-  // div[class*="pane-facetapi"].pane-block:first-of-type {
+  // Corners.
+  // div[class*="pane-facetapi"]:first-of-type h2.pane-title {
   //   @include border-radius(5px 5px 0 0);
-  //   h2.pane-title {
-  //     @include border-radius(5px 5px 0 0);
-  //   }
   // }
-  // div[class*="pane-facetapi"].pane-block:last-of-type {
+  // div[class*="pane-facetapi"]:last-of-type .item-list {
   //   @include border-radius(0 0 5px 5px);
-  //   .ctools-collapsed,
-  //   &.ctools-collapsed {
-  //     h2.pane-title {
-  //       @include border-radius(0 0 5px 5px);
-  //     }
-  //   }
   // }
+  .ctools-collapsible-container .ctools-toggle {
+    width: 12px;
+  }
+}
+// Date facets.
+.facetapi-facet-changed {
+  li.expanded {
+    a.facetapi-active {
+      background: #ccc;
+      border-bottom: 1px dotted #eee;
+      color: #333;
+      line-height: 22px;
+      padding: 6px 20px 6px 10px;
+      &:hover {
+        background: #ccc;
+        color: #333;
+        text-decoration: none;
+        &:after {
+          color: red;
+        }
+      }
+      &:before {
+        @include pointer;
+      }
+      &:after {
+        content: "\f00d";
+        font-family: "FontAwesome";
+        position: absolute;
+        top: 6px;
+        right: 6px;
+      }
+    }
+    ul.expanded li.leaf a,
+    li.expanded a {
+      padding: 6px 20px 6px 20px;
+    }
+    .item-list {
+      border: none;
+    }
+  }
 }
 
 // Wrap long value strings.
@@ -317,5 +339,25 @@
 .pane-dkan-sitewide-dkan-sitewide-resource-add {
   table {
     margin-top: 0;
+  }
+}
+
+.radix-layouts-sidebar {
+  .panel-panel-inner {
+    .panels-ipe-portlet-wrapper:first-child,
+    > div[class*="pane-facetapi"]:first-child {
+      h2.pane-title {
+        @include border-radius(5px 5px 0 0);
+      }
+    }
+    .panels-ipe-portlet-wrapper:last-child,
+    > div[class*="pane-facetapi"]:last-child {
+      .ctools-collapsed,
+      &.ctools-collapsed {
+        h2.pane-title {
+          @include border-radius(0 0 5px 5px);
+        }
+      }
+    }
   }
 }

@@ -197,7 +197,8 @@ div.autocomplete-deluxe-multiple,
   color: @title;
 }
 
-.radix-layouts-sidebar div[class*="pane-facetapi"] .pane-title {
+.radix-layouts-sidebar div[class*="pane-facetapi"] .pane-title,
+.radix-layouts-sidebar .pane-title.ctools-collapsible-handle {
   background: @toolbarbtn;
 }
 
@@ -245,7 +246,31 @@ ul.resource-list li .heading:hover {
   background-color: @bottom;
   border-color: @bottom;
 }
+.pagination > li > a {
+  color: @top;
+}
+.pagination > li > a:hover {
+  color: @linkactive;
+}
+.pagination > .active > span {
+  background-color: @top;
+  border-color: @top;
+}
+.pagination > .active > span:hover {
+  background-color: @bottom;
+  border-color: @bottom;
+}
 
+.facetapi-terms a span,
 .icon-dkan {
+  color: @top;
+}
+
+.link-badge {
+  background-color: @top;
+  border-color: @top;
+}
+li.active .link-badge {
+  background-color: #fff;
   color: @top;
 }

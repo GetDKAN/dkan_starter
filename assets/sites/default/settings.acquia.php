@@ -14,10 +14,12 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
     case 'dev':
     case 'test':
       $env = $env == 'test' ? 'stg': $env;
+      $base_url="http://$sitegroup.$env.prod.acquia-sites.com";
       $conf['securepages_basepath'] = 'http://$sitegroup.$env.prod.acquia-sites.com';
       $conf['securepages_basepath_ssl'] = 'https://$sitegroup.$env.prod.acquia-sites.com';
       break;
     case 'prod':
+      $base_url="http://$sitegroup.$env.prod.acquia-sites.com";
       $conf['securepages_basepath'] = 'http://$sitegroup.prod.acquia-sites.com';
       $conf['securepages_basepath_ssl'] = 'https://$sitegroup.prod.acquia-sites.com';
       break;
@@ -33,5 +35,5 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
         newrelic_set_appname($app_name, '', 'true');
         break;
     }
-  }  
+  }
 }
