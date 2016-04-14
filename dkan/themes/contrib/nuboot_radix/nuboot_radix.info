@@ -33,7 +33,7 @@ plugins[panels][styles] = panels/styles
 ; CSS - General
 stylesheets[all][]     = assets/css/nuboot_radix.style.css
 stylesheets[all][]		 = assets/css/dkan-flaticon.css
-stylesheets[all][]		 = assets/css/dkan-dataset-search-icons.css
+stylesheets[all][]		 = assets/css/dkan-topics.css
 stylesheets[print][]   = assets/css/print.css
 
 ; CSS - Conditional

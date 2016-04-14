@@ -1,13 +1,25 @@
 //
 // Styles for Nodes
 // --------------------------------------------------
-
-// Dataset field labels.
-.field-name-field-tags,
-.field-name-field-topic,
-.field-name-field-preview-thumbail {
-  .field-label {
+.node-type-dataset {
+  .field-name-field-tags {
+    margin: 1em 0;
+  }
+  .field-name-field-topic {
+    margin: -20px 0 15px 0;
+  }
+  // Dataset field labels.
+  h4 {
     @include h4;
+  }
+  .field-name-field-related-content,
+  .field-name-field-topic,
+  .field-name-field-tags,
+  .field-name-field-topic,
+  .field-name-field-preview-thumbail {
+    .field-label {
+      @include h4;
+    }
   }
 }
 
@@ -168,4 +180,7 @@
 }
 .field-name-field-additional-info {
   margin-top: 2em;
+}
+.field-name-field-related-content .field-item {
+  @include item-list;
 }

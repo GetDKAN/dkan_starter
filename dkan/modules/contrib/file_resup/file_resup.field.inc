@@ -227,8 +227,14 @@ function file_resup_field_widget_submit($form, &$form_state) {
   // Append our items.
   if (!empty($element['resup']['#value'])) {
     $fids = array_diff(explode(',', $element['resup']['#value']), $fids);
+    $field = field_widget_field($element, $form_state);
     foreach ($fids as $fid) {
-      $items[] = array('fid' => $fid);
+      $item = array('fid' => $fid);
+      // Respect display default when available.
+      if (!empty($field['settings']['display_field'])) {
+        $item['display'] = $field['settings']['display_default'];
+      }
+      $items[] = $item;
     }
   }
 

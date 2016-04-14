@@ -76,3 +76,9 @@ section.col-sm-9 {
     overflow: hidden;
   }
 }
+@media all and (max-width:767px) {
+  .branding.container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}

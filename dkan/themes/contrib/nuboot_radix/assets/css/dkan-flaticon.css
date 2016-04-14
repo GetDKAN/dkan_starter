@@ -9,7 +9,7 @@
 	font-style: normal;
 }
 
-[class^="icon-"], [class*=" icon-"] {
+.format-label:before {
 	font-family: 'dkan-flaticon';
 	speak: none;
 	font-style: normal;

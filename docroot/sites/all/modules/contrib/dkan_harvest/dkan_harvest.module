@@ -90,7 +90,13 @@ function dkan_harvest_cache_data_process($sources, $harvest_last_updated) {
           break;
 
         case 'data.json':
+          $remote = utf8_encode($remote);
           $json = drupal_json_decode($remote);
+          if (!$json) {
+            # Anticipate encoding errors.
+            $remote = utf8_encode($remote);
+            $json = drupal_json_decode($remote);
+          }
           if ($json) {
             dkan_harvest_cache_pod_1_1_json($json, $key, $source, $counters);
           }

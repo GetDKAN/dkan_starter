@@ -14,7 +14,7 @@ body.modal-open {
 .branding {
   position: relative;
   .logo {
-    margin: 20px 0;
+    margin: 20px  20px 15px 0;
   }
 }
 @media (max-width: 768px) {
@@ -24,8 +24,7 @@ body.modal-open {
 }
 
 .site-name {
-  display: inline-block;
-  float: left;
+  display: block;
   font-size: 2em;
   line-height: 1.15em;
   margin: 50px 20px 0;
@@ -34,9 +33,11 @@ body.modal-open {
     float: none;
     margin: 10px 20px 5px 0;
   }
+  &:hover {
+    text-decoration: none;
+  }
 }
 .site-slogan {
-  clear: left;
   margin-bottom: 20px;
 }
 h1 {
@@ -238,51 +239,6 @@ table thead > tr > th {
   background-color: #FFFEEE;
 }
 
-// Admin tables.
-.page-admin {
-  .container.main {
-    width: 100%;
-  }
-  .table-bordered > thead > tr > th,
-  .table-bordered > tbody > tr > th,
-  .table-bordered > tbody > tr > td {
-    border: none;
-  }
-  table thead > tr > th.checkbox, 
-  table.table thead > tr > th.checkbox,
-  .table-bordered > tbody > tr > th.checkbox,
-  .table-bordered > tbody > tr > td.checkbox,
-  .table-striped > tbody > tr:nth-child(odd) > td.checkbox,
-  .table-striped > tbody > tr:nth-child(odd) > th.checkbox {
-    background-color: transparent;
-    border: none;
-    margin: 0;
-    display: table-cell;
-    position: relative;
-  }
-  .table tbody tr:hover td.checkbox, 
-  .table tbody tr:hover th.checkbox {
-    background-color: #FFFEEE;
-  }
-  table th.checkbox, 
-  table td.checkbox {
-    label {
-      line-height:0;
-      padding: 4px;
-      vertical-align: top;
-    }
-    input[type="checkbox"],
-    input {
-      float: none !important;
-      margin: 0 !important;
-      position: relative;
-    }
-  }
-}
-.page-admin-dkan-dataset-preview table .checkbox input[type="checkbox"] {
-  position: absolute;
-  left: 16px;
-}
 
 dl {
   margin:0;
