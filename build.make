@@ -30,6 +30,8 @@ projects[] = maillog
 ;projects[] = shield
 ;projects[] = features_override
 ;projects[] = security_review
+projects[stage_file_proxy][version] = 1.7
+projects[stage_file_proxy][subdir] = contrib
 
 ; Acquia
 ; ======
@@ -86,8 +88,6 @@ projects[] = securepages
 ; ======
 projects[] = google_analytics
 projects[] = google_tag
-
-;projects[] = entity
 
 ; NuCivic
 ; =======
