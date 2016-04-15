@@ -5,3 +5,18 @@
  */
 
 include_once 'custom_config.features.inc';
+
+/**
+ * Implements hook_modules_disabled().
+ *
+ * Add alert when modules are disabled that should not be.
+ */
+function custom_config_modules_disabled($modules) {
+  $temp_disabled_modules = variable_get('features_master_temp_disabled_modules', array());
+
+  $modules_warn = array_diff($modules, $temp_disabled_modules);
+  if (!empty($modules_warn)) {
+    watchdog('custom_config_disable', 'Trying to disable module(s) not on temporarily disabled list',
+      ['modules' => $modules_warn], WATCHDOG_ERROR);
+  }
+}
