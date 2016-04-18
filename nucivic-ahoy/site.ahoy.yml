@@ -318,3 +318,20 @@ commands:
         echo "Using behat.yml .."
       fi
       ahoy cmd-proxy "cd $BEHAT_FOLDER && bin/behat $CONFIG ${ARGS[@]}"
+
+  truncate-watchdog:
+    usage: Truncates the watchdog table.
+    hide: true
+    cmd: |
+      echo "truncate watchdog" | ahoy dkan sqlc;
+
+  fail-when-bad-disable:
+    usage: Kill the build if modules were incorrectly disabled.
+    hide: true
+    cmd: |
+      error=`echo "select message, variables from watchdog where type = 'custom_config_disable'" | ahoy dkan sqlc`
+      if [ "$error" ];
+      then
+        echo $error
+        exit 1
+      fi

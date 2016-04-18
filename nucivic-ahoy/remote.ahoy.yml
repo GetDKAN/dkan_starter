@@ -40,3 +40,7 @@ commands:
       ahoy cmd-proxy drush @$alias search-api-index datasets
       ahoy cmd-proxy drush @$alias search-api-index groups_di
       ahoy cmd-proxy drush @$alias search-api-index stories_index
+
+  launch-checklist:
+    usage: A series of commands to perform a launch-checklist
+    import: nucivic-ahoy/launch-checklist.ahoy.yml
