@@ -194,7 +194,7 @@ commands:
       hub pull-request -m "Updates DKAN from $tag_old $version_old to $tag_new $version_new" >/dev/null 2>&1
 
   mysql-dump-sanitized:
-    usage: Creates a dump of a sanitazed version of the site db
+    usage: Creates a dump of a sanitized and pruned version of the site db
     cmd: |
       ahoy cmd-proxy exec mkdir -p backups
       ahoy drush sql-dump > backups/unsanitized.sql
@@ -204,6 +204,12 @@ commands:
       ahoy drush sql-dump > backups/sanitized.sql
       ahoy drush -y sql-drop
       ahoy drush sql-cli < backups/unsanitized.sql
+
+  mysql-prune:
+    usage: Prunes datasets and resources from site database
+    hide: true
+    cmd: |
+      ahoy drush php-script nucivic-ahoy/.scripts/prune-database.php
 
   name:
     usage: Utility function to determine the site name.
