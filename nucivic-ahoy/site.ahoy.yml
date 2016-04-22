@@ -121,7 +121,6 @@ commands:
       ln -s ../../../../projects/modules/custom docroot/sites/all/modules/custom
       ln -s ../../../../projects/modules/dkan_overrides docroot/sites/all/modules/dkan_overrides
       ahoy site self-update
-      ahoy dkan self-update
 
   reinstall:
     usage: Reinstall the site from scratch (dkan + custom_config + environment).
@@ -274,6 +273,7 @@ commands:
   self-update:
     usage: Utility function for self updating this repo.
     cmd: |
+      ahoy dkan self-update
       rm -fR nucivic-ahoy
       git clone 'git@github.com:nucivic/nucivic-ahoy' --depth=1
       rm -rf nucivic-ahoy/.git
