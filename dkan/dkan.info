@@ -1,7 +1,7 @@
 name = DKAN
 core = 7.x
 exclusive = TRUE
-version = 7.x-1.12-beta
+version = 7.x-1.12
 project = dkan
 
 ; Core
@@ -116,7 +116,7 @@ dependencies[] = dkan_sitewide_search_db
 dependencies[] = dkan_sitewide_panelizer
 dependencies[] = dkan_data_dashboard
 dependencies[] = dkan_data_story
-dependencies[] = dkan_featured_topics
+dependencies[] = dkan_topics
 dependencies[] = dkan_permissions
 
 ; DKAN Core Modules

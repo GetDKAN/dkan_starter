@@ -2,13 +2,13 @@
 api: '2'
 core: 7.x
 includes:
-- https://raw.githubusercontent.com/NuCivic/dkan_dataset/7.x-1.12-beta/dkan_dataset.make
-- https://raw.githubusercontent.com/NuCivic/dkan_datastore/7.x-1.12-beta/dkan_datastore.make
-- https://raw.githubusercontent.com/NuCivic/dkan_workflow/7.x-1.12-beta/dkan_workflow.make
+- https://raw.githubusercontent.com/NuCivic/dkan_dataset/7.x-1.12/dkan_dataset.make
+- https://raw.githubusercontent.com/NuCivic/dkan_datastore/7.x-1.12/dkan_datastore.make
+- https://raw.githubusercontent.com/NuCivic/dkan_workflow/7.x-1.12/dkan_workflow.make
 - https://raw.githubusercontent.com/NuCivic/visualization_entity/a2490a0ea1baa8fe3617d669b4c9a1c8f0b5626c/visualization_entity.make
 - https://raw.githubusercontent.com/NuCivic/visualization_entity_charts/d02f1b19797840b0d4b8b92625b4c22ca0a603f2/visualization_entity_charts.make
 - modules/dkan/dkan_data_story/dkan_data_story.make
-- modules/dkan/dkan_featured_topics/dkan_featured_topics.make
+- modules/dkan/dkan_topics/dkan_topics.make
 projects:
   manualcrop:
     version: 1.x-dev
@@ -44,19 +44,19 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/dkan_dataset.git
-      tag: 7.x-1.12-beta
+      tag: 7.x-1.12
   dkan_datastore:
     subdir: dkan
     download:
       type: git
       url: https://github.com/NuCivic/dkan_datastore.git
-      tag: 7.x-1.12-beta
+      tag: 7.x-1.12
   dkan_workflow:
     subdir: dkan
     download:
       type: git
       url: https://github.com/NuCivic/dkan_workflow.git
-      tag: 7.x-1.12-beta
+      tag: 7.x-1.12
   visualization_entity:
     download:
       type: git
@@ -97,9 +97,9 @@ projects:
   fontyourface:
     version: '2.8'
     patch:
-      2550253: https://www.drupal.org/files/issues/fontface_regenerate-css-after-add-rule.patch
-      2644694: https://www.drupal.org/files/issues/browse-fonts-page-uses-disabled-font-2644694.patch
       1: patches/fontyourface-no-ajax-browse-view.patch
+      2: patches/fontyourface-clear-css-cache.patch
+      2644694: https://www.drupal.org/files/issues/browse-fonts-page-uses-disabled-font-2644694.patch
   imagecache_actions:
     download:
       type: git
@@ -176,7 +176,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/nuboot_radix.git
-      tag: 7.x-1.12-beta
+      tag: 7.x-1.12
     type: theme
   radix:
     type: theme

@@ -13,10 +13,10 @@ includes[leaflet_draw_widget_make] = https://raw.githubusercontent.com/NuCivic/l
 ; Recline specific
 projects[recline][download][type] = git
 projects[recline][download][url] = https://github.com/NuCivic/recline.git
-projects[recline][download][branch] =  7.x-1.x
+projects[recline][download][tag] = 7.x-1.12
 projects[recline][subdir] = contrib
 
-includes[recline_make] = https://raw.githubusercontent.com/NuCivic/recline/7.x-1.12-beta/recline.make
+includes[recline_make] = https://raw.githubusercontent.com/NuCivic/recline/7.x-1.12/recline.make
 
 ; Contrib Modules
 projects[autocomplete_deluxe][subdir] = contrib
@@ -71,7 +71,7 @@ projects[facetapi_pretty_paths][version] = 1.1
 projects[facetapi_bonus][version] = 1.1
 projects[facetapi_bonus][subdir] = contrib
 
-projects[features][version] = 2.6
+projects[features][version] = 2.9
 projects[features][subdir] = contrib
 
 projects[field_group][version] = 1.5
@@ -140,7 +140,7 @@ projects[og_extras][type] = module
 projects[open_data_schema_map][type] = module
 projects[open_data_schema_map][download][type] = git
 projects[open_data_schema_map][download][url] = https://github.com/NuCivic/open_data_schema_map.git
-projects[open_data_schema_map][download][revision] = 41bf956bb54328b9755a3e0e074cafe45b09bdcc
+projects[open_data_schema_map][download][revision] = b7f6d255855a1c950d5a7dadd8a33860ccf66d35
 projects[open_data_schema_map][subdir] = contrib
 
 projects[open_data_schema_map_dkan][type] = module
