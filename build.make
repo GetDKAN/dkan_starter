@@ -54,6 +54,7 @@ projects[dkan_migrate_base][type] = module
 projects[dkan_migrate_base][download][type] = git
 projects[dkan_migrate_base][download][url] = https://github.com/NuCivic/dkan_migrate_base.git
 projects[dkan_migrate_base][download][branch] = 7.x-1.x
+
 ; DKAN Harvest
 projects[dkan_harvest][type] = module
 projects[dkan_harvest][download][type] = git
@@ -72,6 +73,14 @@ projects[visualization_entity_tables][download][type] = git
 projects[visualization_entity_tables][download][url] = https://github.com/NuCivic/visualization_entity_tables.git
 projects[visualization_entity_tables][download][branch] = master
 
+; Federal
+; ==========================================
+;projects[] = password_policy
+;projects[] = open_data_federal_extras
+;projects[open_data_federal_extras][type] = module
+;projects[open_data_federal_extras][download][type] = git
+;projects[open_data_federal_extras][download][url] = https://github.com/NuCivic/open_data_federal_extras.git
+;projects[open_data_federal_extras][download][branch] = master
 
 ; Performance
 ; ===========
