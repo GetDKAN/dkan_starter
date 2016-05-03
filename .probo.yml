@@ -19,12 +19,18 @@ steps:
       echo ""
       # Install dependencies like ahoy.
       time bash dkan/dkan-init.sh dkan --deps-only
+      sudo apt-get update
+      sudo apt-get install libdigest-hmac-perl -y
+
       echo ""
       echo "-------> Setup the settings.local.php file and install a fresh database."
       echo ""
       # Setup the database.
       ahoy site setup --db-user=root --db-pass=strongpassword --db-host=127.0.0.1 --db-port=3306 --db-name=dkan
-      ahoy site reinstall
+      # Setup CI
+      ahoy ci setup
+      # Install tools
+      ahoy drush dl -y registry_rebuild
 
       echo ""
       echo "-------> Symlink ./docroot to var/www/html:"
@@ -37,6 +43,7 @@ steps:
       echo "-------> Diagnose and fail build if necessary"
       echo ""
       ahoy site fail-when-bad-disable
+      echo ""
 
       echo ""
       echo "The url of this build should be at:"

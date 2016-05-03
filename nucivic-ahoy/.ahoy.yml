@@ -1,7 +1,6 @@
 ahoyapi: v1
 usage: NuCivic Data cli app for development using ahoy.
 commands:
-
   drush:
     usage: Run drush via ahoy (helpful for abstraction)
     cmd: ahoy cmd-proxy drush --root=docroot {{args}}
@@ -40,6 +39,14 @@ commands:
         {{args}}
       fi
     hide: true
+
+  ci:
+    usage: A series of commands to handle ci setup
+    import: nucivic-ahoy/ci.ahoy.yml
+
+  launch-checklist:
+    usage: A series of commands to handle pre launch checks
+    import: nucivic-ahoy/launch-checklist.ahoy.yml
 
   site:
     usage: A series of commands for site development
