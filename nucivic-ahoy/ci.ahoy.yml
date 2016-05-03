@@ -1,0 +1,15 @@
+ahoyapi: v1
+version: 0.0.0
+commands:
+  setup:
+    usage: switchs between ci setups
+    cmd: |
+      if [ -s assets/drush/aliases.local.php ]; then
+        echo "Site name set. Pulling database from s3 bucket"
+        ahoy site s3-setup
+        ahoy site asset-download-db
+        ahoy drush sql-cli < backups/sanitized.sql
+      else
+        echo "Site name not set. Going with DKAN base install"
+        ahoy site reinstall
+      fi

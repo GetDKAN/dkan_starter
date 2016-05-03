@@ -55,7 +55,6 @@ commands:
         echo "A settings.local.php file was created at assets/sites/default/settings.local.php, but you need you add your own db credentials."
       fi
 
-
   drupal-rebuild:
     usage: Remakes and reinstall site.
     cmd: |
@@ -213,7 +212,13 @@ commands:
   name:
     usage: Utility function to determine the site name.
     cmd: |
-      ahoy cmd-proxy php -f nucivic-ahoy/.scripts/site-name.php
+      if [ -s assets/drush/aliases.local.php ]; then
+        ahoy cmd-proxy php -f nucivic-ahoy/.scripts/site-name.php
+      else
+        echo "Site name not set. Type the alias followed by [ENTER]:"
+        read ALIAS
+        cat assets/drush/datastarter.aliases.drushrc.php | sed "s/data_starter/$ALIAS/g" > assets/drush/aliases.local.php
+      fi
     hide: true
 
   asset-download:
