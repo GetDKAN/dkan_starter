@@ -31,3 +31,11 @@ if (getenv('DB_1_ENV_MYSQL_DATABASE')) {
     define('ENVIRONMENT', 'local');
   }
 }
+
+if (getenv('MEMCACHED_PORT_11211_TCP_ADDR')) {
+  $memcache_server = getenv('MEMCACHED_PORT_11211_TCP_ADDR') . ':' . getenv('MEMCACHED_PORT_11211_TCP_PORT');
+  $conf['memcache_servers'] = array($memcache_server => 'default');
+  $conf['cache_backends'][] = 'sites/all/modules/contrib/memcache/memcache.inc';
+  $conf['cache_default_class'] = 'MemCacheDrupal';
+  $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
+}
