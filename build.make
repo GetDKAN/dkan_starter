@@ -88,6 +88,7 @@ projects[] = expire
 projects[] = memcache
 projects[] = entitycache
 projects[] = admin_views
+projects[] = fast_404
 
 ; Security
 ; ==========
