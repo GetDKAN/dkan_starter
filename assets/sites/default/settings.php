@@ -49,7 +49,7 @@ devinci_set_env($env_map);
 
 // Don't show any errors.
 $conf['error_level'] = ERROR_REPORTING_HIDE;
-error_reporting(0);
+ini_set('error_reporting', E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 ini_set("display_errors", 0);
 
 //Ensure we don't send emails by default.
