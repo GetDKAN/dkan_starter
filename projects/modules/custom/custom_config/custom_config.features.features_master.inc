@@ -75,6 +75,7 @@ function custom_config_features_master_defaults() {
     'facetapi' => 'facetapi',
     'facetapi_bonus' => 'facetapi_bonus',
     'facetapi_pretty_paths' => 'facetapi_pretty_paths',
+    'fast_404' => 'fast_404',
     'features' => 'features',
     'features_banish' => 'features_banish',
     'features_master' => 'features_master',
