@@ -20,3 +20,29 @@ function custom_config_modules_disabled($modules) {
       ['modules' => $modules_warn], WATCHDOG_ERROR);
   }
 }
+
+/**
+ * Implements hook_search_api_index_load()
+ *
+ * Forces read-only mode on Search API indexes if the current environment
+ * is NOT an Acquia-Hosted production environment. (Including a local copy
+ * of this site)
+ */
+ function custom_config_search_api_index_load($indexes) {
+  // Assume that we need to override and force read-only mode.
+  $set_read_only = TRUE;
+
+  // Avoid forcing index read-only mode, if on Acquia Hosting + in a production environment
+  if (isset($_ENV["AH_SITE_ENVIRONMENT"]) && isset($_ENV["AH_PRODUCTION"])) {
+    return;
+  }
+
+  // Cycle through all Search API Solr indexes and force to read_only mode.
+  if ($set_read_only) {
+    foreach ($indexes as &$index) {
+      if ($index->server == 'acquia_solr_server') {
+        $index->read_only = "1";
+      }
+    }
+  }
+}
