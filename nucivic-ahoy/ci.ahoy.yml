@@ -7,9 +7,34 @@ commands:
       if [ -s assets/drush/aliases.local.php ]; then
         echo "Site name set. Pulling database from s3 bucket"
         ahoy site s3-setup
-        ahoy site asset-download-db
+        ahoy site asset-download
+        ahoy site files-link
+        ahoy site files-fix-permissions
         ahoy drush sql-cli < backups/sanitized.sql
       else
         echo "Site name not set. Going with DKAN base install"
         ahoy site reinstall
       fi
+
+  deploy:
+    usage: deploys within a ci setup
+    cmd: |
+      echo "DELETE FROM search_api_index where server = 'dkan_acquia_solr';" > delete.sql
+      echo "DELETE FROM search_api_index where server = 'local_solr_server';" >> delete.sql
+      echo "DELETE FROM search_api_server where machine_name = 'dkan_acquia_solr';" >> delete.sql
+      echo "DELETE FROM search_api_server where machine_name = 'local_solr_server';" >> delete.sql
+      echo "DELETE FROM search_api_index where server IS NULL;" >> delete.sql
+      ahoy drush sqlc < delete.sql
+      rm delete.sql
+      ahoy drush rr
+      ahoy cmd-proxy drush cc drush
+      ahoy drush env-switch local --force
+      ahoy drush -y fr --force custom_config
+      ahoy drush env-switch local --force
+      ahoy cmd-proxy drush cc drush
+      ahoy drush -y fr --force dkan_sitewide_search_db;
+      ahoy drush rr
+      ahoy cmd-proxy drush cc drush
+      ahoy drush search-api-index datasets
+      ahoy drush search-api-index groups_di
+      ahoy drush search-api-index stories_index
