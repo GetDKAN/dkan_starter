@@ -183,7 +183,7 @@ commands:
       set -e
       EMPTY="{{args}}"
       if [[ -z "${EMPTY// }" ]]; then
-        echo $(grep -iE 'projects\[dkan\]\[download\]\[(branch|tag)\]' docroot/profiles/dkan/build-dkan.make|cut -d '=' -f2|sed 's/ //g')
+        echo $(cat dkan/dkan.info | grep 'version' | cut -d '=' -f2 | sed 's/ //g')
         exit 0
       fi
       IFS=' ' read -r -a args <<< "{{args}}"
