@@ -3,6 +3,8 @@
 /docroot/sites/*/private
 /files/*
 /cache
+/assets/sites/default/files
+/*.prod.files/*
 
 # ** Only works in OSs that support newer versions of fnmatch (Bash 4+)
 /docroot/sites/default/**/files
@@ -43,17 +45,26 @@ Thumbs.db
 # Vim generated files #
 ######################
 *.un~
-*\.swp
+*.swp
+*.swo
+
+# PHP Storm files
+#################
+.idea
 
 # SASS #
 ##########
 .sass-cache
 
-# PHPStorm #
-############
-.idea
+# Ahoy Stuff #
+##############
+backups
+backups/*
+nucivic-ahoy/composer.lock
+nucivic-ahoy/vendor
+dkan/test/vendor
+dkan/test/vendor/*
 
-# Ahoy #
-########
-/backups
-/backups/*
+# Sublime #
+###########
+*.sublime-*
