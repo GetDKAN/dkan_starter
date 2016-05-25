@@ -82,6 +82,7 @@ commands:
       ahoy site overrides
       ahoy dkan remake
       ahoy site post-build
+      ahoy site config
       AHOY_CMD_PROXY=$TEMP
 
   overrides:
@@ -124,6 +125,29 @@ commands:
         ahoy custom post-build
       fi
       ahoy site self-update
+
+  config:
+    usage: ahoy site config - Applies site specific changes stored in config.yml
+    cmd: |
+      eval $(ahoy parse config/config.yml)
+      tempdir=$(mktemp -dt "$0")
+
+      # Configure https settings.
+      if [ "$default_https_everywhere" == "TRUE" ];
+      then
+        sed "s/#HOST/$default_hostname/g" config/templates/.htaccess.https.tpl > $tempdir/.htaccess.https
+        sed -e "/#HTTPS/r $tempdir/.htaccess.https" \
+            -e "/#HTTPS/d" config/templates/.htaccess.tpl > $tempdir/.htaccess
+      else
+        sed -e "s/^#HTTPS$//g" config/templates/.htaccess.tpl > $tempdir/.htaccess
+      fi
+
+      cp $tempdir/.htaccess docroot/.htaccess
+
+      # Transpose config.yml to php
+      cd nucivic-ahoy
+      composer install
+      php .scripts/config.php
 
   reinstall:
     usage: Reinstall the site from scratch (dkan + custom_config + environment).

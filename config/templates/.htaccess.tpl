@@ -113,7 +113,7 @@ DirectoryIndex index.php index.html index.htm
   # uncomment the following line:
   # RewriteBase /
   
-
+#HTTPS
 
   # Pass all requests not referring directly to files in the filesystem to
   # index.php. Clean URLs are handled in drupal_environment_initialize().
