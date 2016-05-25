@@ -43,6 +43,7 @@ Thumbs.db
 # Vim generated files #
 ######################
 *.un~
+*\.swp
 
 # SASS #
 ##########

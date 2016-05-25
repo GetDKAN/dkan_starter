@@ -132,7 +132,6 @@ commands:
       eval $(ahoy parse config/config.yml)
       tempdir=$(mktemp -dt "$0")
 
-
       # Configure https settings.
       if [ "$default_https_everywhere" == "TRUE" ];
       then
@@ -144,6 +143,11 @@ commands:
       fi
 
       cp $tempdir/.htaccess docroot/.htaccess
+
+      # Transpose config.yml to php
+      cd nucivic-ahoy
+      composer install
+      php .scripts/config.php
 
   reinstall:
     usage: Reinstall the site from scratch (dkan + custom_config + environment).
