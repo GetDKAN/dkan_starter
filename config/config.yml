@@ -1,3 +1,3 @@
 default:
-  host: localhost
-  https_everywhere: FALSE
+  hostname: localhost
+  https_everywhere: TRUE
