@@ -190,9 +190,15 @@ class DataJSONHarvest extends MigrateDataJsonDatasetBase {
    * Implements prepareRow.
    */
   public function prepareRow($row) {
+    // Remove the items added by dkan_harvest.
+    unset($row->harvest_object_id);
+    unset($row->harvest_source_id);
+    unset($row->harvest_last_updated);
+    unset($row->source);
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
+
   }
 
  /**

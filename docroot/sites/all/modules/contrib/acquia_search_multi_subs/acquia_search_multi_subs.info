@@ -7,9 +7,9 @@ dependencies[] = acquia_agent
 
 files[] = lib/Drupal/SearchApiSolr/SearchApiAcquiaSearchMultiService.php
 
-; Information added by Drupal.org packaging script on 2016-02-22
-version = "7.x-1.6"
+; Information added by Drupal.org packaging script on 2016-05-24
+version = "7.x-1.7"
 core = "7.x"
 project = "acquia_search_multi_subs"
-datestamp = "1456170292"
+datestamp = "1464130148"
 

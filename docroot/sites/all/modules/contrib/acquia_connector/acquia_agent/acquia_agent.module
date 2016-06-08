@@ -377,7 +377,7 @@ function acquia_agent_update_status_alter(&$projects) {
 
   foreach ($projects as $project => $project_info) {
     if ($project == 'drupal') {
-      if (isset($subscription['update'])) {
+      if (!empty($subscription['update'])) {
         $projects[$project]['status'] = isset($subscription['update']['status']) ? $subscription['update']['status'] : t('Unknown');
         $projects[$project]['releases'] = isset($subscription['update']['releases']) ? $subscription['update']['releases'] : array();
         $projects[$project]['recommended'] = isset($subscription['update']['recommended']) ? $subscription['update']['recommended'] : '';
@@ -782,6 +782,11 @@ function acquia_agent_valid_response($data, $key = NULL) {
  * This function should never be called directly - use acquia_agent_call().
  */
 function _acquia_agent_request($url, $method, $data) {
+
+  if (function_exists('acquia_connector_test_xmlrpc_server_emulator')) {
+    return acquia_connector_test_xmlrpc_server_emulator($method, $data);
+  }
+
   $ctx = acquia_agent_stream_context_create($url);
   if (!$ctx) {
     // TODO: what's a meaningful fault code?
