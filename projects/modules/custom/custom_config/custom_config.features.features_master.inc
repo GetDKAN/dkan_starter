@@ -47,7 +47,7 @@ function custom_config_features_master_defaults() {
     'dkan_dataset_groups_perms' => 'dkan_dataset_groups_perms',
     'dkan_datastore' => 'dkan_datastore',
     'dkan_datastore_api' => 'dkan_datastore_api',
-    'dkan_default_content' => 'dkan_default_content',
+    'dkan_health_status' => 'dkan_health_status',
     'dkan_default_topics' => 'dkan_default_topics',
     'dkan_permissions' => 'dkan_permissions',
     'dkan_sitewide' => 'dkan_sitewide',
