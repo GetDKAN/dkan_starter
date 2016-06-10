@@ -95,6 +95,9 @@ $conf['install_profile'] = 'dkan';
 // This should be updated to the actual live site url if using stage_file_proxy.
 //$conf['stage_file_proxy_origin'] = 'http://my-live-site.com';
 
+// KEY for dkan health status
+$conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
+
 /******************************************************
  * OPTIONAL: Override default settings per environment.
  ******************************************************/
