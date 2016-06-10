@@ -171,7 +171,13 @@ switch(ENVIRONMENT) {
     $conf['error_level'] = ERROR_REPORTING_HIDE;
 
     // Enable caching like in production.
-    $conf['page_cache_maximum_age'] = 900;
+    $conf['page_cache_maximum_age'] = 21600;
+    $conf['ape_alternative_lifetime'] = 300;
+    $conf['ape_alternatives'] = "search
+    search*
+    dataset
+    dataset*";
+    $conf['page_compression'] = 1;
     $conf['cache'] = 1;
     $conf['preprocess_js'] = 1;
     $conf['preprocess_css'] = 1;
@@ -189,8 +195,14 @@ switch(ENVIRONMENT) {
       'default-system' => 'DefaultMailSystem',
     );
     // Enable caching for production.
-    // 15 minutes max page cache time.
-    $conf['page_cache_maximum_age'] = 900;
+    // 6 hours cache time.
+    $conf['page_cache_maximum_age'] = 21600;
+    $conf['ape_alternative_lifetime'] = 300;
+    $conf['ape_alternatives'] = "search
+    search*
+    dataset
+    dataset*";
+    $conf['page_compression'] = 1;
     $conf['cache'] = 1;
     $conf['preprocess_js'] = 1;
     $conf['preprocess_css'] = 1;

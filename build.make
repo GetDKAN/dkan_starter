@@ -93,6 +93,9 @@ projects[] = entitycache
 projects[] = admin_views
 projects[] = fast_404
 
+projects[ape][version] = 1.1
+projects[ape][subdir] = contrib
+
 ; Security
 ; ==========
 projects[] = securepages
