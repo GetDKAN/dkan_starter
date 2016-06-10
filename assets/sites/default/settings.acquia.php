@@ -2,6 +2,12 @@
 /**
  * Acquia Settings.
  */
+ 
+if (isset($conf['memcache_servers'])) {
+  $conf['cache_backends'][] = './sites/all/modules/contrib/memcache/memcache.inc';
+  $conf['cache_default_class'] = 'MemCacheDrupal';
+  $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
+}
 
 if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   // Set 2 session cookies, one secure and one not.
