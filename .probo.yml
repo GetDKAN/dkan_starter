@@ -1,3 +1,6 @@
+assets:
+  - .s3curl
+
 steps:
   - name: Setup QA site
     # Currently this "Script" is not documented in probo's docs, but it fixes the issue of
@@ -7,8 +10,17 @@ steps:
     script: |
       # Fail right away.
       set -e
+
+      echo ""
+      echo "-------> Symlink ./docroot to var/www/html:"
+      echo ""
+      #Set a symlink so that probo can serve the site.
+      ln -s $SRC_DIR/docroot /var/www/html
+      ln -s $SRC_DIR/docroot /var/www/docroot
+
       # Start in the right folder of our checkout (/src)
       cd $SRC_DIR
+
 
       echo ""
       echo "Build $BUILD_ID "
@@ -26,18 +38,18 @@ steps:
       echo "-------> Setup the settings.local.php file and install a fresh database."
       echo ""
       # Setup the database.
+      mysql -u root -pstrongpassword -e 'create database dkan;'
       ahoy site setup --db-user=root --db-pass=strongpassword --db-host=127.0.0.1 --db-port=3306 --db-name=dkan
+      drush cc drush
+      drush dl -n registry_rebuild-7.x-2.3
       # Setup CI
+      if [ -f $ASSET_DIR/.s3curl ]
+      then
+        cp $ASSET_DIR/.s3curl ~/.s3curl
+        chmod 600 ~/.s3curl
+      fi
       ahoy ci setup
-      # Install tools
-      ahoy drush dl -y registry_rebuild
-
-      echo ""
-      echo "-------> Symlink ./docroot to var/www/html:"
-      echo ""
-      #Set a symlink so that probo can serve the site.
-      ln -s $SRC_DIR/docroot /var/www/html
-      chmod -R 777 /var/www/html/sites/default/files
+      ahoy ci deploy
 
       echo ""
       echo "-------> Diagnose and fail build if necessary"
