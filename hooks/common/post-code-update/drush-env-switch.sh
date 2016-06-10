@@ -8,6 +8,8 @@ env=$2
 drush_alias=$site'.'$env
 target_env=`drush @$drush_alias php-eval "echo ENVIRONMENT;"`
 
+drush @$drush_alias -y updb
+
 drupal=$(drush @$drush_alias status | grep -e "Drupal bootstrap" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 
 if [[ "$drupal" =~ "Successful" ]]; then
