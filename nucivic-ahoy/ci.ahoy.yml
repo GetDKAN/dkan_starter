@@ -28,7 +28,7 @@ commands:
       rm delete.sql
       ahoy drush rr
       ahoy drush updatedb -y
-      ahoy site truncate-watchdog   
+      ahoy site truncate-watchdog      
       ahoy cmd-proxy drush cc drush
       ahoy drush env-switch local --force
       ahoy drush -y fr --force custom_config

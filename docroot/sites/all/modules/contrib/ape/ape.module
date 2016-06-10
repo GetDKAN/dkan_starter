@@ -1,0 +1,243 @@
+<?php
+
+/**
+ * @file
+ * Allows finer control of the Cache Control header.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function ape_help($path, $arg) {
+  switch ($path) {
+    case 'admin/config/development/ape':
+      return '<p>' . t('Configure the max age header based on path and other criteria.') . '</p>';
+
+    case 'admin/help#ape':
+      $output = '';
+      $output .= '<p>' . t('The advanced page expiration module is a lightweight solution to allow the max age header (used by external caching mechanisms such as Varnish) to be set based on different criteria, such as path or redirect code. This allows for more advanced scenarios such as having the homepage expire every five minutes while the rest of the site expires in one hour.') . '</p>';
+      $output .= '<p>' . t('The <a href="@settings">settings page</a> explains the different options available.', array('@settings' => url('admin/config/development/ape'))) . ' There is also Rules integration and an alter hook available for more complex integrations.</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ape_permission() {
+  return array(
+    'administer ape' => array(
+      'title' => t('Administer advanced page expiration'),
+      'description' => t('Configure advanced page expiration.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ape_menu() {
+  $items['admin/config/development/ape'] = array(
+    'title' => 'Advanced page expiration',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ape_admin_settings'),
+    'description' => 'Configure the strategy for the cache-control header which defines cache lifetime for external caching systems.',
+    'access arguments' => array('administer ape'),
+    'file' => 'ape.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Determines whether a user may administer ape.
+ *
+ * Required for rules integration.
+ */
+function ape_rules_access($type, $name) {
+  return user_access('administer ape');
+}
+
+/**
+ * Implements hook_drupal_goto_alter().
+ *
+ * If a drupal_goto is called, detect if it is a 301 or 302 and set the
+ * cache-control header appropriately based on configured options.
+ *
+ * This hook is used so we know the response code without having to use PHP 5.4.
+ */
+function ape_drupal_goto_alter(&$path, &$options, &$http_response_code) {
+  $max_age = NULL;
+  if ($http_response_code == 301) {
+    $max_age = variable_get('ape_301_lifetime', 0);
+  }
+  elseif ($http_response_code == 302) {
+    $max_age = variable_get('ape_302_lifetime', 0);
+  }
+  ape_cache_set($max_age);
+  ape_set_cache_header($max_age);
+}
+
+/**
+ * Implements hook_redirect_alter().
+ *
+ * This integrates the redirect module which uses its own method of redirecting
+ * rather than drupal_goto and will implement the standard page cache length.
+ */
+function ape_redirect_alter(&$redirect) {
+  $max_age = NULL;
+  if(variable_get('redirect_page_cache', 0)) {
+    if($redirect->status_code == '301') {
+      $max_age = variable_get('ape_301_lifetime', 0);
+    } elseif ($redirect->status_code == '302') {
+      $max_age = variable_get('ape_302_lifetime', 0);
+    }
+    ape_cache_set($max_age);
+    ape_set_cache_header($max_age);
+  }
+}
+
+/**
+ * Implements hook_page_delivery_callback_alter().
+ *
+ * Set an exception length cache-control, or if no match set a global value.
+ */
+function ape_page_delivery_callback_alter(&$callback) {
+  $max_age = ape_cache_set();
+  // Check to see if another module or hook has already set an APE header. This
+  // allows rules or other module integration to take precedent.
+  if (is_null($max_age)) {
+    if (ape_check_path(variable_get('ape_alternatives', ''), $_GET['q'])) {
+      $max_age = variable_get('ape_alternative_lifetime', 0);
+    }
+    else {
+      $max_age = variable_get('page_cache_maximum_age', 0);
+    }
+  }
+
+  $router_item = menu_get_item();
+
+  // If 404, set to 404 configurable value.
+  if ($router_item == FALSE) {
+    $max_age = variable_get('ape_404_lifetime', 0);
+  }
+  // If 403, ensure we do not cache to ensure login states work correctly.
+  elseif ($router_item['access'] == FALSE) {
+    $max_age = 0;
+  }
+
+  // Allow max_age to be altered by hook_ape_cache_alter().
+  $original_max_age = $max_age;
+  drupal_alter('ape_cache_expiration', $max_age, $original_max_age);
+  ape_set_cache_header($max_age);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Remove page_cache_maximum_age selection from main performance page and
+ * instead direct users to this module's config page. Also do a little cleanup
+ * to clarify external caching.
+ */
+function ape_form_system_performance_settings_alter(&$form, &$form_state) {
+  unset($form['caching']['page_cache_maximum_age']);
+
+  $form['clear_cache']['#weight'] = -5;
+  $form['caching']['#title'] = t('General Caching');
+  $form['caching']['#weight'] = -4;
+  $form['ape_caching'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('External page caching'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE,
+    '#weight' => -3,
+  );
+
+  $form['ape_caching']['page_cache_maximum_age'] = array(
+    '#markup' => l(t('Configure external page caching strategy with APE.'), 'admin/config/development/ape'),
+  );
+}
+
+/**
+ * Check if global page caching is enabled and the user is anonymous.
+ *
+ * @return bool
+ *   True if the user is anonymous, caching is enabled and the path is not in
+ *   the excludes list.
+ */
+function ape_check_cacheable() {
+
+  if (user_is_anonymous() && variable_get('cache', 0) && drupal_page_is_cacheable()) {
+    $excluded = ape_check_path(variable_get('ape_exclusions', ''), $_GET['q']);
+    if (!$excluded) {
+      return TRUE;
+    }
+  }
+  else {
+    return FALSE;
+  }
+}
+
+/**
+ * Statically cache an expiration length from other modules.
+ *
+ * @param int $new_age
+ *   The new value for age.
+ *
+ * @return int
+ *   The resulting max age.
+ */
+function ape_cache_set($new_age = NULL) {
+  $max_age = &drupal_static(__FUNCTION__);
+  if (!isset($max_age)) {
+    $max_age = NULL;
+  }
+  if (is_null($max_age) && !is_null($new_age)) {
+    $max_age = $new_age;
+  }
+  return $max_age;
+}
+
+/**
+ * Sets the cache control header.
+ *
+ * @param int $max_age
+ *   The cache expiration age, in seconds.
+ */
+function ape_set_cache_header($max_age) {
+  $name = 'Cache-Control';
+  $value = 'no-cache, must-revalidate, post-check=0, pre-check=0';
+  if ($max_age > 0 && ape_check_cacheable()) {
+    $value = 'public, max-age=' . $max_age;
+  }
+  drupal_add_http_header($name, $value);
+}
+
+/**
+ * Checks saved paths against the current request path.
+ *
+ * @param string $haystack
+ *   The list of paths to compare.
+ * @param string $path
+ *   The path to check against.
+ *
+ * @return bool
+ *   Whether the path was found within the haystack.
+ */
+function ape_check_path($haystack, $path = NULL) {
+  if (!$path) {
+    $path = $_GET['q'];
+  }
+  // This is pretty much lifted from the block module.
+  // Convert path to lowercase. This allows comparison of the same path
+  // with different case. Ex: /Page, /page, /PAGE.
+  $pages = drupal_strtolower($haystack);
+  // Convert the Drupal path to lowercase.
+  $path = drupal_strtolower(drupal_get_path_alias($path));
+  // Compare the lowercase internal and lowercase path alias (if any).
+  $page_match = drupal_match_path($path, $pages);
+  if ($path != $_GET['q']) {
+    $page_match = $page_match || drupal_match_path($path, $pages);
+  }
+  return $page_match;
+}
