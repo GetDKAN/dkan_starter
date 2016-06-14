@@ -127,6 +127,7 @@ switch(ENVIRONMENT) {
     // when exporting using features_master.
      $conf['features_master_temp_disabled_modules'] = array(
       'acquia_agent',
+      'acquia_spi',
       'acquia_purge',
       'syslog',
       'dkan_acquia_expire',
