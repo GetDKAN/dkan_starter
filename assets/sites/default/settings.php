@@ -235,7 +235,7 @@ include "settings.nucivic.php";
 if (!isset($_ENV["AH_PRODUCTION"])) {
 
   // EDIT THE NEXT LINE TO MATCH your Search API "server" machinename.
-  $search_api_server_machine_name = 'acquia_solr_server';
+  $search_api_server_machine_name = 'dkan_acquia_solr';
 
   $conf['search_api_acquia_overrides'][$search_api_server_machine_name] = array(
       #'path' => '/solr/[core_ID]',
