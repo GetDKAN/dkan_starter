@@ -6,7 +6,7 @@
 includes[dkan] = build-dkan.make
 
 ; Site specific custom modules
-includes[] = custom.make
+includes[custom] = custom.make
 
 ; Set the default subdirectory for projects so we don't have to specifically set it each time, but make sure dkan stays in /profiles
 defaults[projects][subdir] = contrib
@@ -18,7 +18,8 @@ projects[] = devinci
 projects[] = environment
 projects[] = environment_indicator
 projects[] = features_banish
-projects[] = features_master
+projects[features_master] = 7.x-1.x
+projects[features_master][patch][2725035] = "https://www.drupal.org/files/issues/arguments-are-not-arrays_2725035_3.patch"
 
 ; Optional Projects
 ; =================
@@ -93,6 +94,9 @@ projects[] = entitycache
 projects[] = admin_views
 projects[] = fast_404
 
+projects[ape][version] = 1.1
+projects[ape][subdir] = contrib
+
 ; Security
 ; ==========
 projects[] = securepages
@@ -113,6 +117,11 @@ projects[dkan_acquia_search_solr][type] = module
 projects[dkan_acquia_search_solr][download][type] = git
 projects[dkan_acquia_search_solr][download][url] = https://github.com/NuCivic/dkan_acquia_search_solr.git
 projects[dkan_acquia_search_solr][download][branch] = master
+
+projects[dkan_health_status][type] = module
+projects[dkan_health_status][download][type] = git
+projects[dkan_health_status][download][url] = https://github.com/NuCivic/dkan_health_status.git
+projects[dkan_health_status][download][branch] = 7.x-1.x
 
 ;projects[nucivic_data_devops][type] = module
 ;projects[nucivic_data_devops][download][type] = git

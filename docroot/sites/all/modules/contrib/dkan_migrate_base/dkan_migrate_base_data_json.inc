@@ -197,45 +197,22 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
    * @return
    * Returns TRUE if we should create or update.
    */
-  public function prepareCustomHighwater($row, $table) {
+  public function prepareCustomHighwater($identifier, $modified) {
+    $table = $this->map->getMapTable();
     $query = 'SELECT modified FROM ' . $table . ' WHERE sourceid1 = :identifier';
-    $modified = db_query($query, array(':identifier' => $row->identifier))
+    $existingRecord = db_query($query, array(':identifier' => $identifier))
       ->fetchObject();
 
-    // Update the highwater mark if modified is greater than previous.
-    if ($modified && ($row->modified > $modified)) {
-      db_update($table)
-        ->condition('sourceid1', $row->identifier, "=")
-        ->fields(array(
-          'modified' => strtotime($row->modified)
-        ))
-        ->execute();
-    }
     // If the modified row is greater than the map we want to update.
-    if (strtotime($row->modified) > $row->migrate_map_modified) {
+    if (strtotime($modified) > strtotime($existingRecord->modified)) {
+      return TRUE;
+    }
+    // If modified is missing, update.
+    elseif (!$existingRecord->modified) {
       return TRUE;
     }
   }
 
-  /**
-   * Adds existing nodes with the same title to map.
-   */
-  public function mapExisting($row) {
-    $existingUnmapped = db_query(
-      'select nid from {node} where title = :title',
-      array(':title' => $row->title)
-    )->fetchfield();
-    if (is_numeric($existingUnmapped)) {
-      $mapped = db_query(
-        'SELECT destid1 FROM {migrate_map_'. $table->machineName . '} WHERE sourceid1 = :uuid',
-        array(':uuid' => $row->uuid)
-      )->fetchField();
-      // Only update existing if it isn't already mapped.
-      if (!$mapped) {
-        // TODO: add to map.
-      }
-    }
-  }
 
   /**
    * Loads existing nodes for later inspection.
@@ -257,12 +234,9 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
   public function prepareRow($row) {
     // Only update if the modified row in the source is greater than the
     // previous modified date.
-    
-    if (!$this->prepareCustomHighwater($row, $this->map->getMapTable())) {
+    if (!$this->prepareCustomHighwater($row->identifier, $row->modified)) {
       return FALSE;
     }
-
-    //$this->mapExisting($row);
 
     $this->loadExisting($row);
 
@@ -278,6 +252,7 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
     if (isset($row->keyword)) {
       $tags = taxonomy_vocabulary_machine_name_load('tags');
       foreach ($row->keyword as $tag) {
+        $tag = strtolower($tag);
         $this->createTax($tag, 'tags', $tags->vid);
       }
     }
@@ -319,7 +294,6 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
         $row->dataQuality = 'true';
       }
     }
-    $this->deleteDuplicateDataSets($row);
     if ($row->existing) {
       $this->deleteExistingResources($row->existing);
     }
@@ -341,7 +315,9 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
     }
     $nids = $query->execute()->fetchAllKeyed();
 
-    node_delete_multiple(array_keys($nids));
+    if (isset($nids) && $nids) {
+      node_delete_multiple(array_keys($nids));
+    }
   }
 
   /**
@@ -455,6 +431,7 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
         $res->url = $resource['downloadURL'];
         $res->api = $resource['accessURL'];
         $resource_node = $this->createResourceNode($res);
+        $this->prepareCustomHighwater($resource_node->uuid, $row->modified);
         $this->map->saveIDMapping($resource_node, array($resource_node->nid), 0, 0, '');
         $resources[] = $resource_node->nid;
       }
@@ -462,17 +439,48 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
     return $resources;
   }
 
-  public function processImport(array $options = array()) {
-    $result = parent::processImport($options);
+  /**
+   * Updates nodes to properly reflect created and updated dates from sources.
+   */
+  public function updateCreatedModified($nid, $created, $changed) {
+    if (is_numeric($nid) && is_numeric($created) && is_numeric($changed)) {
+      db_query('UPDATE {node} SET created=:created, changed=:changed WHERE nid=:nid', array(':created'=>strtotime($created),':changed'=>strtotime($changed),':nid'=>$nid));
+    }
+  }
+
+  public function updateHighwater($modified, $identifier, $nid) {
     $table = $this->map->getMapTable();
+    $query = 'SELECT destid1 FROM ' . $table . ' WHERE sourceid1 = :identifier';
+    $existingRecord = db_query($query, array(':identifier' => $identifier))
+      ->fetchObject();
+    if (!$existingRecord) {
+      db_insert($table)
+        ->fields(array(
+          'sourceid1' => $identifier,
+          'destid1' => $nid,
+          'modified' =>$modified,))
+      ->execute();
+    }
+
     db_update($table)
-      ->condition('modified', "", "=")
+      ->condition('sourceid1', $identifier, "=")
       ->fields(array(
-        'modified' => time()
+        'modified' => $modified
       ))
       ->execute();
-  
-    return $result;
+  }
+
+  /**
+   * Implements prepareRow.
+   */
+  public function complete($entity, $row) {
+    $this->updateCreatedModified($entity->nid, $row->issued, $row->modified);
+    if ($entity->field_resources) {
+      foreach ($entity->field_resources['und'] as $rid) {
+        $this->updateCreatedModified($rid['target_id'], $row->issued, $row->modified);
+      }
+    }
+    $this->updateHighwater($row->modified, $row->identifier, $entity->nid);
   }
 
   /**
@@ -488,6 +496,7 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
     }
     $entity->status = 1;
     $entity->vid = isset($entity->vid) ? $entity->vid : '';
+
   }
 }
 

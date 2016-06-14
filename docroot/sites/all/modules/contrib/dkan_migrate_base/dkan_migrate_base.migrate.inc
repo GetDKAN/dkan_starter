@@ -446,9 +446,14 @@ abstract class MigrateDKAN extends Migration {
               // html can be listed as a file type for the remote file field but
               // shouldn't be imported.
               && $type != 'html') {
-              $file = remote_stream_wrapper_file_create_by_uri($res->url);
-              $file->status = FALSE;
-              file_save($file);
+              if ($fid = $this->checkExistingFile($res->url)) {
+                $file = file_load($fid);
+              }
+              else {
+                $file = remote_stream_wrapper_file_create_by_uri($res->url);
+                $file->status = FALSE;
+                file_save($file);
+              }
             }
           }
         }
@@ -500,6 +505,16 @@ abstract class MigrateDKAN extends Migration {
     }
     node_save($node);
     return $node;
+  }
+
+  /**
+   * Checks file_managed for existing URI and returns fid if present.
+   */
+  public function checkExistingFile($uri) {
+    if ($fid = db_query("SELECT fid from {file_managed} WHERE uri = :uri", array(":uri" => $uri))->fetchField()) {
+      return $fid;
+    }
+    return FALSE;
   }
 
   /**

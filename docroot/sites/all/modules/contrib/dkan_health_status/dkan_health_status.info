@@ -1,0 +1,6 @@
+name = DKAN Health Status 
+description = Health Status checks for DKAN 
+core = 7.x
+
+dependencies[] = 'dkan_dataset'
+dependencies[] = 'dkan_sitewide'

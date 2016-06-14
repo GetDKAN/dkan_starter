@@ -269,7 +269,11 @@ function _features_master_features_revert_permissions($module, $data) {
   foreach ($roles as $rid => $role) {
     $write_perms = array();
     foreach ($permissions as $perm_name => $perm) {
-      if (in_array($role, $data['permissions'][$perm_name]['roles'])) {
+      $p_roles = array();
+      if (is_array($data['permissions'][$perm_name]['roles'])) {
+        $p_roles = $data['permissions'][$perm_name]['roles'];
+      }
+      if (in_array($role, $p_roles)) {
         $write_perms[$perm_name] = $perm_name;
       }
       else {
@@ -289,16 +293,17 @@ function _features_master_features_revert_permissions($module, $data) {
 function _features_master_features_revert_themes($module, $data) {
 
   $current_enabled_themes = _features_master_get_themes();
+  $data_themes = is_array($data['themes']) ? $data['themes'] : array();
 
   // Enable the defined themes
-  if ($enable_themes = array_diff_key($data['themes'], $current_enabled_themes)) {
+  if ($enable_themes = array_diff_key($data_themes, $current_enabled_themes)) {
 
     theme_enable(array_values($enable_themes));
 
     $themes_string = implode(", ", $enable_themes);
     drupal_set_message(t('FEATURES MASTER: The following themes were enabled successfully: @themes', array('@themes' => $themes_string)));
   }
-  if ($disable_themes = array_diff_key($current_enabled_themes, $data['themes'])) {
+  if ($disable_themes = array_diff_key($current_enabled_themes, $data_themes)) {
     theme_disable(array_values($disable_themes));
 
     $themes_string = implode(", ", $disable_themes);

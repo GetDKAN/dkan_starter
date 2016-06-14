@@ -165,8 +165,6 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
    * Test Agent subscription methods.
    */
   public function testAcquiaAgentSubscription() {
-    // Set a wrapper on drupal_http_request() to record connection request counts.
-    variable_set('drupal_http_request_function', '_acquia_connector_test_http_request_wrapper');
 
     // Starts as inactive.
     $active = acquia_agent_subscription_is_active();
@@ -299,6 +297,24 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
     $this->drupalPost($this->migrate_path, $edit_fields, $submit_button);
     $this->drupalGet($this->migrate_path);
     $this->assertNoFieldChecked('edit-migrate-files', "The migrate files checkbox is not checked.");
+
+    // Test migration setup and destination.
+    variable_set('drupal_http_request_function', 'acquia_connector_test_upload');
+    variable_set('acquia_connector_test_upload_server_to_fail', TRUE);
+
+    $edit_fields = array(
+      'environment' => 'dev',
+      'migrate_files' => TRUE,
+      'reduce_db_size' => TRUE,
+    );
+
+    $this->drupalPost($this->migrate_path, $edit_fields, 'Migrate');
+    $this->assertText('Unable to connect to migration destination site (unexpected response code: 500)');
+
+    variable_del('acquia_connector_test_upload_server_to_fail');
+    $this->drupalPost($this->migrate_path, $edit_fields, 'Migrate');
+    $this->assertNoText('Unable to connect to migration destination site (unexpected response code: 500)');
+    variable_del('drupal_http_request_function');
   }
 
   /**

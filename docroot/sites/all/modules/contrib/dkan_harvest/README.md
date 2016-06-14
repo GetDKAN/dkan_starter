@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/NuCivic/dkan_harvest.svg?branch=master)](https://travis-ci.org/NuCivic/dkan_harvest)
-
+[![Build Status](https://travis-ci.org/NuCivic/dkan_harvest.svg?branch=7.x-1.x)](https://travis-ci.org/NuCivic/dkan_harvest)
 ## What is DKAN Harvest?
 
 DKAN Harvest is a module that can be used to regulary harvest open data from open `APIs` **(Only project open data data.json endpoints for now)**. 
