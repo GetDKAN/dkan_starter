@@ -13,6 +13,7 @@ function custom_config_features_master_defaults() {
   $features_master['modules'] = array(
     'acquia_agent' => 'acquia_agent',
     'acquia_purge' => 'acquia_purge',
+    'acquia_spi' => 'acquia_spi',
     'admin_menu' => 'admin_menu',
     'admin_menu_source' => 'admin_menu_source',
     'admin_menu_toolbar' => 'admin_menu_toolbar',
@@ -103,6 +104,8 @@ function custom_config_features_master_defaults() {
     'geophp' => 'geophp',
     'globalredirect' => 'globalredirect',
     'google_fonts_api' => 'google_fonts_api',
+    'google_tag' => 'google_tag',
+    'googleanalytics' => 'googleanalytics',
     'gravatar' => 'gravatar',
     'honeypot' => 'honeypot',
     'image' => 'image',
