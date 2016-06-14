@@ -19,18 +19,3 @@ switch(ENVIRONMENT) {
     // );
     break;
 }
-
-// Fake the 'derived_key' used to connect to Solr, if we can't find the
-// Acquia-set "AH_PRODUCTION" environment variable.
-// This will cause all requests to Acquia Search instances respond with 403.
-if (!isset($_ENV["AH_PRODUCTION"])) {
-
-  // EDIT THE NEXT LINE TO MATCH your Search API "server" machinename.
-  $search_api_server_machine_name = 'dkan_acquia_solr';
-
-  $conf['search_api_acquia_overrides'][$search_api_server_machine_name] = array(
-      #'path' => '/solr/[core_ID]',
-      #'host' => '[hostname].acquia-search.com',
-      'derived_key' => 'FAKE',
-  );
-}
