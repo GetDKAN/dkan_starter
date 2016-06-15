@@ -233,7 +233,7 @@ include "settings.nucivic.php";
 // Fake the 'derived_key' used to connect to Solr, if we can't find the
 // Acquia-set "AH_PRODUCTION" environment variable.
 // This will cause all requests to Acquia Search instances respond with 403.
-if (!isset($_ENV["AH_PRODUCTION"])) {
+if (!isset($_ENV["AH_SITE_ENVIRONMENT"])) {
 
   // EDIT THE NEXT LINE TO MATCH your Search API "server" machinename.
   $search_api_server_machine_name = 'acquia_solr_server';
