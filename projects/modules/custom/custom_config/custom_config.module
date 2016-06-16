@@ -40,7 +40,7 @@ function custom_config_modules_disabled($modules) {
   // Cycle through all Search API Solr indexes and force to read_only mode.
   if ($set_read_only) {
     foreach ($indexes as &$index) {
-      if ($index->server == 'acquia_solr_server') {
+      if ($index->server == 'dkan_acquia_solr') {
         $index->read_only = "1";
       }
     }
