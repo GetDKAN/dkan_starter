@@ -35,6 +35,7 @@ commands:
       ahoy drush env-switch local --force
       ahoy cmd-proxy drush cc drush
       ahoy drush -y fr --force dkan_sitewide_search_db;
+      ahoy drush -y fr --force visualization_entity_charts_dkan;
       ahoy drush rr
       ahoy cmd-proxy drush cc drush
       ahoy drush search-api-index datasets
