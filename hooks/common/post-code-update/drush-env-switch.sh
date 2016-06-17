@@ -23,9 +23,9 @@ if [[ "$drupal" =~ "Successful" ]]; then
   if [ -z "$DB_BASED_SEARCH" ]; then
     echo "SOLR Search, avoiding indexing data"
   else
-    drush @$drush_alias search_api_index search-api-index datasets
-    drush @$drush_alias search_api_index search-api-index groups_di
-    drush @$drush_alias search_api_index search-api-index stories_index
+    drush @$drush_alias search-api-index datasets
+    drush @$drush_alias search-api-index groups_di
+    drush @$drush_alias search-api-index stories_index
     echo "DB Search, indexing data"
   fi
 else
