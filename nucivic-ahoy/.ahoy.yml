@@ -44,6 +44,14 @@ commands:
     usage: A series of commands to handle ci setup
     import: nucivic-ahoy/ci.ahoy.yml
 
+  tools:
+    usage: A series of commands to setup dev tools
+    import: nucivic-ahoy/tools.ahoy.yml
+
+  debug:
+    usage: A series of commands to setup debugging
+    import: nucivic-ahoy/debug.ahoy.yml
+
   launch-checklist:
     usage: A series of commands to handle pre launch checks
     import: nucivic-ahoy/launch-checklist.ahoy.yml
