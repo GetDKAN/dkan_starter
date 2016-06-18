@@ -267,6 +267,7 @@ function devinci_custom_environment_switch($target_env, $current_env) {
       drupal_flush_all_caches();
       features_master_features_revert('custom_config');
       features_master_features_revert('custom_config');
+      features_revert_module('visualization_entity_charts_dkan');
       features_revert_module('dkan_dataset_content_types');
       features_revert_module('dkan_sitewide_search_db');
       features_revert_module('dkan_data_story');
