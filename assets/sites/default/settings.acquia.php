@@ -10,27 +10,27 @@ if (isset($conf['memcache_servers'])) {
 }
 
 if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
-  // Set 2 session cookies, one secure and one not.
-  $conf['https'] = FALSE;
-  // Enable https redirection.
-  $conf['securepages_enable'] = FALSE;
-  $sitegroup = getenv('AH_SITE_GROUP');
-  $env = getenv(['AH_SITE_ENVIRONMENT']);
+  $env = getenv('AH_SITE_ENVIRONMENT');
+  // There's no way to predict the urls anymore. Replace with actual urls.
   switch ($env) {
     case 'dev':
+      $base_url="http://devurl";
+      break;
     case 'test':
-      $env = $env == 'test' ? 'stg': $env;
-      $base_url="http://$sitegroup.$env.prod.acquia-sites.com";
-      $conf['securepages_basepath'] = 'http://$sitegroup.$env.prod.acquia-sites.com';
-      $conf['securepages_basepath_ssl'] = 'https://$sitegroup.$env.prod.acquia-sites.com';
+      $base_url="http://testurl";
       break;
     case 'prod':
-      $base_url="http://$sitegroup.$env.prod.acquia-sites.com";
-      $conf['securepages_basepath'] = 'http://$sitegroup.prod.acquia-sites.com';
-      $conf['securepages_basepath_ssl'] = 'https://$sitegroup.prod.acquia-sites.com';
+      $base_url="http://produrl";
       break;
   }
 
+  $conf['https'] = FALSE;
+  $conf['securepages_enable'] = FALSE;
+  $conf['securepages_basepath'] = $base_url;
+  $conf['securepages_basepath_ssl'] = str_replace('http://', 'https://', $base_url);
+  
+  $sitegroup = getenv('AH_SITE_GROUP');
+  
   // New relic settings per enviroment.
   if (extension_loaded('newrelic')) {
     switch ($env) {
