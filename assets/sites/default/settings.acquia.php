@@ -14,13 +14,13 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   // There's no way to predict the urls anymore. Replace with actual urls.
   switch ($env) {
     case 'dev':
-      $base_url="http://devurl";
+      $base_url = $conf['acquia']['dev']['base_url'];
       break;
     case 'test':
-      $base_url="http://testurl";
+      $base_url = $conf['acquia']['test']['base_url'];
       break;
     case 'prod':
-      $base_url="http://produrl";
+      $base_url = $conf['acquia']['prod']['base_url'];
       break;
   }
 
