@@ -1,3 +1,11 @@
 default:
   hostname: localhost
   https_everywhere: FALSE
+acquia:
+  dev:
+    base_url: http://devurl
+  test:
+    base_url: http://testurl
+  prod:
+    base_url: http://produrl
+    

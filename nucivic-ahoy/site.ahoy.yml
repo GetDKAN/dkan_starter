@@ -401,7 +401,8 @@ commands:
       rsync -av data_starter_private/build-dkan.make build-dkan.make
       rsync -av data_starter_private/build.make build.make
       rsync -av data_starter_private/circle.yml circle.yml
-      rsync -av data_starter_private/dkan/ dkan/
+      rm -rf dkan
+      cp -r data_starter_private/dkan dkan
       rsync -av data_starter_private/docroot/sites/all/modules/contrib/ docroot/sites/all/modules/contrib/
       rsync -av data_starter_private/hooks/ hooks/
       rsync -av data_starter_private/projects/ projects/
