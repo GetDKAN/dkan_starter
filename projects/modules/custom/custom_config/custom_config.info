@@ -4,6 +4,7 @@ core = 7.x
 package = Custom
 version = 7.x-1.0
 project = custom_config
+dependencies[] = data_config
 dependencies[] = dkan_sitewide_user
 dependencies[] = features
 dependencies[] = features_banish
