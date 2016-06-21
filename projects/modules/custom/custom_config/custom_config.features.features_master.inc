@@ -8,6 +8,7 @@
  * Implements hook_features_master_defaults().
  */
 function custom_config_features_master_defaults() {
+  module_load_include('module', 'data_config');
 
   $features_master = data_config_enabled_modules();
   
