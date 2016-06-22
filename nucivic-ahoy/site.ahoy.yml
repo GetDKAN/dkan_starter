@@ -411,6 +411,7 @@ commands:
       rsync -av data_starter_private/docroot/sites/all/modules/contrib/ docroot/sites/all/modules/contrib/
       rsync -av data_starter_private/hooks/ hooks/
       rsync -av --exclude 'data_starter_private/projects/modules/custom' data_starter_private/projects/ projects/
+      rsync -av data_starter_private/projects/modules/data_config projects/modules/data_config
       rsync -av data_starter_private/run-tests.sh run-tests.sh
       rsync -av data_starter_private/.probo.yml .probo.yml
       rsync -av data_starter_private/OWNERS.md OWNERS.md
