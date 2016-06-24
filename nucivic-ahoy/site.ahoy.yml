@@ -15,6 +15,11 @@ commands:
         cp assets/sites/default/default.settings.php assets/sites/default/settings.php
       fi
 
+      if [ "$CI" = "true" ]; then
+        # Drush alias points to /var/www/docroot so we need this here.
+        sudo ln -sf /home/ubuntu/$CIRCLE_PROJECT_REPONAME/docroot /var/www/docroot
+      fi
+
       if [ "$AHOY_CMD_PROXY" == "DOCKER" ]; then
         cp assets/sites/default/settings.docker.demo.php assets/sites/default/settings.docker.php
         ahoy docker up

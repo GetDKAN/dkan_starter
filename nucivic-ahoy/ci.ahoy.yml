@@ -39,5 +39,5 @@ commands:
       ahoy drush sqlc < delete.sql
       rm delete.sql
       name=$(ahoy site name)
-      ahoy cmd-proxy bash hooks/common/post-code-deploy/deploy.sh $name local
+      ahoy cmd-proxy bash hooks/common/post-code-deploy/drush-env-switch.sh $name local
       ahoy drush user-password 1 --password='SuperSecret!321'
