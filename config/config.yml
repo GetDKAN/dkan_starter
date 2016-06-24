@@ -1,3 +1,22 @@
 default:
   hostname: localhost
   https_everywhere: FALSE
+acquia:
+  subscription: 'professional'
+  dev:
+    base_url: http://devurl
+    core_id: changeme
+    derived_key: changeme
+  test:
+    base_url: http://testurl
+    core_id: changeme
+    derived_key: changeme
+  ra:
+    base_url: http://testurl
+    core_id: changeme
+    derived_key: changeme
+  prod:
+    base_url: http://produrl
+    core_id: changeme
+    derived_key: changeme
+    

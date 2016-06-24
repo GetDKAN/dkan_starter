@@ -9,10 +9,15 @@ commands:
       rm -f assets/sites/default/settings.docker.php
       rm -f assets/sites/default/settings.local.php
       ahoy cmd-proxy mkdir -p ~/.drush
-      ahoy cmd-proxy 'find ./assets -type f -name "*aliases*php" -exec cp "{}" ~/.drush \;'
+      ahoy cmd-proxy  bash ./nucivic-ahoy/.scripts/drush.alias.sh
 
       if [ ! -f assets/sites/default/settings.php ] && [ -f assets/sites/default/default.settings.php ]; then
         cp assets/sites/default/default.settings.php assets/sites/default/settings.php
+      fi
+
+      if [ "$CI" = "true" ]; then
+        # Drush alias points to /var/www/docroot so we need this here.
+        sudo ln -sf /home/ubuntu/$CIRCLE_PROJECT_REPONAME/docroot /var/www/docroot
       fi
 
       if [ "$AHOY_CMD_PROXY" == "DOCKER" ]; then
@@ -397,14 +402,15 @@ commands:
       cd data_starter_private
       git checkout {{args}}
       cd ..
-      rsync -av data_starter_private/assets/sites/default/ assets/sites/default/
+      rsync -av --exclude 'data_starter_private/assets/sites/default/settings.nucivic.php' data_starter_private/assets/sites/default/ assets/sites/default/
       rsync -av data_starter_private/build-dkan.make build-dkan.make
       rsync -av data_starter_private/build.make build.make
       rsync -av data_starter_private/circle.yml circle.yml
-      rsync -av data_starter_private/dkan/ dkan/
+      rm -rf dkan
+      cp -r data_starter_private/dkan dkan
       rsync -av data_starter_private/docroot/sites/all/modules/contrib/ docroot/sites/all/modules/contrib/
       rsync -av data_starter_private/hooks/ hooks/
-      rsync -av data_starter_private/projects/ projects/
+      rsync -av --exclude 'data_starter_private/projects/modules/custom' data_starter_private/projects/ projects/
       rsync -av data_starter_private/run-tests.sh run-tests.sh
       rsync -av data_starter_private/.probo.yml .probo.yml
       rsync -av data_starter_private/OWNERS.md OWNERS.md
