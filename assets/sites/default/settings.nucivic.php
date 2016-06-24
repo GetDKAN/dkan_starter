@@ -6,6 +6,8 @@
 /**
  * NuCivic specific config per environment
  */
+$conf['features_master_temp_enabled_modules'][] = 'dkan_default_content';
+
 switch(ENVIRONMENT) {
   case 'development':
   case 'test':
