@@ -200,9 +200,7 @@ switch(ENVIRONMENT) {
     $conf['page_cache_maximum_age'] = 21600;
     $conf['ape_alternative_lifetime'] = 300;
     $conf['ape_alternatives'] = "search
-    search*
-    dataset
-    dataset*";
+search*";
     $conf['page_compression'] = 1;
     $conf['cache'] = 1;
     $conf['preprocess_js'] = 1;
