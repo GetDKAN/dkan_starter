@@ -18,6 +18,7 @@ function custom_config_features_master_defaults() {
     'admin_menu_source' => 'admin_menu_source',
     'admin_menu_toolbar' => 'admin_menu_toolbar',
     'adminrole' => 'adminrole',
+    'ape' => 'ape',
     'autocomplete_deluxe' => 'autocomplete_deluxe',
     'beautytips' => 'beautytips',
     'block' => 'block',
