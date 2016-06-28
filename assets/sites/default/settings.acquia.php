@@ -35,8 +35,7 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
       case 'dev':
       case 'test':
       case 'prod':
-        $app_name = '$sitegroup.$env';
-        newrelic_set_appname($app_name, '', 'true');
+        newrelic_set_appname("$sitegroup.$env", '', 'true');
         break;
     }
   }
