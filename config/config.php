@@ -2,7 +2,7 @@
 /**
  * @file
  * Contents generated automatically by `ahoy site config` command.
- * Do not edit.
+ * DO NOT EDIT.
  */
 $conf = array (
   'default' => 

@@ -27,6 +27,14 @@ else if (file_exists($settings_docker)) {
   include $settings_docker;
 }
 
+/**
+ * Include config file from config folder.
+ */
+$config_file = DRUPAL_ROOT . '/../config/config.php';
+if (file_exists($config_file)) {
+  include $config_file;
+}
+
 /******************************************************
  * REQUIRED: Setup standard environments using devinci.
  ******************************************************/

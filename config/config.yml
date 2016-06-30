@@ -3,6 +3,8 @@ default:
   https_everywhere: FALSE
 acquia:
   subscription: 'professional'
+  search:
+    host: changeme
   dev:
     base_url: http://devurl
     core_id: changeme
