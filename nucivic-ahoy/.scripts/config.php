@@ -3,28 +3,35 @@
  * Transpose config.yml to php array.
  */
 
-include 'vendor/autoload.php';
+include realpath(__DIR__ . '/../vendor/autoload.php');
+
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
 
+// Setup twig.
+$loader = new Twig_Loader_Filesystem(realpath(__DIR__ . '/../.templates'));
+$twig = new Twig_Environment($loader, array(
+    'cache' => realpath(__DIR__ . '/../.cache'),
+));
+$twig->addFunction(new Twig_SimpleFunction('var_export', 'var_export'));
+
 try {
+  // Parse yaml.
   $yaml = new Parser();
-  $config = $yaml->parse(file_get_contents('../config/config.yml'));
-  $file = fopen('../config/config.php', 'w');
+  $config = $yaml->parse(file_get_contents(__DIR__ . '/../../config/config.yml'));
+  
+  // Render yaml using twig template.
+  $context = array(
+    'config' => $config,
+  );
+  $output = $twig->render(
+    'config.php.twig',
+    $context
+  );
 
-  $config_string = var_export($config, TRUE);
-
-  $output = <<<EOT
-<?php
-/**
- * @file
- * Contents generated automatically by `ahoy site config` command.
- * Do not edit.
- */
-\$conf = $config_string;
-EOT;
+  // Write the php file.
+  $file = fopen(__DIR__ . '/../../config/config.php', 'w');
   fwrite($file, $output);
-
 } catch (Exception $e) {
   echo "An error happened trying to transpose the config.yml file:\n{$e->getMessage()}\n";
 } finally {
