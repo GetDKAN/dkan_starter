@@ -13,21 +13,7 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   $env = getenv('AH_SITE_ENVIRONMENT');
   $sitegroup = getenv('AH_SITE_GROUP');
 
-  // There's no way to predict the urls anymore. Replace with actual urls.
   $base_url = $conf['acquia'][$env]['base_url'];
-
-  if ($conf['acquia']['subscription'] == 'enterprise') {
-    switch ($env) {
-    case 'dev':
-    case 'test':
-      $env = $env == 'test' ? 'stg': $env;
-      $base_url = 'http://$sitegroup$env.prod.acquia-sites.com';
-      break;
-    case 'prod':
-      $base_url = 'http://$sitegroup.prod.acquia-sites.com';
-      break;
-    }
-  }
   $conf['securepages_basepath'] = $base_url;
   $conf['securepages_basepath_ssl'] = str_replace('http://', 'https://', $base_url);
 
