@@ -52,8 +52,6 @@ dependencies:
     - ahoy ci setup
     - ahoy ci deploy
     - ahoy site fail-when-bad-disable
-    - BEHAT_ENV=$(echo $(ahoy cmd-proxy printenv HOSTNAME) | tr -d "\r" )
-    - ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh $BEHAT_FOLDER
     # Run a webserver using drush.
     - 'ahoy drush --yes runserver :8888':
         background: true
