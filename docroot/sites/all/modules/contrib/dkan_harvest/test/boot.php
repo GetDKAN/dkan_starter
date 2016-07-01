@@ -7,15 +7,15 @@
 use Drupal\Driver\DrupalDriver;
 use Drupal\Driver\Cores\Drupal7;
 
-require 'vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-$dir = explode('/sites/', getcwd());
 // Path to Drupal.
-$path = $dir[0];
-// Host.
-$uri = 'http://localhost';
+$dir = implode('/', array(__DIR__, '..', '..', 'docroot'));
 
-$driver = new DrupalDriver($path, $uri);
+// Host.
+$uri = getenv('DKAN_WEB_1_ENV_VIRTUAL_HOST') ? 'http://' . getenv('DKAN_WEB_1_ENV_VIRTUAL_HOST') : 'http://localhost';
+
+$driver = new DrupalDriver($dir, $uri);
 $driver->setCoreFromVersion();
 
 // Bootstrap Drupal.

@@ -1,5 +1,5 @@
 language: php
-sudo: false
+sudo: required
 
 php:
   - 5.5
@@ -9,32 +9,21 @@ mysql:
   username: root
   encoding: utf8
 
+
 install:
   - composer install
   - mysql -e 'create database dkan_travis;'
 
   # Install latest Drush 7.
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - composer global require --no-interaction drush/drush:dev-master
-  - composer global require --no-interaction youngj/httpserver:*
+  - composer global require --no-interaction drush/drush:8.0.2
 
 before_script:
   # Install DKAN
-  - cd ~
-  - git clone https://github.com/NuCivic/dkan.git
-  - git clone https://github.com/NuCivic/dkan-drops-7.git
-  - cd dkan-drops-7
-
-  - drush si dkan --sites-subdir=default --db-url=mysql://root:@127.0.0.1:3306/dkan_travis --account-name=admin --account-pass=admin  --site-name="DKAN" install_configure_form.update_status_module='array(FALSE,FALSE)' --yes
-  - drush cc all --yes
-
-  - cp -r /home/travis/build/NuCivic/dkan_migrate_base sites/all/modules/.
-  - cd sites/all/modules
-  - git clone https://github.com/NuCivic/open_data_federal_extras.git
-  - drush en -y open_data_federal_extras
-  - drush en -y dkan_migrate_base
-  - drush en -y dkan_migrate_base_example
-  - cd dkan_migrate_base
+  - export DATABASE_URL=mysql://root:@127.0.0.1:3306/dkan_travis
+  - bash dkan-module-init.sh --deps --build=$DATABASE_URL
+  - cd dkan_migrate_base && composer install && cd ..
+  - ahoy drush en -y dkan_migrate_base_example open_data_federal_extras
 
 script:
-  - bin/phpunit --configuration tests
+  - dkan_migrate_base/bin/phpunit --configuration dkan_migrate_base/tests
