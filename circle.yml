@@ -50,7 +50,7 @@ dependencies:
     - drush cc drush
     - drush dl -n registry_rebuild-7.x-2.3
     - ahoy ci setup
-    - ahoy updatedb -y
+    - ahoy drush updatedb -y
     - ahoy ci deploy
     - ahoy site fail-when-bad-disable
     # Run a webserver using drush.
