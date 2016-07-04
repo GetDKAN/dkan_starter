@@ -23,6 +23,7 @@ function custom_config_features_master_defaults() {
     'beautytips' => 'beautytips',
     'block' => 'block',
     'bueditor' => 'bueditor',
+    'bueditor_plus' => 'bueditor_plus',
     'chosen' => 'chosen',
     'color_field' => 'color_field',
     'colorizer' => 'colorizer',
