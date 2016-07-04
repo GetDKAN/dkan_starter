@@ -1,5 +1,7 @@
+<?php
+
 /**
- * Implements hook_update_N().
+ * Removes dkan_default_content.
  */
 function data_config_update_7001() {
   module_disable(array("dkan_default_content"));
