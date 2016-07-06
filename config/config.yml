@@ -5,6 +5,8 @@ data_starter:
   version: 7.x-1.12.5
 acquia:
   subscription: 'professional'
+  search:
+    host: changeme
   dev:
     base_url: http://devurl
     core_id: changeme
