@@ -1,0 +1,9 @@
+<?php
+
+/**
+ * Removes dkan_default_content.
+ */
+function data_config_update_7001() {
+  module_disable(array("dkan_default_content"));
+  drupal_uninstall_modules(array("dkan_default_content"));
+}
