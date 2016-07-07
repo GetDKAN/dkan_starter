@@ -9,7 +9,7 @@ commands:
       rm -f assets/sites/default/settings.docker.php
       rm -f assets/sites/default/settings.local.php
       ahoy cmd-proxy mkdir -p ~/.drush
-      ahoy cmd-proxy  bash ./nucivic-ahoy/.scripts/drush.alias.sh
+      ahoy cmd-proxy bash ./nucivic-ahoy/.scripts/drush.alias.sh
 
       if [ ! -f assets/sites/default/settings.php ] && [ -f assets/sites/default/default.settings.php ]; then
         cp assets/sites/default/default.settings.php assets/sites/default/settings.php
@@ -84,8 +84,8 @@ commands:
       ln -s ../../dkan docroot/profiles/dkan
       rm -rf dkan_old
       # No recursive prevents dkan build to happen. Run it now from dkan remake.
-      ahoy site overrides
       ahoy dkan remake
+      ahoy site overrides
       ahoy site post-build
       ahoy site config
       AHOY_CMD_PROXY=$TEMP
@@ -94,14 +94,21 @@ commands:
     usage: Overrides drupal-org.make with overrides.make
     cmd: |
       if [ -f overrides.make ]; then
-        cd nucivic-ahoy
-        composer install
-        php .scripts/overrides.php
+        cd nucivic-ahoy && composer install && cd ..
+        ahoy cmd-proxy drush php-script nucivic-ahoy/.scripts/overrides.php
+        rm -rf docroot/sites/all/modules/overrides
+        mkdir -p docroot/sites/all/modules/overrides
+        ahoy drush -y make --no-core --contrib-destination=overrides overriden_make.make --no-recursion --no-cache --verbose
+        mv overrides/modules/* docroot/sites/all/modules/overrides
+        rm -rf overrides
+        rm overriden_make.make
       fi
 
   post-build:
     usage: Runs (what used to be buildmanager) post build commands.
     cmd: |
+      # Remove dkan make overrides
+      cd dkan; git checkout drupal-org.make; cd ..
       # Setup a folder for contrib modules and themes.
       mkdir -p docroot/sites/all/modules/contrib
       mkdir -p docroot/sites/all/themes/contrib
@@ -338,9 +345,7 @@ commands:
   files-fix-permissions:
     usage: Fix the permissiosn for the files.
     cmd: |
-      ahoy cmd-proxy mkdir -p docroot/sites/default/files
-      ahoy cmd-proxy "find docroot/sites/default/files/ -type d -exec 'chmod o+rwx {} \\;'"
-      ahoy cmd-proxy "find docroot/sites/default/files/ -type f -exec 'chmod o+rw {} \\;'"
+      ahoy cmd-proxy  bash ./nucivic-ahoy/.scripts/site.files-fix-permissions.sh
     hide: true
 
   test:
@@ -411,7 +416,6 @@ commands:
       rsync -av data_starter_private/docroot/sites/all/modules/contrib/ docroot/sites/all/modules/contrib/
       rsync -av data_starter_private/hooks/ hooks/
       rsync -av --exclude 'data_starter_private/projects/modules/custom' data_starter_private/projects/ projects/
-      rsync -av data_starter_private/projects/modules/data_config projects/modules/data_config
       rsync -av data_starter_private/run-tests.sh run-tests.sh
       rsync -av data_starter_private/.probo.yml .probo.yml
       rsync -av data_starter_private/OWNERS.md OWNERS.md

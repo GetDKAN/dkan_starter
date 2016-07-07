@@ -19,7 +19,7 @@ try {
   // Parse yaml.
   $yaml = new Parser();
   $config = $yaml->parse(file_get_contents(__DIR__ . '/../../config/config.yml'));
-  
+
   // Render yaml using twig template.
   $context = array(
     'config' => $config,
