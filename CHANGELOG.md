@@ -1,4 +1,4 @@
-# CHANGELOG
+# Change log
 
 ## [Unreleased]
 ### Added
