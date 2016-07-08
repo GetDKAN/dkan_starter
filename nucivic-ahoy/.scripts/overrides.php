@@ -5,7 +5,7 @@ use Symfony\Component\Yaml\Dumper;
 
 try {
   $yaml = new Parser();
-  $overrides_make = $yaml->parse(file_get_contents(__DIR__ . '/../../overrides.make'));
+  $overrides_make = $yaml->parse(file_get_contents(__DIR__ . '/../../config/overrides.make'));
   $drupal_org_make = make_parse_info_file(realpath(__DIR__ . '/../../dkan/drupal-org.make'));
 
   if (is_array($overrides_make) && is_array($drupal_org_make))  {

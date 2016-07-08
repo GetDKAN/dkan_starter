@@ -4,6 +4,13 @@
  * resources in order to prune the size of a DKAN site database for development 
  * purposes.
  */
+
+db_query("DELETE FROM search_api_index where server = 'dkan_acquia_solr'");
+db_query("DELETE FROM search_api_index where server = 'local_solr_server'");
+db_query("DELETE FROM search_api_server where machine_name = 'dkan_acquia_solr';");
+db_query("DELETE FROM search_api_server where machine_name = 'local_solr_server';");
+db_query("DELETE FROM search_api_index where server IS NULL");
+
 module_load_include('inc', 'search_api', 'search_api.drush');
 drush_search_api_disable();
 
