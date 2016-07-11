@@ -47,9 +47,6 @@ acquia:
 - `ahoy ci deploy` now calls the acquia hook deployment script and the deployment script runs a environment force switch
 - `ahoy site update-data-starter` has been modified so that it excludes any changes to `projects/modules/custom` or to `assets/sites/default/settings.php`
 - `ahoy site config` will trigger not just the config.php generation but potentially any site specific changes that can be applied via the templates `config/template` do to `config.yml` 
-### Deprecated
-### Removed
-### Security
 
 ## [7.x-1.12.3.0] 2016-07-05
 ### Changed
