@@ -1,11 +1,25 @@
 # Change log
 
 ## [Unreleased]
+
 ### Added
+
 ### Fixed
+
 ### Changed
+- `site rebuild` now uses `site update-data-starter`
+- `site remake` only does a full remake if it runs within a Data Starter working copy
+- `custom.make` no longer included from `build.make`
+- `site custom` recipe to run drush make against `custom.make`
+- `site new` now is only available if it runs within a Data Starter working copy
+- `site dkan` only updates dkan if it runs within a Data Starter working copy
+- `site update-data-starter` now places a working copy at `.data_starter_private` to speed up the update process (.gitignore is updated to ignore the folder)
+- `site update-data-starter` prunes the working copy in `.data_starter_private` in advance to simplify the rsync copy
+
 ### Deprecated
+
 ### Removed
+
 ### Security
 
 ## [7.x-1.12.3.1] 2016-07-11
