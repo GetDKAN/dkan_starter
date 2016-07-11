@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 ### Added
+### Fixed
+### Changed
+### Deprecated
+### Removed
+### Security
+
+## [7.x-1.12.3.1] 2016-07-11
+### Added
 - `ahoy site config` takes configuration in `config/config.yml` and generates `config/config.php`
 - Sample `config/config.yml` added:
 ```yaml
