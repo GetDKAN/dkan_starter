@@ -24,4 +24,3 @@ commands:
     usage: Runs custom post-build commands.
     cmd: |
       echo "TODO: custom postbuild steps."
-

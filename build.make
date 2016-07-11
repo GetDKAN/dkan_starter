@@ -2,12 +2,6 @@
 ; libraries. Use in conjunction with drush subtree or build-manager to track
 ; and contribute to upstream code.
 
-; Grab DKAN make file
-includes[dkan] = build-dkan.make
-
-; Site specific custom modules
-includes[custom] = custom.make
-
 ; Set the default subdirectory for projects so we don't have to specifically set it each time, but make sure dkan stays in /profiles
 defaults[projects][subdir] = contrib
 projects[dkan][subdir] = ""
