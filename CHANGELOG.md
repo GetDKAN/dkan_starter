@@ -36,7 +36,7 @@ acquia:
     derived_key: changeme
 ```
 - A symlink has been added from `hooks/common/post-code-deploy/deploy.sh -> drush-env-switch.sh` for backwards compatibility.
-### Fixed
+
 ### Changed
 - `drush/aliases.local.php` now defines an alias for data_starter that's used on cirle ci
 - `ahoy site setup` creates a symlink to `/var/www/docroot` if it's run on circle
