@@ -130,6 +130,8 @@ commands:
       # Setup custom modules folder outside of the drupal root.
       rm -rf docroot/sites/all/modules/custom
       rm -rf docroot/sites/all/modules/dkan_overrides
+      rm -rf docroot/sites/all/modules/data_config
+      ln -s ../../../../assets/modules/data_config docroot/sites/all/modules/data_config
       ln -s ../../../../config/modules/custom docroot/sites/all/modules/custom
       ln -s ../../../../config/modules/dkan_overrides docroot/sites/all/modules/dkan_overrides
       if [ "$(ahoy custom | grep post-build)" != '' ]
