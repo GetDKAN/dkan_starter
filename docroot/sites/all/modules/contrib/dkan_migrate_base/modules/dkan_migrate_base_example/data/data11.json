@@ -23,9 +23,8 @@
                 },
                 {
                     "@type": "dcat:Distribution",
-                    "downloadURL": "http://example.com/sites/default/files/grossrents_adj.csv",
-                    "mediaType": "text/csv",
-                    "format": "csv",
+                    "accessURL": "http://demo.getdkan.com/dataset/wisconsin-polling-places",
+                    "downloadURL": "http://demo.getdkan.com/sites/default/files/Polling_Places_Madison_0.csv",
                     "description": "No description provided"
                 }
             ],

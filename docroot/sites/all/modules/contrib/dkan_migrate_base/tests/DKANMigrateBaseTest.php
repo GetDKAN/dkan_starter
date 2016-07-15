@@ -14,12 +14,21 @@ class DKANMigrateBaseTestSetup
 
 class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
 {
-
     public static function setUpBeforeClass()
     {
         $setup = new DKANMigrateBaseTestSetup();
         $setup->unpublishNodes('dataset');
         migrate_static_registration();
+        self::setMigrationEndpointName('data_json_1_1', 'json');
+    }
+
+    public static function setMigrationEndpointName($api, $name) {
+      // Change /data.json path to /json during tests.
+      $data_json = open_data_schema_map_api_load($api);
+      $data_json->endpoint = $name;
+      drupal_write_record('open_data_schema_map', $data_json, 'id');
+      drupal_static_reset('open_data_schema_map_api_load_all');
+      menu_rebuild();
     }
 
     public function getNodeByTitle($title) {
@@ -80,6 +89,7 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       dkan_migrate_base_add_modified_column($table);
 
       $result = $migration->processImport();
+
       $this->assertNotEquals($result, Migration::RESULT_FAILED);
       $this->assertEquals(0, $migration->errorCount());
     }
@@ -139,6 +149,22 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
     {
       $this->rollback('dkan_migrate_base_example_ckan_resources');
     }
+    
+    public function testDataJsonEndpoint() {
+      global $base_url;
+      $this->migrate('dkan_migrate_base_example_data_json11');
+      $expected = array(); 
+      $url = $base_url . '/json';
+      $response = drupal_http_request($url);
+      if($response->code != 200) throw new Exception('Request '.$url.' failed');
+      $datasets = json_decode($response->data)->dataset;
+      $dataset = array_filter($datasets,  function($d) {
+        return $d->title == 'Gross Rent over time';
+      })[0];
+      $expected['title'] = 'Gross Rent over time';
+      $expected['modified'] = '2014-06-24';
+      $this->nodeAssert($expect, $dataset);
+    }
 
     public function testDataJsonImport()
     {
@@ -146,6 +172,7 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       $this->migrate('dkan_migrate_base_example_data_json11');
 
       $node = $this->getNodebyTitle('Gross Rent over time');
+
       $group = isset($node->og_group_ref['und'][0]['target_id']) ? node_load($node->og_group_ref['und'][0]['target_id']) : NULL;
       $keyword1 = taxonomy_term_load($node->field_tags['und'][0]['tid']);
       $keyword2 = taxonomy_term_load($node->field_tags['und'][1]['tid']);
@@ -168,7 +195,7 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       $expect['group']  = "Housing";
       $result['license']  = $node->field_license['und'][0]['value'];
       $expect['license']  = "notspecified";
-      $result['modified']  = date('m d y', $node->changed);
+      $result['modified']  = date_format(date_create($node->field_modified_source_date[LANGUAGE_NONE][0]['value']), 'm d y');
       $expect['modified']  = "06 24 14";
       $result['accessLevel']  = $node->field_public_access_level['und'][0]['value'];
       $expect['accessLevel']  = "public";
@@ -205,7 +232,7 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       $result['temporalEnd']  = $node->field_temporal_coverage['und'][0]['value2'];
       $expect['temporalEnd']  = "2010-01-15 00:06:00";
       $result['accrualPeriodicity']  = $node->field_frequency['und'][0]['value'];
-      $expect['accrualPeriodicity']  = "R/P1Y";
+      $expect['accrualPeriodicity']  = 3;
       $result['describedBy']  = $node->field_data_dictionary['und'][0]['value'];
       $expect['describedBy']  = "http://www.agency.gov/vegetables/definitions.pdf";
       $result['references']  = $node->field_related_content['und'][0]['url'];
@@ -226,9 +253,10 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       $expect['resource2Name']  = "csv";
       $result['resource2Format']  = $format2->name;
       $expect['resource2Format']  = "csv";
-      $result['resource2DownloadUrl']  = $resource2->field_link_api['und'][0]['url'];
-      $expect['resource2DownloadUrl']  = "http://example.com/sites/default/files/grossrents_adj.csv";
-
+      $result['resource2DownloadUrl']  = $resource2->field_link_remote_file['und'][0]['uri'];
+      $expect['resource2DownloadUrl']  = "http://demo.getdkan.com/sites/default/files/Polling_Places_Madison_0.csv";
+      $result['resource2AccessUrl']  = $resource2->field_link_api['und'][0]['url'];
+      $expect['resource2AccessUrl']  = "http://demo.getdkan.com/dataset/wisconsin-polling-places";
       // TODO:
       // maintainer
       // maintainer_email
@@ -239,6 +267,10 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
 
     public function testDataJsonRollback() {
       $this->rollback('dkan_migrate_base_example_data_json11');
+    }
+    
+    public static function tearDownAfterClass() {
+      self::setMigrationEndpointName('data_json_1_1', 'data.json');
     }
 }
 

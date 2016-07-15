@@ -63,37 +63,49 @@ commands:
   drupal-rebuild:
     usage: Remakes and reinstall site.
     cmd: |
-      ahoy site remake
+      ahoy site update-data-starter
       ahoy site reinstall
 
   remake:
     usage: Rebuild all the dkan projects from the build.make file.
     cmd: |
       set -e
-      TEMP=$AHOY_CMD_PROXY
       AHOY_CMD_PROXY=''
-      # Building in a new directory
-      # drush make is stupid, delete docroot_new just in case
-      rm -rf docroot_new
-      ahoy drush -y make build.make --no-recursion --no-cache --verbose docroot_new
-      rm -rf docroot
-      mv docroot_new docroot
-      # Move dkan folder from docroot/profiles to base folder
-      mv dkan dkan_old
-      mv docroot/profiles/dkan ./
-      ln -s ../../dkan docroot/profiles/dkan
-      rm -rf dkan_old
-      # No recursive prevents dkan build to happen. Run it now from dkan remake.
-      ahoy dkan remake
+      DIRNAME=${PWD##*/}
+      # IF this is data_starter_private
+      if [[ "$DIRNAME" == "data_starter_private" ]]; then
+        # Building in a new directory
+        # drush make is stupid, delete docroot_new just in case
+        rm -rf docroot_new
+        ahoy drush -y make build.make --no-recursion --no-cache --verbose docroot_new
+        rm -rf docroot
+        mv docroot_new docroot
+        # Move dkan folder from docroot/profiles to base folder
+        mv dkan dkan_old
+        mv docroot/profiles/dkan ./
+        ln -s ../../dkan docroot/profiles/dkan
+        rm -rf dkan_old
+        # No recursive prevents dkan build to happen. Run it now from dkan remake.
+        ahoy dkan remake
+      fi
       ahoy site overrides
+      ahoy site custom
       ahoy site post-build
       ahoy site config
-      AHOY_CMD_PROXY=$TEMP
+
+  custom:
+    usage: Downloads 3rd party modules
+    cmd: |
+      if [ -f custom.make ]; then
+        ahoy drush -y make --no-core --contrib-destination=contrib custom.make --no-recursion --no-cache --verbose
+        mv contrib/modules/* docroot/sites/all/modules/contrib
+        rm -rf contrib
+      fi
 
   overrides:
     usage: Overrides drupal-org.make with overrides.make
     cmd: |
-      if [ -f overrides.make ]; then
+      if [ -f config/overrides.make ]; then
         cd nucivic-ahoy && composer install && cd ..
         ahoy cmd-proxy drush php-script nucivic-ahoy/.scripts/overrides.php
         rm -rf docroot/sites/all/modules/overrides
@@ -174,6 +186,12 @@ commands:
     usage: Sets new client site from data-starter
     cmd: |
       set -e
+      AHOY_CMD_PROXY=''
+      DIRNAME=${PWD##*/}
+      if [[ "$DIRNAME" != "data_starter_private" ]]; then
+        echo "This command should only be use from a data_starter_private working copy"
+        exit 0
+      fi
       cd ..
       if [ -d {{args}} ]; then
         ahoy confirm "{{args}} site folder alredy exists."
@@ -181,7 +199,7 @@ commands:
       fi
       git clone 'git@github.com:NuCivic/data_starter_private.git' {{args}} --depth=1
       cd {{args}}
-      rm -rf .git
+      rm -rf .git build.make build-dkan.make drupal-org-core.make
       echo "Site {{args}} initiated at ../{{args}}"
       git init .
       git add . -A
@@ -195,9 +213,15 @@ commands:
     usage: Upgrades/Downgrades dkan to a certain tag 'ahoy site dkan tag 7.x-1.10' or branch 'ahoy site dkan branch 7.x-1.x'. If no arguments are provided it outputs current dkan version.
     cmd: |
       set -e
+      AHOY_CMD_PROXY=''
       EMPTY="{{args}}"
       if [[ -z "${EMPTY// }" ]]; then
         echo $(cat dkan/dkan.info | grep 'version' | cut -d '=' -f2 | sed 's/ //g')
+        exit 0
+      fi
+      DIRNAME=${PWD##*/}
+      if [[ "$DIRNAME" != "data_starter_private" ]]; then
+        echo "This command should only be use to update data_starter_private. Run ahoy site update-data-starter instead"
         exit 0
       fi
       IFS=' ' read -r -a args <<< "{{args}}"
@@ -304,7 +328,7 @@ commands:
       echo ""
       echo "Unpacking the files asset."
       echo ""
-      ahoy cmd-proxy tar xvzf backups/$site.prod.files.tar.gz
+      tar xvzf backups/$site.prod.files.tar.gz
     hide: true
 
   asset-upload:
@@ -401,25 +425,43 @@ commands:
 
   update-data-starter:
     usage: Updates data starter.
-    hide: true
     cmd: |
-      if [ ! -d data_starter_private ]; then
-        git clone 'git@github.com:NuCivic/data_starter_private.git' --depth=1
+      # It takes time to grab the entire repo. Checking out to git ignored hidden folder.
+      if [ ! -d .data_starter_private ]; then
+        git clone 'git@github.com:NuCivic/data_starter_private.git' .data_starter_private --depth=1
       fi
-      cd data_starter_private
-      git checkout {{args}}
+      cd .data_starter_private
+      git checkout master --force
+      git reset --hard origin/master
+      git fetch --tags
+      ARGS="{{args}}"
+      if [[ -z "$ARGS" ]]; then
+        echo "Please provide a Data Starter release (tag) as an argument. Exiting"
+        exit 0
+      fi
+      ARGS=`git tag | grep "$ARGS"`
+      if [[ -z "$ARGS" ]]; then
+        echo "You need to specify a valid Data Starter release (tag). Exiting"
+        exit 0
+      fi
+      git checkout $ARGS
+      # TEMP
+      rm -rf .gitignore
+      # Prune data starter copy to have only upstream bits
+      rm -rf .github .ahoy
+      rm -rf assets/drush
+      rm -rf assets/sites/default/settings.nucivic.php
+      rm -rf projects/modules/custom
+      rm -rf backups
+      rm -rf tests
+      rm -rf drupal-org-core.make
+      rm -rf build-dkan.make
+      # This could be updated to remove the whole folder once we remove the templates from there.
+      rm -rf config/config.* config/overrides.make
+      # custom.make belongs in config folder as well (i think)
+      rm -rf custom.make
       cd ..
-      rsync -av --exclude 'data_starter_private/assets/sites/default/settings.nucivic.php' data_starter_private/assets/sites/default/ assets/sites/default/
-      rsync -av data_starter_private/build-dkan.make build-dkan.make
-      rsync -av data_starter_private/build.make build.make
-      rsync -av data_starter_private/circle.yml circle.yml
+      # Remove dkan so there's no leftovers from previous versions
       rm -rf dkan
-      cp -r data_starter_private/dkan dkan
-      rsync -av data_starter_private/docroot/sites/all/modules/contrib/ docroot/sites/all/modules/contrib/
-      rsync -av data_starter_private/hooks/ hooks/
-      rsync -av --exclude 'data_starter_private/projects/modules/custom' data_starter_private/projects/ projects/
-      rsync -av data_starter_private/run-tests.sh run-tests.sh
-      rsync -av data_starter_private/.probo.yml .probo.yml
-      rsync -av data_starter_private/OWNERS.md OWNERS.md
-      rsync -av data_starter_private/README.md README.md
-      rsync -av data_starter_private/nucivic-ahoy/ nucivic-ahoy/
+      # You can rsync now
+      rsync -av --exclude=.git .data_starter_private/* ./
