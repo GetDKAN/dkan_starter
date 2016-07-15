@@ -6,6 +6,9 @@
 defaults[projects][subdir] = contrib
 projects[dkan][subdir] = ""
 
+; Site specific custom modules
+includes[] = config/custom.make
+
 ; Default Projects
 ; ================
 projects[] = devinci

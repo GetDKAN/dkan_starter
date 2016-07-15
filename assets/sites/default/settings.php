@@ -246,8 +246,8 @@ if (!isset($_ENV["AH_SITE_ENVIRONMENT"])) {
 include "settings.acquia.php";
 
 /*****************************
- * OPTIONAL: NuCivic Settings.
+ * OPTIONAL: Custom Settings.
  ****************************/
-/* This are nucivic specific settings 
+/* This are custom site settings 
  */
-include "settings.nucivic.php";
+include "settings.custom.php";
