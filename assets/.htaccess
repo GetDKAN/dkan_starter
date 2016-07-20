@@ -166,6 +166,9 @@ DirectoryIndex index.php index.html index.htm
 	RewriteCond %{QUERY_STRING} !^q=node/add [NC]
 	RewriteCond %{THE_REQUEST}  !.*/node/add [NC]
 
+	RewriteCond %{QUERY_STRING} !^q=batch [NC]
+	RewriteCond %{THE_REQUEST}  !.*/batch [NC]
+
 	RewriteCond %{QUERY_STRING} !^q=feedback/.*/edit [NC]
 	RewriteCond %{THE_REQUEST}  !.*/feedback/.*/edit [NC]
 	RewriteCond %{QUERY_STRING} !^q=feedback/.*/add [NC]
