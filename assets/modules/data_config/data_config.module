@@ -13,6 +13,7 @@ function data_config_enabled_modules() {
     'admin_menu_source' => 'admin_menu_source',
     'admin_menu_toolbar' => 'admin_menu_toolbar',
     'adminrole' => 'adminrole',
+    'ape' => 'ape',
     'autocomplete_deluxe' => 'autocomplete_deluxe',
     'beautytips' => 'beautytips',
     'block' => 'block',
