@@ -9,6 +9,9 @@ projects[dkan][subdir] = ""
 ; Site specific custom modules
 includes[] = config/custom.make
 
+; Grab DKAN make file
+includes[] = build-dkan.make
+
 ; Default Projects
 ; ================
 projects[] = devinci

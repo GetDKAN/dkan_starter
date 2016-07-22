@@ -10,9 +10,17 @@ $conf = array (
     'hostname' => 'localhost',
     'https_everywhere' => false,
   ),
+  'data_starter' => 
+  array (
+    'version' => '7.x-1.12.5',
+  ),
   'acquia' => 
   array (
     'subscription' => 'professional',
+    'search' => 
+    array (
+      'host' => 'changeme',
+    ),
     'dev' => 
     array (
       'base_url' => 'http://devurl',
