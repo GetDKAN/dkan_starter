@@ -15,7 +15,6 @@
 
 # Ignore the dkan test composer folder.
 dkan/test/vendor
-dkan/test/assets
 
 # Packages #
 ############
