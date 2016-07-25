@@ -181,3 +181,8 @@ DirectoryIndex index.php index.html index.htm
 	RewriteCond %{REMOTE_ADDR} !127.0.0.1
 	RewriteRule .* - [F,L]
 </IfModule>
+
+# See https://httpoxy.org/
+<IfModule mod_headers.c>
+   RequestHeader unset Proxy
+</IfModule>
