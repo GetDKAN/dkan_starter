@@ -22,7 +22,7 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
     $conf['securepages_enable'] = FALSE;
   }
 
-  if (isset($conf['acquia'][$env])) {
+  if (isset($conf['acquia'][$env]['core_id'])) {
     $conf['search_api_acquia_overrides']['dkan_acquia_solr'] = array(
       'path' => '/solr/' . $conf['acquia'][$env]['core_id'],
       'host' => $conf['acquia']['search']['host'],
