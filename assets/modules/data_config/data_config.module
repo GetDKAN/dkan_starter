@@ -159,6 +159,7 @@ function data_config_enabled_modules() {
     'rdfui' => 'rdfui',
     'rdfx' => 'rdfx',
     'recline' => 'recline',
+    'ref_field_sync' => 'ref_field_sync',
     'roleassign' => 'roleassign',
     'remote_file_source' => 'remote_file_source',
     'remote_stream_wrapper' => 'remote_stream_wrapper',
