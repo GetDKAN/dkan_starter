@@ -103,6 +103,7 @@ commands:
       ln -s ../../../../assets/modules/data_config docroot/sites/all/modules/data_config
       ln -s ../../../../config/modules/custom docroot/sites/all/modules/custom
       ln -s ../../../../config/modules/dkan_overrides docroot/sites/all/modules/dkan_overrides
+      ln -s ../../../../config/themes/custom docroot/sites/all/themes/custom
       if [ "$(ahoy custom | grep post-build)" != '' ]
       then
         ahoy custom post-build
