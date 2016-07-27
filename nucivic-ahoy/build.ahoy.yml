@@ -4,7 +4,7 @@ commands:
   drupal-rebuild:
     usage: Remakes and reinstall site.
     cmd: |
-      ahoy site update-data-starter
+      ahoy build update-data-starter
       ahoy site reinstall
 
   update:
@@ -42,10 +42,10 @@ commands:
         # No recursive prevents dkan build to happen. Run it now from dkan remake.
         ahoy dkan remake
       fi
-      ahoy site overrides
-      ahoy site custom
-      ahoy site post-build
-      ahoy site config
+      ahoy build overrides
+      ahoy build custom
+      ahoy build post-build
+      ahoy build config
 
   custom:
     usage: Downloads 3rd party modules
@@ -62,12 +62,15 @@ commands:
       if [ -f config/overrides.make ]; then
         cd nucivic-ahoy && composer install && cd ..
         ahoy cmd-proxy drush php-script nucivic-ahoy/.scripts/overrides.php
-        rm -rf docroot/sites/all/modules/overrides
-        mkdir -p docroot/sites/all/modules/overrides
-        ahoy drush -y make --no-core --contrib-destination=overrides overriden_make.make --no-recursion --no-cache --verbose
-        mv overrides/modules/* docroot/sites/all/modules/overrides
-        rm -rf overrides
-        rm overriden_make.make
+        // Check file exits and file not empty.
+        if [ -e overriden_make.make ] && [ -s overriden_make.make ]; then
+          rm -rf docroot/sites/all/modules/overrides
+          mkdir -p docroot/sites/all/modules/overrides
+          ahoy drush -y make --no-core --contrib-destination=overrides overriden_make.make --no-recursion --no-cache --verbose
+          mv overrides/modules/* docroot/sites/all/modules/overrides
+          rm -rf overrides
+        fi
+        rm -f overriden_make.make
       fi
 
   post-build:
@@ -107,7 +110,7 @@ commands:
       ahoy site self-update
 
   config:
-    usage: ahoy site config - Applies site specific changes stored in config.yml
+    usage: ahoy build config - Applies site specific changes stored in config.yml
     cmd: |
       eval $(ahoy parse config/config.yml)
       tempdir=$(mktemp -dt "$0")
@@ -157,7 +160,7 @@ commands:
       echo "NuCivic/{{args}} Github repo created"
 
   dkan:
-    usage: Upgrades/Downgrades dkan to a certain tag 'ahoy site dkan tag 7.x-1.10' or branch 'ahoy site dkan branch 7.x-1.x'. If no arguments are provided it outputs current dkan version.
+    usage: Upgrades/Downgrades dkan to a certain tag 'ahoy build dkan tag 7.x-1.10' or branch 'ahoy build dkan branch 7.x-1.x'. If no arguments are provided it outputs current dkan version.
     cmd: |
       set -e
       AHOY_CMD_PROXY=''
@@ -168,7 +171,7 @@ commands:
       fi
       DIRNAME=${PWD##*/}
       if [[ "$DIRNAME" != "data_starter_private" ]]; then
-        echo "This command should only be use to update data_starter_private. Run ahoy site update-data-starter instead"
+        echo "This command should only be use to update data_starter_private. Run ahoy build update-data-starter instead"
         exit 0
       fi
       IFS=' ' read -r -a args <<< "{{args}}"
@@ -196,7 +199,7 @@ commands:
       then
         ahoy custom remake
       else
-        ahoy site remake
+        ahoy build remake
       fi
       git add . -A
       git commit -m "Updates build-dkan.make from $tag_old $version_old to $tag_new $version_new"

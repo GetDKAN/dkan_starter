@@ -4,9 +4,9 @@ package = Development
 dependencies[] = features
 core = 7.x
 
-; Information added by Drupal.org packaging script on 2016-01-28
-version = "7.x-1.0"
+; Information added by Drupal.org packaging script on 2016-07-22
+version = "7.x-1.1"
 core = "7.x"
 project = "features_master"
-datestamp = "1454000040"
+datestamp = "1469228944"
 
