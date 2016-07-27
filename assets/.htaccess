@@ -112,6 +112,8 @@ DirectoryIndex index.php index.html index.htm
   # If your site is running in a VirtualDocumentRoot at http://example.com/,
   # uncomment the following line:
   # RewriteBase /
+  
+
 
   # Pass all requests not referring directly to files in the filesystem to
   # index.php. Clean URLs are handled in drupal_environment_initialize().
@@ -146,43 +148,3 @@ DirectoryIndex index.php index.html index.htm
   </IfModule>
 </IfModule>
 
-# deny all POST requests
-<IfModule mod_rewrite.c>
-	RewriteCond %{REQUEST_METHOD} POST
-	RewriteCond %{QUERY_STRING} !^q=admin/ [NC]
-	RewriteCond %{THE_REQUEST}  !.*/admin/ [NC]
-
-	RewriteCond %{QUERY_STRING} !^q=dataset/.*/edit [NC]
-	RewriteCond %{THE_REQUEST}  !.*/dataset/.*/edit [NC]
-	RewriteCond %{QUERY_STRING} !^q=dataset/.*/add [NC]
-	RewriteCond %{THE_REQUEST}  !.*/dataset/.*/add [NC]
-	RewriteCond %{QUERY_STRING} !^q=dataset/add [NC]
-	RewriteCond %{THE_REQUEST}  !.*/dataset/add [NC]
-
-	RewriteCond %{QUERY_STRING} !^q=node/.*/edit [NC]
-	RewriteCond %{THE_REQUEST}  !.*/node/.*/edit [NC]
-	RewriteCond %{QUERY_STRING} !^q=node/.*/add [NC]
-	RewriteCond %{THE_REQUEST}  !.*/node/.*/add [NC]
-	RewriteCond %{QUERY_STRING} !^q=node/add [NC]
-	RewriteCond %{THE_REQUEST}  !.*/node/add [NC]
-
-	RewriteCond %{QUERY_STRING} !^q=batch [NC]
-	RewriteCond %{THE_REQUEST}  !.*/batch [NC]
-
-	RewriteCond %{QUERY_STRING} !^q=feedback/.*/edit [NC]
-	RewriteCond %{THE_REQUEST}  !.*/feedback/.*/edit [NC]
-	RewriteCond %{QUERY_STRING} !^q=feedback/.*/add [NC]
-	RewriteCond %{THE_REQUEST}  !.*/feedback/.*/add [NC]
-	RewriteCond %{QUERY_STRING} !^q=feedback/add [NC]
-	RewriteCond %{THE_REQUEST}  !.*/feedback/add [NC]
-
-	RewriteCond %{QUERY_STRING} !^q=user/ [NC]
-	RewriteCond %{THE_REQUEST}  !.*/user/ [NC]
-	RewriteCond %{REMOTE_ADDR} !127.0.0.1
-	RewriteRule .* - [F,L]
-</IfModule>
-
-# See https://httpoxy.org/
-<IfModule mod_headers.c>
-   RequestHeader unset Proxy
-</IfModule>

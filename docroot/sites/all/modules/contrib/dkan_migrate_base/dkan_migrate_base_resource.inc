@@ -59,10 +59,10 @@ class MigrateCkanResourceBase extends MigrateCkanBase {
     }
 
     // Add endpoint for local file.
-    if (strpos('http://', $list_url) === TRUE) {
+    if (strpos('http://', $list_url) === FALSE) {
       $list_url = $this->endpoint . $list_url;
     }
-    if (strpos('http://', $item_url) !== TRUE) {
+    if (strpos('http://', $item_url) === FALSE) {
       $item_url = $this->endpoint . $item_url;
     }
 

@@ -18,8 +18,7 @@ projects[] = devinci
 projects[] = environment
 projects[] = environment_indicator
 projects[] = features_banish
-projects[features_master] = 7.x-1.x
-projects[features_master][patch][2725035] = "https://www.drupal.org/files/issues/arguments-are-not-arrays_2725035_3.patch"
+projects[features_master] = 1.1
 
 ; Optional Projects
 ; =================
