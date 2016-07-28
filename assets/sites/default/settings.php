@@ -138,12 +138,13 @@ switch(ENVIRONMENT) {
       'acquia_agent',
       'acquia_spi',
       'acquia_purge',
-      'syslog',
       'dkan_acquia_expire',
+      'dkan_acquia_search_solr',
       'expire',
       'search_api_solr',
       'search_api_acquia',
-      'dkan_acquia_search_solr',
+      'securepages'
+      'syslog',
     );
     // Show ALL errors when working locally.
     $conf['error_level'] = ERROR_REPORTING_DISPLAY_ALL;
