@@ -4,6 +4,11 @@
  * Declares default modules for custom_config features master.
  */
 function data_config_enabled_modules() {
+  $features_master = array();
+  
+  $features_master['themes'] = array(
+    'nuboot_radix' => 'nuboot_radix',
+  );
   
   $features_master['modules'] = array(
     'acquia_agent' => 'acquia_agent',
