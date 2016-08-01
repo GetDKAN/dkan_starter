@@ -505,11 +505,35 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
   public function complete($entity, $row) {
     $this->updateCreatedModified($entity->nid, $row->issued, $row->modified);
     if ($entity->field_resources) {
-      foreach ($entity->field_resources['und'] as $rid) {
+      foreach ($entity->field_resources[LANGUAGE_NONE] as $rid) {
         $this->updateCreatedModified($rid['target_id'], $row->issued, $row->modified);
       }
     }
     $this->updateHighwater($row->modified, $row->identifier, $entity->nid);
+    if (module_exists('dkan_workflow')) {
+      // Changing the moderation state of all harvested datasets to published.
+      db_update('workbench_moderation_node_history')
+      ->fields(array(
+        'state' => "published",
+        'published' => 1,
+        ))
+      ->condition('is_current', 1, '=')
+      ->condition('nid', $entity->nid, '=')
+      ->execute();
+      // Updating associated resources as well.
+      if ($entity->field_resources) {
+        foreach ($entity->field_resources[LANGUAGE_NONE] as $rid) {
+          db_update('workbench_moderation_node_history')
+          ->fields(array(
+            'state' => "published",
+            'published' => 1,
+            ))
+          ->condition('is_current', 1, '=')
+          ->condition('nid', $rid['target_id'], '=')
+          ->execute();
+        }
+      }
+    }
   }
 
   /**

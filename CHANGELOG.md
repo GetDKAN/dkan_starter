@@ -1,5 +1,24 @@
 # Change log
 
+## [7.x-1.12.6.2]
+
+### Added
+
+### Fixed
+- Patches `dkan 7.x-1.12.6`, skips custom tests.
+- Patches `dkan 7.x-1.12.6`, fix tests break because configured not installed.
+
+
+### Changed
+- `ahoy site setup` now builds dynamic drush alias using `ahoy site name`
+
+### Deprecated
+
+### Removed
+
+### Security
+
+## [7.x-1.12.3.1] 2016-07-11
 ## [Unreleased]
 
 ### Added

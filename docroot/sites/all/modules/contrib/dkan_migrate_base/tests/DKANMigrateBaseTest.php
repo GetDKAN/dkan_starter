@@ -241,6 +241,16 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       $expect['additional']  = "crazy";
       $result['additional2']  = $node->field_additional_info['und'][0]['second'];
       $expect['additional2']  = "what";
+      $result['status']  = $node->status;
+      $expect['status']  = 1;
+      if (module_exists('dkan_workflow')) {
+        $result['moderationState']  = $node->workbench_moderation['current']->state;
+        $expect['moderationState']  = "published";
+        $result['moderationStateResource1']  = $resource1->workbench_moderation['current']->state;
+        $expect['moderationStateResource1']  = "published";
+        $result['moderationStateResource2']  = $resource2->workbench_moderation['current']->state;
+        $expect['moderationStateResource2']  = "published";
+      }
 
       $result['resource1Name']  = $resource1->title;
       $expect['resource1Name']  = "txt";

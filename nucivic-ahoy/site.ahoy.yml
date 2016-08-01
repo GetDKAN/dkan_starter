@@ -8,7 +8,6 @@ commands:
       ARGS=( {{args}} )
       rm -f assets/sites/default/settings.docker.php
       rm -f assets/sites/default/settings.local.php
-      ahoy cmd-proxy mkdir -p ~/.drush
       ahoy cmd-proxy bash ./nucivic-ahoy/.scripts/drush.alias.sh
 
       if [ ! -f assets/sites/default/settings.php ] && [ -f assets/sites/default/default.settings.php ]; then
@@ -127,6 +126,7 @@ commands:
       echo "Unpacking the $db database."
       echo ""
       ahoy cmd-proxy gunzip backups/$db.sql.gz -f
+      cp -f backups/$db.sql backups/last_install.sql
 
   asset-download-files:
     usage: Download files backup asset from S3 to local backups folder.
