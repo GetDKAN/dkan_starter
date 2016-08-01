@@ -8,7 +8,6 @@ commands:
       ARGS=( {{args}} )
       rm -f assets/sites/default/settings.docker.php
       rm -f assets/sites/default/settings.local.php
-      ahoy cmd-proxy mkdir -p ~/.drush
       ahoy cmd-proxy bash ./nucivic-ahoy/.scripts/drush.alias.sh
 
       if [ ! -f assets/sites/default/settings.php ] && [ -f assets/sites/default/default.settings.php ]; then
