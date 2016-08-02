@@ -126,7 +126,7 @@ commands:
         sed -e "s/^#HTTPS$//g" config/templates/.htaccess.tpl > $tempdir/.htaccess
       fi
 
-      cp $tempdir/.htaccess docroot/.htaccess
+      cp $tempdir/.htaccess config/.htaccess
 
       # Transpose config.yml to php
       cd nucivic-ahoy
