@@ -1,5 +1,22 @@
 # Change log
 
+## [7.x-1.12.6.4]
+
+### Added
+
+### Fixed
+- Fixed upgraded hooks. 
+
+
+### Changed
+- Updated ahoy tools. `ahoy site config` now does not clobber custom .htaccess.
+
+### Deprecated
+
+### Removed
+
+### Security
+
 ## [7.x-1.12.6.2]
 
 ### Added
