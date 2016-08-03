@@ -62,7 +62,7 @@ commands:
       if [ -f config/overrides.make ]; then
         cd nucivic-ahoy && composer install && cd ..
         ahoy cmd-proxy drush php-script nucivic-ahoy/.scripts/overrides.php
-        // Check file exits and file not empty.
+        # Check file exits and file not empty.
         if [ -e overriden_make.make ] && [ -s overriden_make.make ]; then
           rm -rf docroot/sites/all/modules/overrides
           mkdir -p docroot/sites/all/modules/overrides
@@ -143,11 +143,18 @@ commands:
         echo "This command should only be use from a data_starter_private working copy"
         exit 0
       fi
-      cd ..
-      if [ -d {{args}} ]; then
+
+      if [[ "{{args}}" == "" ]]; then
+        echo "Arguments cannot be empty.  Pass a project name."
+        exit 0
+      fi
+
+      if [ -d ../{{args}} ]; then
         ahoy confirm "{{args}} site folder alredy exists."
         echo ".. skipping installation"; exit 1;
       fi
+        # No ahoy commands after cd-ing out of project folder.
+      cd ..
       git clone 'git@github.com:NuCivic/data_starter_private.git' {{args}} --depth=1
       cd {{args}}
       rm -rf .git build.make build-dkan.make drupal-org-core.make

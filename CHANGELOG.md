@@ -1,5 +1,24 @@
 # Change log
 
+## [7.x-1.12.6.5]
+
+### Added
+- added default `config/.htaccess`
+
+### Fixed
+- Fixed more failing tests in DKAN.
+
+
+### Changed
+- Updated ahoy tools. `ahoy build new` does not throw ambiguous error when no
+  argument is passed. 
+
+### Deprecated
+
+### Removed
+
+### Security
+
 ## [7.x-1.12.6.4]
 
 ### Added
