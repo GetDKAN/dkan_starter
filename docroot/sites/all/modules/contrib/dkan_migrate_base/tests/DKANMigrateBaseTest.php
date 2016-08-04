@@ -22,6 +22,10 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
         self::setMigrationEndpointName('data_json_1_1', 'json');
     }
 
+    public function setup() {
+      $g = $this->createDummyGroup();
+    }
+
     public static function setMigrationEndpointName($api, $name) {
       // Change /data.json path to /json during tests.
       $data_json = open_data_schema_map_api_load($api);
@@ -30,8 +34,25 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       drupal_static_reset('open_data_schema_map_api_load_all');
       menu_rebuild();
     }
+    
+	  public function createDummyGroup() {
+      $nodes = $this->getNodeByTitle('Health', TRUE);
+      if($nodes) {
+        node_delete_multiple(array_keys($nodes));
+      }   
+      $node = new stdClass();
+      $node->type = 'group';
+      $node->title = 'Health';
+      $node->language = LANGUAGE_NONE;
+      $node->status = 1;
+      node_object_prepare($node);
+      $node->uid = 1;
+      $node->body[$node->language][0]['value'] = 'Health Body';
+      node_save($node);
+      return $node;
+    }
 
-    public function getNodeByTitle($title) {
+    public function getNodeByTitle($title, $multiple = FALSE) {
       $query = new EntityFieldQuery();
 
        $entities = $query->entityCondition('entity_type', 'node')
@@ -40,7 +61,9 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
         ->execute();
 
         if (!empty($entities['node'])) {
-          $node = node_load(array_shift(array_keys($entities['node'])));
+          $ids = array_keys($entities['node']);
+          $ids = (!$multiple) ? array_shift($ids) : $ids;
+          $node = (!$multiple) ? node_load($ids) : node_load_multiple($ids);
         }
         return $node;
     }
@@ -57,6 +80,7 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
     {
       $migration = Migration::getInstance($migrationName);
       $result = $migration->processRollback();
+
       // Test rollback
       // TODO: DKAN comes with 4 resources. Remove first so count is 0.
       $rawnodes = node_load_multiple(FALSE, array('type' => 'dataset', 'status' => 1), TRUE);
@@ -99,8 +123,8 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       $expected = $result = array();
       $this->migrate('dkan_migrate_base_example_ckan_resources');
 
-      $node = $this->getNodebyTitle('Madison Polling Places Test');
-      $file = $node->field_link_remote_file['und'][0];
+      $node = $this->getNodeByTitle('Madison Polling Places Test');
+      $file = $node->field_upload['und'][0];
       $body = 
       '<p>This is a list and map of polling places in Madison, WI.</p>
 
@@ -125,7 +149,7 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       $expected = $result = array();
       $this->migrate('dkan_migrate_base_example_ckan_dataset');
 
-      $node = $this->getNodebyTitle('Wisconsin Polling Places Test');
+      $node = $this->getNodeByTitle('Wisconsin Polling Places Test');
 
       $result['title']    = $node->title;
       $expect['title']    = "Wisconsin Polling Places Test";
@@ -150,30 +174,15 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       $this->rollback('dkan_migrate_base_example_ckan_resources');
     }
     
-    public function testDataJsonEndpoint() {
-      global $base_url;
-      $this->migrate('dkan_migrate_base_example_data_json11');
-      $expected = array(); 
-      $url = $base_url . '/json';
-      $response = drupal_http_request($url);
-      if($response->code != 200) throw new Exception('Request '.$url.' failed');
-      $datasets = json_decode($response->data)->dataset;
-      $dataset = array_filter($datasets,  function($d) {
-        return $d->title == 'Gross Rent over time';
-      })[0];
-      $expected['title'] = 'Gross Rent over time';
-      $expected['modified'] = '2014-06-24';
-      $this->nodeAssert($expect, $dataset);
-    }
-
     public function testDataJsonImport()
     {
-      $expected = $result = array();
+      $expect = $result = array();
       $this->migrate('dkan_migrate_base_example_data_json11');
 
-      $node = $this->getNodebyTitle('Gross Rent over time');
-
+      $node = $this->getNodeByTitle('Gross Rent over time');
+      $node2 = $this->getNodeByTitle('Hospital Compare');
       $group = isset($node->og_group_ref['und'][0]['target_id']) ? node_load($node->og_group_ref['und'][0]['target_id']) : NULL;
+      $group2 = isset($node2->og_group_ref['und'][0]['target_id']) ? node_load($node2->og_group_ref['und'][0]['target_id']) : NULL;
       $keyword1 = taxonomy_term_load($node->field_tags['und'][0]['tid']);
       $keyword2 = taxonomy_term_load($node->field_tags['und'][1]['tid']);
       $resource1 = node_load($node->field_resources['und'][0]['target_id']);
@@ -264,21 +273,57 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       $result['resource2Format']  = $format2->name;
       $expect['resource2Format']  = "csv";
       $result['resource2DownloadUrl']  = $resource2->field_link_remote_file['und'][0]['uri'];
-      $expect['resource2DownloadUrl']  = "http://demo.getdkan.com/sites/default/files/Polling_Places_Madison_0.csv";
+      $expect['resource2DownloadUrl']  = "https://s3.amazonaws.com/dkan-default-content-files/files/Polling_Places_Madison_0.csv";
       $result['resource2AccessUrl']  = $resource2->field_link_api['und'][0]['url'];
       $expect['resource2AccessUrl']  = "http://demo.getdkan.com/dataset/wisconsin-polling-places";
+
+      $this->nodeAssert($expect, $result);
+
+      // Group should be assigned to the Health group
+      // created during test setup instead of create 
+      // new one based in the incoming data.
+      
+      // Assert node is created and group Health is properly assigned
+      $expect = $result = array();
+      $result['title'] = $node2->title;
+      $expect['title'] = 'Hospital Compare';
+      $result['group_name'] = $group2->title;
+      $expect['group_name'] = 'Health';
+      $result['body'] = $group2->body['und'][0]['value'];
+      $expect['body'] = 'Health Body';
+
+      $this->nodeAssert($expect, $result);
+
+      // Check Health data is not duplicated.
+      $this->assertEquals(1, count($this->getNodeByTitle('Health', TRUE)));
+
       // TODO:
       // maintainer
       // maintainer_email
       // licence_title
 
-      $this->nodeAssert($expect, $result);
     }
 
-    public function testDataJsonRollback() {
+    public function testDataJsonEndpoint() {
+      global $base_url;
+      $this->migrate('dkan_migrate_base_example_data_json11');
+      $expected = array();
+      $url = $base_url . '/json';
+      $response = drupal_http_request($url);
+      if($response->code != 200) throw new Exception('Request '.$url.' failed');
+      $datasets = json_decode($response->data)->dataset;
+      $dataset = array_filter($datasets,  function($d) {
+        return $d->title == 'Gross Rent over time';
+      })[0];
+      $expected['title'] = 'Gross Rent over time';
+      $expected['modified'] = '2014-06-24';
+      $this->nodeAssert($expect, $dataset);
+    }
+
+    public function tearDown(){
       $this->rollback('dkan_migrate_base_example_data_json11');
     }
-    
+
     public static function tearDownAfterClass() {
       self::setMigrationEndpointName('data_json_1_1', 'data.json');
     }
