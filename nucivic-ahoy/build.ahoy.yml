@@ -72,8 +72,6 @@ commands:
   post-build:
     usage: Runs (what used to be buildmanager) post build commands.
     cmd: |
-      # Remove dkan make overrides
-      cd dkan; git checkout drupal-org.make; cd ..
       # Setup a folder for contrib modules and themes.
       mkdir -p docroot/sites/all/modules/contrib
       mkdir -p docroot/sites/all/themes/contrib
@@ -104,7 +102,6 @@ commands:
       then
         ahoy custom post-build
       fi
-      ahoy site self-update
 
   config:
     usage: ahoy build config - Applies site specific changes stored in config.yml
