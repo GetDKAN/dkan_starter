@@ -4,8 +4,6 @@
  * Code for the HHS Search feature.
  */
 
-include_once 'dkan_acquia_search_solr.features.inc';
-
 /**
  * Queries the search_api_server for dkan_acquia_solr.
  */

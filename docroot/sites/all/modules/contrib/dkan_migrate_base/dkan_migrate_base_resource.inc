@@ -38,6 +38,7 @@ class MigrateCkanResourceBase extends MigrateCkanBase {
     $this->endpoint = isset($arguments['endpoint']) ? $arguments['endpoint'] : dirname(__FILE__) . '/modules/dkan_migrate_base_example/data/';
     $list_url = isset($arguments['list_url']) ? $arguments['list_url'] : 'resource_list';
     $item_url = isset($arguments['item_url']) ? $arguments['item_url'] : 'resource_show?id=:id';
+
     $this->page = isset($arguments['page']) ? $arguments['page'] : '';
     $this->offset = isset($arguments['offset']) ? $arguments['offset'] : '';
     $this->ids = isset($arguments['ids']) ? $arguments['ids'] : '';
@@ -59,10 +60,10 @@ class MigrateCkanResourceBase extends MigrateCkanBase {
     }
 
     // Add endpoint for local file.
-    if (strpos('http://', $list_url) === FALSE) {
+    if (strpos($list_url, 'http://') === FALSE && strpos($list_url, 'public://') === FALSE) {
       $list_url = $this->endpoint . $list_url;
     }
-    if (strpos('http://', $item_url) === FALSE) {
+    if (strpos($item_url, 'http://') === FALSE && strpos($item_url, 'public://') === FALSE) {
       $item_url = $this->endpoint . $item_url;
     }
 
@@ -114,15 +115,17 @@ class MigrateCkanResourceBase extends MigrateCkanBase {
     $row->last_modified = $this->StringToTime($row->last_modified);
 
     $row->name = $row->name ? $row->name : $row->description;
+
     // Tax terms in Drupal are case sensitive. It is better to have a single
     // 'html' term instead of 'html' and 'HTML'.
     // TODO: move to hook_node_update in dkan_dataset.
     $format = taxonomy_vocabulary_machine_name_load('format');
+    $remote_mime = remote_mime($row->url);
     $row->format = strtolower($row->format);
     $this->createTax($row->format, 'format', $format->vid);
 
     // Decide which of DKAN's three fields is best for resource file.
-    if ($row->url_type == 'upload' || $row->resource_type == 'file.upload' || $row->resource_type == 'file') {
+    if ($row->url_type == 'upload' || $row->resource_type == 'file.upload' || $row->resource_type == 'file' || $remote_mime) {
       $name = explode('/', $row->url);
       $name = $name[count($name) - 1];
       $uri = 'public://' . $name;

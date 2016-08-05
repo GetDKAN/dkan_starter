@@ -2,7 +2,7 @@ default:
   hostname: localhost
   https_everywhere: FALSE
 data_starter:
-  version: 7.x-1.12.6.4
+  version: 7.x-1.12.6.5
 acquia:
   subscription: 'professional'
   search:

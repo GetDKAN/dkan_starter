@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/NuCivic/dkan_migrate_base.svg?branch=7.x-1.x)](https://travis-ci.org/NuCivic/dkan_migrate_base)
+[![Build Status](https://circleci.com/gh/NuCivic/dkan_migrate_base.svg?branch=7.x-1.x&style=svg)](https://circleci.com/gh/NuCivic/dkan_migrate_base)
 
 DKAN "Harvester" using Migrate module
 =================
@@ -24,6 +24,100 @@ We have provided an example module in this repo. To create a custom migration ju
 ### Periodic Migrations
 After the initial time the migration is run it will check each dataset and resource from the CKAN instance and only update items that have changed in CKAN.
 
+### Mappings
+
+#### Dataset
+
+##### POD 1.0
+```
+'title' => 'title',
+'body' => 'description',
+'og_group_ref' => 'publisher',
+'field_tags' => 'keyword',
+'field_modified_source_date' => 'modified',
+'created' => 'issued',
+'field_public_access_level' => 'accessLevel',
+'field_resources' => 'resources',
+'field_contact_name' => 'contactPointName',
+'field_contact_email' => 'mbox',
+'uuid' => 'identifier',
+'field_license' => 'license',
+'field_spatial_geographical_cover' => 'spatial',
+'field_temporal_coverage' => 'temporalBegin',
+'field_temporal_coverage:to' => 'temporalEnd',
+'field_frequency' => 'accrualPeriodicity',
+'field_data_dictionary' => 'dataDictionary',
+'language' => 'language',
+```
+
+##### POD 1.1
+```      
+'title' => 'title',
+'body' => 'description',
+'og_group_ref' => 'group_id',
+'field_tags' => 'keyword',
+'field_modified_source_date' => 'modified',
+'created' => 'issued',
+'field_public_access_level' => 'accessLevel',
+'field_resources' => 'resources',
+'field_contact_name' => 'contactPointName',
+'field_contact_email' => 'mbox',
+'uuid' => 'identifier',
+'field_license' => 'license',
+'field_spatial_geographical_cover' => 'spatial',
+'field_temporal_coverage' => 'temporalBegin',
+'field_temporal_coverage:to' => 'temporalEnd',
+'field_frequency' => 'accrualPeriodicity',
+'field_data_dictionary' => 'describedBy',
+'field_additional_info' => 'any additional info key',
+'field_additional_info:second' => 'any additional info value',
+'field_related_content' => 'references',
+```
+
+#### CKAN
+```
+'title' => 'title'
+'field_license' => 'license_title'
+'created' => 'metadata_created'
+'changed' => 'metadata_modified'
+'field_author' => 'author'
+'field_contact_email' => 'author_email'
+'uid' => 'uid'
+'id' => 'uuid'
+'path' => 'name'
+'body' => 'notes'
+'field_spatial_geographical_cover' => 'spatialText'
+'field_spatial' => 'spatial'
+'field_resources' => 'resource_ids'
+'field_tags' => 'tag_names'
+'field_additional_info' => 'any additional info key'
+'field_additional_info:second' => 'any additional info value'
+```
+
+##### Open Federal Extra Fields
+```
+'field_odfe_bureau_code' => 'bureauCode',
+'field_odfe_program_code' => 'programCode',
+'field_odfe_landing_page' => 'landingPage',
+'field_odfe_rights' => 'rights',
+'field_odfe_conforms_to' => 'conformsTo',
+'field_odfe_data_quality' => 'dataQuality',
+'field_odfe_data_dictionary_type' => 'describedByType',
+'field_odfe_is_part_of' => 'isPartOf',
+'field_odfe_language' => 'language',
+'field_odfe_investment_uii' => 'primaryITInvestmentUII',
+'field_odfe_system_of_records' => 'systemOfRecords',
+'field_odfe_category' => 'theme',
+```
+
+##### Notes
+**publisher POD:** is being mapped to a DKAN group. If that group doesn't exists then is created.
+**field_additional_info:** is a DKAN field that holds json keys that can't be mapped to any other DKAN field. 
+**open_data_federal_extras:** is a module that can be enabled to add fields that are present in the POD spec but aren't present in DKAN out-of-the-box. By enabling this module you are adding these fields to your DKAN entities (datasets and resources).
+
+### Resources
+TODO
+
 ### Documentation
 We are working on improving this documentation. Please let us know if you have any questions in the mean time.
 
@@ -39,3 +133,4 @@ NuCivic/dkan#issue_id
 ``` 
 
 to any commit message or comment replacing **issue_id** with the corresponding issue id.
+

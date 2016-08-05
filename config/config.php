@@ -12,7 +12,7 @@ $conf = array (
   ),
   'data_starter' => 
   array (
-    'version' => '7.x-1.12.5',
+    'version' => '7.x-1.12.6.5',
   ),
   'acquia' => 
   array (

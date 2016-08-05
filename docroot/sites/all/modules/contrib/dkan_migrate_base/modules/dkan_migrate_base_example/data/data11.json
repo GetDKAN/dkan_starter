@@ -24,7 +24,7 @@
                 {
                     "@type": "dcat:Distribution",
                     "accessURL": "http://demo.getdkan.com/dataset/wisconsin-polling-places",
-                    "downloadURL": "http://demo.getdkan.com/sites/default/files/Polling_Places_Madison_0.csv",
+                    "downloadURL": "https://s3.amazonaws.com/dkan-default-content-files/files/Polling_Places_Madison_0.csv",
                     "description": "No description provided"
                 }
             ],
@@ -134,7 +134,8 @@
             "license": "cc-by",
             "modified": "2014-06-23",
             "publisher": {
-                "@type": "org:Organization"
+                "@type": "org:Organization",
+                "name": "Health"
             },
             "title": "NGA Scores",
             "accessLevel": "public"
