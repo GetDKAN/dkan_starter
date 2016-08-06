@@ -2,12 +2,24 @@
 
 ## [7.x-1.12.6.5]
 
+### Fixed
+- Updated DKAN to fix topics issue.
+
+### Changed
+- Updated settings.acquia.php to include correct solr server name.
+- Updated ahoy tools.
+
+### Removed
+- assets/.htacess
+- Symlink from docroot/.htacess to config/.htaccess
+
+## [7.x-1.12.6.5]
+
 ### Added
 - added default `config/.htaccess`
 
 ### Fixed
 - Fixed more failing tests in DKAN.
-
 
 ### Changed
 - Updated ahoy tools. `ahoy build new` does not throw ambiguous error when no
