@@ -1,7 +1,7 @@
-diff --git a/dkan/test/features/datastore.feature b/dkan/test/features/datastore.feature
+diff --git a/test/features/datastore.feature b/test/features/datastore.feature
 index 5c1ab81..29a1229 100644
---- a/dkan/test/features/datastore.feature
-+++ b/dkan/test/features/datastore.feature
+--- a/test/features/datastore.feature
++++ b/test/features/datastore.feature
 @@ -26,7 +26,6 @@ Feature: Datastore
        And I am on "dataset/dataset-01"
        And I click "Resource 01"
@@ -10,10 +10,10 @@ index 5c1ab81..29a1229 100644
        And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
        And I press "Save"
        And I am on "dataset/dataset-01"
-diff --git a/dkan/test/features/recline.feature b/dkan/test/features/recline.feature
+diff --git a/test/features/recline.feature b/test/features/recline.feature
 index daccdc2..29d303b 100644
---- a/dkan/test/features/recline.feature
-+++ b/dkan/test/features/recline.feature
+--- a/test/features/recline.feature
++++ b/test/features/recline.feature
 @@ -50,7 +50,6 @@ Feature: Recline
      When I click "Resource 01"
      Then I should see "Test R1"
@@ -57,10 +57,10 @@ index daccdc2..29d303b 100644
 +    Given I fill in "q" with "Glendale"
 +    When I press "Go"
      Then I should see "Tompkins"
-diff --git a/dkan/test/features/resource.admin.feature b/dkan/test/features/resource.admin.feature
+diff --git a/test/features/resource.admin.feature b/test/features/resource.admin.feature
 index 46118fa..654fa19 100644
---- a/dkan/test/features/resource.admin.feature
-+++ b/dkan/test/features/resource.admin.feature
+--- a/test/features/resource.admin.feature
++++ b/test/features/resource.admin.feature
 @@ -89,8 +89,7 @@ Feature: Resource
      Given I am logged in as "John"
      And I am on "Resource 02" page
@@ -91,10 +91,10 @@ index 46118fa..654fa19 100644
      And I press "Save"
      And I am on "Resource 04" page
      When I click "Manage Datastore"
-diff --git a/dkan/test/features/resource.all.feature b/dkan/test/features/resource.all.feature
+diff --git a/test/features/resource.all.feature b/test/features/resource.all.feature
 index 4d49f0e..52cc5a5 100644
---- a/dkan/test/features/resource.all.feature
-+++ b/dkan/test/features/resource.all.feature
+--- a/test/features/resource.all.feature
++++ b/test/features/resource.all.feature
 @@ -147,8 +147,7 @@ Feature: Resource
      When I click "Resource 01"
      Then I should see "Edit"
@@ -105,10 +105,10 @@ index 4d49f0e..52cc5a5 100644
      And I press "edit-submit"
      When I am on "/dataset/dataset-01"
      Then I should see "Open With"
-diff --git a/dkan/test/features/resource.author.feature b/dkan/test/features/resource.author.feature
+diff --git a/test/features/resource.author.feature b/test/features/resource.author.feature
 index 514c3f8..687e9c1 100644
---- a/dkan/test/features/resource.author.feature
-+++ b/dkan/test/features/resource.author.feature
+--- a/test/features/resource.author.feature
++++ b/test/features/resource.author.feature
 @@ -60,9 +60,8 @@ Feature: Resource
      Given I am logged in as "Katie"
      And I am on the "Content" page
@@ -150,10 +150,10 @@ index 514c3f8..687e9c1 100644
      And I press "Save"
      Given I am logged in as "Celeste"
      And I am on "Resource 03" page
-diff --git a/dkan/test/features/resource.editor.feature b/dkan/test/features/resource.editor.feature
+diff --git a/test/features/resource.editor.feature b/test/features/resource.editor.feature
 index c2fa1a6..4f1d0ed 100644
---- a/dkan/test/features/resource.editor.feature
-+++ b/dkan/test/features/resource.editor.feature
+--- a/test/features/resource.editor.feature
++++ b/test/features/resource.editor.feature
 @@ -98,8 +98,7 @@ Feature: Resource
      Given I am logged in as "John"
      And I am on "Resource 01" page
