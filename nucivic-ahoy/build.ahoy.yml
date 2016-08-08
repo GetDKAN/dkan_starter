@@ -50,9 +50,18 @@ commands:
   custom:
     usage: Downloads 3rd party modules
     cmd: |
-      if [ -f custom.make ]; then
-        ahoy drush -y make --no-core --contrib-destination=contrib custom.make --no-recursion --no-cache --verbose
+      if [ -f config/custom.make ]; then
+        ahoy drush -y make --no-core --contrib-destination=contrib config/custom.make --no-recursion --no-cache --verbose
         mv contrib/modules/* docroot/sites/all/modules/contrib
+        rm -rf contrib
+      fi
+
+  custom-libs:
+    usage: Downloads 3rd party libraries
+    cmd: |
+      if [ -f config/custom_libs.make ]; then
+      ahoy drush -y make --no-core --contrib-destination=contrib config/custom_libs.make --no-recursion --no-cache --verbose
+        mv contrib/libraries/* docroot/sites/all/libraries
         rm -rf contrib
       fi
 
@@ -81,7 +90,7 @@ commands:
       mkdir -p docroot/sites/all/themes/contrib
       # Replace the default .htaccess file with our own that includes a working non-www to www example for acquia.
       if [ -f config/.htaccess ]; then
-        rm -f docroot/.htaccess
+        rm -rf docroot/.htaccess
         ln -s ../config/.htaccess docroot/.htaccess
       fi
       # Replace sites/default with our own sites/default outside of the drupal root.
@@ -150,7 +159,7 @@ commands:
         ahoy confirm "{{args}} site folder alredy exists."
         echo ".. skipping installation"; exit 1;
       fi
-        # No ahoy commands after cd-ing out of project folder.
+      # No ahoy commands after cd-ing out of project folder.
       cd ..
       git clone 'git@github.com:NuCivic/data_starter_private.git' {{args}} --depth=1
       cd {{args}}
@@ -219,23 +228,24 @@ commands:
       if [ ! -d .data_starter_private ]; then
         git clone 'git@github.com:NuCivic/data_starter_private.git' .data_starter_private --depth=1
       fi
-      mv config .config
       cd .data_starter_private
       git checkout master --force
       git reset --hard origin/master
-      git fetch --tags
       ARGS="{{args}}"
       if [[ -z "$ARGS" ]]; then
         echo "Please provide a Data Starter release (tag) as an argument. Exiting"
         exit 0
       fi
-      ARGS=`git tag | grep "$ARGS"`
+      git fetch origin "$ARGS:$ARGS" 2> /dev/null
+      ARGS=`git rev-parse --verify "$ARGS" 2> /dev/null`
+      echo $ARGS
       if [[ -z "$ARGS" ]]; then
-        echo "You need to specify a valid Data Starter release (tag). Exiting"
+        echo "You need to specify a valid Data Starter release (tag) or branch. Exiting"
         exit 0
       fi
       git checkout $ARGS
       cd ..
+      mv config .config
       rm -rf *
       # You can rsync now
       rsync -av --exclude=.git .data_starter_private/* ./
