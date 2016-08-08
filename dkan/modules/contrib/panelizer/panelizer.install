@@ -1151,6 +1151,11 @@ function panelizer_update_7300(&$sandbox) {
     // Get a list of all records using a default display.
     $sandbox['max'] = db_query('SELECT COUNT(DISTINCT entity_type) FROM {panelizer_entity} WHERE did = 0')->fetchField();
 
+    // Bail if no records found.
+    if (empty($sandbox['max'])) {
+      return t('No records need to be fixed.');
+    }
+
     watchdog('panelizer', 'Default panelizer records will be removed for @count entity types.', array('@count' => $sandbox['max']));
   }
 

@@ -1,6 +1,10 @@
 # Change log
+## [7.x-1.12.6.7]
 
-## [7.x-1.12.6.5]
+### Fixed
+- Patches broken panalizer update. 
+
+## [7.x-1.12.6.6]
 
 ### Fixed
 - Updated DKAN to fix topics issue.
