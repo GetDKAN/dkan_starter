@@ -143,7 +143,7 @@ switch(ENVIRONMENT) {
       'expire',
       'search_api_solr',
       'search_api_acquia',
-      'securepages'
+      'securepages',
       'syslog',
     );
     // Show ALL errors when working locally.
