@@ -10,10 +10,6 @@ $conf = array (
     'hostname' => 'localhost',
     'https_everywhere' => false,
   ),
-  'data_starter' => 
-  array (
-    'version' => '7.x-1.12.6.7',
-  ),
   'acquia' => 
   array (
     'subscription' => 'professional',

@@ -1,4 +1,11 @@
+
 # Change log
+
+## [7.x-1.12.6.8]
+
+### Changed
+- Skip more custom tests. 
+
 ## [7.x-1.12.6.7]
 
 ### Fixed
