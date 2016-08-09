@@ -18,6 +18,7 @@ commands:
       ahoy build update-data-starter "$ARGS"
       ahoy build custom
       ahoy build overrides
+      ahoy build custom-libs
       ahoy build config
 
   remake:
@@ -50,7 +51,7 @@ commands:
   custom:
     usage: Downloads 3rd party modules
     cmd: |
-      if [ -f config/custom.make ]; then
+      if [ -f config/custom.make ] && [ `cat config/custom.make | sed '/^\s*$/d' | wc -l` -lt 3 ]; then
         ahoy drush -y make --no-core --contrib-destination=contrib config/custom.make --no-recursion --no-cache --verbose
         mv contrib/modules/* docroot/sites/all/modules/contrib
         rm -rf contrib
@@ -252,3 +253,7 @@ commands:
       rm -rf config
       mv .config config
       rm -rf .data_starter_private
+
+    upgrade-sites:
+      usage: ahoy build upgrade-sites $tag
+      cmd: ahoy cmd-proxy bash nucivic-ahoy/.scripts/upgrade-sites.sh

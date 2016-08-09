@@ -1,6 +1,11 @@
 
 # Change log
 
+## [7.x-1.12.6.9]
+
+### Fixed
+- `ahoy build custom` breaks if invalid custom.make
+
 ## [7.x-1.12.6.8]
 
 ### Changed
