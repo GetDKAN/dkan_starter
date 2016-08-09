@@ -9,6 +9,8 @@ drush_alias=$site'.'$env
 env_map=(
   "local:local"
   "pro:production"
+  "prod:production"
+  "production:production"
   "dev:development"
   "test:test"
   "ra:test"
