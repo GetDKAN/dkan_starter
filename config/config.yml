@@ -1,6 +1,7 @@
 default:
   hostname: localhost
   https_everywhere: FALSE
+  https_securepages: FALSE
 acquia:
   subscription: 'professional'
   search:

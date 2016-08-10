@@ -17,9 +17,19 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   $conf['securepages_basepath'] = $base_url;
   $conf['securepages_basepath_ssl'] = str_replace('http://', 'https://', $base_url);
 
-  if (!$conf['https_everywhere']) {
-    $conf['https'] = FALSE;
-    $conf['securepages_enable'] = FALSE;
+  if ($conf['default']['https_securepages']) {
+    $conf['securepages_enable'] = TRUE;
+    $conf['securepages_forms'] = "user_login\r\nuser_login_block";
+    $conf['securepages_ignore'] = "";
+    $conf['securepages_pages'] =  "node/add*\r\nnode/*/edit\r\nnode/*/delete\r\nuser\r\nuser/*\r\nadmin\r\nadmin/*\r\npanels\r\npanels*";
+    $conf['securepages_secure'] = "1";
+    $conf['securepages_switch'] = "0";
+    $conf['securepages_debug'] = "0";
+    // Enables for "Authenticate users" role which should always be "2".
+    $conf['securepages_roles'] = array("2" => "2");
+  }
+  else {
+    $conf['securepages_enable'] = "0";
   }
 
   if (isset($conf['acquia'][$env]['core_id'])) {
