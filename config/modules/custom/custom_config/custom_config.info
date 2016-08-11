@@ -5,3 +5,4 @@ package = Custom
 version = 7.x-1.0
 project = custom_config
 dependencies[] = data_config
+dependencies[] = features_master
