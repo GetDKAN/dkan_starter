@@ -1,6 +1,20 @@
 
 # Change log
 
+## [1.12.7.0]
+### Added
+- config.yml (root level to store ata_starter specific metadata/and defaults)
+
+### Changed
+- Remake dkan at 1.12.7 with release-1-12 patch
+- Versioning scheme (drop 7.x)
+
+### Removed
+- Unnecessary custom_config deps and info section
+
+### Fixed
+- `ahoy build custom` breaks if invalid custom.make
+
 ## [7.x-1.12.6.9]
 
 ### Fixed
