@@ -255,6 +255,13 @@ function features_master_features_revert($module) {
  * @param $data
  */
 function _features_master_features_revert_permissions($module, $data) {
+   
+  $data_permissions = is_array($data['permissions']) ? $data['permissions'] : array();
+
+  if (!$data_permissions) {
+    // Permissions aren't defined so don't revert.
+    return;
+  }
 
   // Make sure the list of available node types is up to date, especially when
   // installing multiple features at once, for example from an install profile
@@ -270,8 +277,8 @@ function _features_master_features_revert_permissions($module, $data) {
     $write_perms = array();
     foreach ($permissions as $perm_name => $perm) {
       $p_roles = array();
-      if (is_array($data['permissions'][$perm_name]['roles'])) {
-        $p_roles = $data['permissions'][$perm_name]['roles'];
+      if (is_array($data_permissions[$perm_name]['roles'])) {
+        $p_roles = $data_permissions[$perm_name]['roles'];
       }
       if (in_array($role, $p_roles)) {
         $write_perms[$perm_name] = $perm_name;
@@ -295,6 +302,11 @@ function _features_master_features_revert_themes($module, $data) {
   $current_enabled_themes = _features_master_get_themes();
   $data_themes = is_array($data['themes']) ? $data['themes'] : array();
 
+  if (!$data_themes) {
+    // Themes aren't defined so don't revert.
+    return;
+  }
+
   // Enable the defined themes
   if ($enable_themes = array_diff_key($data_themes, $current_enabled_themes)) {
 
@@ -315,43 +327,46 @@ function _features_master_features_revert_themes($module, $data) {
  * Revert modules.
  */
 function _features_master_features_revert_modules($module, $data) {
-  if (!empty($data['modules'])) {
-    features_master_temporary_modules_alter($data['modules'], 'revert');
-    $current_enabled_modules = module_list();
-    if ($enable_modules = array_diff_key($data['modules'], $current_enabled_modules)) {
-      foreach ($enable_modules as $module) {
-        // TODO: We could speed the process up by checking the database each time to see if a module was already enabled,
-        // perhaps as a dependency of another module just installed.
-        try {
-          $success = module_enable(array($module));
-        } catch (Exception $e) {
-          $success = false;
-          drupal_set_message(t('FEATURES MASTER: Enabling @module or one of it\'s dependencies caused an exception: @ex', array('@module' => $module, '@ex' => $e->getMessage())));
-        }
-        if (!$success) {
-          // Consider these modules as not enabled;
-          unset($enable_modules[$module]);
-          drupal_set_message(t('FEATURES MASTER: @module has unmet dependencies, is not installed, or has some other issue and could not be enabled', array('@module' => $module)));
-        }
-      }
+  $data_themes = is_array($data['modules']) ? $data['modules'] : array();
 
-      if(empty($enable_modules)){
-        drupal_set_message(t('FEATURES MASTER: No modules were enabled, either there was an error enabling them or none were set to enable.'));
+  if (!$data_modules) {
+    // Modules aren't defined so don't revert.
+    return;
+  }
+  features_master_temporary_modules_alter($data_modules, 'revert');
+  $current_enabled_modules = module_list();
+  if ($enable_modules = array_diff_key($data_modules, $current_enabled_modules)) {
+    foreach ($enable_modules as $module) {
+      // TODO: We could speed the process up by checking the database each time to see if a module was already enabled,
+      // perhaps as a dependency of another module just installed.
+      try {
+        $success = module_enable(array($module));
+      } catch (Exception $e) {
+        $success = false;
+        drupal_set_message(t('FEATURES MASTER: Enabling @module or one of it\'s dependencies caused an exception: @ex', array('@module' => $module, '@ex' => $e->getMessage())));
       }
-      else {
-        $modules_string = implode(", ", $enable_modules);
-        drupal_set_message(t('FEATURES MASTER: The following modules were enabled successfully: @modules_string', array('@modules_string' => $modules_string)));
+      if (!$success) {
+        // Consider these modules as not enabled;
+        unset($enable_modules[$module]);
+        drupal_set_message(t('FEATURES MASTER: @module has unmet dependencies, is not installed, or has some other issue and could not be enabled', array('@module' => $module)));
       }
     }
-    if ($disable_modules = array_diff_key($current_enabled_modules, $data['modules'])) {
-      foreach ($disable_modules as $module) {
-        // TODO: We don't get any return value from module_disable unfortunately. We should add a try catch here as well.
-        module_disable(array($module));
-      }
-      $modules_string = implode(", ", $disable_modules);
-      drupal_set_message(t('FEATURES MASTER: The following modules were disabled successfully: @modules_string', array('@modules_string' => $modules_string)));
+
+    if(empty($enable_modules)){
+      drupal_set_message(t('FEATURES MASTER: No modules were enabled, either there was an error enabling them or none were set to enable.'));
     }
-    //TODO: Implement the same thing for themes.
+    else {
+      $modules_string = implode(", ", $enable_modules);
+      drupal_set_message(t('FEATURES MASTER: The following modules were enabled successfully: @modules_string', array('@modules_string' => $modules_string)));
+    }
+  }
+  if ($disable_modules = array_diff_key($current_enabled_modules, $data_modules)) {
+    foreach ($disable_modules as $module) {
+      // TODO: We don't get any return value from module_disable unfortunately. We should add a try catch here as well.
+      module_disable(array($module));
+    }
+    $modules_string = implode(", ", $disable_modules);
+    drupal_set_message(t('FEATURES MASTER: The following modules were disabled successfully: @modules_string', array('@modules_string' => $modules_string)));
   }
 }
 
