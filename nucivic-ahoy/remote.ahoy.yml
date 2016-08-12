@@ -8,10 +8,10 @@ commands:
       alias={{args}}
       alias=${alias#@}
       echo $alias
-      ahoy cmd-proxy drush @$alias cc drush
-      ahoy cmd-proxy drush @$alias -y si dkan
-      ahoy cmd-proxy drush @$alias cc drush
-      ahoy cmd-proxy drush @$alias -y en custom_config environment devinci
+      ahoy drush @$alias cc drush
+      ahoy drush @$alias -y si dkan
+      ahoy drush @$alias cc drush
+      ahoy drush @$alias -y en custom_config environment devinci
       ahoy remote deploy $alias
       ahoy remote update-indexes $alias
 
@@ -21,14 +21,14 @@ commands:
       set -e
       alias={{args}}
       alias=${alias#@}
-      ahoy cmd-proxy drush @$alias dl -n registry_rebuild
-      ahoy cmd-proxy drush @$alias cc drush
-      target_env=`ahoy cmd-proxy drush @$alias php-eval "'echo ENVIRONMENT;'"`
-      ahoy cmd-proxy drush @$alias cc drush
-      ahoy cmd-proxy drush @$alias -y fr --force custom_config
-      ahoy cmd-proxy drush @$alias env-switch $target_env --force
-      ahoy cmd-proxy drush @$alias cc drush
-      ahoy cmd-proxy drush @$alias rr
+      ahoy  drush @$alias dl -n registry_rebuild
+      ahoy  drush @$alias cc drush
+      target_env=`ahoy  drush @$alias php-eval "'echo ENVIRONMENT;'"`
+      ahoy drush @$alias cc drush
+      ahoy drush @$alias -y fr --force custom_config
+      ahoy drush @$alias env-switch $target_env --force
+      ahoy drush @$alias cc drush
+      ahoy drush @$alias rr
 
   update-indexes:
     usage: Updates search api indexes
@@ -36,10 +36,10 @@ commands:
       set -e
       alias={{args}}
       alias=${alias#@}
-      ahoy cmd-proxy drush @$alias cc drush
-      ahoy cmd-proxy drush @$alias search-api-index datasets
-      ahoy cmd-proxy drush @$alias search-api-index groups_di
-      ahoy cmd-proxy drush @$alias search-api-index stories_index
+      ahoy  drush @$alias cc drush
+      ahoy  drush @$alias search-api-index datasets
+      ahoy  drush @$alias search-api-index groups_di
+      ahoy  drush @$alias search-api-index stories_index
 
   launch-checklist:
     usage: A series of commands to perform a launch-checklist
