@@ -37,7 +37,7 @@ drupal=$(drush @$drush_alias status | grep -e "Drupal bootstrap" | sed -e 's/^[[
 
 if [[ "$drupal" =~ "Successful" ]]; then
   echo "Installation detected, running deploy script"
-  drush @$drush_alias en data_config -y
+  drush @$drush_alias en custom_config -y
   drush @$drush_alias cc all
   drush @$drush_alias -y fr --force custom_config
   drush @$drush_alias env-switch $target_env --force
