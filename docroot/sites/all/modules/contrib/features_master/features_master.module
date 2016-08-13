@@ -327,7 +327,7 @@ function _features_master_features_revert_themes($module, $data) {
  * Revert modules.
  */
 function _features_master_features_revert_modules($module, $data) {
-  $data_themes = is_array($data['modules']) ? $data['modules'] : array();
+  $data_modules = is_array($data['modules']) ? $data['modules'] : array();
 
   if (!$data_modules) {
     // Modules aren't defined so don't revert.
