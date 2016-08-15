@@ -51,17 +51,32 @@ commands:
   custom:
     usage: Downloads 3rd party modules
     cmd: |
-      if [ -f config/custom.make ] && [ `cat config/custom.make | sed '/^\s*$/d' | wc -l` -lt 3 ]; then
+      if [ -f config/custom.make ] && [ `cat config/custom.make | sed '/^\s*$/d' | wc -l` -gt 3 ]; then
         ahoy drush -y make --no-core --contrib-destination=contrib config/custom.make --no-recursion --no-cache --verbose
-        mv contrib/modules/* docroot/sites/all/modules/contrib
+
+        # Remove old stuff first
+        dirs=( $(find ./contrib/modules -type d  -maxdepth 1 | sed 's/\.\/contrib\/modules\///g') )
+        for dir in "${dirs[@]}";
+        do
+          rm -fR ./docroot/sites/all/modules/contrib/$dir
+        done
+
+        mv -f contrib/modules/* docroot/sites/all/modules/contrib
         rm -rf contrib
       fi
 
   custom-libs:
     usage: Downloads 3rd party libraries
     cmd: |
-      if [ -f config/custom_libs.make ]; then
-      ahoy drush -y make --no-core --contrib-destination=contrib config/custom_libs.make --no-recursion --no-cache --verbose
+      if [ -f config/custom_libs.make ] && [ `cat config/custom_libs.make | sed '/^\s*$/d' | wc -l` -gt 3 ]; then
+        ahoy drush -y make --no-core --contrib-destination=contrib config/custom_libs.make --no-recursion --no-cache --verbose
+      
+        # Remove old stuff first
+        dirs=( $(find ./contrib/libraries -type d  -maxdepth 1 | sed 's/\.\/contrib\/libraries\///g') )
+        for dir in "${dirs[@]}";
+        do
+          rm -fR ./docroot/sites/all/libraies/$dir
+        done
         mv contrib/libraries/* docroot/sites/all/libraries
         rm -rf contrib
       fi

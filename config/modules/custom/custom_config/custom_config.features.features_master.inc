@@ -13,7 +13,7 @@ function custom_config_features_master_defaults() {
   $features_master = data_config_enabled_modules();
   
   // Add and remove modules where necessary.
-  unset($features_master['example']);
+  unset($features_master['modules']['example']);
   
   return $features_master;
 }

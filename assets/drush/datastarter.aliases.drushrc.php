@@ -2,6 +2,7 @@
 // NuCivic Data Starter
 $aliases['local'] = array(
   'profile' => 'dkan',
-  'webroot' => '/var/www/docroot',
-  '#name' => 'data_starter',
+  'root' => '/var/www/docroot',
+  '#name' => 'datastarter',
+  'uri' => 'datastarter.local',
 );

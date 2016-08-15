@@ -19,6 +19,7 @@ projects[] = environment
 projects[] = environment_indicator
 projects[] = features_banish
 projects[features_master] = 1.1
+projects[features_master][patch][2775681] = https://www.drupal.org/files/issues/2775681-4-only-revert-if-defined.patch
 
 ; Optional Projects
 ; =================
