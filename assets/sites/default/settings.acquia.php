@@ -18,7 +18,7 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   $conf['securepages_basepath_ssl'] = str_replace('http://', 'https://', $base_url);
 
   if ($conf['default']['https_securepages']) {
-    $conf['securepages_enable'] = TRUE;
+    $conf['securepages_enable'] = 1;
     $conf['securepages_forms'] = "user_login\r\nuser_login_block";
     $conf['securepages_ignore'] = "";
     $conf['securepages_pages'] =  "node/add*\r\nnode/*/edit\r\nnode/*/delete\r\nuser\r\nuser/*\r\nadmin\r\nadmin/*\r\npanels\r\npanels*";
