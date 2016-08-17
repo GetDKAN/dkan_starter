@@ -5,6 +5,7 @@ acquia:
   subscription: 'professional'
   search:
     host: changeme
+    id: acquia_search
   dev:
     base_url: http://devurl
     core_id: changeme

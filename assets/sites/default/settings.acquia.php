@@ -23,7 +23,8 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   }
 
   if (isset($conf['acquia'][$env]['core_id'])) {
-    $conf['search_api_acquia_overrides']['acquia_search'] = array(
+    $search_server_id = $conf['acquia']['search']['id'];
+    $conf['search_api_acquia_overrides'][$search_server_id] = array(
       'path' => '/solr/' . $conf['acquia'][$env]['core_id'],
       'host' => $conf['acquia']['search']['host'],
       'derived_key' => $conf['acquia'][$env]['derived_key']
