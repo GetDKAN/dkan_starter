@@ -10,6 +10,7 @@ $conf = array (
     'hostname' => 'localhost',
     'https_everywhere' => false,
     'https_securepages' => false,
+    'stage_file_proxy_origin' => 'changeme',
   ),
   'acquia' => 
   array (
