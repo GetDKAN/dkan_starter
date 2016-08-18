@@ -6,7 +6,7 @@ acquia:
   subscription: 'professional'
   search:
     host: changeme
-    id: acquia_search
+    id: dkan_acquia_solr 
   dev:
     base_url: http://devurl
     core_id: changeme

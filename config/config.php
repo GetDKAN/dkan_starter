@@ -17,6 +17,7 @@ $conf = array (
     'search' => 
     array (
       'host' => 'changeme',
+      'id' => 'dkan_acquia_solr',
     ),
     'dev' => 
     array (
