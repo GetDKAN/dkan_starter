@@ -1,10 +1,12 @@
 default:
   hostname: localhost
   https_everywhere: FALSE
+  https_securepages: FALSE
 acquia:
   subscription: 'professional'
   search:
     host: changeme
+    id: dkan_acquia_solr 
   dev:
     base_url: http://devurl
     core_id: changeme

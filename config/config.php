@@ -9,6 +9,7 @@ $conf = array (
   array (
     'hostname' => 'localhost',
     'https_everywhere' => false,
+    'https_securepages' => false,
   ),
   'acquia' => 
   array (
@@ -16,6 +17,7 @@ $conf = array (
     'search' => 
     array (
       'host' => 'changeme',
+      'id' => 'dkan_acquia_solr',
     ),
     'dev' => 
     array (
