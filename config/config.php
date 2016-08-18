@@ -9,6 +9,7 @@ $conf = array (
   array (
     'hostname' => 'localhost',
     'https_everywhere' => false,
+    'https_securepages' => false,
   ),
   'acquia' => 
   array (
