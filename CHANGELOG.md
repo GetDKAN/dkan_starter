@@ -1,6 +1,6 @@
 
 # Change log
-## [1.12.7.8]
+## [1.12.8.0]
 ### Added
 - Add new id for search servers
 ### Changed
