@@ -1,5 +1,13 @@
 
 # Change log
+## [1.12.7.8]
+### Added
+- Add new id for search servers
+### Changed
+- Remake dkan at 1.12.8 with release-1-12 patch
+- Added securepages configuration
+### Fixed
+- Acquia solr search not using correct server.
 
 ## [1.12.7.0]
 ### Added
