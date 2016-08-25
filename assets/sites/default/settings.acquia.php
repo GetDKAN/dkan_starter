@@ -2,7 +2,7 @@
 /**
  * Acquia Settings.
  */
- 
+
 if (isset($conf['memcache_servers'])) {
   $conf['cache_backends'][] = './sites/all/modules/contrib/memcache/memcache.inc';
   $conf['cache_default_class'] = 'MemCacheDrupal';
@@ -14,10 +14,11 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   $sitegroup = getenv('AH_SITE_GROUP');
 
   $base_url = $conf['acquia'][$env]['base_url'];
-  $conf['securepages_basepath'] = $base_url;
-  $conf['securepages_basepath_ssl'] = str_replace('http://', 'https://', $base_url);
+  $base_url_https = str_replace('http://', 'https://', $base_url);
 
-  if ($conf['default']['https_securepages']) {
+  if ($conf['default']['https_securepages'] && !$conf['default']['https_everywhere']) {
+    $conf['securepages_basepath'] = $base_url;
+    $conf['securepages_basepath_ssl'] = $base_url_https;
     $conf['securepages_enable'] = 1;
     $conf['securepages_forms'] = "user_login\r\nuser_login_block";
     $conf['securepages_ignore'] = "";
@@ -30,6 +31,13 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   }
   else {
     $conf['securepages_enable'] = "0";
+  }
+
+  if ($conf['default']['https_everywhere']) {
+    $base_url = $base_url_https;
+
+    // Disable securepages when https everywhere is enabled.
+    $conf['features_master_temp_disabled_modules'][] = 'securepages';
   }
 
   if (isset($conf['acquia'][$env]['core_id'])) {
