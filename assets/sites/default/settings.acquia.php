@@ -40,19 +40,6 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
     $conf['features_master_temp_disabled_modules'][] = 'securepages';
   }
 
-  // Adds support for fast file if enabled in config.yml.
-  if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
-    $conf['dkan_datastore_fast_import_selection'] = 2;
-    $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
-    $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
-    $conf['queue_filesize_threshold'] = $conf['default']['fast_file']['queue'];
-
-    $databases['default']['default']['pdo'] = array(
-      PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
-      PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
-    );
-  }
-
   if (isset($conf['acquia'][$env]['core_id'])) {
     $search_server_id = $conf['acquia']['search']['id'];
     $conf['search_api_acquia_overrides'][$search_server_id] = array(
