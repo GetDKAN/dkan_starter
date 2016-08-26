@@ -43,6 +43,12 @@ function _data_starter_validates($variable = '') {
   return isset($conf['default'][$variable]) && $conf['default'][$variable] != 'changeme';
 }
 
+// Needs to happen before Acquia connects.
+// TODO: Move to our version of devinci.
+if (file_exists('/var/www/site-php')) {
+  $conf['acquia_hosting_settings_autoconnect'] = FALSE;
+}
+
 /******************************************************
  * REQUIRED: Setup standard environments using devinci.
  ******************************************************/
@@ -63,6 +69,22 @@ devinci_set_env($env_map);
 /********************************************************
  * OPTIONAL: Setup default settings for ALL environments.
  ********************************************************/
+
+// Adds support for fast file if enabled in config.yml.
+if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
+  $conf['dkan_datastore_fast_import_selection'] = 2;
+  $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
+  $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
+  $conf['queue_filesize_threshold'] = $conf['default']['fast_file']['queue'];
+
+  $databases['default']['default']['pdo'] = array(
+    PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
+    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
+  );
+}
+else {
+  $conf['dkan_datastore_fast_import_selection'] = 0;
+}
 
 // Don't show any errors.
 $conf['error_level'] = ERROR_REPORTING_HIDE;

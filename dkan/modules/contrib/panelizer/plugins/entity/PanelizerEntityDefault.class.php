@@ -1621,6 +1621,9 @@ abstract class PanelizerEntityDefault implements PanelizerEntityInterface {
         // Ensure we don't accidentally overwrite existing display
         // data or anything silly like that.
         $panelizer = $this->clone_panelizer($panelizer, $entity);
+        // Ensure that Panels storage is set correctly.
+        $panelizer->display->storage_type = 'panelizer_entity';
+        $panelizer->display->storage_id = implode(':', array($this->entity_type, $entity_id, $view_mode));
         // First write the display
         panels_save_display($panelizer->display);
 
@@ -1777,6 +1780,10 @@ abstract class PanelizerEntityDefault implements PanelizerEntityInterface {
           // Update the cache key since we are adding a new display
           $panelizer->display->cache_key = implode(':', array_filter(array('panelizer', $panelizer->entity_type, $panelizer->entity_id, $view_mode, $revision_id)));
         }
+
+        // Ensure that Panels storage is set correctly.
+        $panelizer->display->storage_type = 'panelizer_entity';
+        $panelizer->display->storage_id = implode(':', array($this->entity_type, $entity_id, $view_mode));
 
         // First write the display.
         panels_save_display($panelizer->display);
@@ -3283,13 +3290,15 @@ abstract class PanelizerEntityDefault implements PanelizerEntityInterface {
         'view modes' => array(),
       );
       if (!empty($values[0]['status'])) {
-        $settings['help'] = $values[0]['help'];
+        // This field is optional so should not always be applied.
+        if (isset($values[0]['help']) && !empty($values[0]['help'])) {
+          $settings['help'] = $values[0]['help'];
+        }
 
         foreach ($values as $view_mode => $config) {
           if (!empty($view_mode) && !empty($config)) {
             // Fix the configuration.
-            // Make sure each setting is disabled if the view mode is
-            // disabled.
+            // Make sure each setting is disabled if the view mode is disabled.
             if (empty($config['status'])) {
               foreach ($config as $key => $val) {
                 $config[$key] = 0;

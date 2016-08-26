@@ -74,8 +74,7 @@ test:
   override:
      - bash dkan/test/circle-behat.sh docroot/profiles/dkan/test/features --tags='~@customizable&&~@fixme&&~@testBug':
          parallel: true
-     - 'ahoy site test features/general.feature':
-         parallel: true
+     - 'ahoy site test'
   post:
     - echo $CIRCLE_ARTIFACTS; cp -av dkan/test/assets $CIRCLE_ARTIFACTS:
         parallel: true
