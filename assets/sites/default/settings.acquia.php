@@ -58,4 +58,5 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
         break;
     }
   }
+  acquia_hosting_db_choose_active();
 }
