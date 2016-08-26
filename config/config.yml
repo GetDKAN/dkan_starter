@@ -2,6 +2,7 @@ default:
   hostname: localhost
   https_everywhere: FALSE
   https_securepages: FALSE
+  stage_file_proxy_origin: changeme
   fast_file:
     enable: TRUE
     limit: 10MB

@@ -35,6 +35,14 @@ if (file_exists($config_file)) {
   include $config_file;
 }
 
+/**
+ * Validation function to check if variable is available.
+ * TODO: make more robust.
+ */
+function _data_starter_validates($variable = '') {
+  return isset($conf['default'][$variable]) && $conf['default'][$variable] != 'changeme';
+}
+
 // Needs to happen before Acquia connects.
 // TODO: Move to our version of devinci.
 if (file_exists('/var/www/site-php')) {
@@ -124,7 +132,10 @@ $conf['environment_indicator_git_support'] = FALSE;
 $conf['install_profile'] = 'dkan';
 
 // This should be updated to the actual live site url if using stage_file_proxy.
-//$conf['stage_file_proxy_origin'] = 'http://my-live-site.com';
+
+if (_data_starter_validates('stage_file_proxy_origin')) {
+  $conf['stage_file_proxy_origin'] = $conf['default']['stage_file_proxy_origin'];
+}
 
 // KEY for dkan health status
 $conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
@@ -150,9 +161,17 @@ switch(ENVIRONMENT) {
       // the custom_config feature master list.
       // 'field_ui',
       'maillog',
-      // 'stage_file_proxy',
       'views_ui',
     );
+    if (_data_starter_validates('stage_file_proxy_origin')) {
+      $conf['features_master_temp_enabled_modules'] = array_merge(
+        $conf['features_master_temp_enabled_modules'],
+        array(
+          'stage_file_proxy',
+        )
+      );
+    }
+
     // Features Master also supports temporarily disabling modules.
     // This will disable modules in the local environment, but INCLUDE them
     // when exporting using features_master.
@@ -186,7 +205,6 @@ switch(ENVIRONMENT) {
       'devel',
       'field_ui',
       'maillog',
-      // 'stage_file_proxy',
       'views_ui',
     );
     // Enable git support for the environment indicator to show current branch.
@@ -199,7 +217,6 @@ switch(ENVIRONMENT) {
   case 'test':
     $conf['features_master_temp_enabled_modules'] = array(
       'maillog',
-      // 'stage_file_proxy',
     );
     $conf['error_level'] = ERROR_REPORTING_HIDE;
 
