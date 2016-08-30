@@ -38,7 +38,14 @@ default:
       tags: ~@fixme
   extensions:
     Behat\MinkExtension:
-      goutte: ~
+      goutte:
+        guzzle_parameters:
+          verify: false
+          ssl.certificate_authority: false
+          curl.options:
+            CURLOPT_SSL_VERIFYPEER: false
+            CURLOPT_CERTINFO: false
+            CURLOPT_TIMEOUT: 120
       selenium2: ~
       default_session: 'goutte'
       javascript_session: 'selenium2'
