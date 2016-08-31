@@ -40,7 +40,9 @@ if (file_exists($config_file)) {
  * TODO: make more robust.
  */
 function _data_starter_validates($variable = '') {
-  return isset($conf['default'][$variable]) && $conf['default'][$variable] != 'changeme';
+  global $conf;
+  $validates = isset($conf['default'][$variable]) && $conf['default'][$variable] != 'changeme';
+  return $validates;
 }
 
 // Needs to happen before Acquia connects.
@@ -164,12 +166,7 @@ switch(ENVIRONMENT) {
       'views_ui',
     );
     if (_data_starter_validates('stage_file_proxy_origin')) {
-      $conf['features_master_temp_enabled_modules'] = array_merge(
-        $conf['features_master_temp_enabled_modules'],
-        array(
-          'stage_file_proxy',
-        )
-      );
+      $conf['features_master_temp_enabled_modules'][] = 'stage_file_proxy';
     }
 
     // Features Master also supports temporarily disabling modules.
