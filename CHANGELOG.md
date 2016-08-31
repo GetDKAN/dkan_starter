@@ -1,5 +1,13 @@
 
 # Change log
+
+## [1.12.9.0]
+### Changed
+- Updated dkan version to 1.12.9
+- Added fast_file configuration setup via 'fast_file' config/config.yml
+- Added 'https_everywhere' configuration
+- Added stage_file_proxy configuration
+
 ## [1.12.8.0]
 ### Added
 - Add new id for search servers
