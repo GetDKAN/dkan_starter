@@ -206,7 +206,13 @@ function data_config_enabled_modules() {
     'visualization_entity_embed' => 'visualization_entity_embed',
     'visualization_entity_recline_field_reference' => 'visualization_entity_recline_field_reference',
   );
-  
+
+  $data_config = variable_get('default');
+ 
+  if (isset($data_config['fast_file']) && $data_config['fast_file']['enable']) {
+    $features['dkan_datastore_fast_import'] = 'dkan_datastore_fast_import';
+  }
+
   return $features_master;
 
 }
@@ -238,7 +244,7 @@ function data_config_modules_disabled($modules) {
   $set_read_only = TRUE;
 
   // Avoid forcing index read-only mode, if on Acquia Hosting + in a production environment
-  if (isset($_ENV["AH_SITE_ENVIRONMENT"]) && isset($_ENV["AH_PRODUCTION"])) {
+  if (isset($_ENV["AH_SITE_ENVIRONMENT"])) {
     return;
   }
 

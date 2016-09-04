@@ -35,6 +35,22 @@ if (file_exists($config_file)) {
   include $config_file;
 }
 
+/**
+ * Validation function to check if variable is available.
+ * TODO: make more robust.
+ */
+function _data_starter_validates($variable = '') {
+  global $conf;
+  $validates = isset($conf['default'][$variable]) && $conf['default'][$variable] != 'changeme';
+  return $validates;
+}
+
+// Needs to happen before Acquia connects.
+// TODO: Move to our version of devinci.
+if (file_exists('/var/www/site-php')) {
+  $conf['acquia_hosting_settings_autoconnect'] = FALSE;
+}
+
 /******************************************************
  * REQUIRED: Setup standard environments using devinci.
  ******************************************************/
@@ -55,6 +71,22 @@ devinci_set_env($env_map);
 /********************************************************
  * OPTIONAL: Setup default settings for ALL environments.
  ********************************************************/
+
+// Adds support for fast file if enabled in config.yml.
+if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
+  $conf['dkan_datastore_fast_import_selection'] = 2;
+  $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
+  $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
+  $conf['queue_filesize_threshold'] = $conf['default']['fast_file']['queue'];
+
+  $databases['default']['default']['pdo'] = array(
+    PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
+    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
+  );
+}
+else {
+  $conf['dkan_datastore_fast_import_selection'] = 0;
+}
 
 // Don't show any errors.
 $conf['error_level'] = ERROR_REPORTING_HIDE;
@@ -102,7 +134,10 @@ $conf['environment_indicator_git_support'] = FALSE;
 $conf['install_profile'] = 'dkan';
 
 // This should be updated to the actual live site url if using stage_file_proxy.
-//$conf['stage_file_proxy_origin'] = 'http://my-live-site.com';
+
+if (_data_starter_validates('stage_file_proxy_origin')) {
+  $conf['stage_file_proxy_origin'] = $conf['default']['stage_file_proxy_origin'];
+}
 
 // KEY for dkan health status
 $conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
@@ -128,9 +163,12 @@ switch(ENVIRONMENT) {
       // the custom_config feature master list.
       // 'field_ui',
       'maillog',
-      // 'stage_file_proxy',
       'views_ui',
     );
+    if (_data_starter_validates('stage_file_proxy_origin')) {
+      $conf['features_master_temp_enabled_modules'][] = 'stage_file_proxy';
+    }
+
     // Features Master also supports temporarily disabling modules.
     // This will disable modules in the local environment, but INCLUDE them
     // when exporting using features_master.
@@ -138,12 +176,13 @@ switch(ENVIRONMENT) {
       'acquia_agent',
       'acquia_spi',
       'acquia_purge',
-      'syslog',
       'dkan_acquia_expire',
+      'dkan_acquia_search_solr',
       'expire',
       'search_api_solr',
       'search_api_acquia',
-      'dkan_acquia_search_solr',
+      'securepages',
+      'syslog',
     );
     // Show ALL errors when working locally.
     $conf['error_level'] = ERROR_REPORTING_DISPLAY_ALL;
@@ -163,7 +202,6 @@ switch(ENVIRONMENT) {
       'devel',
       'field_ui',
       'maillog',
-      // 'stage_file_proxy',
       'views_ui',
     );
     // Enable git support for the environment indicator to show current branch.
@@ -176,7 +214,6 @@ switch(ENVIRONMENT) {
   case 'test':
     $conf['features_master_temp_enabled_modules'] = array(
       'maillog',
-      // 'stage_file_proxy',
     );
     $conf['error_level'] = ERROR_REPORTING_HIDE;
 

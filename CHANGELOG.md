@@ -1,4 +1,83 @@
+
 # Change log
+
+## [1.12.9.0]
+### Changed
+- Updated dkan version to 1.12.9
+- Added fast_file configuration setup via 'fast_file' config/config.yml
+- Added 'https_everywhere' configuration
+- Added stage_file_proxy configuration
+
+## [1.12.8.0]
+### Added
+- Add new id for search servers
+
+### Changed
+- Remake dkan at 1.12.8 with release-1-12 patch
+- Added securepages configuration
+
+### Fixed
+- Acquia solr search not using correct server.
+
+## [1.12.7.0]
+### Added
+- config.yml (root level to store ata_starter specific metadata/and defaults)
+
+### Changed
+- Remake dkan at 1.12.7 with release-1-12 patch
+- Versioning scheme (drop 7.x)
+
+### Removed
+- Unnecessary custom_config deps and info section
+
+### Fixed
+- `ahoy build custom` breaks if invalid custom.make
+
+## [7.x-1.12.6.9]
+
+### Fixed
+- `ahoy build custom` breaks if invalid custom.make
+
+## [7.x-1.12.6.8]
+
+### Changed
+- Skip more custom tests. 
+
+## [7.x-1.12.6.7]
+
+### Fixed
+- Patches broken panalizer update. 
+
+## [7.x-1.12.6.6]
+
+### Fixed
+- Updated DKAN to fix topics issue.
+
+### Changed
+- Updated settings.acquia.php to include correct solr server name.
+- Updated ahoy tools.
+
+### Removed
+- assets/.htacess
+- Symlink from docroot/.htacess to config/.htaccess
+
+## [7.x-1.12.6.5]
+
+### Added
+- added default `config/.htaccess`
+
+### Fixed
+- Fixed more failing tests in DKAN.
+
+### Changed
+- Updated ahoy tools. `ahoy build new` does not throw ambiguous error when no
+  argument is passed. 
+
+### Deprecated
+
+### Removed
+
+### Security
 
 ## [7.x-1.12.6.4]
 

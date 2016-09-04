@@ -9,10 +9,14 @@ $conf = array (
   array (
     'hostname' => 'localhost',
     'https_everywhere' => false,
-  ),
-  'data_starter' => 
-  array (
-    'version' => '7.x-1.12.5',
+    'https_securepages' => false,
+    'stage_file_proxy_origin' => 'changeme',
+    'fast_file' => 
+    array (
+      'enable' => true,
+      'limit' => '10MB',
+      'queue' => '50MB',
+    ),
   ),
   'acquia' => 
   array (
@@ -20,6 +24,7 @@ $conf = array (
     'search' => 
     array (
       'host' => 'changeme',
+      'id' => 'dkan_acquia_solr',
     ),
     'dev' => 
     array (

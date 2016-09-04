@@ -18,6 +18,7 @@ commands:
       ahoy build update-data-starter "$ARGS"
       ahoy build custom
       ahoy build overrides
+      ahoy build custom-libs
       ahoy build config
 
   remake:
@@ -50,9 +51,33 @@ commands:
   custom:
     usage: Downloads 3rd party modules
     cmd: |
-      if [ -f custom.make ]; then
-        ahoy drush -y make --no-core --contrib-destination=contrib custom.make --no-recursion --no-cache --verbose
-        mv contrib/modules/* docroot/sites/all/modules/contrib
+      if [ -f config/custom.make ] && [ `cat config/custom.make | sed '/^\s*$/d' | wc -l` -gt 3 ]; then
+        ahoy drush -y make --no-core --contrib-destination=contrib config/custom.make --no-recursion --no-cache --verbose
+
+        # Remove old stuff first
+        dirs=( $(find ./contrib/modules -type d  -maxdepth 1 | sed 's/\.\/contrib\/modules\///g') )
+        for dir in "${dirs[@]}";
+        do
+          rm -fR ./docroot/sites/all/modules/contrib/$dir
+        done
+
+        mv -f contrib/modules/* docroot/sites/all/modules/contrib
+        rm -rf contrib
+      fi
+
+  custom-libs:
+    usage: Downloads 3rd party libraries
+    cmd: |
+      if [ -f config/custom_libs.make ] && [ `cat config/custom_libs.make | sed '/^\s*$/d' | wc -l` -gt 3 ]; then
+        ahoy drush -y make --no-core --contrib-destination=contrib config/custom_libs.make --no-recursion --no-cache --verbose
+      
+        # Remove old stuff first
+        dirs=( $(find ./contrib/libraries -type d  -maxdepth 1 | sed 's/\.\/contrib\/libraries\///g') )
+        for dir in "${dirs[@]}";
+        do
+          rm -fR ./docroot/sites/all/libraies/$dir
+        done
+        mv contrib/libraries/* docroot/sites/all/libraries
         rm -rf contrib
       fi
 
@@ -62,7 +87,7 @@ commands:
       if [ -f config/overrides.make ]; then
         cd nucivic-ahoy && composer install && cd ..
         ahoy cmd-proxy drush php-script nucivic-ahoy/.scripts/overrides.php
-        // Check file exits and file not empty.
+        # Check file exits and file not empty.
         if [ -e overriden_make.make ] && [ -s overriden_make.make ]; then
           rm -rf docroot/sites/all/modules/overrides
           mkdir -p docroot/sites/all/modules/overrides
@@ -76,15 +101,13 @@ commands:
   post-build:
     usage: Runs (what used to be buildmanager) post build commands.
     cmd: |
-      # Remove dkan make overrides
-      cd dkan; git checkout drupal-org.make; cd ..
       # Setup a folder for contrib modules and themes.
       mkdir -p docroot/sites/all/modules/contrib
       mkdir -p docroot/sites/all/themes/contrib
       # Replace the default .htaccess file with our own that includes a working non-www to www example for acquia.
-      if [ -f assets/.htaccess ]; then
+      if [ -f config/.htaccess ]; then
         rm -rf docroot/.htaccess
-        ln -s ../assets/.htaccess docroot/.htaccess
+        ln -s ../config/.htaccess docroot/.htaccess
       fi
       # Replace sites/default with our own sites/default outside of the drupal root.
       rm -rf docroot/sites/default;
@@ -108,7 +131,6 @@ commands:
       then
         ahoy custom post-build
       fi
-      ahoy site self-update
 
   config:
     usage: ahoy build config - Applies site specific changes stored in config.yml
@@ -143,11 +165,18 @@ commands:
         echo "This command should only be use from a data_starter_private working copy"
         exit 0
       fi
-      cd ..
-      if [ -d {{args}} ]; then
+
+      if [[ "{{args}}" == "" ]]; then
+        echo "Arguments cannot be empty.  Pass a project name."
+        exit 0
+      fi
+
+      if [ -d ../{{args}} ]; then
         ahoy confirm "{{args}} site folder alredy exists."
         echo ".. skipping installation"; exit 1;
       fi
+      # No ahoy commands after cd-ing out of project folder.
+      cd ..
       git clone 'git@github.com:NuCivic/data_starter_private.git' {{args}} --depth=1
       cd {{args}}
       rm -rf .git build.make build-dkan.make drupal-org-core.make
@@ -215,26 +244,31 @@ commands:
       if [ ! -d .data_starter_private ]; then
         git clone 'git@github.com:NuCivic/data_starter_private.git' .data_starter_private --depth=1
       fi
-      mv config .config
       cd .data_starter_private
       git checkout master --force
       git reset --hard origin/master
-      git fetch --tags
       ARGS="{{args}}"
       if [[ -z "$ARGS" ]]; then
         echo "Please provide a Data Starter release (tag) as an argument. Exiting"
         exit 0
       fi
-      ARGS=`git tag | grep "$ARGS"`
+      git fetch origin "$ARGS:$ARGS" 2> /dev/null
+      ARGS=`git rev-parse --verify "$ARGS" 2> /dev/null`
+      echo $ARGS
       if [[ -z "$ARGS" ]]; then
-        echo "You need to specify a valid Data Starter release (tag). Exiting"
+        echo "You need to specify a valid Data Starter release (tag) or branch. Exiting"
         exit 0
       fi
       git checkout $ARGS
       cd ..
+      mv config .config
       rm -rf *
       # You can rsync now
       rsync -av --exclude=.git .data_starter_private/* ./
       rm -rf config
       mv .config config
       rm -rf .data_starter_private
+
+    upgrade-sites:
+      usage: ahoy build upgrade-sites $tag
+      cmd: ahoy cmd-proxy bash nucivic-ahoy/.scripts/upgrade-sites.sh
