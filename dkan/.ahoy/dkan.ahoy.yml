@@ -121,7 +121,7 @@ commands:
     cmd: |
       # Store the arguments as a bash array.
       input="{{args}}"
-      b64=`echo "payload: $input" | base64`
+      b64=`echo "payload: $input" | base64 --break=0`
       echo "*** DEBUGGING: ***"
       echo "$input"
        echo "$b64"
