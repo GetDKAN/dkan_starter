@@ -72,7 +72,7 @@ dependencies:
 ## Customize test commands
 test:
   override:
-     - bash dkan/test/circle-behat.sh docroot/profiles/dkan/test/features tests/features/general.feature --tags='~@customizable&&~@fixme&&~@testBug':
+     - ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features tests/features/general.feature --tags='~@customizable&&~@fixme&&~@testBug':
          parallel: true
 
   post:
