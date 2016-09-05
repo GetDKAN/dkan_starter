@@ -122,6 +122,10 @@ commands:
       # Store the arguments as a bash array.
       input="{{args}}"
       b64=`echo "payload: $input" | base64`
+      echo "*** DEBUGGING: ***"
+      echo "$input"
+       echo "$b64"
+      echo "*** DEBUGGING: ***"
       ahoy cmd-proxy ruby dkan/.ahoy/.scripts/dkan-test.rb "$b64"
 
   create-qa-users:
