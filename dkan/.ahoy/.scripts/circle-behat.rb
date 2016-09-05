@@ -40,7 +40,6 @@ files.each_index do |i|
       error = 1 unless $?.success?
     end
   end
-  exit
 end
 
 Kernel.exit(error) unless error == 0
