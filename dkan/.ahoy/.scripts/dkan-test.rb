@@ -35,10 +35,6 @@ end
 # Parse given arguments in a format that behat understands.
 def main
   payload = args_payload
-  puts "*** DEBUGGING ***"
-  puts "dkan-test.rb"
-  pp payload
-  puts "*** DEBUGGING ***"
   
   if payload.include? SKIP_COMPOSER_FLAG
     puts  "Skipping composer install.."
@@ -54,9 +50,6 @@ def main
 
   Dir.chdir(BEHAT_FOLDER) do
     puts "RUNNING: bin/behat #{files} #{params} #{CONFIG}"
-  puts "*** DEBUGGING ***"
-    exit
-  puts "*** DEBUGGING ***"
 
     IO.popen("bin/behat #{files} #{params} #{CONFIG}").each do |line|
       puts line

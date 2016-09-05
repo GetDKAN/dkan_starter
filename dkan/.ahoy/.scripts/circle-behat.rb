@@ -40,14 +40,6 @@ files.each_index do |i|
       error = 1 unless $?.success?
     end
   end
-  puts "*** DEBUGGING ***"
-  puts "circle-behat.rb"
-    pp parsed
-    pp file
-    pp files
-    pp params
-    exit
-  puts "*** DEBUGGING ***"
 end
 
 Kernel.exit(error) unless error == 0
