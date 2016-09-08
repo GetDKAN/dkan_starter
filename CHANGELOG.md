@@ -1,6 +1,10 @@
 
 # Change log
 
+## [1.12.10.0]
+### Changed
+- Remove new relic automatic settings
+
 ## [1.12.9.0]
 ### Changed
 - Updated dkan version to 1.12.9
