@@ -35,7 +35,7 @@ end
 # Parse given arguments in a format that behat understands.
 def main
   payload = args_payload
-  
+
   if payload.include? SKIP_COMPOSER_FLAG
     puts  "Skipping composer install.."
     payload.delete(SKIP_COMPOSER_FLAG)
