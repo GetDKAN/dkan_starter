@@ -48,15 +48,5 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
       'derived_key' => $conf['acquia'][$env]['derived_key'],
     );
   }
-  // New relic settings per enviroment.
-  if (extension_loaded('newrelic')) {
-    switch ($env) {
-      case 'dev':
-      case 'test':
-      case 'prod':
-        newrelic_set_appname("$sitegroup.$env", '', 'true');
-        break;
-    }
-  }
   acquia_hosting_db_choose_active();
 }
