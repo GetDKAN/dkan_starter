@@ -87,6 +87,7 @@ commands:
   name:
     usage: Utility function to determine the site name.
     cmd: |
+      # TODO: use config/config.yml instead
       if [ -s assets/drush/aliases.local.php ]; then
         ahoy cmd-proxy php -f nucivic-ahoy/.scripts/site-name.php
       else

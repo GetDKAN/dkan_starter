@@ -4,6 +4,7 @@ commands:
   setup:
     usage: switchs between ci setups
     cmd: |
+      eval $(ahoy parse config/config.yml)
       name=$(ahoy site name)
 
       if [ "$name" = 'datastarter' ]; then
@@ -12,8 +13,13 @@ commands:
       else
         echo "Site name set. Pulling database from s3 bucket"
         ahoy site s3-setup
-        ahoy site asset-download
-        ahoy site files-link
+        # Configure https settings.
+        if [ "$default_stage_file_proxy_origin" != "" ] && [ "$default_stage_file_proxy_origin" != "changeme" ]; then
+          ahoy site asset-download-db
+        else
+          ahoy site asset-download
+          ahoy site files-link
+        fi
         ahoy site files-fix-permissions
         ahoy drush sql-cli < backups/sanitized.sql
       fi
@@ -21,13 +27,6 @@ commands:
   deploy:
     usage: deploys within a ci setup
     cmd: |
-      echo "DELETE FROM search_api_index where server = 'dkan_acquia_solr';" > delete.sql
-      echo "DELETE FROM search_api_index where server = 'local_solr_server';" >> delete.sql
-      echo "DELETE FROM search_api_server where machine_name = 'dkan_acquia_solr';" >> delete.sql
-      echo "DELETE FROM search_api_server where machine_name = 'local_solr_server';" >> delete.sql
-      echo "DELETE FROM search_api_index where server IS NULL;" >> delete.sql
-      ahoy drush sqlc < delete.sql
-      rm delete.sql
       name=$(ahoy site name)
       ahoy site truncate-watchdog
       ahoy cmd-proxy bash hooks/common/post-code-deploy/drush-env-switch.sh $name local

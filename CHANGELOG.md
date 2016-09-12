@@ -3,7 +3,13 @@
 
 ## [1.12.10.0]
 ### Changed
-- Remove new relic automatic settings
+- Remove new relic automatic settings #97
+- Allow multiple tests via `ahoy dkan test` #126, nucivic/dkan#1351
+- Remove .ahoy unnecessary deploy steps: nucivic/nucivic-ahoy#92
+- Update dkan to version 1.12.10
+  - Fix broken dkan update: nucivic/dkan#1283
+
+
 
 ## [1.12.9.0]
 ### Changed
