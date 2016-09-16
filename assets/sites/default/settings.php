@@ -81,6 +81,7 @@ if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enabl
   $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
   $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
   $conf['queue_filesize_threshold'] = $conf['default']['fast_file']['queue'];
+  $conf['dkan_datastore_class'] = 'DkanDatastoreFastImport';
 
   $databases['default']['default']['pdo'] = array(
     PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
