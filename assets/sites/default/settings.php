@@ -127,6 +127,9 @@ ini_set('session.gc_divisor', 100);
 ini_set('session.gc_maxlifetime', 200000);
 ini_set('session.cookie_lifetime', 2000000);
 
+// Disable cron. We run this from Jenkins.
+$conf['cron_safe_threshold'] = 0;
+
 // Disable git support for the environment indicator by default.
 $conf['environment_indicator_git_support'] = FALSE;
 

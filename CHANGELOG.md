@@ -1,5 +1,8 @@
 
 # Change log
+## [1.12.10.1]
+### Changed
+- Set cron_safe_threshold to 0 so it only runs from Jenkins
 
 ## [1.12.10.0]
 ### Changed
@@ -8,8 +11,6 @@
 - Remove .ahoy unnecessary deploy steps: nucivic/nucivic-ahoy#92
 - Update dkan to version 1.12.10
   - Fix broken dkan update: nucivic/dkan#1283
-
-
 
 ## [1.12.9.0]
 ### Changed
