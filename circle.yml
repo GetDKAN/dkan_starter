@@ -65,15 +65,16 @@ dependencies:
     - java -jar selenium-server-standalone-2.49.1.jar -p 4444 :
         background: true
   post:
-     - sudo apt-get install -y x11vnc
+     - sudo apt-get install -y x11vnc clamav clamav-freshclam
      - x11vnc -forever -nopw:
         background: true
 
 ## Customize test commands
 test:
   override:
-     - ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features tests/features/general.feature --tags='~@customizable&&~@fixme&&~@testBug':
+     - ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features --tags='~@customizable&&~@fixme&&~@testBug':
          parallel: true
+     - ahoy site test
 
   post:
     - echo $CIRCLE_ARTIFACTS; cp -av dkan/test/assets $CIRCLE_ARTIFACTS:

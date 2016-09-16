@@ -72,6 +72,9 @@ devinci_set_env($env_map);
  * OPTIONAL: Setup default settings for ALL environments.
  ********************************************************/
 
+// Use the executable scan method for ClamAV by default (Daemon mode can cause some problems)
+$conf['clamav_mode'] = 1;
+
 // Adds support for fast file if enabled in config.yml.
 if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
   $conf['dkan_datastore_fast_import_selection'] = 2;
@@ -279,13 +282,13 @@ if (!isset($_ENV["AH_SITE_ENVIRONMENT"])) {
 /****************************
  * OPTIONAL: Acquia Settings.
  ***************************/
-/* This are acquia specific settings 
+/* This are acquia specific settings
  */
 include "settings.acquia.php";
 
 /*****************************
  * OPTIONAL: Custom Settings.
  ****************************/
-/* This are custom site settings 
+/* This are custom site settings
  */
 include "settings.custom.php";

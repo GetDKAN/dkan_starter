@@ -25,6 +25,7 @@ function data_config_enabled_modules() {
     'bueditor' => 'bueditor',
     'bueditor_plus' => 'bueditor_plus',
     'chosen' => 'chosen',
+    'clamav' => 'clamav',
     'color_field' => 'color_field',
     'colorizer' => 'colorizer',
     'conditional_fields' => 'conditional_fields',

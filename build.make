@@ -100,6 +100,8 @@ projects[ape][subdir] = contrib
 ; Security
 ; ==========
 projects[] = securepages
+projects[clamav][version] = 1.x-dev
+projects[clamav][subdir] = contrib
 
 ; Other
 ; ======
