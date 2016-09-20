@@ -224,14 +224,36 @@ function data_config_enabled_modules() {
  * Add alert when modules are disabled that should not be.
  */
 function data_config_modules_disabled($modules) {
+  $module_data = system_rebuild_module_data();
   $temp_disabled_modules = variable_get('features_master_temp_disabled_modules', array());
-
   $modules_warn = array_diff($modules, $temp_disabled_modules);
   if (!empty($modules_warn)) {
     watchdog('custom_config_disable', 'Trying to disable module(s) not on temporarily disabled list',
       ['modules' => $modules_warn], WATCHDOG_ERROR);
+    if (module_exists('custom_config')) {
+      $dependencies = array();
+      foreach($modules_warn as $module) {
+        // Add dependencies to the list, with a placeholder weight.
+        // The new modules will be processed as the while loop continues.
+        $dependencies[$module] = array();
+        foreach (array_keys($module_data[$module]->requires) as $dependency) {
+          $dependencies[$module][] = $dependency;
+        }
+        $dependencies[$module] = array_intersect($dependencies[$module], $modules_warn);
+      }
+      $feature_master_list = custom_config_features_master_defaults();
+      $feature_master_list = array_keys($feature_master_list['modules']);
+      $dpt_output = array(
+        array('Modules being disabled', 'In feature master list?', 'Cross Dependencies with modules being disabled'),
+      );
+      foreach($modules_warn as $module) {
+        array_push($dpt_output, array($module, in_array($module, $feature_master_list) ? "YES": "NO", implode(',', $dependencies[$module])));
+      }
+      drush_print_table($dpt_output, $header=TRUE);
+    }
   }
 }
+
 
 /**
  * Implements hook_search_api_index_load()
