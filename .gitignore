@@ -65,6 +65,7 @@ nucivic-ahoy/composer.lock
 nucivic-ahoy/vendor
 dkan/test/vendor
 dkan/test/vendor/*
+dkan/test/assets/*
 
 # Sublime #
 ###########
