@@ -29,8 +29,14 @@ done
 
 echo "Target environment is $target_env"
 
-echo "Run pre deploy steps..."
-(drush @$drush_alias cc all && drush @$drush_alias rr) || (drush @$drush_alias updb -y 2>/dev/null && drush @$drush_alias rr)
+echo "Running drush rr --no-cache-clear"
+drush @$drush_alias rr --no-cache-clear
+echo "Truncating cache table"
+drush @$drush_alias sqlq "TRUNCATE cache;"
+echo "Running database update"
+drush @$drush_alias updatedb -y
+echo "Clearing caches"
+drush @$drush_alias cc all
 
 echo "Checking drupal boostrap."
 drupal=$(drush @$drush_alias status | grep -e "Drupal bootstrap" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
