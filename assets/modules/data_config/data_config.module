@@ -25,7 +25,6 @@ function data_config_enabled_modules() {
     'bueditor' => 'bueditor',
     'bueditor_plus' => 'bueditor_plus',
     'chosen' => 'chosen',
-    'clamav' => 'clamav',
     'color_field' => 'color_field',
     'colorizer' => 'colorizer',
     'conditional_fields' => 'conditional_fields',
@@ -212,6 +211,10 @@ function data_config_enabled_modules() {
  
   if (isset($data_config['fast_file']) && $data_config['fast_file']['enable']) {
     $features_master['modules']['dkan_datastore_fast_import'] = 'dkan_datastore_fast_import';
+  }
+
+  if (isset($data_config['clamav']) && $data_config['clamav']['enable']) {
+    $features_master['modules']['clamav'] = 'clamav';
   }
 
   return $features_master;

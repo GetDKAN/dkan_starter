@@ -171,6 +171,9 @@ switch(ENVIRONMENT) {
       // 'field_ui',
       'maillog',
       'views_ui',
+      // Add clamav to local environment so that tests will continue to pass.
+      // TODO: change clamav feature tests so that they enable clamav.
+      'clamav',
     );
     if (_data_starter_validates('stage_file_proxy_origin')) {
       $conf['features_master_temp_enabled_modules'][] = 'stage_file_proxy';
