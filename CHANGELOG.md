@@ -1,5 +1,11 @@
 
 # Change log
+## [1.12.10.2]
+### Changed
+- Disabled clamav by default. REF #140
+### Added
+- New config/config.yml param: `default: clamav`
+
 ## [1.12.10.1]
 ### Changed
 - Set cron_safe_threshold to 0 so it only runs from Jenkins
