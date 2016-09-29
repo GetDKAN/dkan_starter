@@ -70,7 +70,7 @@ commands:
 
   custom:
     usage: A series of custom commands specific to a project.
-    import: .ahoy/custom.ahoy.yml
+    import: config/custom.ahoy.yml
 
   parse:
     usage: ahoy parse :filpath :argument, where :argument depth is seperated by underscores.
