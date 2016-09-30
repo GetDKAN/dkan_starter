@@ -1,5 +1,9 @@
 
 # Change log
+## [1.12.10.3]
+### Changed
+- Add "lt" environment map #144
+- Update nucivic-ahoy #143
 ## [1.12.10.2]
 ### Changed
 - Disabled clamav by default. REF #140
