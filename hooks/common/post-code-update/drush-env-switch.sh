@@ -15,6 +15,7 @@ env_map=(
   "test:test"
   "ra:test"
   "testing:test"
+  "lt:production"
 )
 
 for m in "${env_map[@]}"; do
