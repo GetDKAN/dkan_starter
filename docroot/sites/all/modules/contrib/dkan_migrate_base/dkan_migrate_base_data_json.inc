@@ -67,6 +67,13 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
       'field_temporal_coverage:to' => 'temporalEnd',
       'field_frequency' => 'accrualPeriodicity',
       'field_data_dictionary' => 'describedBy',
+      'field_pod_theme' => 'theme',
+      'field_is_part_of' => 'isPartOf',
+      'field_data_dictionary_type' => 'describedByType',
+      'field_landing_page' => 'landingPage',
+      'field_conforms_to' => 'conformsTo',
+      'field_rights' => 'rights',
+      'field_language' => 'language',
     );
     if ($version == '1.0') {
       $addFields = array(
@@ -86,16 +93,9 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
       $odfeFields =  array(
         'field_odfe_bureau_code' => 'bureauCode',
         'field_odfe_program_code' => 'programCode',
-        'field_odfe_landing_page' => 'landingPage',
-        'field_odfe_rights' => 'rights',
-        'field_odfe_conforms_to' => 'conformsTo',
         'field_odfe_data_quality' => 'dataQuality',
-        'field_odfe_data_dictionary_type' => 'describedByType',
-        'field_odfe_is_part_of' => 'isPartOf',
-        'field_odfe_language' => 'language',
         'field_odfe_investment_uii' => 'primaryITInvestmentUII',
         'field_odfe_system_of_records' => 'systemOfRecords',
-        'field_odfe_category' => 'theme',
       );
     }
     return $baseFields + $addFields + $odfeFields;
@@ -253,12 +253,6 @@ class MigrateDataJsonDatasetBase extends MigrateDKAN {
       foreach ($row->keyword as $tag) {
         $tag = strtolower($tag);
         $this->createTax($tag, 'tags', $tags->vid);
-      }
-    }
-    if (isset($row->theme) && module_exists('open_data_federal_extras')) {
-      $category = taxonomy_vocabulary_machine_name_load('odfe_theme');
-      foreach ($row->theme as $cat) {
-        $this->createTax($cat, 'odfe_theme', $category->vid);
       }
     }
     if (is_array($row->publisher)) {

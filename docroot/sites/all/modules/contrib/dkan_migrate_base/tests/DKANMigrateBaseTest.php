@@ -214,6 +214,16 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
       $expect['contactEmail']  = "bruce@notbatman.com";
       $result['spatial']  = $node->field_spatial_geographical_cover['und'][0]['value'];
       $expect['spatial']  = "Lincoln, Nebraska";
+      $result['landingPage']  = $node->field_landing_page['und'][0]['url'];
+      $expect['landingPage']  = "http://www.agency.gov/vegetables";
+      $result['rights']  = $node->field_rights['und'][0]['value'];
+      $expect['rights']  = "This dataset contains Personally Identifiable Information and could not be released for public access.";
+      $result['dataStandard']  = $node->field_conforms_to['und'][0]['url'];
+      $expect['dataStandard']  = "http://www.agency.gov/common-vegetable-analysis-model";
+      $result['describedByType']  = $node->field_data_dictionary_type['und'][0]['value'];
+      $expect['describedByType']  = "application/pdf";
+      $result['isPartOf']  = $node->field_is_part_of['und'][0]['value'];
+      $expect['isPartOf']  = "http://dx.doi.org/10.7927/H4PZ56R2";
       if (module_exists('open_data_federal_extras')) {
         $result['bureauCode']  = $node->field_odfe_bureau_code['und'][0]['value'];
         $expect['bureauCode']  = "010:86";
@@ -221,16 +231,6 @@ class DKANMigrateBaseTest  extends PHPUnit_Framework_TestCase
         $expect['programCode']  = "015:001";
         $result['programCode2']  = $node->field_odfe_program_code['und'][1]['value'];
         $expect['programCode2']  = "015:002";
-        $result['landingPage']  = $node->field_odfe_landing_page['und'][0]['url'];
-        $expect['landingPage']  = "http://www.agency.gov/vegetables";
-        $result['rights']  = $node->field_odfe_rights['und'][0]['value'];
-        $expect['rights']  = "This dataset contains Personally Identifiable Information and could not be released for public access.";
-        $result['dataStandard']  = $node->field_odfe_conforms_to['und'][0]['url'];
-        $expect['dataStandard']  = "http://www.agency.gov/common-vegetable-analysis-model";
-        $result['describedByType']  = $node->field_odfe_data_dictionary_type['und'][0]['value'];
-        $expect['describedByType']  = "application/pdf";
-        $result['describedByType']  = $node->field_odfe_is_part_of['und'][0]['value'];
-        $expect['describedByType']  = "http://dx.doi.org/10.7927/H4PZ56R2";
         $result['primaryITInvestmentUII']  = $node->field_odfe_investment_uii['und'][0]['value'];
         $expect['primaryITInvestmentUII']  = "023-000000001";
         $result['systemOfRecords']  = $node->field_odfe_system_of_records['und'][0]['url'];

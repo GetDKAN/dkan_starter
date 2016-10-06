@@ -6,7 +6,7 @@ machine:
 
   # Version of ruby to use
   php:
-    version: '5.5.11'
+    version: '5.6.22'
 
   # Override /etc/hosts
   #hosts:
@@ -41,7 +41,10 @@ dependencies:
      #- "backups"
      #- "dkan/test/sites/default"
   pre:
-    - echo "memory_limit = 256M" > ~/.phpenv/versions/5.5.11/etc/conf.d/memory.ini
+    - echo "memory_limit = 256M" > $PHPENV_ROOT/versions/$(phpenv global)/etc/conf.d/memory.ini
+    - sudo apt-get update -y && sudo apt-get install -y x11vnc clamav clamav-freshclam
+    - yes | sudo perl -MCPAN -e "install Digest::HMAC_SHA1;"
+
   override:
     - printenv
     - mkdir $CIRCLE_ARTIFACTS/junit
@@ -65,7 +68,6 @@ dependencies:
     - java -jar selenium-server-standalone-2.49.1.jar -p 4444 :
         background: true
   post:
-     - sudo apt-get install -y x11vnc clamav clamav-freshclam
      - x11vnc -forever -nopw:
         background: true
 
@@ -75,7 +77,6 @@ test:
      - ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features --tags='~@customizable&&~@fixme&&~@testBug':
          parallel: true
      - ahoy site test
-
   post:
     - echo $CIRCLE_ARTIFACTS; cp -av dkan/test/assets $CIRCLE_ARTIFACTS:
         parallel: true

@@ -47,6 +47,13 @@ After the initial time the migration is run it will check each dataset and resou
 'field_temporal_coverage:to' => 'temporalEnd',
 'field_frequency' => 'accrualPeriodicity',
 'field_data_dictionary' => 'dataDictionary',
+'field_is_part_of' => 'isPartOf',
+'field_landing_page' => 'landingPage',
+'field_rights' => 'rights',
+'field_pod_theme' => 'theme',
+'field_conforms_to' => 'conformsTo',
+'field_data_dictionary_type' => 'describedByType',
+'field_language' => 'language',
 'language' => 'language',
 ```
 
@@ -72,6 +79,13 @@ After the initial time the migration is run it will check each dataset and resou
 'field_additional_info' => 'any additional info key',
 'field_additional_info:second' => 'any additional info value',
 'field_related_content' => 'references',
+'field_is_part_of' => 'isPartOf',
+'field_landing_page' => 'landingPage',
+'field_pod_theme' => 'theme',
+'field_conforms_to' => 'conformsTo',
+'field_data_dictionary_type' => 'describedByType',
+'field_language' => 'language',
+'field_rights' => 'rights',
 ```
 
 #### CKAN
@@ -98,16 +112,9 @@ After the initial time the migration is run it will check each dataset and resou
 ```
 'field_odfe_bureau_code' => 'bureauCode',
 'field_odfe_program_code' => 'programCode',
-'field_odfe_landing_page' => 'landingPage',
-'field_odfe_rights' => 'rights',
-'field_odfe_conforms_to' => 'conformsTo',
 'field_odfe_data_quality' => 'dataQuality',
-'field_odfe_data_dictionary_type' => 'describedByType',
-'field_odfe_is_part_of' => 'isPartOf',
-'field_odfe_language' => 'language',
 'field_odfe_investment_uii' => 'primaryITInvestmentUII',
 'field_odfe_system_of_records' => 'systemOfRecords',
-'field_odfe_category' => 'theme',
 ```
 
 ##### Notes
