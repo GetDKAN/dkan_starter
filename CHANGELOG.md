@@ -1,9 +1,16 @@
-
 # Change log
+
+## [1.12.10.3]
+### Changed
+- Remake dkan (#146)
+- Fix data_config deployment issue (#146)
+- Change CircleCI settings (#146)
+
 ## [1.12.10.3]
 ### Changed
 - Add "lt" environment map #144
 - Update nucivic-ahoy #143
+
 ## [1.12.10.2]
 ### Changed
 - Disabled clamav by default. REF #140
