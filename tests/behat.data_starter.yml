@@ -1,0 +1,24 @@
+# this default param refers to a profile level configuration
+default:
+  # autoloads can only be handled in behat using PS-0 at the profile level
+  # otherwise use composer.json and PS-3
+  autoload:
+    # PS-0 forces us to use a symlink inside of the profile level bootstrap
+    - %paths.base%/features/bootstrap/custom
+    - %paths.base%/features/bootstrap/dkan
+    - %paths.base%/features/bootstrap
+  suites:
+    # this default parram is for a suite level configuration
+    data_starter:
+      paths:
+        - %paths.base%/features
+      contexts:
+        - FeatureContext #Temporary overrides only!
+        - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MessageContext
+    dkan:
+      # handle dkan path here to maintain backwards compatibility
+      paths:
+        - %paths.base%/../dkan/test/features
+
