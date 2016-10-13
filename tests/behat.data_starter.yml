@@ -13,10 +13,30 @@ default:
       paths:
         - %paths.base%/features
       contexts:
-        - FeatureContext #Temporary overrides only!
+        - FeatureContext
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\MarkupContext
+        - Drupal\DKANExtension\Context\DKANContext
+        - Drupal\DKANExtension\Context\MailContext
+        - Drupal\DKANExtension\Context\PageContext
+        - Drupal\DKANExtension\Context\GroupContext
+        - Drupal\DKANExtension\Context\WorkflowContext
+        - Drupal\DKANExtension\Context\DatasetContext
+        - Drupal\DKANExtension\Context\DataDashboardContext
+        - Drupal\DKANExtension\Context\ResourceContext
+        - Drupal\DKANExtension\Context\DatastoreContext
+        - Drupal\DKANExtension\Context\SearchAPIContext:
+          search_forms:
+            default:
+              form_css: '#dkan-sitewide-dataset-search-form'
+              form_field: 'edit-search'
+              form_button: 'edit-submit'
+              results_css: '.view-dkan-datasets'
+              result_item_css: '.views-row'
+        - Devinci\DevinciExtension\Context\JavascriptContext:
+              maximum_wait: 30
     dkan:
       # handle dkan path here to maintain backwards compatibility
       paths:
