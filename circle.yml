@@ -76,8 +76,10 @@ dependencies:
 ## Customize test commands
 test:
   override:
-    - ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features/widgets.feature --name=DEBUG:
+    - ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features --tags='~@customizable&&~@fixme&&~@testBug':
          parallel: true
+    - ahoy site test
+
   post:
     - echo $CIRCLE_ARTIFACTS; cp -av dkan/test/assets $CIRCLE_ARTIFACTS:
         parallel: true
