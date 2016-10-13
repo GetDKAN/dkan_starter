@@ -41,7 +41,7 @@ Feature: Widgets
       And I wait and press "Save"
       Then I should see "actionplan.pdf"
 
-  Scenario: Adds "New Image Widget" block to home page using panels ipe editor
+  Scenario: DEBUG Adds "New Image Widget" block to home page using panels ipe editor
     When I click on the text " Add image"
       And I wait for "Configure new Add image"
       And I fill in "field_basic_image_caption[und][0][value]" with "dkan logo image test"
