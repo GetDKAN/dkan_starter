@@ -23,7 +23,7 @@ Feature: Resources
       | Resource 01 | Group 01  | csv    | Dataset 01 | Gabriel    | Yes       | Yes          |
       | Resource 02 | Group 01  | html   | Dataset 01 | Gabriel    | Yes       | Yes          |
 
-  @fixme @api @javascript
+  @api @javascript
   Scenario: ClamAV scan for resource clean file upload
     Given I am logged in as "Gabriel"
     And I am on "Resource 01" page
@@ -36,7 +36,7 @@ Feature: Resources
     When I am on "Resource 01" page
     Then I should see "postvaccinedeaths.csv"
 
-  @fixme @api @javascript
+  @api @javascript
   Scenario: ClamAV scan for resource test signature upload
     Given I am logged in as "Gabriel"
     And I am on "Resource 01" page
