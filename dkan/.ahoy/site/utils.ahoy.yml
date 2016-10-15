@@ -3,12 +3,13 @@ version: 0.0.0
 commands:
   setup:
     usage: Setups sites settings
+    hide: true
     cmd: |
       # Create an array with the arguments that were input.
       ARGS=( {{args}} )
       rm -f assets/sites/default/settings.docker.php
       rm -f assets/sites/default/settings.local.php
-      ahoy cmd-proxy bash ./nucivic-ahoy/.scripts/drush.alias.sh
+      ahoy cmd-proxy bash ./dkan/.ahoy/site/.scripts/drush.alias.sh
 
       if [ ! -f assets/sites/default/settings.php ] && [ -f assets/sites/default/default.settings.php ]; then
         cp assets/sites/default/default.settings.php assets/sites/default/settings.php
@@ -16,7 +17,7 @@ commands:
 
       if [ "$CI" = "true" ]; then
         # Drush alias points to /var/www/docroot so we need this here.
-        sudo ln -sf /home/ubuntu/$CIRCLE_PROJECT_REPONAME/docroot /var/www/docroot
+        sudo ln -sf $HOME/$CIRCLE_PROJECT_REPONAME/docroot /var/www/docroot
       fi
 
       if [ "$AHOY_CMD_PROXY" == "DOCKER" ]; then
@@ -59,19 +60,12 @@ commands:
         echo "A settings.local.php file was created at assets/sites/default/settings.local.php, but you need you add your own db credentials."
       fi
 
-  reinstall:
-    usage: Reinstall the site from scratch (dkan + custom_config + environment).
-    cmd: |
-      ahoy dkan reinstall
-      ahoy drush -y en custom_config environment devinci
-      ahoy drush env-switch --force local
-
   mysql-dump-sanitized:
     usage: Creates a dump of a sanitized and pruned version of the site db
     cmd: |
       ahoy cmd-proxy exec mkdir -p backups
       ahoy drush sql-dump > backups/unsanitized.sql
-      ahoy drush sql-cli < nucivic-ahoy/.mysqlscripts/sanitize.sql | grep -v concat > backups/truncate.sql
+      ahoy drush sql-cli < dkan/.ahoy/site/.mysqlscripts/sanitize.sql | grep -v concat > backups/truncate.sql
       ahoy drush sql-cli < backups/truncate.sql
       rm backups/truncate.sql
       ahoy drush sql-dump > backups/sanitized.sql
@@ -82,14 +76,14 @@ commands:
     usage: Prunes datasets and resources from site database
     hide: true
     cmd: |
-      ahoy drush php-script nucivic-ahoy/.scripts/prune-database.php
+      ahoy drush php-script dkan/.ahoy/site/.scripts/prune-database.php
 
   name:
     usage: Utility function to determine the site name.
     cmd: |
       # TODO: use config/config.yml instead
       if [ -s assets/drush/aliases.local.php ]; then
-        ahoy cmd-proxy php -f nucivic-ahoy/.scripts/site-name.php
+        ahoy cmd-proxy php -f dkan/.ahoy/site/.scripts/site-name.php
       else
         echo "Site name not set. Type the alias followed by [ENTER]:"
         read ALIAS
@@ -100,29 +94,30 @@ commands:
   asset-download:
     usage: Download database and files assets from S3 to local backups folder.
     cmd: |
-      ahoy site asset-download-db
-      ahoy site asset-download-files
+      ahoy utils asset-download-db
+      ahoy utils asset-download-files
     hide: true
 
   asset-download-db:
     usage: Download DB backup asset from S3 to local backups folder.
     cmd: |
-      ahoy site asset-download-dbs sanitized
+      ahoy utils asset-download-dbs sanitized
 
   asset-download-db-unpruned:
     usage: Download unpruned DB backup asset from S3 to local backups folder.
     cmd: |
-      ahoy site asset-download-dbs unpruned
+      ahoy utils asset-download-dbs unpruned
 
   asset-download-dbs:
     hide: true
     usage: Download DB backup asset from S3 to local backups folder.
     cmd: |
+      eval $(ahoy parse config/config.yml)
       ahoy cmd-proxy exec mkdir -p backups
-      site=$(ahoy site name)
+      site=$(ahoy utils name)
       db={{args}}
-      asset="https://s3.amazonaws.com/nucivic-data-backups-scrubbed/$site.prod.$db.sql.gz"
-      LC_TIME=en_US.UTF-8 perl nucivic-ahoy/.scripts/s3curl.pl --id local $asset > backups/$db.sql.gz
+      asset="$private_aws_scrubbed_data_url/$site.prod.$db.sql.gz"
+      LC_TIME=en_US.UTF-8 perl dkan/.ahoy/site/.scripts/s3curl.pl --id local $asset > backups/$db.sql.gz
       echo ""
       echo "Unpacking the $db database."
       echo ""
@@ -132,10 +127,11 @@ commands:
   asset-download-files:
     usage: Download files backup asset from S3 to local backups folder.
     cmd: |
+      eval $(ahoy parse config/config.yml)
       ahoy cmd-proxy exec mkdir -p backups
-      site=$(ahoy site name)
-      asset="https://s3.amazonaws.com/nucivic-data-backups-scrubbed/$site.prod.files.tar.gz"
-      LC_TIME=en_US.UTF-8 perl nucivic-ahoy/.scripts/s3curl.pl --id local $asset > backups/$site.prod.files.tar.gz
+      site=$(ahoy utils name)
+      asset="$private_aws_scrubbed_data_url/$site.prod.files.tar.gz"
+      LC_TIME=en_US.UTF-8 perl dkan/.ahoy/site/.scripts/s3curl.pl --id local $asset > backups/$site.prod.files.tar.gz
       echo ""
       echo "Unpacking the files asset."
       echo ""
@@ -145,8 +141,8 @@ commands:
   asset-upload:
     usage: Upload database and files assets to dedicated S3 bucket.
     cmd: |
-      ahoy site asset-db-upload
-      ahoy site asset-files-upload
+      ahoy utils asset-db-upload
+      ahoy utils asset-files-upload
     hide: true
 
   asset-upload-db:
@@ -161,28 +157,28 @@ commands:
 
   s3-setup:
     usage: Utility script for adding aws s3curl credentials.
-    cmd: bash nucivic-ahoy/.scripts/s3-setup.sh
+    cmd: bash dkan/.ahoy/site/.scripts/s3-setup.sh
     hide: true
 
   self-update:
     usage: Utility function for self updating this repo.
     cmd: |
       ahoy dkan self-update
-      rm -fR nucivic-ahoy
-      git clone 'git@github.com:nucivic/nucivic-ahoy' --depth=1
-      rm -rf nucivic-ahoy/.git
-      rm -rf nucivic-ahoy/.gitignore
+      rm -fR dkan/.ahoy/site
+      git clone 'git@github.com:nucivic/dkan/.ahoy/site' --depth=1
+      rm -rf dkan/.ahoy/site/.git
+      rm -rf dkan/.ahoy/site/.gitignore
     hide: true
 
   files-link:
     usage: Links files.
-    cmd: ahoy cmd-proxy ln -s ../../../$(ahoy site name).prod.files/files docroot/sites/default/files
+    cmd: ahoy cmd-proxy ln -s ../../../$(ahoy utils name).prod.files/files docroot/sites/default/files
     hide: true
 
   files-fix-permissions:
     usage: Fix the permissiosn for the files.
     cmd: |
-      ahoy cmd-proxy  bash ./nucivic-ahoy/.scripts/site.files-fix-permissions.sh
+      ahoy cmd-proxy  bash ./dkan/.ahoy/site/.scripts/site.files-fix-permissions.sh
     hide: true
 
   test:

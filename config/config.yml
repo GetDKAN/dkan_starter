@@ -9,6 +9,11 @@ default:
     enable: TRUE
     limit: 10MB
     queue: 50MB
+private:
+  aws:
+    scrubbed_data_url: CHANGE ME  
+  probo:
+    password: CHANGE ME
 acquia:
   subscription: 'professional'
   search:
@@ -30,4 +35,3 @@ acquia:
     base_url: http://produrl
     core_id: changeme
     derived_key: changeme
-    

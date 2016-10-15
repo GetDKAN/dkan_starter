@@ -52,12 +52,8 @@ dependencies:
     - mkdir $CIRCLE_ARTIFACTS/junit
     - cd tests; composer install; cd ..
     - bash dkan/dkan-init.sh dkan --deps-only
-    - ahoy site setup --db-user=ubuntu --db-pass='' --db-host=127.0.0.1 --db-port=3306 --db-name=circle_test
-    - drush cc drush
-    - drush dl -n registry_rebuild-7.x-2.3
-    - ahoy ci setup
-    - ahoy ci deploy
-    - ahoy site fail-when-bad-disable
+    - ahoy site up --db-user=ubuntu --db-pass='' --db-host=127.0.0.1 --db-port=3306 --db-name=circle_test
+    - ahoy utils fail-when-bad-disable
     # Run a webserver using drush.
     - 'ahoy drush --yes runserver :8888':
         background: true
@@ -78,7 +74,6 @@ test:
   override:
     - ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features --tags='~@customizable&&~@fixme&&~@testBug':
          parallel: true
-    - ahoy site test
 
   post:
     - echo $CIRCLE_ARTIFACTS; cp -av dkan/test/assets $CIRCLE_ARTIFACTS:

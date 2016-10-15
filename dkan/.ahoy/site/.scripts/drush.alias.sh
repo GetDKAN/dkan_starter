@@ -1,6 +1,6 @@
 mkdir -p ~/.drush
 cp -L ./assets/drush/aliases.local.php ~/.drush
-name=$(ahoy site name)
+name=$(ahoy utils name)
 touch ~/.drush/$name.aliases.drushrc.php
 
 echo '

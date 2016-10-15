@@ -43,4 +43,4 @@ commands:
 
   launch-checklist:
     usage: A series of commands to perform a launch-checklist
-    import: nucivic-ahoy/launch-checklist.ahoy.yml
+    import: dkan/.ahoy/site/launch-checklist.ahoy.yml

@@ -89,8 +89,8 @@ commands:
     usage: Overrides drupal-org.make with overrides.make
     cmd: |
       if [ -f config/overrides.make ]; then
-        cd nucivic-ahoy && composer install && cd ..
-        ahoy cmd-proxy drush php-script nucivic-ahoy/.scripts/overrides.php
+        cd dkan/.ahoy/site && composer install && cd ..
+        ahoy cmd-proxy drush php-script dkan/.ahoy/site/.scripts/overrides.php
         # Check file exits and file not empty.
         if [ -e overriden_make.make ] && [ -s overriden_make.make ]; then
           rm -rf docroot/sites/all/modules/overrides
@@ -153,7 +153,7 @@ commands:
       cp $tempdir/.htaccess config/.htaccess
 
       # Transpose config.yml to php
-      cd nucivic-ahoy
+      cd dkan/.ahoy/site
       composer install
       php .scripts/config.php
 
@@ -270,7 +270,14 @@ commands:
       rm -rf config
       mv .config config
       rm -rf .data_starter_private
+      hub clone NuCivic/nucivic-ahoy nucivic-ahoy-private
+      if [[ $? = '128' ]]; then
+        echo "You don't have access to NuCivic private ahoy commands. You can ignore this message"
+      else
+        mv nucivic-ahoy-private/config.yml .
+        rm -rf nucivic-ahoy-private
+      fi
 
     upgrade-sites:
       usage: ahoy build upgrade-sites $tag
-      cmd: ahoy cmd-proxy bash nucivic-ahoy/.scripts/upgrade-sites.sh
+      cmd: ahoy cmd-proxy bash dkan/.ahoy/site/.scripts/upgrade-sites.sh
