@@ -26,12 +26,21 @@ DKAN Starter is part of an agile workflow for creating DKAN sites. That workflow
 
 DKAN Starter provides integrations with the following tools to facilitate this workflow:
 
+<<<<<<< HEAD
 * **[Github](http://github.com)** for VCS and project management
 * **[CircleCI](http://circleci.com)** for tests
 * **[Ahoy](https://github.com/DevinciHQ/ahoy)** for simplifying our CLI commands
 * **[Probo](http://probo.ci)** for quality assurance
 * **[Docker](http://docker.io)** for local development
 * **[Acquia](http://acquia.com)** for hosting and deployment
+=======
+* **[Github](http://github.com>)** for VCS and project management
+* **[CircleCI](http://circleci.com>)** for tests
+* **[Ahoy](https://github.com/DevinciHQ/ahoy>)** for simplifying our CLI commands
+* **[Probo](http://probo.ci>)** for quality assurance
+* **[Docker](http://docker.io>)** for local development
+* **[Acquia](http://acquia.com>)** for hosting and deployment
+>>>>>>> Updates docs
 
 All of these tools can be switched out by updating the ahoy commands that implement each part of the workflow.
 
