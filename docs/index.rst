@@ -16,11 +16,15 @@ DKAN Starter is a tool for implementing DKAN. DKAN Starter solves the following 
 
 DKAN Starter is designed as an upstream that integrates with DKAN updates. DKAN implementers can get immediate updates when new minor or patch release is published by DKAN.
 
+DKAN Starter is meant for developers or sysadmins who are tasked with creating a DKAN site. This documentation assumes knowledge of Drupal, LAMP stack administration, and devops tools.
 
 Table of Contents
+-----
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    introduction/index
+   getting_started/index
    common_tasks/index
+   docker-dev-env/index

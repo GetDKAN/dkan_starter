@@ -1,5 +1,7 @@
-Common Development Tasks (WIP)
+Common Development Tasks
 ----------------------
+
+These are common development tasks throughout the lifecycle of a project.
 
 .. toctree::
    :maxdepth: 1
@@ -13,7 +15,7 @@ Common Development Tasks (WIP)
    change-local-container-settings
    config-secure-pages
    enable-fast-file-import
-   Enable-https-everywhere
+   enable-https-everywhere
    enable-or-disable-a-module
    getting-content-into-a-probo-site
    override-and-upstream-behat-suite-config

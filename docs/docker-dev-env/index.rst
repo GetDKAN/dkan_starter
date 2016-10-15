@@ -5,5 +5,4 @@
    :maxdepth: 1
 
    installation
-   getting-started
-   creating-a-new-project
+   ahoy

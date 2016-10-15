@@ -1,13 +1,4 @@
-# Getting Started
-
-
-* Create a Plan
-* Signup for the tools you can use
-* Setup your local docker env
-* Create a new project
-
-
-
+# Create a Project Plan
 
 Before you [[Create a new project]] read the following and either sign up for the tools you can use and / or create a plan to replace the default tools you can't.
 

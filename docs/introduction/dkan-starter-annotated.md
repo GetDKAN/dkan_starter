@@ -1,22 +1,25 @@
+DKAN Starter Annotated
+========
+
 ```
 from: https://confluence.govdelivery.com/display/NCKB/Configuration
 
 TODO: link to correct "How to do this" docs
 ```
 
-# DKAN Starter Annotated
+DKAN Starter Structure
+--------
 
-## DKAN Starter Structure
 The following is the root structure for DKAN Starter:
 
 ```bash
+.ahoy/                       [Ahoy files. See note below.]
 CHANGELOG.md                 [Changelog for DKAN Starter. All releases include an entry.]
 README.md                    [Description of DKAN Starter.]
 build-dkan.make              [Drupal Make file for DKAN version.]
 circle.yml                   [CircleCI test file.]
 docroot/                     [Built docroot. See note below.]
 drupal-org-core.make         [Drupal Make file for Drupal version.]
-nucivic-ahoy/                [Ahoy files. See note below.]
 OWNERS.md                    [Owners file for DKAN Starter.]
 assets/                      [DKAN Starter assets. See note below.]
 build.make                   [Drupal make file for DKAN Starter modules. These are useful modules not included in DKAN.]
@@ -27,7 +30,9 @@ hooks/                       [Deployment hooks for changing environments (ie dev
 tests/                       [Tests]
 ```
 
-### ``docroot/``
+``docroot/``
+^^^^^^^^
+
 This is the docroot that the webserver on your environments will point to. The docroot is never edited directly and is always rebuilt from a combination of sources. Everything except for:
 
 * ``sites/all/modules/custom``
@@ -38,13 +43,18 @@ come from the upstream version of DKAN Starter.
 
 The docroot is rebuilt by running *ahoy build update* command.
 
-### ``nucivic-ahoy``
+``.ahoy/``
+^^^^^^^^
+
 This contains our ahoy scripts. All parts of the DKAN Starter workflow run through the ahoy commands.
 
-### Assets
+``assets/``
+^^^^^^^
+
 This folder includes DKAN Starter modules, patches, and other miscellaneous assets.
 
-## ``config/``
+``config/``
+^^^^^^^
 
 In in effort to simplify how we configure and customize projects we have  added `./config` to capture all configurations an customizations to a data_starter project.
 The idea with this folder is to capture all customizations across our sites in one place  as well as to separate the logic that uses custom configuration from the configuration itself.
@@ -70,6 +80,7 @@ config/
      features/
         general.feature
 ```
+
 Most of the files in the above structure are self explanatory, and as you can see in most cases we have simply moved existing files from the legacy structure to this new folder.  Moving these files here satisfies the first condition of this change: to capture all parts that are customizable in one place.
 The new files that have not been seen in previous setups are the config.yml, config.php, and custom.settings.php.
 
@@ -81,7 +92,7 @@ You should forget about.  This file is created automatically by running `ahoy si
 
 This is where we will now keep all of the site specific configurations.  This file is a yaml formatted file that will not contain any logic (by definition) and thus simplifies understanding how sites differ from each other.
 
-### settings.custom.php:
+### settings.custom.php
 
 This is where settings.php logic that is custom to a site will live, so that it will be much easier to see how, if at all, a site's settings logic is different from another.  Currently we use the devinci along with the environment module to automatically run changes between environments.  Often there are site specific difference that happen between the different installations.  This is where we can capture these logic difference.  Note, that we may move away from how we run deployments (a la devinci style) so this file may become unnecessary.
 

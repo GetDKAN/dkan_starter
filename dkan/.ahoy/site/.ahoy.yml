@@ -32,7 +32,7 @@ commands:
   docker:
     usage: A series of docker commands for dkan development (experimental)
     import: dkan/.ahoy/docker.ahoy.yml
-    hide: true
+    hide: false 
 
   init:
     cmd: echo "ahoy.yml file already exists."

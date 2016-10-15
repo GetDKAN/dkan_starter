@@ -1,6 +1,6 @@
 # Enable HTTPS everywhere
 
-When you want to enable https everywhere on a dkan site. 
+When you want to enable https everywhere on a dkan site.
 
 ## Step-by-step guide
 

@@ -1,8 +1,8 @@
 # Setting up a project locally
 
-1. Install docker as described in [Local Docker Environment](https://confluence.govdelivery.com/display/NCKB/Local+Docker+Environment)
+1. Install docker as described in [Local Docker Environment](../getting_started/setting-up-local-docker)
 2. Run **docker-machine start default; eval "$(docker-machine env default)"** if you haven't already
-3. cd into "~/docker-share/CLIENT-GIT-REPO" 
+3. cd into "~/docker-share/CLIENT-GIT-REPO"
 4. Setup S3 backup access
   1. Ask Pluto for S3 credentials
   2. create aws credentials file
@@ -17,10 +17,7 @@
     );
     ```
 5. run **ahoy docker up** will bring up docker containers
-6. run **ahoy site setup to setup** settings.php files
-7. run **ahoy custom setup** (if there are customizations)
-8. run **ahoy ci setup** to load databases and bring up site
-9. run **ahoy ci deploy** to do the environment switching and run deployment hook.
+6. run **ahoy site up**
 10. run **ahoy docker url** to get the site url
 
 ## Troubleshooting
@@ -36,7 +33,7 @@ Can't locate Digest/HMAC_SHA1.pm in @INC (you may need to install the Digest::HM
 BEGIN failed--compilation aborted at nucivic-ahoy/.scripts/s3curl.pl line 20.
 ```
 
-then, do this: 
+then, do this:
 
 ```
 perl -MCPAN -e "install Digest::HMAC_SHA1;"
