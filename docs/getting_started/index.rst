@@ -4,9 +4,7 @@ Getting Started
 .. toctree::
    :maxdepth: 1
 
-<<<<<<< HEAD
-   getting-started
-=======
    creating-a-project-plan
->>>>>>> Updates docs
+   getting-started
    creating-a-new-project
+   setting-up-local-docker
