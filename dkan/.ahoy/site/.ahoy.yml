@@ -15,15 +15,6 @@ commands:
     hide: true
     import: dkan/.ahoy/dkan.ahoy.yml
 
-  diagnose:
-    usage: A series of ahoy-docker setup diagnosis commands.
-    import: dkan/.ahoy/diagnose.ahoy.yml
-    hide: true
-
-  doctor:
-    usage: A series of ahoy-docker setup diagnosis commands.
-    import: dkan/.ahoy/diagnose.ahoy.yml
-    hide: true
 
   confirm:
     cmd: ahoy -f dkan/.ahoy/utils.ahoy.yml confirm {{args}}
