@@ -7,4 +7,3 @@ Getting Started
    creating-a-project-plan
    getting-started
    creating-a-new-project
-   setting-up-local-docker

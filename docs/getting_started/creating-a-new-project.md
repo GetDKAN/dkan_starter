@@ -59,7 +59,6 @@ We will share the actual jobs for this soon.
 At the least you need a mechanism for providing pruned and sanitized backups for your site to S3 or another mechanism to do so.
 
 You can simply setup the ``ahoy utils asset-download-db`` job to download directly from your production instance for local development, ProboCI, and CirlceCI however we recommend using a pruned and sanitized version of your database for these services.
-<<<<<<< HEAD
 
 ## Custom Site Configuration
 
@@ -96,5 +95,3 @@ Running this inside your project docroot:
 * Downloads a local copy of your files if setup in ``config/config.yml``
 * Runs an "Environment switch" and sets your environment to "local"
 * Runs other deployment tasks as defined in ``hooks/commands`` and ``config/settings.custom.php``
-=======
->>>>>>> Updates docs
