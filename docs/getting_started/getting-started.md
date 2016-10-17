@@ -1,6 +1,6 @@
 # Create a Project Plan
 
-Before you [[Create a new project]] read the following and either sign up for the tools you can use and / or create a plan to replace the default tools you can't.
+Before you [Create a new project](creating-a-new-project) read the following and either sign up for the tools you can use and / or create a plan to replace the default tools you can't.
 
 There are many reasons why teams can't use the tools below and we have worked with many of them that have had successful workflows and deployments.
 
