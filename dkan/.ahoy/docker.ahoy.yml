@@ -1,6 +1,10 @@
 ahoyapi: v1
 version: 0.0.0
 commands:
+  diagnose:
+    usage: A series of ahoy-docker setup diagnosis commands.
+    import: dkan/.ahoy/diagnose.ahoy.yml
+    hide: true
   env:
     cmd: |
       cat << EOF
