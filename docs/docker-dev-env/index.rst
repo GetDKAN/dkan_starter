@@ -1,4 +1,5 @@
-# Local Docker Development Environment
+Local Docker Development Environment
+-----------
 
 
 .. toctree::
