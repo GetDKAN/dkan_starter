@@ -5,9 +5,9 @@ commands:
     usage: Setup project for sublime xdebugging
     cmd: |
       mkdir -p .cache
-      cd nucivic-ahoy
+      cd dkan/.ahoy/site
       composer install
       cd ..
       PROJECT=`pwd`
       PROJECT=$(basename "$PROJECT")
-      PWD=`pwd` URI=`ahoy docker url` php ./nucivic-ahoy/.scripts/setup-sublime-xdebug.php > $PROJECT.sublime-project
+      PWD=`pwd` URI=`ahoy docker url` php ./dkan/.ahoy/site/.scripts/setup-sublime-xdebug.php > $PROJECT.sublime-project

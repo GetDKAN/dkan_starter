@@ -7,19 +7,14 @@ commands:
 
   build:
     usage: A series of commands for dkan development.
-    import: nucivic-ahoy/build.ahoy.yml
+    import: dkan/.ahoy/site/build.ahoy.yml
+    hide: true
 
   dkan:
     usage: A series of commands for dkan development.
+    hide: true
     import: dkan/.ahoy/dkan.ahoy.yml
 
-  diagnose:
-    usage: A series of ahoy-docker setup diagnosis commands.
-    import: dkan/.ahoy/diagnose.ahoy.yml
-
-  doctor:
-    usage: A series of ahoy-docker setup diagnosis commands.
-    import: dkan/.ahoy/diagnose.ahoy.yml
 
   confirm:
     cmd: ahoy -f dkan/.ahoy/utils.ahoy.yml confirm {{args}}
@@ -28,7 +23,7 @@ commands:
   docker:
     usage: A series of docker commands for dkan development (experimental)
     import: dkan/.ahoy/docker.ahoy.yml
-    hide: true
+    hide: false 
 
   init:
     cmd: echo "ahoy.yml file already exists."
@@ -46,34 +41,46 @@ commands:
 
   ci:
     usage: A series of commands to handle ci setup
-    import: nucivic-ahoy/ci.ahoy.yml
+    import: dkan/.ahoy/site/ci.ahoy.yml
+    hide: true
 
   tools:
     usage: A series of commands to setup dev tools
-    import: nucivic-ahoy/tools.ahoy.yml
+    import: dkan/.ahoy/site/tools.ahoy.yml
+    hide: true
 
   debug:
     usage: A series of commands to setup debugging
-    import: nucivic-ahoy/debug.ahoy.yml
+    import: dkan/.ahoy/site/debug.ahoy.yml
+    hide: true
 
   launch-checklist:
     usage: A series of commands to handle pre launch checks
-    import: nucivic-ahoy/launch-checklist.ahoy.yml
+    import: dkan/.ahoy/site/launch-checklist.ahoy.yml
+    hide: true
 
   site:
     usage: A series of commands for site development
-    import: nucivic-ahoy/site.ahoy.yml
+    import: dkan/.ahoy/site/site.ahoy.yml
+
+  utils:
+    hide: true
+    usage: A series of helper commands (hide the details)
+    import: dkan/.ahoy/site/utils.ahoy.yml
 
   remote:
     usage: A series of commands for site remote management
-    import: nucivic-ahoy/remote.ahoy.yml
+    import: dkan/.ahoy/site/remote.ahoy.yml
+    hide: true
 
   custom:
     usage: A series of custom commands specific to a project.
     import: config/custom.ahoy.yml
+    hide: true
 
   parse:
     usage: ahoy parse :filpath :argument, where :argument depth is seperated by underscores.
+    hide: true
     cmd: |
       # Attribution: https://gist.github.com/epiloque/8cf512c6d64641bde388#file-yaml-sh
       parse_yaml() {

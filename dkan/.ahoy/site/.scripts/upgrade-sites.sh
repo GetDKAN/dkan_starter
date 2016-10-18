@@ -6,20 +6,7 @@ if [ "$1" = "" ] && [ "$tag" = "" ]; then
 fi
 
 if [ "$repos" = "" ]; then
-  repos=( 
-    cadepttech
-    client-sandiego-opendata
-    data-marine-scotland
-    data-northdakota
-    ga_gbpw
-    ga_reports
-    healthdata
-    lky
-    ng-worldbank-caribb-jam-data
-    ng-worldbank-caribb-stlucia-data 
-    usda-nal
-    wbddh
-  )
+  repos=()
 else
   IFS=', ' read -r -a repos <<< "$repos"
 fi

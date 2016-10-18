@@ -18,7 +18,7 @@ $twig->addFunction(new Twig_SimpleFunction('var_export', 'var_export'));
 try {
   // Parse yaml.
   $yaml = new Parser();
-  $config = $yaml->parse(file_get_contents(__DIR__ . '/../../config/config.yml'));
+  $config = $yaml->parse(file_get_contents(__DIR__ . '/../../../../config/config.yml'));
 
   // Render yaml using twig template.
   $context = array(
@@ -30,7 +30,7 @@ try {
   );
 
   // Write the php file.
-  $file = fopen(__DIR__ . '/../../config/config.php', 'w');
+  $file = fopen(__DIR__ . '/../../../../config/config.php', 'w');
   fwrite($file, $output);
 } catch (Exception $e) {
   echo "An error happened trying to transpose the config.yml file:\n{$e->getMessage()}\n";
