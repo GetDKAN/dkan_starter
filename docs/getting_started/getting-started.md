@@ -8,12 +8,13 @@ There are many reasons why teams can't use the tools below and we have worked wi
 
 DKAN Starter is optimized to work with the following:
 
-* Github
-* Docker
-* AWS S3
-* ProboCI
-* CircleCI
-* Acquia
+* [Github](http://github.com)
+* [Docker](http://docker.io)
+* [AWS S3](https://aws.amazon.com/s3/)
+* [ProboCI](http://probo.ci)
+* [CircleCI](http://circleci.com)
+* [Acquia](http://acquia.com)
+* [Jenkins](https://jenkins.io)
 
 You will be best supported if you can use these tools. If you can't use one or more of these tools make sure to plan out how to replace them at the beginning of your project.
 
@@ -21,7 +22,11 @@ You will be best supported if you can use these tools. If you can't use one or m
 
 Create accounts with the tools that you can use in the list above. Docker is the only tool you don't have to create an account for.
 
-## Create Alternative Workflows with for the Tools You Can't Use
+See [Creating a New Project](creating-a-new-project) for details about each of the services above.
+
+## Create A Project Plan for Tools You Can't Use
+
+
 
 If you can't use these tools you can create overrides by overriding ahoy.
 
