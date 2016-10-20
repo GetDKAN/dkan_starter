@@ -48,7 +48,8 @@ steps:
         cp $ASSET_DIR/.s3curl ~/.s3curl
         chmod 600 ~/.s3curl
       fi
-      ahoy site up
+      ahoy ci setup
+      ahoy ci deploy
 
       echo ""
       echo "-------> Diagnose and fail build if necessary"
