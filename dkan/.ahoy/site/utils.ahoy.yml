@@ -5,11 +5,15 @@ commands:
     usage: Setups sites settings
     hide: true
     cmd: |
-      # Create an array with the arguments that were input.
+      echo "Create an array with the arguments that were input."
+      echo ""
       ARGS=( {{args}} )
       rm -f assets/sites/default/settings.docker.php
       rm -f assets/sites/default/settings.local.php
-      ahoy cmd-proxy bash ./dkan/.ahoy/site/.scripts/drush.alias.sh
+
+      echo "Setting up alias name"
+      echo ""
+      ahoy cmd-proxy exec bash ./dkan/.ahoy/site/.scripts/drush.alias.sh
 
       if [ ! -f assets/sites/default/settings.php ] && [ -f assets/sites/default/default.settings.php ]; then
         cp assets/sites/default/default.settings.php assets/sites/default/settings.php
@@ -24,6 +28,8 @@ commands:
         cp assets/sites/default/settings.docker.demo.php assets/sites/default/settings.docker.php
         ahoy docker up
       elif [ "${#ARGS[@]}" -ne 0  ]; then
+        echo "Updating settings.local.php"
+        echo ""
         for i in "${ARGS[@]}"; do
           case "$i" in
             --db-user=*)
