@@ -7,9 +7,12 @@ default:
     - %paths.base%/features/bootstrap/custom
     - %paths.base%/features/bootstrap/dkan
     - %paths.base%/features/bootstrap
+  extensions:
+    Behat\MinkExtension:
+      files_path: /var/www/tests/files
   suites:
     # this default parram is for a suite level configuration
-    data_starter:
+    dkan_starter:
       paths:
         - %paths.base%/features
       contexts:
@@ -41,4 +44,3 @@ default:
       # handle dkan path here to maintain backwards compatibility
       paths:
         - %paths.base%/../dkan/test/features
-

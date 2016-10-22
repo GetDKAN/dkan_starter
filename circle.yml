@@ -72,9 +72,8 @@ dependencies:
 ## Customize test commands
 test:
   override:
-     #- BEHAT_FOLDER=$HOME/$CIRCLE_PROJECT_REPONAME/tests ruby dkan/.ahoy/.scripts/circle-behat.rb dkan/test/features tests/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug':
-         #parallel: true
-     - BEHAT_FOLDER=$HOME/$CIRCLE_PROJECT_REPONAME/tests ruby dkan/.ahoy/.scripts/circle-behat.rb dkan/test/features/widgets.feature --tags='~@customizable&&~@fixme&&~@testBug'
+     - BEHAT_FOLDER=$HOME/$CIRCLE_PROJECT_REPONAME/tests ruby dkan/.ahoy/.scripts/circle-behat.rb dkan/test/features tests/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug':
+         parallel: true
   post:
     - echo $CIRCLE_ARTIFACTS; cp -av tests/assets $CIRCLE_ARTIFACTS:
         parallel: true

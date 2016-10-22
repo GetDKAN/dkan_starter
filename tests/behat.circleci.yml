@@ -2,7 +2,7 @@ imports:
   # dkan is the default profile
   -  ../dkan/test/behat.yml
   # data_stater will override dkan
-  -  behat.data_starter.yml
+  -  behat.dkan_starter.yml
   # custom has the last say
   -  ../config/tests/behat.custom.yml
 

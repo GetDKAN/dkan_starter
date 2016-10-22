@@ -29,7 +29,7 @@ Feature: Resources
     And I am on "Resource 01" page
     When I click "Edit"
     And I click "Upload"
-    And I attach the file "postvaccinedeaths.csv" to "field_upload[und][0][resup]" using file resup
+    And I attach the file "dkan_starter/postvaccinedeaths.csv" to "field_upload[und][0][resup]" using file resup
     And I wait for the file upload to finish
     And I press "Save"
     Then I should see "Resource Resource 01 has been updated"
@@ -42,7 +42,7 @@ Feature: Resources
     And I am on "Resource 01" page
     And  I click "Edit"
     And I click "Upload"
-    When I attach the file "eicarcom.html" to "field_upload[und][0][resup]" using file resup
+    When I attach the file "dkan_starter/eicarcom.html" to "field_upload[und][0][resup]" using file resup
     And I wait for the file upload to finish
     Then I should see "A virus has been detected in the file. The file will not be accepted."
     And I press "Save"
