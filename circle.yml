@@ -1,23 +1,16 @@
 ## Customize the test machine
 machine:
-
-  #timezone:
-  #  America/New_York # Set the timezone
-
-  # Version of ruby to use
   php:
     version: '5.6.22'
-
-  # Override /etc/hosts
-  #hosts:
-    #circlehost: 127.0.0.1
-    #dev.mycompany.com: 127.0.0.1
 
   # Add some environment variables
   environment:
     PATH: $PATH:$HOME/.config/composer/vendor/bin
-    # For xvfb / selenium setup (not sure why)
-    #DISPLAY: ':99.0'
+    DATABASE_URL: mysql://ubuntu:@127.0.0.1:3306/circle_test
+    # Timeouts issues happen when selenium tries to spawn a new chrome 
+    # instance. I've nail that down to this selenium issue 
+    # https://github.com/SeleniumHQ/docker-selenium/issues/87
+    DBUS_SESSION_BUS_ADDRESS: /dev/null
 ## Customize checkout
 ## Note: Only post is supported.
 checkout:
@@ -27,19 +20,8 @@ checkout:
 
 ## Customize dependencies
 dependencies:
-
-  # we automatically cache and restore many dependencies between
-  # builds. If you need to, you can add custom paths to cache:
-  #cache_directories:
-  #  - "custom_1"   # relative to the build directory
-  #  - "~/custom_2" # relative to the user's home directory
   cache_directories:
-     #- "dkan/test/vendor"
-     #- "~/.composer"
      - "~/.drush"
-     # Disable caching sql install backups for now.
-     #- "backups"
-     #- "dkan/test/sites/default"
   pre:
     - rm /opt/circleci/php/$(phpenv global)/etc/conf.d/xdebug.ini
     - echo "memory_limit = 256M" > $PHPENV_ROOT/versions/$(phpenv global)/etc/conf.d/memory.ini
@@ -57,10 +39,6 @@ dependencies:
     # Run a webserver using drush.
     - 'ahoy drush --yes runserver :8888':
         background: true
-
-    # Setup display for selenium
-    #- sh -e /etc/init.d/xvfb start
-    #- sleep 3
 
     - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
     - java -jar selenium-server-standalone-2.53.1.jar -p 4444 :
