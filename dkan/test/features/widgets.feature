@@ -39,7 +39,7 @@ Feature: Widgets
       And I attach the drupal file "dkan/actionplan.pdf" to "files[field_basic_file_file_und_0]"
       And I press "Finish"
       And I wait and press "Save"
-      Then I should see "dkan/actionplan.pdf"
+      Then I should see "actionplan.pdf"
 
   Scenario: Adds "New Image Widget" block to home page using panels ipe editor
     When I click on the text " Add image"
