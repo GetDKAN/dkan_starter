@@ -1,5 +1,4 @@
-Creating a New Project
--------------
+# Creating a New Project
 
 ## Github
 
