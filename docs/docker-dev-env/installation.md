@@ -1,5 +1,4 @@
-Setting up Your Local Docker Environment
--------------------
+# Setting up Your Local Docker Environment
 
 The steps to setup the DKAN development environment are as following:
 1. Run the universal Docker installer (recommended) and/or run the commands manually to make sure that the Docker Machine is properly setup.
