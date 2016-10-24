@@ -1,7 +1,9 @@
 DKAN Starter Documentation (Beta)
 =============
 
-**NOTE: These docs are being migrated from our internal documentation system and are currently in beta. We will be updating them throughout the next several weeks.**
+.. note::
+
+  These docs are being migrated from our internal documentation system and are currently in beta. We will be updating them throughout the next several weeks.
 
 DKAN Starter is a tool for implementing DKAN. DKAN Starter solves the following issues:
 
@@ -30,3 +32,5 @@ Table of Contents
    getting_started/index
    common_tasks/index
    docker-dev-env/index
+   tutorials/index
+   troubleshooting/index
