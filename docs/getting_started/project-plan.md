@@ -42,6 +42,11 @@ If you can't use ProboCI you can create other mechanisms for creating Quality As
 If you can't use CircleCI you need a test-runner for verifying that current DKAN tests don't break as you build and to test new functionality. If you have to work within your own data center you can install CirlceCI. CircleCI can also be installed quite easily within an Amazon VPC if you sign up for [Enterprise](https://circleci.com/enterprise/).
 
 ### Docker
+
+DKAN has its own fleet of docker containers our developers work with on a daily basis that are optimized for DKAN.
+
+These docker containers were developed with help from [HelioCore](https://heliocore.com/).
+
 If you can't install Docker and Docker Machine on your local machines you need a way to allow developers to work on individual instances of the website. This can be done with other tools like Vagrant or by setting up a cloud VPS. The solution needs to accommodate testing developer branches. This needs to be in place before development starts on the project.
 
 ### Jenkins
@@ -65,7 +70,7 @@ If you are unable to use Acquia there many hosts that can be substituted or a be
 
 ## Project Plan Checklist
 
-You can use [this checklist](https://docs.google.com/spreadsheets/d/167rJVtwfg5S5kBdsbr34i27nDR3-u8Ligh4lypobips/edit#gid=0) as a tool for preparing your Project Plan.
+You can use [this checklist](https://docs.google.com/spreadsheets/d/167rJVtwfg5S5kBdsbr34i27nDR3-u8Ligh4lypobips/edit#gid=0) as a tool for preparing your Project Plan. Make a copy for your own project.
 
 ## Contact GovDelivery
 
