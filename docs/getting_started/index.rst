@@ -2,7 +2,7 @@ Getting Started
 --------
 
 .. toctree::
-   :maxdepth: 0
+   :maxdepth: 2
 
    project-plan
    creating-a-new-project   
