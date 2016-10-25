@@ -1,4 +1,4 @@
-Local Docker Development Environment
+Docker Development Environment
 -----------
 
 

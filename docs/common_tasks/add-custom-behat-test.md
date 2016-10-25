@@ -1,5 +1,6 @@
 # Add a Custom Behat Test
 Sometimes a site will require a feature that will never be part of the upstream product.  In these cases you will need to add a site specific behat tests to your site repo. This page documents how to do that.
+
 ## Step-by-step guide
 1. Add any new feature tests to the config/tests/features folder.
 2. If a new context that cannot be merged into nucivic/dkanextension is needed, add it to the config/tests/feature/bootstrap folder (see example in info block below).
@@ -13,9 +14,9 @@ config/tests/features/
 |   |-- FeatureContext.php
 |-- custom.feature
 ```
-### Example Test: 
+### Example Test:
 #### config/tests/features/custom.feature
- ``` 
+ ```
 Feature: Custom Example
   @api
   Scenario: See custom about page

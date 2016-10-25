@@ -1,11 +1,13 @@
-# Add client custom configuration
+# Add custom configuration
+
 By custom configuration we mean:
+
 * A new Content Type
 * A new View
 * A new Page
 * Whatever can be captured in features in a custom module
 
-Whatever's you need to customise the project, you should set the feature export 
+Whatever's you need to customise the project, you should set the feature export
 to somewhere inside the **docroot/sites/all/modules/custom** folder. That way,
 your module will **persist** when the site gets **remade** (Read Add a custom
 module if you don't understand what this means).
@@ -17,6 +19,3 @@ However, there's a few caveats:
   2. Create a behat feature file for your tests (name it appropriately)
   3. Look at the **circle.yml** recipe to see if it's setup to run that behat feature
 2. **Customisation** does not mean in any way **DKAN overrides.** If you plan to introduce overrides please refer to Override a DKAN oobb feature
-
-  
-

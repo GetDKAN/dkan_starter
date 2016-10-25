@@ -1,4 +1,5 @@
 # Configure Secure Pages
+
 Secure pages is useful as in interim solution until we get "HTTPs Everywhere" support.
 
 To setup secure pages properly:

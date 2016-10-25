@@ -30,7 +30,9 @@ Table of Contents
 
    introduction/index
    getting_started/index
-   common_tasks/index
    docker-dev-env/index
+   common_tasks/index
    tutorials/index
    troubleshooting/index
+   modules/index
+   deployment/index

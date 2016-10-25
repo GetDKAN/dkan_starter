@@ -2,23 +2,21 @@
 
 1. Install docker as described in [Local Docker Environment](../getting_started/setting-up-local-docker)
 2. Run **docker-machine start default; eval "$(docker-machine env default)"** if you haven't already
-3. cd into "~/docker-share/CLIENT-GIT-REPO"
+3. cd into ``~/docker-share/CLIENT-GIT-REPO``
 4. Setup S3 backup access
-  1. Ask Pluto for S3 credentials
-  2. create aws credentials file
-    1. vim ~/.s3-curl
-    2. Add
-    ```
-    %awsSecretAccessKeys = (
+   1. Get S3 credentials
+   2. Create aws credentials file
+      1. ``vim ~/.s3-curl``
+      2. Add: ``%awsSecretAccessKeys = (
       local => {
         id => 'AWS_ID',
         key => 'AWS_KEY',
       }
-    );
-    ```
-5. run **ahoy docker up** will bring up docker containers
-6. run **ahoy site up**
-10. run **ahoy docker url** to get the site url
+    );``
+
+5. Run **ahoy docker up** will bring up docker containers
+6. Run **ahoy site up**
+10. Run **ahoy docker url** to get the site url
 
 ## Troubleshooting
 
