@@ -26,3 +26,21 @@ DKAN's ahoy commands are stored in the ``.ahoy/`` folder in DKAN.
 ## DKAN Starter and Ahoy
 
 DKAN Starter ahoy commands are stored in the ``.ahoy/sites/`` folder in DKAN.
+
+## Upgrading to ahoy v2
+*  move your current ahoy binary to ahoy1 in the same folder it is (you might
+   need it to switch between ahoy1 and ahoy2 projects in the interim).
+* get ahoy2: run
+```bash
+if [ -z ${version+x} ]; then
+  version=2.0.1-alpha
+fi
+os=`uname -s | tr '[:upper:]' '[:lower:]'`
+wget  https://nucivic-binaries.s3-us-west-1.amazonaws.com/ahoy/$version/ahoy-$os-amd64 -O ./ahoy && \
+        chmod +x ./ahoy
+```
+* (OR)
+```bash
+curl https://gist.githubusercontent.com/dkinzer/862b6191964389b1bb8cd5deda936880/raw/02107a496d89fbe1dc9bf6c2fc3b7c6946f847de/get-ahoy.sh | bash
+```
+* move this new copy of ahoy to where the old ahoy binary was.
