@@ -1,0 +1,154 @@
+/* panel pane */
+.view-dkan-topics-featured {
+ margin: 2em 0;
+}
+.view-dkan-topics-featured .views-field-field-image img {
+  max-width: 110px;
+  margin-bottom: 8px;
+}
+.view-dkan-topics-featured .topic-icon,
+.view-dkan-topics-featured .views-field {
+  background-color: #f0f0f0;
+  display: block;
+  margin: 0;
+  text-align: center;
+  width: 100%;
+}
+.view-dkan-topics-featured a:hover {
+  text-decoration: none;
+}
+.view-dkan-topics-featured .topic-icon a::before {
+  font-size: 3.5em;
+  line-height: 1em;
+}
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e900::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e906::before {
+  font-size: 2.5em;
+}
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e909::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e90a::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e917::before {
+  font-size: 2.6em;
+}
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e901::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e902::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e90f::before {
+  font-size: 2.7em;
+}
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e908::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e90c::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e90d::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e90e::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e910::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e911::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e912::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e913::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e916::before {
+  font-size: 2.8em;
+}
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e905::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e907::before,
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e914::before {
+  font-size: 3em;
+}
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e904::before {
+  font-size: 3.1em;
+}
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e915::before {
+  font-size: 3.7em;
+}
+.view-dkan-topics-featured .topic-icon a.font-icon-select-2-e903::before {
+  font-size: 4.4em;
+}
+.view-dkan-topics-featured .row {
+  width: 88%;
+  padding: 0;
+  margin: 0 auto;
+}
+.view-dkan-topics-featured .views-row-last {
+  padding-bottom: 60px;
+}
+.view-dkan-topics-featured .row > div {
+  width: 80%;
+  padding: 0;
+  margin: 0 10% 28px 10%;
+}
+@media all and (min-width:768px) {
+  .view-dkan-topics-featured .row > div {
+    width: 44%;
+    margin: 0 3% 28px 3%;
+  }
+}
+@media all and (min-width:1200px) {
+  .view-dkan-topics-featured .row > div {
+    width: 22%;
+    margin: 0 1.5% 28px 1.5%;
+  }
+}
+.view-dkan-topics-featured .row > div:hover div {
+  background-color: #39bde9;
+}
+.view-dkan-topics-featured .row > div .topic-icon {
+  height: 90px;
+}
+.view-dkan-topics-featured .row > div .topic-icon > div {
+  padding-top: 25px;
+}
+.view-dkan-topics-featured .row > div .topic-icon > div > a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #39bde9;
+  padding-top: 25px;
+}
+.view-dkan-topics-featured .row > div .topic-icon > div > a > span {
+  display: none;
+}
+
+.view-dkan-topics-featured .row > div:hover .topic-icon > div > a {
+  color: white;
+}
+.view-dkan-topics-featured .row > div .views-field-name {
+  height: 53px;
+}
+.view-dkan-topics-featured .row > div .views-field-name > span.field-content > a {
+  color: #7c7c7c;
+  font-size: 13px;
+}
+.view-dkan-topics-featured .row > div:hover .views-field-name > span.field-content > a {
+  color: white;
+}
+#div-field-topic-icon-color-und-0--rgb {
+  margin-bottom: 3em;
+}
+/* dataset view */
+.view-dkan-datasets .field-name-field-topic {
+  margin: 8px 0;
+}
+.field-name-field-topic .field-name-field-topic-icon {
+  margin: 0 .25em 0 0;
+}
+#taxonomy-form-term .field-name-field-topic-icon {
+  display: block;
+}
+.field-name-field-topic-icon,
+.field-name-field-topic .name,
+.view-dkan-datasets .field-name-field-topic-icon,
+.view-dkan-datasets .field-name-field-topic .name {
+  display: inline-block;
+}
+.field-name-field-topic-icon span::before,
+.view-dkan-datasets .field-name-field-topic-icon span::before {
+  font-size: 1.5em;
+  vertical-align: bottom;
+  padding-right: 2px;
+}
+.field-name-field-topic .field-item {
+  margin-bottom: 5px;
+}
+.field-name-field-topic .field-type-image {
+  display: inline-block;
+  margin-right: 4px;
+}

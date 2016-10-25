@@ -1,0 +1,38 @@
+name        = singapore_open_data
+description = A subtheme based on NuBoot Radix
+screenshot  = screenshot.png
+core        = 7.x
+
+; Base - Radix
+base theme  = nuboot_radix
+
+
+; Regions
+regions[header]         = 'Header'
+regions[highlighted]    = 'Highlighted'
+regions[preface_first]  = 'Preface First'
+regions[preface_second] = 'Preface Second'
+regions[help]           = 'Help'
+regions[content]        = 'Content'
+regions[sidebar_first]  = 'Primary'
+regions[sidebar_second] = 'Secondary'
+regions[postscript_first]   = 'Postscript First'
+regions[postscript_second]  = 'Postscript Second'
+regions[bottom_content] = Bottom Content
+regions[footer_first]   = Footer First
+regions[footer_second]  = Footer Second
+regions[footer_third]   = Footer Third
+regions[footer]         = 'Footer'
+regions[page_top]       = 'Page top'
+regions[page_bottom]    = 'Page bottom'
+
+; Panels
+plugins[panels][layouts] = panels/layouts
+plugins[panels][styles] = panels/styles
+
+; CSS - General
+stylesheets[all][]     = assets/css/singapore_open_data.style.css
+stylesheets[all][]     = assets/css/dkan_topics.css
+
+; Javascript
+scripts[] = assets/js/singapore_open_data.script.js
