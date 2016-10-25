@@ -46,6 +46,7 @@ commands:
     usage: A series of commands to handle ci setup
     imports:
       - dkan/.ahoy/site/ci.ahoy.yml
+      - config/.ahoy/site/ci.ahoy.yml
     hide: true
 
   tools:
@@ -70,12 +71,14 @@ commands:
     usage: A series of commands for site development
     imports:
       - dkan/.ahoy/site/site.ahoy.yml
+      - config/.ahoy/site/site.ahoy.yml
 
   utils:
     hide: true
     usage: A series of helper commands (hide the details)
     imports:
       - dkan/.ahoy/site/utils.ahoy.yml
+      - config/.ahoy/site/utils.ahoy.yml
 
   remote:
     usage: A series of commands for site remote management
