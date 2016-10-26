@@ -22,6 +22,17 @@ $conf = array (
       'queue' => '50MB',
     ),
   ),
+  'private' => 
+  array (
+    'aws' => 
+    array (
+      'scrubbed_data_url' => 'CHANGE ME',
+    ),
+    'probo' => 
+    array (
+      'password' => 'CHANGE ME',
+    ),
+  ),
   'acquia' => 
   array (
     'subscription' => 'professional',
