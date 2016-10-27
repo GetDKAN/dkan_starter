@@ -21,13 +21,12 @@ steps:
       echo ""
 
       echo ""
-      echo "-------> Run 'bash dkan-init.sh':"
+      echo "-------> Run 'bash dkan-module-init.sh':"
       echo ""
       # Create the proper folder structure
       export DATABASE_URL="mysql://root:strongpassword@127.0.0.1/dkan"
       time bash dkan-module-init.sh --deps --build=$DATABASE_URL
       #Set a symlink so that probo can serve the site.
-
       echo ""
       echo "-------> Symlink ./docroot to var/www/html:"
       echo ""

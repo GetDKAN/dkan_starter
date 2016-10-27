@@ -1,4 +1,9 @@
 [![Build Status](https://travis-ci.org/NuCivic/dkan_harvest.svg?branch=7.x-1.x)](https://travis-ci.org/NuCivic/dkan_harvest)
+
+**DEPRECATED:** This module has been moved into [DKAN core](https://github.com/NuCivic/dkan) for release 7.x-1.13. To maintain backward compatibility with DKAN 7.x-1.12 and subsequent patch releases this project will remain on Github but new features will be applied directly to the DKAN core folder `modules/dkan/dkan_harvest`.
+
+If you want to try this module on DKAN < 1.13, do NOT use the `7.x-1.x` branch, which is significantly lacking in features. Latest development has happened on branch `harvest_dkan_integration`. Again, the current `7.x-1.x` branch of [DKAN core](https://github.com/NuCivic/dkan) includes the most stable version of DKAN harvest. Using the bleeding-edge `7.x-1.x` or Waiting for the stable release of DKAN 1.13 is the recommended path for trying DKAN Harvest.
+
 ## What is DKAN Harvest?
 
 DKAN Harvest is a module that can be used to regulary harvest open data from open `APIs` **(Only project open data data.json endpoints for now)**. 
