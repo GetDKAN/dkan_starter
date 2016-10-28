@@ -12,6 +12,7 @@
 # Ignore the dkan test composer folder.
 /docroot/profiles/dkan/test/vendor
 /docroot/profiles/dkan/test/assets
+!/docroot/profiles/dkan/test/assets/README.md
 
 # Packages #
 ############
