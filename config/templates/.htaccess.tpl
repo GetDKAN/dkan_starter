@@ -113,7 +113,11 @@ DirectoryIndex index.php index.html index.htm
   # uncomment the following line:
   # RewriteBase /
   
-#HTTPS
+  # Redirect to HTTP.
+  RewriteCond %{HTTPS} on
+  RewriteCond %{SERVER_PORT} 443
+  RewriteCond %{HTTP:X-Forwarded-Proto} =https
+  RewriteRule ^(.*)$ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
   # Pass all requests not referring directly to files in the filesystem to
   # index.php. Clean URLs are handled in drupal_environment_initialize().
