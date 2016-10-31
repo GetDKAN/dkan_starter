@@ -89,8 +89,8 @@ commands:
     usage: Overrides drupal-org.make with overrides.make
     cmd: |
       if [ -f config/overrides.make ]; then
-        cd dkan/.ahoy/site && composer install && cd ..
-        ahoy cmd-proxy drush php-script dkan/.ahoy/site/.scripts/overrides.php
+        cd .ahoy/site && composer install && cd ..
+        ahoy cmd-proxy drush php-script .ahoy/site/.scripts/overrides.php
         # Check file exits and file not empty.
         if [ -e overriden_make.make ] && [ -s overriden_make.make ]; then
           rm -rf docroot/sites/all/modules/overrides
@@ -153,7 +153,7 @@ commands:
       cp $tempdir/.htaccess config/.htaccess
 
       # Transpose config.yml to php
-      cd dkan/.ahoy/site
+      cd .ahoy/site
       composer install
       php .scripts/config.php
 
@@ -280,4 +280,4 @@ commands:
 
     upgrade-sites:
       usage: ahoy build upgrade-sites $tag
-      cmd: ahoy cmd-proxy bash dkan/.ahoy/site/.scripts/upgrade-sites.sh
+      cmd: ahoy cmd-proxy bash .ahoy/site/.scripts/upgrade-sites.sh

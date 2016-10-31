@@ -8,7 +8,7 @@ commands:
   build:
     usage: A series of commands for dkan development.
     imports:
-      - dkan/.ahoy/site/build.ahoy.yml
+      - .ahoy/site/build.ahoy.yml
     hide: true
 
   dkan:
@@ -45,45 +45,45 @@ commands:
   ci:
     usage: A series of commands to handle ci setup
     imports:
-      - dkan/.ahoy/site/ci.ahoy.yml
+      - .ahoy/site/ci.ahoy.yml
       - config/.ahoy/site/ci.ahoy.yml
     hide: true
 
   tools:
     usage: A series of commands to setup dev tools
     imports:
-      - dkan/.ahoy/site/tools.ahoy.yml
+      - .ahoy/site/tools.ahoy.yml
     hide: true
 
   debug:
     usage: A series of commands to setup debugging
     imports:
-      - dkan/.ahoy/site/debug.ahoy.yml
+      - .ahoy/site/debug.ahoy.yml
     hide: true
 
   launch-checklist:
     usage: A series of commands to handle pre launch checks
     imports:
-      - dkan/.ahoy/site/launch-checklist.ahoy.yml
+      - .ahoy/site/launch-checklist.ahoy.yml
     hide: true
 
   site:
     usage: A series of commands for site development
     imports:
-      - dkan/.ahoy/site/site.ahoy.yml
+      - .ahoy/site/site.ahoy.yml
       - config/.ahoy/site/site.ahoy.yml
 
   utils:
     hide: true
     usage: A series of helper commands (hide the details)
     imports:
-      - dkan/.ahoy/site/utils.ahoy.yml
+      - .ahoy/site/utils.ahoy.yml
       - config/.ahoy/site/utils.ahoy.yml
 
   remote:
     usage: A series of commands for site remote management
     imports:
-      - dkan/.ahoy/site/remote.ahoy.yml
+      - .ahoy/site/remote.ahoy.yml
     hide: true
 
   parse:
