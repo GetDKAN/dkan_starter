@@ -86,12 +86,6 @@ commands:
       - dkan/.ahoy/site/remote.ahoy.yml
     hide: true
 
-  custom:
-    usage: A series of custom commands specific to a project.
-    imports:
-      - config/custom.ahoy.yml
-    hide: true
-
   parse:
     usage: ahoy parse :filpath :argument, where :argument depth is seperated by underscores.
     hide: true
