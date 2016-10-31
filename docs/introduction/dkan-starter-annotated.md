@@ -65,7 +65,6 @@ config/
   aliases.local.php
   config.php
   config.yml
-  custom.ahoy.yml
   custom.make
   custom_libs.make
   overrides.make
@@ -103,10 +102,6 @@ This is where contributed modules are added. Contributed modules are defined as 
 ### aliases.local.php
 
 Houses local aliases for your project. This file is set by running ``ahoy site name``.
-
-### custom.ahoy.yml
-
-Custom ahoy commands are added here.
 
 ### custom_libs.make
 
