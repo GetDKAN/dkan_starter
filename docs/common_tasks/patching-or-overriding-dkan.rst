@@ -51,7 +51,7 @@ Here is a step by step process:
 
 2. Add the patch to the ``config/overrides.make``
 
-  .. code-block:: yml
+.. code-block:: yml
 
     ---
     api: '2'
