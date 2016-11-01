@@ -108,7 +108,7 @@ custom.ahoy.yml
 
 Custom ahoy commands are added here.
 
-### custom_libs.make
+custom_libs.make
 ~~~~~~~~~~~~~~~~~~~~
 
 3rd-party libraries are added to this make file.
@@ -123,7 +123,7 @@ Custom modules built for this project are added here. Any modules added to this 
 
 This module is for custom configuration of DKAN. Implementers can use this module or another custom module for customizations.
 
-modules/custom/custom_config/custom_config.features.features_master.inc
+custom_config.features.features_master.inc
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This file contains a list of the modules that you want enabled on your site.
+The ``modules/custom/custom_config/custom_config.features.features_master.inc`` file contains a list of the modules that you want enabled on your site.
