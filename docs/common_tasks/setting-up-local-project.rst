@@ -6,7 +6,7 @@ Setting up a project locally
 
 .. code-block:: bash
 
-docker-machine start default; eval "$(docker-machine env default)"
+  docker-machine start default; eval "$(docker-machine env default)"
 
 if you haven't already
 
