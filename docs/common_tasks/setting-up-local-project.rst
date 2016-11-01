@@ -16,6 +16,7 @@ if you haven't already
   2. Create aws credentials file
       1. ``vim ~/.s3-curl``
       2. Add: 
+      
       .. code-block:: bash
       
          %awsSecretAccessKeys = (
