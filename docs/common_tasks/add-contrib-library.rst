@@ -27,6 +27,7 @@ Add to the project
 ~~~~~~~~~~~~~~~~~~
 
 Run:
+
 .. code-block:: bash
 
   ahoy build custom-libs
