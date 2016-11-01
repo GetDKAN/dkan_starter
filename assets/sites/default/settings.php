@@ -213,6 +213,8 @@ switch(ENVIRONMENT) {
       'field_ui',
       'maillog',
       'views_ui',
+      // Only send Acquia Insite scores from prod.
+      'acquia_spi',
     );
     // Enable git support for the environment indicator to show current branch.
     $conf['environment_indicator_git_support'] = TRUE;
@@ -222,6 +224,10 @@ switch(ENVIRONMENT) {
    * Test Environment
    */
   case 'test':
+    $conf['features_master_temp_enabled_modules'] = array(
+      // Only send Acquia Insite scores from prod.
+      'acquia_spi',
+    );
     $conf['features_master_temp_enabled_modules'] = array(
       'maillog',
     );
