@@ -42,13 +42,13 @@ Here is a step by step process:
       1. Go to https://github.com/NuCivic/MODULE/compare or https://github.com/NuCivic/dkan/compare
       
       2. Select the upstream branch, ie release-1-12, and the PR you want to override with.
-      
-        Example: <img width="834" alt="screen shot 2016-09-15 at 11 23 42 am" src="https://cloud.githubusercontent.com/assets/512243/19907917/495b1638-a057-11e6-845d-c462be711f6d.png">
-    
-      3. Add **.diff** to the end 
 
 .. image: https://github.com/NuCivic/dkan_datastore/compare/release-1-12...fix-filters-pw-1.diff
     :alt: github view of comparison
+   
+   
+      3. Add **.diff** to the end 
+
 
 
 2. Add the patch to the ``config/overrides.make``
