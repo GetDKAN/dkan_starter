@@ -60,11 +60,11 @@ Lets say you are working on a module which adds [hover-bear](http://fakeplus.com
   
 4. Commit local changes
 
-    1. cd into``docroot/sites/all/modules/contrib/dkan_hover_bears``
-    2. commit changes
+     1. cd into``docroot/sites/all/modules/contrib/dkan_hover_bears``
+     2. commit changes
 5. Push to the client repo
-    1. MAKE SURE YOU HAVE COMMITTED TO THE MODULE
-    2. Update ``custom.make`` if you are pointing to a commit. If you are pointing to a branch you shouldn't need to worry about this as your code has already been pushed to the branch
-    3. run ``ahoy build custom``
-        1. You should see changes in ``docroot/sites/all/modules/contrib/dkan_hover_bears``
-    4. Commit changes to ``custom.make`` (if you are using revision) and ``docroot/sites/all/modules/contrib/dkan_hover_bears``
+     1. MAKE SURE YOU HAVE COMMITTED TO THE MODULE
+     2. Update ``custom.make`` if you are pointing to a commit. If you are pointing to a branch you shouldn't need to worry about this as your code has already been pushed to the branch
+     3. run ``ahoy build custom``
+         1. You should see changes in ``docroot/sites/all/modules/contrib/dkan_hover_bears``
+     4. Commit changes to ``custom.make`` (if you are using revision) and ``docroot/sites/all/modules/contrib/dkan_hover_bears``
