@@ -40,7 +40,7 @@ will bring up docker containers
 
    ahoy site up
    
-10. Run
+7. Run
 
 .. code-block:: bash
 
