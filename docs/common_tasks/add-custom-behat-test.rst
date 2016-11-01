@@ -15,17 +15,17 @@ Directory structure for custom tests:
 
 .. code-block:: bash
 
-config/tests/features/
- |-- bootstrap
- |   |-- CustomContext.php
- |   |-- FeatureContext.php
- |-- custom.feature
+ config/tests/features/
+  |-- bootstrap
+  |   |-- CustomContext.php
+  |   |-- FeatureContext.php
+  |-- custom.feature
 
 Example Test:
 ~~~~~~~~~~~~~
 
- ``config/tests/features/custom.feature``
- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``config/tests/features/custom.feature``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: gherkin
 
@@ -41,7 +41,7 @@ Example `behat.custom.yml`
 
 config/tests/behat.custom.yml
 
-.. code-block:: gherkin
+.. code-block:: yml
 
  # behat.yml
  default:
