@@ -35,21 +35,19 @@ Here is a step by step process:
 
    1. Create a PR
    
-   2. Make sure the PR can be merged into the **release-1-12**(or the release number you are working off of)
+   2. Make sure the PR can be merged into the **release-1-12** (or the release number you are working off of)
    
    3. Get a diff of the PR
    
       1. Go to https://github.com/NuCivic/MODULE/compare or https://github.com/NuCivic/dkan/compare
       
       2. Select the upstream branch, ie release-1-12, and the PR you want to override with.
-
-.. image: https://github.com/NuCivic/dkan_datastore/compare/release-1-12...fix-filters-pw-1.diff
-    :alt: github view of comparison
-   
    
       3. Add **.diff** to the end 
 
-
+.. image: https://cloud.githubusercontent.com/assets/512243/19907917/495b1638-a057-11e6-845d-c462be711f6d.png
+    :alt: github view of comparison
+   
 
 2. Add the patch to the ``config/overrides.make``
 
