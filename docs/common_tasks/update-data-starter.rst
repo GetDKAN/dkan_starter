@@ -5,7 +5,7 @@ There is a new command
 
 .. code-block:: bash
   
-  ahoy build update VERSION".
+  ahoy build update VERSION
 
 **VERSION** is the latest dkan_starter release here: `https://github.com/NuCivic/dkan_starter/releases <https://github.com/NuCivic/dkan_starter/releases>`_.
 
