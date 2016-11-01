@@ -26,27 +26,24 @@ if you haven't already
             }
           );
 
-5. Run
+5. Bring up docker containers:
 
 .. code-block:: bash
 
    ahoy docker up
    
-will bring up docker containers
-
-6. Run
+6. Setup your site
 
 .. code-block:: bash
 
    ahoy site up
    
-7. Run
+7. Get the site URL
 
 .. code-block:: bash
 
    ahoy docker url
    
-to get the site url
 
 Troubleshooting
 ===============
