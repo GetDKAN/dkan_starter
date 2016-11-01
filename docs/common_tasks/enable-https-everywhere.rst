@@ -8,7 +8,7 @@ Step-by-step guide
 
 You'll need to take several steps to enable https everywhere for a site instance on Acquia.
 
-1. To config/config.yml add:
+1. To ``config/config.yml`` add:
   
 .. code-block:: bash
   
