@@ -43,11 +43,13 @@ Here is a step by step process:
       
       2. Select the upstream branch, ie release-1-12, and the PR you want to override with.
       
-        Example: ![Confluence Pic](https://confluence.govdelivery.com/download/attachments/89326572/Screen%20Shot%202016-09-15%20at%2011.23.42%20AM.png?version=1&modificationDate=1473935044000&api=v2)
+        Example: <img width="834" alt="screen shot 2016-09-15 at 11 23 42 am" src="https://cloud.githubusercontent.com/assets/512243/19907917/495b1638-a057-11e6-845d-c462be711f6d.png">
     
-      3. Add **.diff** to the end
-      
-      4. Exmaple: https://github.com/NuCivic/dkan_datastore/compare/release-1-12...fix-filters-pw-1.diff
+      3. Add **.diff** to the end 
+
+.. image: https://github.com/NuCivic/dkan_datastore/compare/release-1-12...fix-filters-pw-1.diff
+    :alt: github view of comparison
+
 
 2. Add the patch to the ``config/overrides.make``
 
