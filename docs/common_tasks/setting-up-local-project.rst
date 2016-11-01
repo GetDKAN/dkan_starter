@@ -5,7 +5,8 @@ Setting up a project locally
 2. Run 
 
 .. code-block:: bash
-   docker-machine start default; eval "$(docker-machine env default)"
+
+docker-machine start default; eval "$(docker-machine env default)"
 
 if you haven't already
 
@@ -16,6 +17,7 @@ if you haven't already
       1. ``vim ~/.s3-curl``
       2. Add: 
       .. code-block:: bash
+      
          %awsSecretAccessKeys = (
             local => {
               id => 'AWS_ID',
@@ -26,6 +28,7 @@ if you haven't already
 5. Run
 
 .. code-block:: bash
+
    ahoy docker up
    
 will bring up docker containers
@@ -33,11 +36,13 @@ will bring up docker containers
 6. Run
 
 .. code-block:: bash
+
    ahoy site up
    
 10. Run
 
 .. code-block:: bash
+
    ahoy docker url
    
 to get the site url
@@ -61,6 +66,7 @@ If you run into the following error:
 then, do this:
 
 .. code-block:: bash
+
    perl -MCPAN -e "install Digest::HMAC_SHA1;"
 
 of course the specific module will depend on your error.
