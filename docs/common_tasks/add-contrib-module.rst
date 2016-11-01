@@ -12,6 +12,7 @@ Add the module to the custom.make file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Add the following line to the cusmom.make
+
 .. code-block:: bash
 
   projects[] = sharethis
@@ -39,6 +40,7 @@ Remake the project
 Run:
 
 .. code-block:: bash
+
   ahoy build custom
 
 That should put the **sharethis** module at ``docroot/sites/all/modules/contrib``.
