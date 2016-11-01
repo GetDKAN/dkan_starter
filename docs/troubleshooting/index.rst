@@ -3,7 +3,7 @@ Troubleshooting FAQ
 
 These are FAQ issues that DKAN Starter or DKAN users may run into while using the docker and ahoy tools.
 
-Please submit tickets to the [DKAN Issue Queue](http://github.com/nucivic/dkan/issues).
+Please submit tickets to the `DKAN Issue Queue <http://github.com/nucivic/dkan/issues>`_.
 
 Frequently Asked Questions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
