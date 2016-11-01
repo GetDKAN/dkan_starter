@@ -18,11 +18,13 @@ Patches should be applied to the appropriate git repository, included in a pull 
 To test the application of the patch you can run
 
 .. code-block:: bash
+
   ahoy build overrides
 
 Overrides are applied in the build process when running 
 
 .. code-block:: bash
+
   ahoy build update VERSION 
   
 See Updating Data Starter to Latest Version of DKAN
