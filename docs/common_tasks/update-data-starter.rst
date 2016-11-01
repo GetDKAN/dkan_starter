@@ -1,4 +1,5 @@
-# Update DKAN Starter
+Update DKAN Starter
+------------------
 
 There is a new command 
 
@@ -17,4 +18,4 @@ This performs the following:
 
 This removes everything outside of the config/ folder with the data_starter updates and then applies the local overrides and settings that are contained in the config folder.
 
-If a module is removed from sites/all/modules/contrib after running ``ahoy build update VERSION`` then it was not defined in custom.make.
+If a module is removed from sites/all/modules/contrib after running ``ahoy build update VERSION`` then it was not defined in ``custom.make``.
