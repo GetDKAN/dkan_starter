@@ -34,13 +34,13 @@ Profile level control is over arching and at this level behat allows users to im
         drupal:
           drupal_root: '/var/www/docroot'
 
-In the above configuration we see contents of the `tests/behat.docker.yml` file.  Note the imports: field.  When we invoke behat using the following command:
+In the above configuration we see contents of the ``tests/behat.docker.yml`` file.  Note the imports: field.  When we invoke behat using the following command:
 
   .. cone-block::bash
   
 	behat --config=behat.docker.yml
 
-Then, what is happening is that we are using the composition of merging the default profiles from ../dkan/test/behat.yml,  behat.data_starter.yml and ../config/tests/behat.custom.yml in that order.  This is the approach we are currently taking in our dkan_starter setup.  This approach allows us to use the behat configuration in dkan/test/behat.yml as an upstream configuration that does not need to be copied and maintained outside of dkan as the case used to be.
+Then, what is happening is that we are using the composition of merging the default profiles from ``../dkan/test/behat.yml``,  ``behat.data_starter.yml`` and ``../config/tests/behat.custom.yml`` in that order.  This is the approach we are currently taking in our dkan_starter setup.  This approach allows us to use the behat configuration in dkan/test/behat.yml as an upstream configuration that does not need to be copied and maintained outside of dkan as the case used to be.
 
 Suites:
 ~~~~~~
@@ -49,7 +49,7 @@ Although profiles are uniquely suited for deriving and composing appropriate con
 In the past we have maintained completely separate configurations to be able to handle the testing needs at each of these levels.  By adopting the use of behat suites, we now can control our testing from one origin and supply the needed configuration and configuration overrides via the use of suite configurations and profile compositions as described in the profile section above.
 
 We have implemented three defaults called custom, data_starter, and dkan.
-Below see the example of the data_starter suite as defined in tests/behat.data_starter.yml:
+Below see the example of the data_starter suite as defined in ``tests/behat.data_starter.yml``:
 
 # this default label refers to a profile level configuration
 
