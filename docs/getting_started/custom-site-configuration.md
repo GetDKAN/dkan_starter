@@ -18,7 +18,7 @@ $ ahoy utils name
 
 The following customizations (other than Acquia environment) are currently available in ``config/config.yml``. We expect to add more configuration settings here including installed modules, variables, and other settings.
 
-```yml
+```
 default:
   hostname: localhost                   [We recommend keeping this.]
   https_everywhere: FALSE               [Whether all traffic is redirected to https. Recommended.]
@@ -71,7 +71,7 @@ We've added the ``features_master_temp_enabled_modules`` feature so that some mo
 
 See:
 
-* [Adding a custom module](../common_tasks/add-custom-module)
-* [Adding a contributed module](../common_tasks/add-contrib-module)
-* [Adding a contributed library](../common_tasks/add-contrib-library)
-* [Adding Custom Behat tests](../common_tasks/add-custom-behat-test)
+* [Adding a custom module](../common_tasks/add-custom-module.md)
+* [Adding a contributed module](../common_tasks/add-contrib-module.md)
+* [Adding a contributed library](../common_tasks/add-contrib-library.md)
+* [Adding Custom Behat tests](../common_tasks/add-custom-behat-test.md)

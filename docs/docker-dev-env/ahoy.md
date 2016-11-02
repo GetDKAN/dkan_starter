@@ -26,3 +26,50 @@ DKAN's ahoy commands are stored in the ``.ahoy/`` folder in DKAN.
 ## DKAN Starter and Ahoy
 
 DKAN Starter ahoy commands are stored in the ``.ahoy/sites/`` folder in DKAN.
+
+## Upgrading to ahoy v2
+### Rational
+Now that dkan_starter is open sourced we need a straight forward way of allowing
+ahoy command overrides for  the default setup commands.  This need is satisfied by
+switching to using the ahoy binary for  version 2 which has an overriding
+feature built in. Thus we are updating the version of ahoy we are using from version
+1 to version 2.
+
+### Expected errors
+Unfortunately this upgrade is backwards incompatible with ahoy
+config files that are for ahoy version 1.  If you try to use ahoy with an
+imcompatible set of configs you will see an error like the following:
+
+```
+2016/10/31 13:41:11 AHOY! [fatal] ==> Ahoy only supports API version 'v2', but 'v1' given in /Users/dkinzer/docker-share/sites/dkan_starter/.ahoy.yml
+panic: AHOY! [fatal] ==> Ahoy only supports API version 'v2', but 'v1' given in /Users/dkinzer/docker-share/sites/dkan_starter/.ahoy.yml
+```
+
+Projects that are currently using ahoy version 1 will need to be updated to use
+ahoy version 2 by upgrading the project to the latest dkan or dkan_starter.
+
+However, if for some reason this is not possible the developer will
+need to switch  ahoy binaries from version 1 to version 2 depending on what config
+file version the project is using (see the following sections for details)
+
+### Updating the binary
+*  move your current ahoy binary to ahoy1 in the same folder it is (you might
+   need it to switch between ahoy1 and ahoy2 projects in the interim).
+* get ahoy2: run
+```bash
+if [ -z ${version+x} ]; then
+  version=2.0.0-alpha
+fi
+os=`uname -s | tr '[:upper:]' '[:lower:]'`
+wget  https://nucivic-binaries.s3-us-west-1.amazonaws.com/ahoy/$version/ahoy-$os-amd64 -O ./ahoy-$os && \
+        chmod +x ./ahoy
+```
+* move this new copy of ahoy to where the old ahoy binary was.
+* symlink ahoy to this binary `ln -s /usr/local/bin/ahoy-2.0.0-alpha /usr/local/bin/ahoy`
+
+### Switching between versions
+To switch between the two versions of ahoy you need only update the symlink to
+point to the version of the ahoy binary that you require.
+
+Make sure that you use ahoy1 binary with ahoy1 config files and ahoy2 binaries
+with ahoy2 config files or you will see the error above.

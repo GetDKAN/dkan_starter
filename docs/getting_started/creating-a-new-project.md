@@ -1,5 +1,4 @@
-Creating a New Project
--------------
+# Creating a New Project
 
 ## Github
 
@@ -16,7 +15,6 @@ To create a new project simply copy the DKAN Starter github repository and creat
 Add the [S3Curl](https://github.com/rtdp/s3curl/blob/master/s3curl.pl) script as an asset. To do so click "Build Assets" in a project and upload the file. See:
 
 <img width="1263" alt="Screenshot of ProboCI with S3curl updloaded in Build Assets tab" src="https://cloud.githubusercontent.com/assets/512243/19433741/f22316f0-942f-11e6-99b0-270cfc47fc3d.png">
-### Add Tokens
 
 ## CircleCI
 
