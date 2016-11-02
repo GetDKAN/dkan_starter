@@ -31,8 +31,8 @@ Combining Custom Config (Features Master) and DEVINCI (Environment) functionalit
 Those predefined conditions are:
 
 * Custom Config holds a list of modules that need to be enabled.
-* There are complementary modules that could be enabled (for specific or all environments) setting up values for the features_master_temp_enabled_modules variable in settings.php file.
-* There are complementary modules that could be disabled (for specific or all environments) setting up values for the features_master_temp_disabled_modules variable in settings.php file.
+* There are complementary modules that could be enabled (for specific or all environments) setting up values for the **features_master_temp_enabled_modules** variable in settings.php file.
+* There are complementary modules that could be disabled (for specific or all environments) setting up values for the **features_master_temp_disabled_modules** variable in settings.php file.
 * Any enabled module that's not cover by the above three statements will be disabled.
 * There are configuration items (variables) set up (for specific or all) environments.
 
@@ -40,9 +40,10 @@ Hooks
 ^^^^^
 
 For NuCivic Data Projects we are implementing deployment hooks for:
-* post-code-deploy -> This runs when code is deployed from one environment from another (i.e elevating code from dev to test, test to prod)
-* post-code-update -> This runs when code is push to the acquia's master branch. This only runs if the dev environment is running the master branch
-* post-db-copy -> This runs when a database is deployed from on environment to another (i.e moving prod db to test and dev)
+* **post-code-deploy**: This runs when code is deployed from one environment from another (i.e elevating code from dev to test, test to prod)
+* **post-code-update**: This runs when code is push to the acquia's master branch. This only runs if the dev environment is running the master branch
+* **post-db-copy**: This runs when a database is deployed from on environment to another (i.e moving prod db to test and dev)
+
 The implementation is the same for all of them. We run the following set of commands:
 
 .. code-block:: bash
@@ -95,7 +96,7 @@ Let's examine what happends when the environment switching occur following data_
    
    2. A set of global (not environment specific) configuration is set bellow the environment mapping. Things like error reporting, the default mail_system, default caching options, zip compression, fast_404, and many settings more.
 
-   3. Environment specific happens after b) enclosed in a switch statement that analyses the ENVIRONMENT constant:
+   3. Environment specific happens after b) enclosed in a switch statement that analyses the ``ENVIRONMENT`` constant:
 
    .. code-block:: php
 
@@ -178,16 +179,16 @@ Let's examine what happends when the environment switching occur following data_
 
    1. Cache flushing
 
-   Pretty self explanatory, it flushes drupal caches.
+      Pretty self explanatory, it flushes drupal caches.
 
    2. Revert custom_config
 
-   This does all of the following:
-   * Enables all the modules declared in custom_config.features_master.inc EXCEPT those specifically set in ``$conf['features_master_temp_disabled_modules']`` for the ENVIRONMENT the system is switching to.
-   * Enables all the modules specifically set in $conf['features_master_temp_enabled_modules'] for the ENVIRONMENT the system is switching to.
-   * Disables everything that's not set explicitally to be enabled/disabled for the ENVIRONMENT the system is switching to.
+      This does all of the following:
+      * Enables all the modules declared in custom_config.features_master.inc EXCEPT those specifically set in ``$conf['features_master_temp_disabled_modules']`` for the ``ENVIRONMENT`` the system is switching to.
+      * Enables all the modules specifically set in ``$conf['features_master_temp_enabled_modules']`` for the ``ENVIRONMENT`` the system is switching to.
+      * Disables everything that's not set explicitally to be enabled/disabled for the ``ENVIRONMENT`` the system is switching to.
 
    3. Revertion of modules
 
-   We revert everything feature related that we are interested in keeping true to the code.
-   The end goal here will be to revert EVERYTHING but at the time of this writing it is not possible. Some rewirring needs to happen on dkan to guarantee that we can do this.
+      We revert everything feature related that we are interested in keeping true to the code.
+      The end goal here will be to revert EVERYTHING but at the time of this writing it is not possible. Some rewirring needs to happen on dkan to guarantee that we can do this.
