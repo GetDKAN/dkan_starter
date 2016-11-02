@@ -15,23 +15,23 @@ Profile level control is over arching and at this level behat allows users to im
 
 .. conde-block::yaml
   // tests/behat.docker.yml
-	imports:
-		# dkan is the default profile
-		-  ../dkan/test/behat.yml
-		# data_stater will override dkan
-		-  behat.data_starter.yml
-		# custom has the last say
-		-  ../config/tests/behat.custom.yml
-	default:
-		extensions:
-			Behat\MinkExtension:
-				base_url: http://web
-				selenium2:
-					wd_host: http://browser:4444/wd/hub
-					browser: chrome
-			Drupal\DrupalExtension:
-				drupal:
-					drupal_root: '/var/www/docroot'
+  imports:
+    # dkan is the default profile
+    -  ../dkan/test/behat.yml
+    # data_stater will override dkan
+    -  behat.data_starter.yml
+    # custom has the last say
+    -  ../config/tests/behat.custom.yml
+  default:
+    extensions:
+      Behat\MinkExtension:
+        base_url: http://web
+        selenium2:
+          wd_host: http://browser:4444/wd/hub
+          browser: chrome
+      Drupal\DrupalExtension:
+        drupal:
+          drupal_root: '/var/www/docroot'
 
 In the above configuration we see contents of the `tests/behat.docker.yml` file.  Note the imports: field.  When we invoke behat using the following command:
   .. conde-block::bash
@@ -49,26 +49,27 @@ We have implemented three defaults called custom, data_starter, and dkan.
 Below see the example of the data_starter suite as defined in tests/behat.data_starter.yml:
 
 # this default label refers to a profile level configuration
+
 .. code-block::yaml
-	default:
-		# autoloads can only be handled in behat using PS-0 at the profile level
-		# otherwise use composer.json and PS-3
-		autoload:
-			# PS-0 forces us to use a symlink inside of the profile level bootstrap
-			- %paths.base%/features/bootstrap/custom
-			- %paths.base%/features/bootstrap/dkan
-			- %paths.base%/features/bootstrap
-		suites:
-			data_starter:
-				paths:
-					- %paths.base%/features
-				contexts:
-					- FeatureContext #Temporary overrides only!
-					- Drupal\DrupalExtension\Context\MinkContext
-					- Drupal\DrupalExtension\Context\DrupalContext
-					- Drupal\DrupalExtension\Context\MessageContext
-			dkan:
-				# handle dkan path here to maintain backwards compatibility
-				paths:
-					- %paths.base%/../dkan/test/features
+  default:
+    # autoloads can only be handled in behat using PS-0 at the profile level
+    # otherwise use composer.json and PS-3
+    autoload:
+      # PS-0 forces us to use a symlink inside of the profile level bootstrap
+      - %paths.base%/features/bootstrap/custom
+      - %paths.base%/features/bootstrap/dkan
+      - %paths.base%/features/bootstrap
+    suites:
+      data_starter:
+        paths:
+          - %paths.base%/features
+        contexts:
+          - FeatureContext #Temporary overrides only!
+          - Drupal\DrupalExtension\Context\MinkContext
+          - Drupal\DrupalExtension\Context\DrupalContext
+          - Drupal\DrupalExtension\Context\MessageContext
+      dkan:
+        # handle dkan path here to maintain backwards compatibility
+        paths:
+          - %paths.base%/../dkan/test/features
 
