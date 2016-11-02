@@ -30,7 +30,7 @@ for name in ${repos[@]}; do
 
   ahoy build update $tag
   git add -A 
-  git commit -m "Update $name data_starter_private to $tag
+  git commit -m "Update $name dkan_starter to $tag
   
   AC
   ==========
@@ -39,7 +39,7 @@ for name in ${repos[@]}; do
 
   git push origin $branch --force 2> /dev/null
 
-  hub pull-request -m "Update $name data_starter_private to $tag." 2> /dev/null
+  hub pull-request -m "Update $name dkan_starter to $tag." 2> /dev/null
 
   popd
 done
