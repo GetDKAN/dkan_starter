@@ -13,6 +13,7 @@ Profiles:
 
 Profile level control is over arching and at this level behat allows users to import configuration files that can be composed into new configurations. For example:
 
+.. conde-block::yaml
   // tests/behat.docker.yml
 	imports:
 		# dkan is the default profile
@@ -33,7 +34,7 @@ Profile level control is over arching and at this level behat allows users to im
 					drupal_root: '/var/www/docroot'
 
 In the above configuration we see contents of the `tests/behat.docker.yml` file.  Note the imports: field.  When we invoke behat using the following command:
-
+  .. conde-block::bash
 	behat --config=behat.docker.yml
 
 Then, what is happening is that we are using the composition of merging the default profiles from ../dkan/test/behat.yml,  behat.data_starter.yml and ../config/tests/behat.custom.yml in that order.  This is the approach we are currently taking in our dkan_starter setup.  This approach allows us to use the behat configuration in dkan/test/behat.yml as an upstream configuration that does not need to be copied and maintained outside of dkan as the case used to be.
@@ -48,6 +49,7 @@ We have implemented three defaults called custom, data_starter, and dkan.
 Below see the example of the data_starter suite as defined in tests/behat.data_starter.yml:
 
 # this default label refers to a profile level configuration
+.. code-block::yaml
 	default:
 		# autoloads can only be handled in behat using PS-0 at the profile level
 		# otherwise use composer.json and PS-3
