@@ -9,13 +9,14 @@ Edit the module entry in the ``build.make`` file
 Look for the module in the ``build.make``. If it looks like this:
 
 .. code-block:: bash
-
-projects[] = sharethis
+ 
+ projects[] = sharethis
 
 
 Then you can just remake since it'll grab the latest stable version for the module. Instead, if it's set to a specific version:
 
 .. code-block:: bash
+ 
  projects[sharethis][version] = 2.12
 
 Then make the edit to the desired version and then remake
