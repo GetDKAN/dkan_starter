@@ -13,7 +13,7 @@ Profiles:
 
 Profile level control is over arching and at this level behat allows users to import configuration files that can be composed into new configurations. For example:
 
-.. conde-block::yaml
+.. conde-block:: yaml
   // tests/behat.docker.yml
   imports:
     # dkan is the default profile
@@ -50,7 +50,7 @@ Below see the example of the data_starter suite as defined in tests/behat.data_s
 
 # this default label refers to a profile level configuration
 
-.. code-block::yaml
+.. code-block:: yaml
   default:
     # autoloads can only be handled in behat using PS-0 at the profile level
     # otherwise use composer.json and PS-3
