@@ -57,7 +57,7 @@ If you run into the following error:
 
 .. code-block:: bash
 
-   ahoy site asset-download-db
+   ahoy utils asset-download-db
    Can't locate Digest/HMAC_SHA1.pm in @INC (you may need to install the Digest::HMAC_SHA1 module) (@INC contains: /usr/local/Cellar/perl/5.24.0_1/lib/perl5/site_perl/5.24.0/darwin-thread-multi-2level /usr/local/Cellar/perl/5.24.0_1/lib/perl5/site_perl/5.24.0 /usr/local/Cellar/perl/5.24.0_1/lib/perl5/5.24.0/darwin-thread-multi-2level /usr/local/Cellar/perl/5.24.0_1/lib/perl5/5.24.0 /usr/local/lib/perl5/site_perl/5.24.0 .) at nucivic-ahoy/.scripts/s3curl.pl line 20.
    BEGIN failed--compilation aborted at nucivic-ahoy/.scripts/s3curl.pl line 20.
 

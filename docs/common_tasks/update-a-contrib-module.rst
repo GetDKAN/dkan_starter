@@ -27,6 +27,6 @@ Run:
 
 .. code-block:: bash
  
- ahoy site remake
+ ahoy build remake
 
 That should update the **sharethis** module at ``docroot/sites/all/modules/contrib``. 

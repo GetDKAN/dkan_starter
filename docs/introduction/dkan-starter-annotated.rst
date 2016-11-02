@@ -81,7 +81,7 @@ The new files that have not been seen in previous setups are the config.yml, con
 config.php
 ~~~~~~~~~~~
 
-You should forget about.  This file is created automatically by running `ahoy site config` and it is derived in part by what you add to `./config/config.yml`.
+You should forget about.  This file is created automatically by running `ahoy build config` and it is derived in part by what you add to `./config/config.yml`.
 
 config.yml
 ~~~~~~~~~~~
@@ -101,7 +101,7 @@ This is where contributed modules are added. Contributed modules are defined as 
 aliases.local.php
 ~~~~~~~~~~~~~~~~~
 
-Houses local aliases for your project. This file is set by running ``ahoy site name``.
+Houses local aliases for your project. This file is set by running ``ahoy utils name``.
 
 custom.ahoy.yml
 ~~~~~~~~~~~~~~~

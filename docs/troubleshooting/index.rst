@@ -16,7 +16,7 @@ When trying to connect to local docker machine:
 .. warning::
     ENVIRONMENT set to , but not mapped in settings.php
 
-* Your "settings.docker.php" file is not set. Run **ahoy site setup**
+* Your "settings.docker.php" file is not set. Run **ahoy site up**
 * Can also be caused by the MySQL container missing:
 
 .. code-block:: bash
