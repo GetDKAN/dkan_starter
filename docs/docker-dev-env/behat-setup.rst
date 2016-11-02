@@ -1,15 +1,15 @@
 Overview of the dkan and dkan_starter behat suite setup
----
+-------------------------------------------------------
 
 This page describes how behat profiles and suites have been configured in dkan and dkan_starter.
 
 Behat suite overview as they apply to dkan and dkan_starter
-^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Behat (3.1)  allows for many levels of control of the testing environment, two of which are profile and suite level controls.
 
 Profiles:
-~~
+~~~~~~~~
 
 Profile level control is over arching and at this level behat allows users to import configuration files that can be composed into new configurations. For example:
 
@@ -39,7 +39,7 @@ In the above configuration we see contents of the `tests/behat.docker.yml` file.
 Then, what is happening is that we are using the composition of merging the default profiles from ../dkan/test/behat.yml,  behat.data_starter.yml and ../config/tests/behat.custom.yml in that order.  This is the approach we are currently taking in our dkan_starter setup.  This approach allows us to use the behat configuration in dkan/test/behat.yml as an upstream configuration that does not need to be copied and maintained outside of dkan as the case used to be.
 
 Suites:
-~~
+~~~~~~
 Although profiles are uniquely suited for deriving and composing appropriate configurations from a reusable configuration files subset, they do not allow for nuanced level configuration at the testing specification level.  We have assessed three distinct subsets of tests; there are dkan specific tests, there are tests that are specific to dkan_starter and finally there are tests that are specific to site level features that are not part of dkan oob.
 
 In the past we have maintained completely separate configurations to be able to handle the testing needs at each of these levels.  By adopting the use of behat suites, we now can control our testing from one origin and supply the needed configuration and configuration overrides via the use of suite configurations and profile compositions as described in the profile section above.
