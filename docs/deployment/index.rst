@@ -173,6 +173,7 @@ Let's examine what happends when the environment switching occur following data_
       }
 
    This could vary a little from site to site but the important thing is we run two steps for every environment:
+   
    * We flush caches with ``drupal_flush_all_caches()``
    * We features_master_features_revert the custom_config module which holds the list of modules to be enabled.
    * We revert modules that we need to be sure they are reverted (i.e modules containing content types).
@@ -184,6 +185,7 @@ Let's examine what happends when the environment switching occur following data_
    2. Revert custom_config
 
       This does all of the following:
+      
       * Enables all the modules declared in custom_config.features_master.inc EXCEPT those specifically set in ``$conf['features_master_temp_disabled_modules']`` for the ``ENVIRONMENT`` the system is switching to.
       * Enables all the modules specifically set in ``$conf['features_master_temp_enabled_modules']`` for the ``ENVIRONMENT`` the system is switching to.
       * Disables everything that's not set explicitally to be enabled/disabled for the ``ENVIRONMENT`` the system is switching to.
