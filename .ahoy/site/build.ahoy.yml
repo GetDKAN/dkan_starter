@@ -264,7 +264,7 @@ commands:
       git checkout $ARGS
       cd ..
       mv config .config
-      rm -rf *
+      rm -rf * .ahoy .ahoy.yml .github .probo.public.yml .probo.yml
       # You can rsync now
       rsync -av --exclude=.git .dkan_starter/* ./
       rm -rf config
