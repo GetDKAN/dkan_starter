@@ -1,10 +1,10 @@
-ahoyapi: v1
+ahoyapi: v2
 version: 0.0.0
 commands:
   drupal-rebuild:
     usage: Remakes and reinstall site.
     cmd: |
-      ahoy build update-data-starter
+      ahoy build update-dkan-starter
       ahoy site reinstall
 
   update:
@@ -15,7 +15,7 @@ commands:
         echo "Please provide a Data Starter release (tag) as an argument. Exiting"
         exit 0
       fi
-      ahoy build update-data-starter "$ARGS"
+      ahoy build update-dkan-starter "$ARGS"
       ahoy build custom
       ahoy build overrides
       ahoy build custom-libs
@@ -31,8 +31,8 @@ commands:
       set -e
       AHOY_CMD_PROXY=''
       DIRNAME=${PWD##*/}
-      # IF this is data_starter_private
-      if [[ "$DIRNAME" == "data_starter_private" ]]; then
+      # IF this is dkan_starter
+      if [[ "$DIRNAME" == "dkan_starter" ]]; then
         # Building in a new directory
         # drush make is stupid, delete docroot_new just in case
         rm -rf docroot_new
@@ -89,8 +89,8 @@ commands:
     usage: Overrides drupal-org.make with overrides.make
     cmd: |
       if [ -f config/overrides.make ]; then
-        cd dkan/.ahoy/site && composer install && cd ..
-        ahoy cmd-proxy drush php-script dkan/.ahoy/site/.scripts/overrides.php
+        cd .ahoy/site && composer install && cd ..
+        ahoy cmd-proxy drush php-script .ahoy/site/.scripts/overrides.php
         # Check file exits and file not empty.
         if [ -e overriden_make.make ] && [ -s overriden_make.make ]; then
           rm -rf docroot/sites/all/modules/overrides
@@ -153,12 +153,12 @@ commands:
       cp $tempdir/.htaccess config/.htaccess
 
       # Transpose config.yml to php
-      cd dkan/.ahoy/site
+      cd .ahoy/site
       composer install
       php .scripts/config.php
 
   new:
-    usage: Sets new client site from data-starter
+    usage: Sets new client site from dkan-starter
     cmd: |
       set -e
       AHOY_CMD_PROXY=''
@@ -202,8 +202,8 @@ commands:
         exit 0
       fi
       DIRNAME=${PWD##*/}
-      if [[ "$DIRNAME" != "data_starter_private" ]]; then
-        echo "This command should only be use to update data_starter_private. Run ahoy build update-data-starter instead"
+      if [[ "$DIRNAME" != "dkan_starter" ]]; then
+        echo "This command should only be use to update dkan_starter. Run ahoy build update-dkan-starter instead"
         exit 0
       fi
       IFS=' ' read -r -a args <<< "{{args}}"
@@ -239,14 +239,14 @@ commands:
       git push -f origin "$pr_branch";
       hub pull-request -m "Updates DKAN from $tag_old $version_old to $tag_new $version_new" >/dev/null 2>&1
 
-  update-data-starter:
+  update-dkan-starter:
     usage: Updates data starter.
     cmd: |
       # It takes time to grab the entire repo. Checking out to git ignored hidden folder.
-      if [ ! -d .data_starter_private ]; then
-        git clone 'git@github.com:NuCivic/data_starter_private.git' .data_starter_private --depth=1
+      if [ ! -d .dkan_starter ]; then
+        git clone 'git@github.com:NuCivic/dkan_starter.git' .dkan_starter --depth=1
       fi
-      cd .data_starter_private
+      cd .dkan_starter
       git checkout master --force
       git reset --hard origin/master
       ARGS="{{args}}"
@@ -264,12 +264,12 @@ commands:
       git checkout $ARGS
       cd ..
       mv config .config
-      rm -rf *
+      rm -rf * .ahoy .ahoy.yml .github .probo.public.yml .probo.yml
       # You can rsync now
-      rsync -av --exclude=.git .data_starter_private/* ./
+      rsync -av --exclude=.git .dkan_starter/* ./
       rm -rf config
       mv .config config
-      rm -rf .data_starter_private
+      rm -rf .dkan_starter
       hub clone NuCivic/nucivic-ahoy nucivic-ahoy-private
       if [[ $? = '128' ]]; then
         echo "You don't have access to NuCivic private ahoy commands. You can ignore this message"
@@ -280,4 +280,4 @@ commands:
 
     upgrade-sites:
       usage: ahoy build upgrade-sites $tag
-      cmd: ahoy cmd-proxy bash dkan/.ahoy/site/.scripts/upgrade-sites.sh
+      cmd: ahoy cmd-proxy bash .ahoy/site/.scripts/upgrade-sites.sh

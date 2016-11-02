@@ -1,4 +1,4 @@
-ahoyapi: v1
+ahoyapi: v2
 version: 0.0.0
 commands:
   setup:
@@ -9,7 +9,7 @@ commands:
       ARGS=( {{args}} )
       rm -f assets/sites/default/settings.docker.php
       rm -f assets/sites/default/settings.local.php
-      ahoy cmd-proxy bash ./dkan/.ahoy/site/.scripts/drush.alias.sh
+      ahoy cmd-proxy bash ./.ahoy/site/.scripts/drush.alias.sh
 
       if [ ! -f assets/sites/default/settings.php ] && [ -f assets/sites/default/default.settings.php ]; then
         cp assets/sites/default/default.settings.php assets/sites/default/settings.php
@@ -65,7 +65,7 @@ commands:
     cmd: |
       ahoy cmd-proxy exec mkdir -p backups
       ahoy drush sql-dump > backups/unsanitized.sql
-      ahoy drush sql-cli < dkan/.ahoy/site/.mysqlscripts/sanitize.sql | grep -v concat > backups/truncate.sql
+      ahoy drush sql-cli < .ahoy/site/.mysqlscripts/sanitize.sql | grep -v concat > backups/truncate.sql
       ahoy drush sql-cli < backups/truncate.sql
       rm backups/truncate.sql
       ahoy drush sql-dump > backups/sanitized.sql
@@ -76,14 +76,14 @@ commands:
     usage: Prunes datasets and resources from site database
     hide: true
     cmd: |
-      ahoy drush php-script dkan/.ahoy/site/.scripts/prune-database.php
+      ahoy drush php-script .ahoy/site/.scripts/prune-database.php
 
   name:
     usage: Utility function to determine the site name.
     cmd: |
       # TODO: use config/config.yml instead
       if [ -s assets/drush/aliases.local.php ]; then
-        ahoy cmd-proxy php -f dkan/.ahoy/site/.scripts/site-name.php
+        ahoy cmd-proxy php -f .ahoy/site/.scripts/site-name.php
       else
         echo "Site name not set. Type the alias followed by [ENTER]:"
         read ALIAS
@@ -117,7 +117,7 @@ commands:
       site=$(ahoy utils name)
       db={{args}}
       asset="$private_aws_scrubbed_data_url/$site.prod.$db.sql.gz"
-      LC_TIME=en_US.UTF-8 perl dkan/.ahoy/site/.scripts/s3curl.pl --id local $asset > backups/$db.sql.gz
+      LC_TIME=en_US.UTF-8 perl .ahoy/site/.scripts/s3curl.pl --id local $asset > backups/$db.sql.gz
       echo ""
       echo "Unpacking the $db database."
       echo ""
@@ -131,7 +131,7 @@ commands:
       ahoy cmd-proxy exec mkdir -p backups
       site=$(ahoy utils name)
       asset="$private_aws_scrubbed_data_url/$site.prod.files.tar.gz"
-      LC_TIME=en_US.UTF-8 perl dkan/.ahoy/site/.scripts/s3curl.pl --id local $asset > backups/$site.prod.files.tar.gz
+      LC_TIME=en_US.UTF-8 perl .ahoy/site/.scripts/s3curl.pl --id local $asset > backups/$site.prod.files.tar.gz
       echo ""
       echo "Unpacking the files asset."
       echo ""
@@ -157,17 +157,17 @@ commands:
 
   s3-setup:
     usage: Utility script for adding aws s3curl credentials.
-    cmd: bash dkan/.ahoy/site/.scripts/s3-setup.sh
+    cmd: bash .ahoy/site/.scripts/s3-setup.sh
     hide: true
 
   self-update:
     usage: Utility function for self updating this repo.
     cmd: |
       ahoy dkan self-update
-      rm -fR dkan/.ahoy/site
-      git clone 'git@github.com:nucivic/dkan/.ahoy/site' --depth=1
-      rm -rf dkan/.ahoy/site/.git
-      rm -rf dkan/.ahoy/site/.gitignore
+      rm -fR .ahoy/site
+      git clone 'git@github.com:nucivic/.ahoy/site' --depth=1
+      rm -rf .ahoy/site/.git
+      rm -rf .ahoy/site/.gitignore
     hide: true
 
   files-link:
@@ -178,7 +178,7 @@ commands:
   files-fix-permissions:
     usage: Fix the permissiosn for the files.
     cmd: |
-      ahoy cmd-proxy  bash ./dkan/.ahoy/site/.scripts/site.files-fix-permissions.sh
+      ahoy cmd-proxy  bash ./.ahoy/site/.scripts/site.files-fix-permissions.sh
     hide: true
 
   test:
