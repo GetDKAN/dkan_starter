@@ -61,8 +61,8 @@ if [ -z ${version+x} ]; then
   version=2.0.0-alpha
 fi
 os=`uname -s | tr '[:upper:]' '[:lower:]'`
-wget  https://nucivic-binaries.s3-us-west-1.amazonaws.com/ahoy/$version/ahoy-$os-amd64 -O ./ahoy-$os && \
-        chmod +x ./ahoy
+wget  https://nucivic-binaries.s3-us-west-1.amazonaws.com/ahoy/$version/ahoy-$os-amd64 -O ./ahoy-$version && \
+        chmod +x ./ahoy-$version
 ```
 * move this new copy of ahoy to where the old ahoy binary was.
 * symlink ahoy to this binary `ln -s /usr/local/bin/ahoy-2.0.0-alpha /usr/local/bin/ahoy`
