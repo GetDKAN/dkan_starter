@@ -1,10 +1,53 @@
 Common Development Tasks
-----------------------
+------------------------
 
 These are common development tasks throughout the lifecycle of a project.
 
+Add or Update Modules, Themes or libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* :doc:`add-client-custom-config`
+* :doc:`add-contrib-library`
+* :doc:`add-contrib-module`
+* :doc:`add-custom-module`
+* :doc:`build-contrib-or-dkan-module-a-client-project`
+* :doc:`patching-or-overriding-dkan`
+* :doc:`update-a-contrib-module`
+* :doc:`update-data-starter`
+* :doc:`update-to-latest-dkan`
+
+Testing & QA
+~~~~~~~~~~~~
+* :doc:`add-custom-behat-test`
+* :doc:`run-tests-locally`
+* :doc:`override-and-upstream-behat-suite-config`
+* :doc:`getting-content-into-a-probo-site`
+
+Deployment
+~~~~~~~~~~
+* TODO: update deployment
+* :doc:`temp-disable-module-in-environment`
+
+Configuration
+~~~~~~~~~~~~~
+* :doc:`config-secure-pages`
+* :doc:`enable-fast-file-import`
+* :doc:`enable-https-everywhere`
+* :doc:`enable-or-disable-a-module`
+* :doc:`update-config.yml-settings`
+
+Docker
+~~~~~~
+* :doc:`change-local-container-settings`
+
+Setup
+~~~~~
+* :doc:`setting-up-local-project`
+
+
+Full Table of Contents
+~~~~~~~~~~~~~~~~~~~~~~
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    add-client-custom-config
    add-contrib-library
@@ -23,7 +66,6 @@ These are common development tasks throughout the lifecycle of a project.
    run-tests-locally
    setting-up-local-project
    temp-disable-module-in-environment
-   troubleshooting-docker-data-starter
    update-a-contrib-module
    update-config.yml-settings
    update-data-starter

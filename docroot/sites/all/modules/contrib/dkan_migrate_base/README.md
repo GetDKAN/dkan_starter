@@ -1,5 +1,7 @@
 [![Build Status](https://circleci.com/gh/NuCivic/dkan_migrate_base.svg?branch=7.x-1.x&style=svg)](https://circleci.com/gh/NuCivic/dkan_migrate_base)
 
+**DEPRECATED:** This module has been moved into [DKAN core](https://github.com/NuCivic/dkan) for release 7.x-1.13. To maintain backward compatibility with DKAN 7.x-1.12 and subsequent patch releases this project will remain on Github but new features will be applied directly to the DKAN core folder `modules/dkan/dkan_migrate_base`.
+
 DKAN "Harvester" using Migrate module
 =================
 This provides base classes for common DKAN migrations (ie imports or harvests).
