@@ -1,4 +1,4 @@
-ahoyapi: v2
+ahoyapi: v1
 usage: DKAN cli app for development using ahoy.
 commands:
 
@@ -8,8 +8,7 @@ commands:
 
   dkan:
     usage: A series of commands for dkan development.
-    imports:
-      - dkan/.ahoy/dkan.ahoy.yml
+    import: dkan/.ahoy/dkan.ahoy.yml
 
 # Utility / Experimental commands that are currently hidden
   confirm:
@@ -18,8 +17,7 @@ commands:
 
   docker:
     usage: A series of docker commands for dkan development (experimental)
-    imports:
-      - dkan/.ahoy/docker.ahoy.yml
+    import: dkan/.ahoy/docker.ahoy.yml
     hide: true
 
   init:
@@ -38,12 +36,10 @@ commands:
 
   diagnose:
     usage: A series of maintenance commands to check the docker environment health
-    imports:
-      - dkan/.ahoy/diagnose.ahoy.yml
+    import: dkan/.ahoy/diagnose.ahoy.yml
     hide: true
 
   doctor:
     usage: A series of maintenance commands to check the docker environment health (Deprecated and moved to diagnose commands)
-    imports:
-      - dkan/.ahoy/diagnose.ahoy.yml
+    import: dkan/.ahoy/diagnose.ahoy.yml
     hide: true
