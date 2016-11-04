@@ -1,4 +1,4 @@
-ahoyapi: v2
+ahoyapi: v1
 version: 0.0.0
 commands:
   reinstall:
@@ -43,5 +43,4 @@ commands:
 
   launch-checklist:
     usage: A series of commands to perform a launch-checklist
-    import:
-      - .ahoy/site/launch-checklist.ahoy.yml
+    import: .ahoy/site/launch-checklist.ahoy.yml

@@ -1,4 +1,4 @@
-ahoyapi: v2
+ahoyapi: v1
 usage: NuCivic Data cli app for development using ahoy.
 commands:
   drush:
@@ -7,26 +7,22 @@ commands:
 
   build:
     usage: A series of commands for dkan development.
-    imports:
-      - .ahoy/site/build.ahoy.yml
+    import: .ahoy/site/build.ahoy.yml
     hide: true
 
   dkan:
     usage: A series of commands for dkan development.
     hide: true
-    imports:
-      - dkan/.ahoy/dkan.ahoy.yml
+    import: dkan/.ahoy/dkan.ahoy.yml
 
   diagnose:
     usage: A series of ahoy-docker setup diagnosis commands.
-    imports:
-      - dkan/.ahoy/diagnose.ahoy.yml
+    import: dkan/.ahoy/diagnose.ahoy.yml
     hide: true
 
   doctor:
     usage: A series of ahoy-docker setup diagnosis commands.
-    imports:
-      - dkan/.ahoy/diagnose.ahoy.yml
+    import: dkan/.ahoy/diagnose.ahoy.yml
     hide: true
 
   confirm:
@@ -35,8 +31,7 @@ commands:
 
   docker:
     usage: A series of docker commands for dkan development (experimental)
-    imports:
-      - dkan/.ahoy/docker.ahoy.yml
+    import: dkan/.ahoy/docker.ahoy.yml
     hide: false 
 
   init:
@@ -55,46 +50,36 @@ commands:
 
   ci:
     usage: A series of commands to handle ci setup
-    imports:
-      - .ahoy/site/ci.ahoy.yml
-      - config/.ahoy/site/ci.ahoy.yml
+    import: .ahoy/site/ci.ahoy.yml
     hide: true
 
   tools:
     usage: A series of commands to setup dev tools
-    imports:
-      - .ahoy/site/tools.ahoy.yml
+    import: .ahoy/site/tools.ahoy.yml
     hide: true
 
   debug:
     usage: A series of commands to setup debugging
-    imports:
-      - .ahoy/site/debug.ahoy.yml
+    import: .ahoy/site/debug.ahoy.yml
     hide: true
 
   launch-checklist:
     usage: A series of commands to handle pre launch checks
-    imports:
-      - .ahoy/site/launch-checklist.ahoy.yml
+    import: .ahoy/site/launch-checklist.ahoy.yml
     hide: true
 
   site:
     usage: A series of commands for site development
-    imports:
-      - .ahoy/site/site.ahoy.yml
-      - config/.ahoy/site/site.ahoy.yml
+    import: .ahoy/site/site.ahoy.yml
 
   utils:
     hide: true
     usage: A series of helper commands (hide the details)
-    imports:
-      - .ahoy/site/utils.ahoy.yml
-      - config/.ahoy/site/utils.ahoy.yml
+    import: .ahoy/site/utils.ahoy.yml
 
   remote:
     usage: A series of commands for site remote management
-    imports:
-      - .ahoy/site/remote.ahoy.yml
+    import: .ahoy/site/remote.ahoy.yml
     hide: true
 
   parse:

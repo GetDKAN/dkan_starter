@@ -27,6 +27,10 @@ DKAN's ahoy commands are stored in the ``.ahoy/`` folder in DKAN.
 
 DKAN Starter ahoy commands are stored in the ``.ahoy/sites/`` folder in DKAN.
 
+# TODO: enable ahoy v2
+Everything below this line is currently not yet available.
+---
+
 ## Upgrading to ahoy v2
 ### Rational
 Now that dkan_starter is open sourced we need a straight forward way of allowing
