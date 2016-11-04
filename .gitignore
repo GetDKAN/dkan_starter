@@ -62,3 +62,7 @@ Thumbs.db
 ###########
 *.sublime-project
 *.sublime-workspace
+
+dkan/.ahoy/site/vendor/*
+dkan/.ahoy/site/vendor/composer.lock
+
