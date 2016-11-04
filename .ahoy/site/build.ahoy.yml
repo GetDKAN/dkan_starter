@@ -266,7 +266,7 @@ commands:
       mv config .config
       rm -rf * .ahoy .ahoy.yml .github .probo.public.yml .probo.yml
       # You can rsync now
-      rsync -av --exclude=.git .dkan_starter/. ./
+      rsync -av --exclude=.git --exclude=config .dkan_starter/. ./
       rm -rf config
       mv .config config
       rm -rf .dkan_starter
