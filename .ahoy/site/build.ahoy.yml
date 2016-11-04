@@ -89,7 +89,7 @@ commands:
     usage: Overrides drupal-org.make with overrides.make
     cmd: |
       if [ -f config/overrides.make ]; then
-        cd .ahoy/site && composer install && cd ..
+        cd .ahoy/site && composer install && cd -
         ahoy cmd-proxy drush php-script .ahoy/site/.scripts/overrides.php
         # Check file exits and file not empty.
         if [ -e overriden_make.make ] && [ -s overriden_make.make ]; then
