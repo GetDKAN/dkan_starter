@@ -30,6 +30,8 @@ done
 
 echo "Target environment is $target_env"
 
+echo "Truncates cache_bootstrap"
+drush @$drush_alias sqlq "TRUNCATE cache_bootstrap;"
 echo "Running drush rr --no-cache-clear"
 drush @$drush_alias rr --no-cache-clear
 echo "Truncating cache table"
