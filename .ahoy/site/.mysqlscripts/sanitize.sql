@@ -41,7 +41,9 @@ UPDATE users SET mail=CONCAT('user', uid, '@example.com'), init=CONCAT('user', u
 
 UPDATE users SET pass = '$S$DAIFIwaPZLsfNqEZkYY1Wklf6TIQal1uObBpIPk1UDUsc6qgPi6b' WHERE uid IN (SELECT uid FROM users_roles WHERE rid=3) AND uid > 0;
 UPDATE users SET name = 'admin' WHERE uid = 1;
+UPDATE users SET name = 'admin' WHERE name = 'administrator';
 UPDATE users SET pass = '$S$DAGmJJr.MOF1M6wTF/YEU6yBchL5kkAvaMGgvXQtVVJyD4KXmc5G'  WHERE uid = 1;
+UPDATE users set name = md5(name) where name <> 'admin' AND uid <> 0;
 
 TRUNCATE flood;
 TRUNCATE history;
