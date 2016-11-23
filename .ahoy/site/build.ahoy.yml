@@ -16,9 +16,15 @@ commands:
         exit 0
       fi
       ahoy build update-dkan-starter "$ARGS"
+      ahoy build update-custom
+
+  update-custom:
+    hidde: true
+    usage: Runs all the custom build steps.
+    cmd: |
       ahoy build custom
-      ahoy build overrides
       ahoy build custom-libs
+      ahoy build overrides
       ahoy build config
       if [ "$(ahoy custom | grep post-build)" != '' ]
       then
@@ -47,10 +53,8 @@ commands:
         # No recursive prevents dkan build to happen. Run it now from dkan remake.
         ahoy dkan remake
       fi
-      ahoy build overrides
-      ahoy build custom
+      ahoy build update-custom
       ahoy build post-build
-      ahoy build config
 
   custom:
     usage: Downloads 3rd party modules
