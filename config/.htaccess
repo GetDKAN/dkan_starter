@@ -98,10 +98,10 @@ DirectoryIndex index.php index.html index.htm
   # RewriteRule ^ http%{ENV:protossl}://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
  
   
-    RewriteCond %{HTTP_HOST} ^example.com$ [NC]
+    RewriteCond %{HTTP_HOST} ^example\.com$ [NC]
     RewriteRule ^ http%{ENV:protossl}://www.example.com%{REQUEST_URI} [L,R=301]
   
-    RewriteCond %{HTTP_HOST} ^oldsite.example.com$ [NC]
+    RewriteCond %{HTTP_HOST} ^oldsite\.example\.com$ [NC]
     RewriteRule ^ http%{ENV:protossl}://www.example.com%{REQUEST_URI} [L,R=301]
   
 
