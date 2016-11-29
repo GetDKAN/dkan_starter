@@ -96,6 +96,12 @@ DirectoryIndex index.php index.html index.htm
   # RewriteCond %{HTTP_HOST} !^www\. [NC]
   # RewriteCond %{HTTP_HOST} ^example\.com$ [NC]
   # RewriteRule ^ http%{ENV:protossl}://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+ 
+  <% for @host in @redirect_hosts %>
+    RewriteCond %{HTTP_HOST} ^<%= @host.to_s %>$ [NC]
+    RewriteRule ^ http%{ENV:protossl}://<%= @prod_host.to_s %>%{REQUEST_URI} [L,R=301]
+  <% end %>
+
   #
   # To redirect all users to access the site WITHOUT the 'www.' prefix,
   # (http://www.example.com/... will be redirected to http://example.com/...)
@@ -113,11 +119,13 @@ DirectoryIndex index.php index.html index.htm
   # uncomment the following line:
   # RewriteBase /
   
-  # Redirect to HTTP.
-  RewriteCond %{HTTPS} on
-  RewriteCond %{SERVER_PORT} 443
-  RewriteCond %{HTTP:X-Forwarded-Proto} =https
-  RewriteRule ^(.*)$ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  <% if @https_everywhere %>
+    # Redirect to HTTP.
+    RewriteCond %{HTTPS} on
+    RewriteCond %{SERVER_PORT} 443
+    RewriteCond %{HTTP:X-Forwarded-Proto} =https
+    RewriteRule ^(.*)$ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  <% end %>
 
   # Pass all requests not referring directly to files in the filesystem to
   # index.php. Clean URLs are handled in drupal_environment_initialize().
