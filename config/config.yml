@@ -1,5 +1,5 @@
 default:
-  hostname: localhost
+  hostname: www.example.com
   https_everywhere: FALSE
   https_securepages: FALSE
   clamav:
@@ -9,6 +9,11 @@ default:
     enable: TRUE
     limit: 10MB
     queue: 50MB
+
+redirectDomains:
+  - example.com
+  - oldsite.example.com
+
 private:
   aws:
     scrubbed_data_url: CHANGE ME  
