@@ -1,0 +1,8 @@
+ahoyapi: v1
+version: 0.0.0
+commands:
+
+  post-build:
+    usage: Runs custom post-build commands.
+    cmd: |
+      echo "Change me"
