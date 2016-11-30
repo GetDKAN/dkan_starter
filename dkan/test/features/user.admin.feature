@@ -1,3 +1,4 @@
+# time:0m45.62s
 @api
 Feature: User
 
@@ -32,16 +33,16 @@ Feature: User
       | Celeste | Group 02 | member               | Active            |
     And "Tags" terms:
       | name    |
-      | Health  |
-      | Gov     |
+      | world   |
+      | results |
     And datasets:
       | title      | publisher | author  | published        | tags     | description |
-      | Dataset 01 | Group 01  | Katie   | Yes              | Health   | Test        |
-      | Dataset 02 | Group 01  | Katie   | No               | Health   | Test        |
-      | Dataset 03 | Group 01  | Gabriel | Yes              | Gov      | Test        |
-      | Dataset 04 | Group 01  | Katie   | Yes              | Health   | Test        |
+      | Dataset 01 | Group 01  | Katie   | Yes              | world    | Test        |
+      | Dataset 02 | Group 01  | Katie   | No               | world    | Test        |
+      | Dataset 03 | Group 01  | Gabriel | Yes              | results  | Test        |
+      | Dataset 04 | Group 01  | Katie   | Yes              | world    | Test        |
 
-   @javascript
+
   Scenario: Edit any user account
     Given I am logged in as "John"
     And I am on "Users" page
@@ -50,8 +51,7 @@ Feature: User
     And I press "Save"
     Then I should see "The changes have been saved"
     When I am on "Katie" page
-    And I click "About" in the "tabs" region
-    Then I should see "This is Katie!"
+    Then I should see "This is Katie!" in the "user profile" region
 
   @dkanBug @deleteTempUsers @javascript
     # Site managers trigger honeypot when creating users.
@@ -67,7 +67,7 @@ Feature: User
       | Password          | temp123              |
       | Confirm password  | temp123              |
     And I check "editor"
-    And I wait for 6 seconds
+    And I wait for "6" seconds
     And I press "Create new account"
     Then I should see "Created a new user account for tempuser."
     When I am on "Users" page

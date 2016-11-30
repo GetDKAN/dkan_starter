@@ -100,15 +100,8 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
         self.$(this).next().slideToggle('fast');
       });
 
-      // Common controls for all the charts.
-      self.baseControls = new recline.View.nvd3.BaseControl({
-        model: self.state.get('model'),
-        state: self.state,
-        parent: self
-      });
-
       // Controls available only for this graphType.
-      self.extendedControls = new recline.View.nvd3[graphType + 'Controls']({
+      self.controls = new recline.View.nvd3[graphType + 'Controls']({
         model: self.state.get('model'),
         state: self.state
       });
@@ -146,8 +139,7 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
       self.grid.visible = true;
 
       self.assign(self.graph, '#chart-viewport');
-      self.assign(self.baseControls, '#base-controls');
-      self.assign(self.extendedControls, '#extended-controls');
+      self.assign(self.controls, '#base-controls');
       self.assign(self.grid, '#grid');
       self.assign(self.pager, '#pager');
       self.assign(self.queryEditor, '#query-editor');
