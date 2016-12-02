@@ -193,6 +193,7 @@ switch(ENVIRONMENT) {
       'search_api_acquia',
       'securepages',
       'syslog',
+      'shield',
     );
     // Show ALL errors when working locally.
     $conf['error_level'] = ERROR_REPORTING_DISPLAY_ALL;
