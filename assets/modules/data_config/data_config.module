@@ -247,7 +247,7 @@ function data_config_modules_disabled($modules) {
   if (!empty($modules_warn)) {
     watchdog('custom_config_disable', 'Trying to disable module(s) not on temporarily disabled list',
       ['modules' => $modules_warn], WATCHDOG_ERROR);
-    if (module_exists('custom_config')) {
+    if (module_exists('custom_config') && function_exists('drush_print_table')) {
       $dependencies = array();
       foreach($modules_warn as $module) {
         // Add dependencies to the list, with a placeholder weight.
