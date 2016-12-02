@@ -50,6 +50,7 @@ commands:
       ahoy build overrides
       ahoy build custom
       ahoy build post-build
+      ahoy build custom-libs:
       ahoy build config
 
   custom:

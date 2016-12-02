@@ -1,6 +1,6 @@
 default:
   suites:
-     default:
+     dkan:
         contexts:
           - FeatureContext #Temporary overrides only!
           - Drupal\DrupalExtension\Context\MinkContext
@@ -34,9 +34,9 @@ default:
           - Drupal\DKANExtension\Context\DatastoreContext
           - Drupal\DrupalExtension\Context\DrushContext
           - Devinci\DevinciExtension\Context\DebugContext:
-            asset_dump_path: %paths.base%/assets
+              asset_dump_path: %paths.base%/assets
           - Devinci\DevinciExtension\Context\JavascriptContext:
-            maximum_wait: 30
+              maximum_wait: 30
   formatters:
     pretty:
       output_styles:
