@@ -10,6 +10,11 @@ commands:
     import: .ahoy/site/build.ahoy.yml
     hide: true
 
+  custom:
+    usage: custom deploy commands (Deprecated after ahoy2)
+    hide: true
+    import: config/custom.ahoy.yml
+
   dkan:
     usage: A series of commands for dkan development.
     hide: true
