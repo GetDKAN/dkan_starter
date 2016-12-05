@@ -69,6 +69,7 @@ function data_config_enabled_modules() {
     'entity_path' => 'entity_path',
     'entity_rdf' => 'entity_rdf',
     'entity_token' => 'entity_token',
+    'entitycache' => 'entitycache',
     'entityreference' => 'entityreference',
     'entityreference_filter' => 'entityreference_filter',
     'environment' => 'environment',
