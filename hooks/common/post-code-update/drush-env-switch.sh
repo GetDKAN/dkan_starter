@@ -61,3 +61,7 @@ if [[ "$drupal" =~ "Successful" ]]; then
 else
   echo "Installation not detected"
 fi
+
+if [ "$env" == "local" ]; then
+  ahoy dkan create-qa-users
+fi
