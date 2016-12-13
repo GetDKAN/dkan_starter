@@ -1,11 +1,11 @@
 # Upgrade path script for 1.12 to 1.13 sites.
 
 
-drush rr
+drush @$drush_alias rr
 drush @$drush_alias fr dkan_dataset_content_types -y
 drush @$drush_alias fr dkan_permissions -y
 
-odfe_status=`drush pmi --fields=status  --format=csv open_data_federal_extras`
+odfe_status=`drush @$drush_alias pmi --fields=status  --format=csv open_data_federal_extras`
 
 if [ "$odfe_status" = "enabled" ]; then
   drush @$drush_alias fr open_data_schema_map_dkan -y
