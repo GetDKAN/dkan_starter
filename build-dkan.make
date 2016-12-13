@@ -1,7 +1,7 @@
 api = 2
 core = 7.x
 
-includes[core] = drupal-org-core.make
+includes[core] = dkan/drupal-org-core.make
 
 ; Profile
 
