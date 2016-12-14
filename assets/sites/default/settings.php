@@ -149,6 +149,10 @@ if (_data_starter_validates('stage_file_proxy_origin')) {
 // KEY for dkan health status
 $conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
 
+// Add tracking codes for Google Analytics.
+$conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
+$conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
+
 /******************************************************
  * OPTIONAL: Override default settings per environment.
  ******************************************************/
