@@ -40,3 +40,6 @@ acquia:
     base_url: http://produrl
     core_id: changeme
     derived_key: changeme
+
+gaClientTrackingCode: UA-XXXXX-Y
+gaNuCivicTrackingCode: UA-XXXXX-Z
