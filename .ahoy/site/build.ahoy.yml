@@ -59,11 +59,11 @@ commands:
   custom:
     usage: Downloads 3rd party modules
     cmd: |
-      if [ -f config/custom.make ] && [ `cat config/custom.make | sed '/^\s*$/d' | wc -l` -gt 3 ]; then
+      if [ -f config/custom.make ] && [ `cat config/custom.make | sed '/^\s*$/d' | wc -l` -gt 2 ]; then
         ahoy drush -y make --no-core --contrib-destination=contrib config/custom.make --no-recursion --no-cache --verbose
 
         # Remove old stuff first
-        dirs=( $(find ./contrib/modules -type d  -maxdepth 1 | sed 's/\.\/contrib\/modules\///g') )
+        dirs=( $(find ./contrib/modules -maxdepth 1 -type d | sed 's/\.\/contrib\/modules\///g') )
         for dir in "${dirs[@]}";
         do
           rm -fR ./docroot/sites/all/modules/contrib/$dir
