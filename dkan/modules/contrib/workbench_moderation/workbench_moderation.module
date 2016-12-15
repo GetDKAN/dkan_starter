@@ -1771,6 +1771,13 @@ function workbench_moderation_store($node) {
   // revision.
   if (empty($node->workbench_moderation['current']->unpublishing)) {
     $live_revision = workbench_moderation_node_live_load($node);
+    if (empty($live_revision)) {
+      // If for some reason the node was deleted prior to reaching this
+      // function, we no longer need to be concerned with it, so just log a
+      // watchdog status to surface the deletion and return.
+      watchdog('Workbench moderation', 'Failed to save node revision: node was deleted before shutdown function executed.');
+      return;
+    }
     $live_revision->status = 1;
   }
   else {

@@ -16,16 +16,16 @@ projects[uuidreference][patch][238875] = https://www.drupal.org/files/issues/uui
 
 ; Libraries
 libraries[chroma][download][type] = "file"
-libraries[chroma][download][url] = "https://github.com/gka/chroma.js/zipball/f1b7ca5cc4156f7d766e45e13ed6496c7b8ff7da"
+libraries[chroma][download][url] = "https://github.com/gka/chroma.js/zipball/master"
 
 libraries[numeral][download][type] = "file"
-libraries[numeral][download][url] = "https://github.com/adamwdraper/Numeral-js/zipball/7487acb3b9b9d3be80d504b151681d1ff75224ce"
+libraries[numeral][download][url] = "https://github.com/adamwdraper/Numeral-js/zipball/master"
 
 libraries[recline_choropleth][download][type] = "file"
-libraries[recline_choropleth][download][url] = "https://github.com/NuCivic/recline.view.choroplethmap.js/archive/aca36cf4c3c408c67e2c20f1188931d61ffdec50.zip"
+libraries[recline_choropleth][download][url] = "https://github.com/NuCivic/recline.view.choroplethmap.js/archive/master.zip"
 
 libraries[leaflet_zoomtogeometries][download][type] = "file"
-libraries[leaflet_zoomtogeometries][download][url] = "https://github.com/NuCivic/leaflet.map.zoomToGeometries.js/zipball/08c19374b6f74a9efde979013c3c16266ab2b505"
+libraries[leaflet_zoomtogeometries][download][url] = "https://github.com/NuCivic/leaflet.map.zoomToGeometries.js/zipball/master"
 
 # NVD3
 libraries[nvd3][type] = libraries
@@ -63,4 +63,4 @@ libraries[spectrum][directory_name]= bgrins-spectrum
 libraries[reclineViewNvd3][type] = libraries
 libraries[reclineViewNvd3][download][type] = git
 libraries[reclineViewNvd3][download][url] = "https://github.com/NuCivic/recline.view.nvd3.js.git"
-libraries[reclineViewNvd3][download][revision] = dcf34811b24f1b48593f06c227a8c14a82972e3a
+libraries[reclineViewNvd3][download][revision] = 6e3576f032f9dad8971fa753a3f89751dd71d83d
