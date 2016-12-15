@@ -49,7 +49,7 @@ if [[ "$drupal" =~ "Successful" ]]; then
   drush @$drush_alias -y fr --force custom_config
   drush @$drush_alias env-switch $target_env --force
   drush @$drush_alias -y updb
-  DB_BASED_SEARCH=`drush @$drush_alias pmi dkan_acquia_search_solr | grep disabled`
+  DB_BASED_SEARCH=`drush @$drush_alias pmi dkan_acquia_search_solr | grep -E 'disabled|not found'`
   if [ -z "$DB_BASED_SEARCH" ]; then
     echo "SOLR Search, avoiding indexing data"
   else
