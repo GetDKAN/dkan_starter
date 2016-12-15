@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @file
+ * Module state handling for the Acquia Search Multi Subscription module.
+ */
+
+/**
+ * Implements hook_enable().
+ *
+ * Updates the subscription so that new Search Indexes connected to the user's
+ * subscription can be pulled in and selected to be connected to.
+ */
+function acquia_search_multi_subs_enable() {
+  acquia_agent_check_subscription();
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Remove variables from any environment that would have this information
+ */
+function acquia_search_multi_subs_uninstall() {
+  if (module_exists('apachesolr')) {
+    variable_del('apachesolr_environments');
+    $environments = apachesolr_load_all_environments();
+    foreach ($environments as $environment) {
+      apachesolr_environment_variable_del($environment['env_id'], 'acquia_search');
+      apachesolr_environment_variable_del($environment['env_id'], 'acquia_search_key');
+      apachesolr_environment_variable_del($environment['env_id'], 'acquia_override_subscription_corename');
+      apachesolr_environment_variable_del($environment['env_id'], 'acquia_override_selector');
+      apachesolr_environment_variable_del($environment['env_id'], 'acquia_override_subscription_key');
+      apachesolr_environment_variable_del($environment['env_id'], 'acquia_override_subscription_id');
+      apachesolr_environment_variable_del($environment['env_id'], 'acquia_override_auto_switch');
+      apachesolr_environment_variable_del($environment['env_id'], 'acquia_override_failover');
+    }
+  }
+  if (module_exists('search_api_solr')) {
+    $servers = db_select('search_api_server', 's')
+      ->fields('s')
+      ->execute()
+      ->fetchCol();
+    foreach ($servers as $server_id) {
+      $server = search_api_server_load($server_id);
+      unset($server->options['acquia_override_subscription']);
+      $server->save();
+    }
+  }
+  variable_del('acquia_search_multi_subs_subscription_cache_time');
+}
+
+/**
+ * Implements hook_disable().
+ *
+ * Remove config overrides.
+ */
+function acquia_search_multi_subs_disable() {
+  // We want to also remove all config overrides when we disable it to avoid
+  // confusion.
+  acquia_search_multi_subs_uninstall();
+}

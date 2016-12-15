@@ -36,6 +36,8 @@ function acquia_search_multi_subs_acquia_subscription_status($active, $subscript
   if ($active) {
     acquia_search_multi_subs_init();
   }
+  cache_clear_all('acquia_search_multi_subs_env_change_apachesolr', 'cache');
+  cache_clear_all('acquia_search_multi_subs_env_change_searchapisolr', 'cache');
 }
 
 /**

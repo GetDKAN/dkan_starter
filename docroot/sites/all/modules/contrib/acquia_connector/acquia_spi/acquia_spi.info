@@ -6,9 +6,9 @@ core = 7.x
 dependencies[] = acquia_agent
 files[] = tests/acquia_spi.test
 
-; Information added by Drupal.org packaging script on 2016-05-06
-version = "7.x-2.17"
+; Information added by Drupal.org packaging script on 2016-12-05
+version = "7.x-3.0"
 core = "7.x"
 project = "acquia_connector"
-datestamp = "1462555141"
+datestamp = "1480951700"
 

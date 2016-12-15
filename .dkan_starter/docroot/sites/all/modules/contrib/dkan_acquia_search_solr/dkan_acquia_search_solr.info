@@ -1,0 +1,8 @@
+name = DKAN Search - Solr
+description = Solr Search Settings for Local and Acquia Environments.
+core = 7.x
+package = DKAN
+dependencies[] = acquia_agent
+dependencies[] = search_api_solr
+dependencies[] = search_api_acquia
+mtime = 1431370710

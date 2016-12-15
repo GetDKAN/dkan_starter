@@ -1,0 +1,61 @@
+<?php
+/**
+ * @file
+ * Hook_requirements for the ClamAV module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function clamav_requirements($phase) {
+  $t = get_t();
+  $requirements = array();
+  if ($phase == 'runtime') {
+    // try to connect on the current settings.
+    $mode = variable_get('clamav_mode', CLAMAV_DEFAULT_MODE);
+    if ($mode == CLAMAV_USE_DAEMON) {
+      $settings = array(
+        'host' => variable_get('clamav_daemon_host', CLAMAV_DEFAULT_HOST),
+        'port' => variable_get('clamav_daemon_port', CLAMAV_DEFAULT_PORT),
+      );
+      $mode = $t('Daemon');
+    }
+    elseif ($mode == CLAMAV_USE_EXECUTABLE) {
+      $settings = variable_get('clamav_executable_path', CLAMAV_DEFAULT_PATH);
+      $mode = $t('Executable');
+    }
+    require_once dirname(__FILE__) . '/clamav.inc';
+    $ver = clamav_get_version($settings);
+
+    // report success or failure.
+    $requirements[] = array(
+      'title' => $t('ClamAV'),
+      'value' => empty($ver) ? $t('@mode not found.', array('@mode' => $mode)) : $t('@mode: @version', array('@mode' => $mode, '@version' => $ver)),
+      'severity' => (empty($ver)) ? REQUIREMENT_ERROR : REQUIREMENT_OK,
+    );
+  }
+  return $requirements;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function clamav_uninstall() {
+  variable_del('clamav_verbose');
+  variable_del('clamav_executable_path');
+  variable_del('clamav_executable_parameters');
+  variable_del('clamav_daemon_port');
+  variable_del('clamav_daemon_host');
+  variable_del('clamav_mode');
+  variable_del('clamav_enabled');
+  variable_del('clamav_unchecked_files');
+  variable_del('clamav_overridden_schemes');
+}
+
+/**
+ * Remove deprecated variables.
+ */
+function clamav_update_7001() {
+  variable_del('clamav_enable_element_file_widget');
+  variable_del('clamav_enable_element_image_widget');
+}

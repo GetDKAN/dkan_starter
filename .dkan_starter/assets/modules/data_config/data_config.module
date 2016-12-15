@@ -1,0 +1,288 @@
+<?php
+
+/**
+ * Declares default modules for custom_config features master.
+ */
+function data_config_enabled_modules() {
+  $features_master = array();
+  
+  $features_master['themes'] = array(
+    'nuboot_radix' => 'nuboot_radix',
+  );
+  
+  $features_master['modules'] = array(
+    'acquia_agent' => 'acquia_agent',
+    'acquia_purge' => 'acquia_purge',
+    'acquia_spi' => 'acquia_spi',
+    'admin_menu' => 'admin_menu',
+    'admin_menu_source' => 'admin_menu_source',
+    'admin_menu_toolbar' => 'admin_menu_toolbar',
+    'adminrole' => 'adminrole',
+    'ape' => 'ape',
+    'autocomplete_deluxe' => 'autocomplete_deluxe',
+    'beautytips' => 'beautytips',
+    'block' => 'block',
+    'bueditor' => 'bueditor',
+    'bueditor_plus' => 'bueditor_plus',
+    'chosen' => 'chosen',
+    'color_field' => 'color_field',
+    'colorizer' => 'colorizer',
+    'conditional_fields' => 'conditional_fields',
+    'conditional_styles' => 'conditional_styles',
+    'contextual' => 'contextual',
+    'ctools' => 'ctools',
+    'custom_config' => 'custom_config',
+    'data' => 'data',
+    'data_config' => 'data_config',
+    'date' => 'date',
+    'date_api' => 'date_api',
+    'date_popup' => 'date_popup',
+    'defaultconfig' => 'defaultconfig',
+    'devinci' => 'devinci',
+    'diff' => 'diff',
+    'dkan' => 'dkan',
+    'dkan_acquia_expire' => 'dkan_acquia_expire',
+    'dkan_acquia_search_solr' => 'dkan_acquia_search_solr',
+    'dkan_data_dashboard' => 'dkan_data_dashboard',
+    'dkan_data_story' => 'dkan_data_story',
+    'dkan_dataset' => 'dkan_dataset',
+    'dkan_dataset_content_types' => 'dkan_dataset_content_types',
+    'dkan_dataset_groups' => 'dkan_dataset_groups',
+    'dkan_dataset_groups_perms' => 'dkan_dataset_groups_perms',
+    'dkan_datastore' => 'dkan_datastore',
+    'dkan_datastore_api' => 'dkan_datastore_api',
+    'dkan_health_status' => 'dkan_health_status',
+    'dkan_default_topics' => 'dkan_default_topics',
+    'dkan_permissions' => 'dkan_permissions',
+    'dkan_sitewide' => 'dkan_sitewide',
+    'dkan_sitewide_demo_front' => 'dkan_sitewide_demo_front',
+    'dkan_sitewide_menu' => 'dkan_sitewide_menu',
+    'dkan_sitewide_panelizer' => 'dkan_sitewide_panelizer',
+    'dkan_sitewide_panels' => 'dkan_sitewide_panels',
+    'dkan_sitewide_search_db' => 'dkan_sitewide_search_db',
+    'dkan_sitewide_user' => 'dkan_sitewide_user',
+    'dkan_topics' => 'dkan_topics',
+    'double_field' => 'double_field',
+    'draggableviews' => 'draggableviews',
+    'eck' => 'eck',
+    'entity' => 'entity',
+    'entity_path' => 'entity_path',
+    'entity_rdf' => 'entity_rdf',
+    'entity_token' => 'entity_token',
+    'entitycache' => 'entitycache',
+    'entityreference' => 'entityreference',
+    'entityreference_filter' => 'entityreference_filter',
+    'environment' => 'environment',
+    'environment_indicator' => 'environment_indicator',
+    'eva' => 'eva',
+    'expire' => 'expire',
+    'facet_icons' => 'facet_icons',
+    'facetapi' => 'facetapi',
+    'facetapi_bonus' => 'facetapi_bonus',
+    'facetapi_pretty_paths' => 'facetapi_pretty_paths',
+    'fast_404' => 'fast_404',
+    'features' => 'features',
+    'features_banish' => 'features_banish',
+    'features_master' => 'features_master',
+    'features_roles_permissions' => 'features_roles_permissions',
+    'feeds' => 'feeds',
+    'feeds_field_fetcher' => 'feeds_field_fetcher',
+    'feeds_flatstore_processor' => 'feeds_flatstore_processor',
+    'field' => 'field',
+    'field_group' => 'field_group',
+    'field_group_table' => 'field_group_table',
+    'field_hidden' => 'field_hidden',
+    'field_reference_delete' => 'field_reference_delete',
+    'field_sql_storage' => 'field_sql_storage',
+    'field_ui' => 'field_ui',
+    'fieldable_panels_panes' => 'fieldable_panels_panes',
+    'file' => 'file',
+    'file_entity' => 'file_entity',
+    'file_resup' => 'file_resup',
+    'filefield_sources' => 'filefield_sources',
+    'filter' => 'filter',
+    'font_icon_select' => 'font_icon_select',
+    'fontyourface' => 'fontyourface',
+    'fontyourface_ui' => 'fontyourface_ui',
+    'geofield' => 'geofield',
+    'geophp' => 'geophp',
+    'globalredirect' => 'globalredirect',
+    'google_fonts_api' => 'google_fonts_api',
+    'google_tag' => 'google_tag',
+    'googleanalytics' => 'googleanalytics',
+    'gravatar' => 'gravatar',
+    'honeypot' => 'honeypot',
+    'image' => 'image',
+    'image_url_formatter' => 'image_url_formatter',
+    'imagecache_actions' => 'imagecache_actions',
+    'imagecache_canvasactions' => 'imagecache_canvasactions',
+    'job_scheduler' => 'job_scheduler',
+    'jquery_update' => 'jquery_update',
+    'leaflet_widget' => 'leaflet_widget',
+    'libraries' => 'libraries',
+    'link' => 'link',
+    'link_iframe_formatter' => 'link_iframe_formatter',
+    'list' => 'list',
+    'manualcrop' => 'manualcrop',
+    'markdown' => 'markdown',
+    'markdowneditor' => 'markdowneditor',
+    'media' => 'media',
+    'media_internet' => 'media_internet',
+    'media_vimeo' => 'media_vimeo',
+    'media_youtube' => 'media_youtube',
+    'menu' => 'menu',
+    'menu_block' => 'menu_block',
+    'menu_token' => 'menu_token',
+    'module_filter' => 'module_filter',
+    'multistep' => 'multistep',
+    'node' => 'node',
+    'number' => 'number',
+    'og' => 'og',
+    'og_access' => 'og_access',
+    'og_context' => 'og_context',
+    'og_extras' => 'og_extras',
+    'og_moderation' => 'og_moderation',
+    'og_ui' => 'og_ui',
+    'open_data_schema_ckan' => 'open_data_schema_ckan',
+    'open_data_schema_map' => 'open_data_schema_map',
+    'open_data_schema_map_dkan' => 'open_data_schema_map_dkan',
+    'open_data_schema_pod' => 'open_data_schema_pod',
+    'options' => 'options',
+    'page_manager' => 'page_manager',
+    'panelizer' => 'panelizer',
+    'panels' => 'panels',
+    'panels_ipe' => 'panels_ipe',
+    'panels_style_collapsible' => 'panels_style_collapsible',
+    'panopoly_images' => 'panopoly_images',
+    'panopoly_widgets' => 'panopoly_widgets',
+    'path' => 'path',
+    'path_breadcrumbs' => 'path_breadcrumbs',
+    'path_breadcrumbs_ui' => 'path_breadcrumbs_ui',
+    'pathauto' => 'pathauto',
+    'r4032login' => 'r4032login',
+    'radix_layouts' => 'radix_layouts',
+    'rdf' => 'rdf',
+    'rdfui' => 'rdfui',
+    'rdfx' => 'rdfx',
+    'recline' => 'recline',
+    'ref_field_sync' => 'ref_field_sync',
+    'roleassign' => 'roleassign',
+    'remote_file_source' => 'remote_file_source',
+    'remote_stream_wrapper' => 'remote_stream_wrapper',
+    'rest_server' => 'rest_server',
+    'restws' => 'restws',
+    'rules' => 'rules',
+    'rules_admin' => 'rules_admin',
+    'search_api' => 'search_api',
+    'search_api_acquia' => 'search_api_acquia',
+    'search_api_db' => 'search_api_db',
+    'search_api_facetapi' => 'search_api_facetapi',
+    'search_api_solr' => 'search_api_solr',
+    'search_api_views' => 'search_api_views',
+    'select_or_other' => 'select_or_other',
+    'services' => 'services',
+    'simple_gmap' => 'simple_gmap',
+    'strongarm' => 'strongarm',
+    'syslog' => 'syslog',
+    'system' => 'system',
+    'tablefield' => 'tablefield',
+    'taxonomy' => 'taxonomy',
+    'taxonomy_fixtures' => 'taxonomy_fixtures',
+    'taxonomy_menu' => 'taxonomy_menu',
+    'text' => 'text',
+    'token' => 'token',
+    'user' => 'user',
+    'update' => 'update',
+    'uuid' => 'uuid',
+    'uuidreference' => 'uuidreference',
+    'uuidreference_select' => 'uuidreference_select',
+    'views' => 'views',
+    'views_autocomplete_filters' => 'views_autocomplete_filters',
+    'views_bulk_operations' => 'views_bulk_operations',
+    'views_content' => 'views_content',
+    'views_responsive_grid' => 'views_responsive_grid',
+    'visualization_entity' => 'visualization_entity',
+    'visualization_entity_charts' => 'visualization_entity_charts',
+    'visualization_entity_charts_dkan' => 'visualization_entity_charts_dkan',
+    'visualization_entity_embed' => 'visualization_entity_embed',
+    'visualization_entity_recline_field_reference' => 'visualization_entity_recline_field_reference',
+  );
+
+  $data_config = variable_get('default');
+ 
+  if (isset($data_config['fast_file']) && $data_config['fast_file']['enable']) {
+    $features_master['modules']['dkan_datastore_fast_import'] = 'dkan_datastore_fast_import';
+  }
+
+  if (isset($data_config['clamav']) && $data_config['clamav']['enable']) {
+    $features_master['modules']['clamav'] = 'clamav';
+  }
+
+  return $features_master;
+
+}
+
+/**
+ * Implements hook_modules_disabled().
+ *
+ * Add alert when modules are disabled that should not be.
+ */
+function data_config_modules_disabled($modules) {
+  $feature_master_list = array();
+  $module_data = system_rebuild_module_data();
+  $temp_disabled_modules = variable_get('features_master_temp_disabled_modules', array());
+  $modules_warn = array_diff($modules, $temp_disabled_modules);
+  if (!empty($modules_warn)) {
+    watchdog('custom_config_disable', 'Trying to disable module(s) not on temporarily disabled list',
+      ['modules' => $modules_warn], WATCHDOG_ERROR);
+    if (module_exists('custom_config') && function_exists('drush_print_table')) {
+      $dependencies = array();
+      foreach($modules_warn as $module) {
+        // Add dependencies to the list, with a placeholder weight.
+        // The new modules will be processed as the while loop continues.
+        $dependencies[$module] = array();
+        foreach (array_keys($module_data[$module]->requires) as $dependency) {
+          $dependencies[$module][] = $dependency;
+        }
+        $dependencies[$module] = array_intersect($dependencies[$module], $modules_warn);
+      }
+      module_load_include('inc','custom_config','features.features_master');
+      $feature_master_list = function_exists('custom_config_features_master_defaults') ? custom_config_features_master_defaults(): array();
+      $feature_master_list = array_keys($feature_master_list['modules']);
+      $dpt_output = array(
+        array('Modules being disabled', 'In feature master list?', 'Cross Dependencies with modules being disabled'),
+      );
+      foreach($modules_warn as $module) {
+        array_push($dpt_output, array($module, in_array($module, $feature_master_list) ? "YES": "NO", implode(',', $dependencies[$module])));
+      }
+      drush_print_table($dpt_output, $header=TRUE);
+    }
+  }
+}
+
+
+/**
+ * Implements hook_search_api_index_load()
+ *
+ * Forces read-only mode on Search API indexes if the current environment
+ * is NOT an Acquia-Hosted production environment. (Including a local copy
+ * of this site)
+ */
+ function data_config_search_api_index_load($indexes) {
+  // Assume that we need to override and force read-only mode.
+  $set_read_only = TRUE;
+
+  // Avoid forcing index read-only mode, if on Acquia Hosting + in a production environment
+  if (isset($_ENV["AH_SITE_ENVIRONMENT"])) {
+    return;
+  }
+
+  // Cycle through all Search API Solr indexes and force to read_only mode.
+  if ($set_read_only) {
+    foreach ($indexes as &$index) {
+      if ($index->server == 'dkan_acquia_solr') {
+        $index->read_only = "1";
+      }
+    }
+  }
+}

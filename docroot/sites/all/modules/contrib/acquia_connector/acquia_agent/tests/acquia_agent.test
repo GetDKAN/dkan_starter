@@ -5,6 +5,7 @@
 */
 class AcquiaAgentTestCase extends DrupalWebTestCase {
   protected $privileged_user;
+  protected $network_user;
   protected $setup_path;
   protected $credentials_path;
   protected $settings_path;
@@ -12,6 +13,8 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
   protected $cloud_free_url;
   protected $acquia_test_id;
   protected $acquia_test_key;
+  protected $migrate_path;
+  protected $status_report_url;
 
   public static function getInfo() {
     // Note: getInfo() strings are not translated with t().
@@ -53,6 +56,11 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
 
   /**
    * Helper function for storing UI strings.
+   *
+   * @param string $id
+   *   UI string id.
+   *
+   * @return string
    */
   private function acquiaAgentStrings($id) {
     switch ($id) {
@@ -67,7 +75,7 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
       case 'account-not-found':
         return 'Account not found';
       case 'id-key':
-        return 'Enter your identifer and key from your subscriptions overview or log in to connect your site to Acquia Insight.';
+        return 'Enter your identifier and key from your subscriptions overview or log in to connect your site to Acquia Insight.';
       case 'enter-key':
         return 'Network key';
       case 'subscription-not-found':
@@ -89,6 +97,7 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
       case 'menu-inactive':
         return 'Subscription not active';
     }
+    return '';
   }
 
   public function testAcquiaAgentGetConnected() {
@@ -377,6 +386,26 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
     $this->drupalGetAJAX('system/acquia-connector-status', array('query' => $query));
     $this->assertResponse(403);
   }
+
+  /**
+   * Test acquia_agent_get_server_superglobal.
+   */
+  public function testServerSuperglobal() {
+    $server = array(
+      'acquia_agent_test_string'       => 'acquia_agent_test_string_value',
+      'acquia_agent_test_array'        => array(1, 2, 3),
+      'acquia_agent_test_empty_string' => '',
+      'acquia_agent_test_empty_array'  => array(),
+      'acquia_agent_test_null'         => NULL,
+    );
+
+    $this->assertIdentical(acquia_agent_get_server_superglobal(), $_SERVER, 'acquia_agent_get_server_superglobal() returns expected value');
+
+    variable_set('acquia_agent_server_superglobal', $server);
+    $this->assertIdentical(acquia_agent_get_server_superglobal(), $server, 'acquia_agent_get_server_superglobal() returns expected value');
+
+    variable_del('acquia_agent_server_superglobal');
+  }
 }
 
 class AquiaAgentUnitTestCase extends DrupalUnitTestCase {
@@ -437,5 +466,12 @@ class AquiaAgentUnitTestCase extends DrupalUnitTestCase {
     $data = array('href'=> 'http://example.com/network/uuid/test/dashboard');
     $uuid = _acquia_agent_get_id_from_sub($data);
     $this->assertIdentical('test', $uuid, 'UUID extracted from href');
+  }
+
+  /**
+   * Test acquia_agent_get_server_superglobal.
+   */
+  public function testServerSuperglobal() {
+    $this->assertIdentical(acquia_agent_get_server_superglobal(), $_SERVER, 'acquia_agent_get_server_superglobal() returns expected value');
   }
 }

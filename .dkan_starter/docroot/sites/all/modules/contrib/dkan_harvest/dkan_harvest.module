@@ -1,0 +1,236 @@
+<?php
+
+/**
+ * @file
+ * Harvesting module for dkan.
+ */
+
+define(
+  'DKAN_HARVEST_CACHE_DIR',
+  'public://dkan-harvest-cache'
+);
+
+/**
+ * Returns configuration for harvest sources.
+ */
+function dkan_harvest_sources_definition() {
+  $modules = module_implements('harvest_sources');
+  $subscribed_values = array();
+  // Get a list of licenses to display.
+  foreach ($modules as $module) {
+    $function = $module . '_harvest_sources';
+    $values = $function();
+    foreach ($values as $key => $value) {
+      // Make sure other module didn't provide the same source.
+      if (!isset($subscribed_values[$key])) {
+        $subscribed_values[$key] = $value;
+      }
+    }
+  }
+  return $subscribed_values;
+}
+
+/**
+ * Callback for dkan-harvest-run.
+ */
+function dkan_harvest_run() {
+  dkan_harvest_cache_data();
+  dkan_harvest_migrate_data();
+}
+
+/**
+ * Callback for dkan-migrate-cached-data.
+ */
+function dkan_harvest_migrate_data() {
+  migrate_static_registration();
+  $migration = Migration::getInstance('dkan_harvest_data_json');
+  $migration->processImport();
+}
+
+/**
+ * Callback for dkan-cache-harvested-data.
+ */
+function dkan_harvest_cache_data($options = array()) {
+  $harvest_last_updated = microtime();
+  $sources = dkan_harvest_sources_definition();
+  if (!empty($options['sources'])) {
+    $sources = array_intersect_key($sources, array_flip($options['sources']));
+  }
+  return dkan_harvest_cache_data_process($sources, $harvest_last_updated);
+}
+
+/**
+ * Callback for dkan-cache-harvested-data.
+ */
+function dkan_harvest_cache_data_process($sources, $harvest_last_updated) {
+  $context = stream_context_create(
+    array(
+      'http' => array(
+        'timeout' => 36000,
+      ),
+      'https' => array(
+        'timeout' => 36000,
+      ),
+    )
+  );
+  $counters = array();
+  foreach ($sources as $key => $source) {
+    $remote = file_get_contents($source['remote'], 0, $context);
+    $counters[$key] = 0;
+    if ($remote) {
+      switch ($source['type']) {
+        case 'data.xml':
+          $xml = simplexml_load_string($remote);
+          $json  = json_encode($xml);
+          $array = json_decode($json, TRUE);
+
+          if ($array) {
+            dkan_harvest_cache_pod_1_1_json($array, $key, $source, $counters);
+          }
+          break;
+
+        case 'data.json':
+          $remote = utf8_encode($remote);
+          $json = drupal_json_decode($remote);
+          if (!$json) {
+            # Anticipate encoding errors.
+            $remote = utf8_encode($remote);
+            $json = drupal_json_decode($remote);
+          }
+          if ($json) {
+            dkan_harvest_cache_pod_1_1_json($json, $key, $source, $counters);
+          }
+          break;
+      }
+    }
+  }
+  $n = 0;
+  foreach ($counters as $key => $counter) {
+    $message = $counter . ' datasets harvested for ' . $key;
+    dkan_harvest_log($message, 'success');
+    $n += $counter;
+  }
+  $message = $n . ' datasets harvested in total';
+  return dkan_harvest_log($message, 'success');
+}
+
+/**
+ * Cache the pod_1_1_json datasets.
+ */
+function dkan_harvest_cache_pod_1_1_json($json, $key, $source, &$counters) {
+  $dir = dkan_harvest_sources_prepare_cache_dir($key);
+  $datasets = $json['dataset'];
+  $datasets = dkan_harvest_filter_datasets($datasets, $source['filters'], $source['excludes']);
+  foreach ($datasets as $dataset) {
+    $identifier = dkan_harvest_prepare_item_id($dataset['identifier']);
+    $dataset['harvest_object_id'] = $identifier;
+    $dataset['harvest_source_id'] = $key;
+    $dataset['harvest_last_updated'] = $harvest_last_updated;
+    $dataset_file = implode('/', array($dir, $identifier));
+    $data = drupal_json_encode($dataset);
+    $test  = file_put_contents($dataset_file, $data);
+
+    if ($test) {
+      dkan_harvest_log($dataset_file . ' created for dataset with id: ' . $identifier, 'success');
+    }
+    else {
+      dkan_harvest_log('failed to create ' . $dataset_file . 'for dataset with id: ' . $identifier, 'failed');
+    }
+    $counters[$key] = $counters[$key] + 1;
+  }
+}
+
+/**
+ * Messages to drush_log if available.
+ */
+function dkan_harvest_log($message, $type) {
+  if (function_exists('drush_log')) {
+    drush_log($message, $type);
+  }
+  else {
+    watchdog('dkan_harvest', $message);
+  }
+  return $message;
+}
+
+/**
+ * Filters an array of data.json datasets based on a set of filters.
+ */
+function dkan_harvest_filter_datasets($datasets, $filters, $excludes = array()) {
+  $r = array();
+  foreach ($datasets as $dataset) {
+    $passes = TRUE;
+    foreach ($filters as $filter => $value) {
+      if (!isset($dataset[$filter])) {
+        $dataset[$filter] = array();
+      }
+      if (count(array_intersect($value, $dataset[$filter])) < 1) {
+        $passes = FALSE;
+        break;
+      }
+    }
+    foreach ($excludes as $exclude => $value) {
+      if (!isset($dataset[$exclude])) {
+        $dataset[$exclude] = array();
+      }
+      if (is_array($dataset[$exclude])) {
+        if (count(array_intersect($value, $dataset[$exclude])) > 0) {
+          $passes = FALSE;
+          break;
+        }
+      }
+      else if ($value == $dataset[$exclude]) {
+        $passes = FALSE;
+        break;
+      };
+    }
+    if ($passes) {
+      $r[] = $dataset;
+    }
+  }
+  return $r;
+}
+
+/**
+ * Creates a directory prepended with DKAN_HARVEST_CACHE_DIR.
+ *
+ * @param string $dir
+ *
+ * @return string
+ * PHP filesteream location.
+ */
+function dkan_harvest_sources_prepare_cache_dir($dir) {
+  // Create base dir.
+  if (!is_dir(DKAN_HARVEST_CACHE_DIR)) {
+    drupal_mkdir(DKAN_HARVEST_CACHE_DIR);
+  }
+  // Create dir for source.
+  $dir = implode('/', array(DKAN_HARVEST_CACHE_DIR, $dir));
+  if (!is_dir($dir)) {
+    drupal_mkdir($dir);
+  }
+  // Delete all files in dir.
+  $files = glob($dir . '/*');
+  foreach($files as $file){
+    if (is_file($file)) {
+      unlink($file);
+    }
+  }
+  return $dir;
+}
+
+/**
+ * Removes URL and returns directory from URL string.
+ *
+ * Example: "http://example.com/whathat" returns "whatwhat"
+ */
+function dkan_harvest_prepare_item_id($identifier) {
+  if (filter_var($identifier, FILTER_VALIDATE_URL)) {
+    $identifier = parse_url($identifier, PHP_URL_PATH);
+    $frag  = explode('/', $identifier);
+    // Does not produce "Strict warning: Only variables should be passed by
+    // reference" like end(explode('/', $identifier));
+    $identifier = $frag[count($frag) - 1];
+  }
+  return $identifier;
+}

@@ -1,0 +1,33 @@
+name = Acquia Purge
+description = "Top-notch Varnish purging on Acquia Cloud!"
+package = Acquia Network Connector
+core = 7.x
+dependencies[] = expire (>=2.0-rc2)
+
+; The order of the files specified here is of absolute importance, since each
+; file is ordered according to code composition. See _acquia_purge_load().
+files[] = AcquiaPurgeService.php
+files[] = processor/AcquiaPurgeProcessorsService.php
+files[] = processor/AcquiaPurgeProcessorInterface.php
+files[] = processor/AcquiaPurgeProcessorBase.php
+files[] = processor/backend/AcquiaPurgeAjaxProcessor.php
+files[] = processor/backend/AcquiaPurgeCronProcessor.php
+files[] = processor/backend/AcquiaPurgeRuntimeProcessor.php
+files[] = state/AcquiaPurgeStateItemInterface.php
+files[] = state/AcquiaPurgeStateStorageInterface.php
+files[] = state/AcquiaPurgeStateItem.php
+files[] = state/AcquiaPurgeStateCounterInterface.php
+files[] = state/AcquiaPurgeStateCounter.php
+files[] = state/AcquiaPurgeStateStorageBase.php
+files[] = state/backend/AcquiaPurgeDiskStateStorage.php
+files[] = state/backend/AcquiaPurgeMemcachedStateStorage.php
+files[] = queue/AcquiaPurgeQueueInterface.php
+files[] = queue/backend/AcquiaPurgeEfficientQueue.php
+files[] = queue/backend/AcquiaPurgeSmartQueue.php
+
+; Information added by Drupal.org packaging script on 2015-07-09
+version = "7.x-1.3"
+core = "7.x"
+project = "acquia_purge"
+datestamp = "1436439312"
+
