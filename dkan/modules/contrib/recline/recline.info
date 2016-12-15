@@ -1,7 +1,8 @@
 name = Recline.js Field
 description = Creates file field for visualizing data using Recline.js
 core = 7.x
-version = 7.x-1.12.11
 
 dependencies[] = libraries
 dependencies[] = file
+scripts[] = js/jsondataview.js
+scripts[] = js/restdataview.js

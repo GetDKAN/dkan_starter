@@ -21,7 +21,7 @@ Feature: Resources
     And resources:
       | title       | publisher | format | dataset    | author   | published | description |
       | Resource 01 | Group 01  | csv    | Dataset 01 | Gabriel    | Yes       | Yes          |
-      | Resource 02 | Group 01  | html   | Dataset 01 | Gabriel    | Yes       | Yes          |
+      | Resource 02 | Group 01  | csv   | Dataset 01 | Gabriel    | Yes       | Yes          |
 
   @api @javascript
   Scenario: ClamAV scan for resource clean file upload
@@ -42,7 +42,7 @@ Feature: Resources
     And I am on "Resource 01" page
     And  I click "Edit"
     And I click "Upload"
-    When I attach the file "dkan_starter/eicarcom.html" to "field_upload[und][0][resup]" using file resup
+    When I attach the file "dkan_starter/eicarcom.csv" to "field_upload[und][0][resup]" using file resup
     And I wait for the file upload to finish
     Then I should see "A virus has been detected in the file. The file will not be accepted."
     And I press "Save"
