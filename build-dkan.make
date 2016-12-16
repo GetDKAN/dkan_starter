@@ -8,8 +8,8 @@ includes[core] = dkan/drupal-org-core.make
 projects[dkan][type] = profile
 projects[dkan][download][type] = git
 projects[dkan][download][url] = https://github.com/NuCivic/dkan.git
-projects[dkan][download][branch] = release-1-12
+projects[dkan][download][tag] = 7.x-1.12.12
 
 ; Un-comment if diff is not empty.
-;projects[dkan][patch][1] = https://github.com/NuCivic/dkan/compare/7.x-1.12.11...release-1-12.diff
+;projects[dkan][patch][1] = https://github.com/NuCivic/dkan/compare/7.x-1.12.12...release-1-12.diff
 
