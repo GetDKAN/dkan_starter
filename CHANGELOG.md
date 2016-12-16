@@ -1,5 +1,18 @@
 # Change log
 
+## [1.12.12.0]
+### Changed
+- Disable shield module on local instance #23 
+- Fix QA password not set #24 
+- Refactor `ahoy build update` for re-use #27
+- Relink `ahoy custom`  commands #28
+- Fix data_config_modules_disabled() exception when module missing #32
+- Fix `ahoy build config` compatibility bug with Linux #39
+- Fix `ahoy build custom` not work for single modules #43
+- Allow config for Google Analytic #44 
+- Avoid indexing when dkan_acquia_search_solr is not installed. #46
+- Update dkan version to 7.x-1.12.12 #45
+  
 ## [1.12.10.3]
 ### Changed
 - Remake dkan (#146)
