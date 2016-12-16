@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the Acquia Search for Search API
+ * module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function search_api_acquia_uninstall() {
+  variable_del('search_api_acquia_version');
+}
+
+/**
+ * Implements hook_install().
+ *
+ * Sets the threshold between GET and POST requests to a value compatible with Acquia Search.
+ */
+function search_api_acquia_install() {
+  variable_set('search_api_solr_http_get_max_length', 3600);
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Sets the threshold between GET and POST requests to a value compatible with Acquia Search.
+ */
+function search_api_acquia_update_7001() {
+  variable_set('search_api_solr_http_get_max_length', 3600);
+}

@@ -1,0 +1,13 @@
+name = Advanced Page Expiration
+description = Allows finer control of the Cache Control header.
+package = Performance and scalability
+core = 7.x
+files[] = ape.test
+configure = admin/config/development/ape
+
+; Information added by Drupal.org packaging script on 2015-02-13
+version = "7.x-1.1"
+core = "7.x"
+project = "ape"
+datestamp = "1423865520"
+

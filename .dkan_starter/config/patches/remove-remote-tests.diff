@@ -1,0 +1,186 @@
+diff --git a/test/features/datastore.feature b/test/features/datastore.feature
+index 5c1ab81..29a1229 100644
+--- a/test/features/datastore.feature
++++ b/test/features/datastore.feature
+@@ -26,7 +26,6 @@ Feature: Datastore
+       And I am on "dataset/dataset-01"
+       And I click "Resource 01"
+       And I click "Edit"
+-      And I click "Remote file"
+       And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+       And I press "Save"
+       And I am on "dataset/dataset-01"
+diff --git a/test/features/recline.feature b/test/features/recline.feature
+index daccdc2..29d303b 100644
+--- a/test/features/recline.feature
++++ b/test/features/recline.feature
+@@ -50,7 +50,6 @@ Feature: Recline
+     When I click "Resource 01"
+     Then I should see "Test R1"
+     When I click "Edit"
+-    And I click "Remote file"
+     And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "http://demo.getdkan.com/sites/default/files/Polling_Places_Madison_0.csv"
+     And I press "edit-submit"
+     Then I should see "Polling_Places_Madison_0.csv"
+@@ -69,7 +68,6 @@ Feature: Recline
+     Given I click "Resource 02"
+     Then I should see "Test R2"
+     When I click "Edit"
+-    And I click "Remote file"
+     And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "http://demo.getdkan.com/sites/default/files/data_0.csv"
+     And I press "edit-submit"
+     Then I should see "data_0.csv"
+@@ -86,18 +84,15 @@ Feature: Recline
+     When I click "Resource 01"
+     Then I should see "Test R1"
+     When I click "Edit"
+-    And I click "Remote file"
+     And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "http://demo.getdkan.com/sites/default/files/Polling_Places_Madison_0.csv"
+     And I press "edit-submit"
+-    And I wait for "Loading" to disappear
+-    And I wait for "1" seconds
+     Then I should see "Polling_Places_Madison_0.csv"
+-    When I click "»"
+-    And I wait for "Our"
+-    And I wait for "1" seconds
+-    And I click "«"
+-    And I wait for "1" seconds
+-    And I wait for "East"
+-    And I fill in "q" with "Glendale"
+-    And I press "Go"
++    Given I click "»"
++    Then I wait for "Our"
++    Then I wait for "1" seconds
++    Given I click "«"
++    Then I wait for "1" seconds
++    Then I wait for "East"
++    Given I fill in "q" with "Glendale"
++    When I press "Go"
+     Then I should see "Tompkins"
+diff --git a/test/features/resource.admin.feature b/test/features/resource.admin.feature
+index 46118fa..654fa19 100644
+--- a/test/features/resource.admin.feature
++++ b/test/features/resource.admin.feature
+@@ -89,8 +89,7 @@ Feature: Resource
+     Given I am logged in as "John"
+     And I am on "Resource 02" page
+     And I click "Edit"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"    
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "Save"
+     When I click "Manage Datastore"
+     And I press "Import"
+@@ -104,8 +103,7 @@ Feature: Resource
+     Given I am logged in as "John"
+     And I am on "Resource 04" page
+     And I click "Edit"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"    
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "Save"
+     And I am on "Resource 04" page
+     When I click "Manage Datastore"
+@@ -124,8 +122,7 @@ Feature: Resource
+     Given I am logged in as "John"
+     And I am on "Resource 04" page
+     And I click "Edit"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"    
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "Save"
+     And I am on "Resource 04" page
+     When I click "Manage Datastore"
+diff --git a/test/features/resource.all.feature b/test/features/resource.all.feature
+index 4d49f0e..52cc5a5 100644
+--- a/test/features/resource.all.feature
++++ b/test/features/resource.all.feature
+@@ -147,8 +147,7 @@ Feature: Resource
+     When I click "Resource 01"
+     Then I should see "Edit"
+     When I click "Edit"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "edit-submit"
+     When I am on "/dataset/dataset-01"
+     Then I should see "Open With"
+diff --git a/test/features/resource.author.feature b/test/features/resource.author.feature
+index 514c3f8..687e9c1 100644
+--- a/test/features/resource.author.feature
++++ b/test/features/resource.author.feature
+@@ -60,9 +60,8 @@ Feature: Resource
+     Given I am logged in as "Katie"
+     And I am on the "Content" page
+     And I click "Resource"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
+     When I fill in "Title" with "Resource 06"
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "Save"
+     Then I should see "Resource Resource 06 has been created"
+ 
+@@ -219,8 +218,7 @@ Feature: Resource
+     Given I am logged in as "Celeste"
+     And I am on "Resource 05" page
+     And I click "Edit"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "Save"
+     And I am on "Resource 05" page
+     When I click "Manage Datastore"
+@@ -234,8 +232,7 @@ Feature: Resource
+     Given I am logged in as "John"
+     And I am on "Resource 03" page
+     And I click "Edit"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "Save"
+     Given I am logged in as "Celeste"
+     And I am on "Resource 03" page
+@@ -254,8 +251,7 @@ Feature: Resource
+     Given I am logged in as "John"
+     And I am on "Resource 03" page
+     And I click "Edit"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "Save"
+     Given I am logged in as "Celeste"
+     And I am on "Resource 03" page
+diff --git a/test/features/resource.editor.feature b/test/features/resource.editor.feature
+index c2fa1a6..4f1d0ed 100644
+--- a/test/features/resource.editor.feature
++++ b/test/features/resource.editor.feature
+@@ -98,8 +98,7 @@ Feature: Resource
+     Given I am logged in as "John"
+     And I am on "Resource 01" page
+     And I click "Edit"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "Save"
+     Given I am logged in as "Celeste"
+     And I am on "Resource 01" page
+@@ -113,8 +112,7 @@ Feature: Resource
+     Given I am logged in as "John"
+     And I am on "Resource 01" page
+     And I click "Edit"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "Save"
+     Given I am logged in as "Celeste"
+     When I am on "Resource 01" page
+@@ -133,8 +131,7 @@ Feature: Resource
+     Given I am logged in as "John"
+     And I am on "Resource 01" page
+     And I click "Edit"
+-    And I click "Remote file"
+-    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
++    And I fill in "edit-field-link-remote-file-und-0-filefield-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/district_centerpoints_small.csv"
+     And I press "Save"
+     Given I am logged in as "Celeste"
+     And I am on "Resource 01" page

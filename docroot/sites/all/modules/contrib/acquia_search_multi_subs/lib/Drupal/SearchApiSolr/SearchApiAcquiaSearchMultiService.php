@@ -260,7 +260,7 @@ class SearchApiAcquiaSearchMultiService extends SearchApiAcquiaSearchService {
     if (empty($subscription) || !is_array($subscription)) {
       // We do not want to send a heartbeat to the server, we only need
       // subscription data.
-      $subscription = acquia_agent_get_subscription(array('no_heartbeat' => 1), $acquia_identifier, $acquia_key);
+      $subscription = acquia_agent_get_subscription(array(), $acquia_identifier, $acquia_key);
       // Don't cache non-subscription data: XML-RPC client error, etc.
       if (!$this->getAcquiaSubscriptionError($subscription, $acquia_identifier)) {
         $subscription_cache[$cid] = $subscription;

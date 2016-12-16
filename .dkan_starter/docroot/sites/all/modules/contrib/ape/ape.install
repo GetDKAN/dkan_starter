@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for advanced page expiration.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function ape_uninstall() {
+  variable_del('ape_exceptions');
+  variable_del('ape_exceptions_lifetime');
+  variable_del('ape_exclusions');
+  variable_del('ape_301_lifetime');
+  variable_del('ape_302_lifetime');
+  variable_del('ape_404_lifetime');
+}

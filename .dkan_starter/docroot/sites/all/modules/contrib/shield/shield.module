@@ -1,0 +1,219 @@
+<?php
+/**
+ * @file
+ * Functions for shield module
+ */
+
+/**
+ * Implements hook_perm().
+ */
+function shield_permission() {
+  return array(
+    'administer shield' => array(
+      'title' => t('Administer shield module'),
+      'description' => t('Perform administration tasks for shield module.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function shield_menu() {
+  $items['admin/config/system/shield'] = array(
+    'title' => 'Shield',
+    'description' => 'Manage the settings of PHP Authentication shield.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('shield_admin_settings'),
+    'weight' => 10,
+    'access arguments' => array('administer shield'),
+    'file' => 'shield.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Sets the shield status.
+ *
+ * If a status is passed in, then that will be used.  Otherwise this function
+ * will fall-back on its in-built logic for determining if a page should be
+ * shielded.
+ *
+ * Modules wishing to have an impact on the shield status need to have a low
+ * enough weight so that they set the status before shield_boot is called.
+ *
+ * We do it this way because calling drupal_alter() in hook_boot seems to have
+ * bad side-effects.
+ *
+ * @param $status
+ *   A boolean to set the current page should protected by shield module.
+ *
+ * @return
+ *   A boolean to protect the current page or not.
+ */
+function shield_set_status($status = NULL) {
+  $stored_status = &drupal_static(__FUNCTION__);
+
+  if (isset($status)) {
+    $stored_status = $status;
+  }
+
+  // Force shield to be disabled in the following cases:
+  // - there are no shield credentials set
+  // - OR we're allowing Drush to bypass Shield
+  // - OR Shield is disabled via the GUI
+  // - OR the remote address is in the white list
+  $user = variable_get('shield_user', '');
+  $cli = (drupal_is_cli() && variable_get('shield_allow_cli', 1));
+  $enabled = variable_get('shield_enabled', 1);
+  $addresses = explode("\r\n", variable_get('shield_ignored_addresses', ''));
+  $server_address = isset($_SERVER[variable_get('shield_remote_address', 'REMOTE_ADDR')]) ? $_SERVER[variable_get('shield_remote_address', 'REMOTE_ADDR')] : FALSE;
+  if ($addresses && $server_address && array_search($server_address, $addresses) !== FALSE) {
+    $enabled_address = TRUE;
+  }
+  else {
+    $enabled_address = FALSE;
+  }
+  if (!$user || $cli || !$enabled || $enabled_address) {
+    $stored_status = FALSE;
+  }
+
+  // Return status if it's been set.
+  if (isset($stored_status)) {
+    return $stored_status;
+  }
+
+  // If our status hasn't already been set by something, then determine status.
+  $stored_status = TRUE;
+  $paths = variable_get('shield_paths', '');
+  $page_match = FALSE;
+
+  // Compare paths, if any have been set.
+  if (!empty($paths)) {
+    require_once DRUPAL_ROOT . '/includes/unicode.inc';
+    require_once DRUPAL_ROOT . '/' . variable_get('path_inc', 'includes/path.inc');
+    require_once DRUPAL_ROOT . '/includes/locale.inc';
+    require_once DRUPAL_ROOT . '/includes/language.inc';
+    drupal_language_initialize();
+    $pages = drupal_strtolower($paths);
+    $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+
+    // The path does not hit Drupal's index.php but bootstrapped. For example
+    // cron.php update.php etc. The code stolen from core's request_path().
+    $request_uri = request_uri();
+    if (empty($path) && isset($request_uri)) {
+      // Extract the path from REQUEST_URI.
+      $request_path = strtok($request_uri, '?');
+      $base_path_len = strlen(rtrim(dirname($_SERVER['SCRIPT_NAME']), '\/'));
+      // Unescape and strip $base_path prefix, leaving path without a leading slash.
+      $path = substr(urldecode($request_path), $base_path_len + 1);
+
+      // Under certain conditions Apache's RewriteRule directive prepends the value
+      // assigned to $_GET['q'] with a slash. Moreover we can always have a trailing
+      // slash in place, hence we need to normalize $path.
+      $path = trim($path, '/');
+    }
+    // Compare the lowercase internal and lowercase path alias (if any).
+    $page_match = drupal_match_path($path, $pages);
+    if ($path != $_GET['q']) {
+      $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
+    }
+  }
+
+  // Enable shield or not, depending on shield_method.
+  $method = variable_get('shield_method', 1);
+  switch ($method) {
+    case 1:
+      // Exclude matched paths from shield protection.
+      if ($page_match) {
+        $stored_status = FALSE;
+      }
+      break;
+
+    case 2:
+      // Exclude all un-matched paths from shield protection.
+      if (!$page_match) {
+        $stored_status = FALSE;
+      }
+      break;
+  }
+
+  return $stored_status;
+}
+
+/**
+ * Determines whether or not the current request will be protected.
+ *
+ * @return
+ *   A boolean to protect the current page or not.
+ */
+function shield_get_status() {
+  return shield_set_status();
+}
+
+/**
+ * Implements hook_boot().
+ */
+function shield_boot() {
+  // Bail if the page isn't protected by Shield.
+  if (!shield_get_status()) {
+    return;
+  }
+
+  // Announce authentication to other modules like HTTPRL and AdvAgg.
+  $_SERVER['AUTH_TYPE'] = 'Basic';
+
+  // Look for HTTP authentication variables as URL parameters.
+  if(isset($_GET['Authorization']) && preg_match('/Basic\s+(.*)$/i', $_GET['Authorization'], $matches)) {
+    list($name, $password) = explode(':', base64_decode($matches[1]));
+    $_SERVER['PHP_AUTH_USER'] = strip_tags($name);
+    $_SERVER['PHP_AUTH_PW'] = strip_tags($password);
+  }
+
+  // Attempt to authenticate user.
+  $user = variable_get('shield_user', '');
+  $pass = variable_get('shield_pass', '');
+  // If we have mod_php.
+  if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_USER'] === $user && $_SERVER['PHP_AUTH_PW'] === $pass) {
+    return;
+  }
+  elseif (substr(php_sapi_name(), 0, 3) == 'cgi' || substr(php_sapi_name(), 0, 3) == 'fpm') {
+    // We have (some sort of) CGI.
+    if (isset($_SERVER['REDIRECT_REMOTE_USER'])) {
+      $auth_var = 'REDIRECT_REMOTE_USER';
+    }
+    else {
+      $auth_var = 'REMOTE_USER';
+    }
+    if (!empty($_SERVER[$auth_var])) {
+      list($redir_user, $redir_pw) = explode(':', base64_decode(substr($_SERVER[$auth_var], 6)));
+      if ($redir_user == $user && $redir_pw == $pass) {
+        return;
+      }
+    }
+  }
+
+  $print = variable_get('shield_print', '');
+  $headers = array(
+    'WWW-Authenticate' => sprintf('Basic realm="%s"', strtr($print, array('[user]' => $user, '[pass]' => $pass))),
+    'status' => '401 Unauthorized',
+  );
+
+  drupal_send_headers($headers, TRUE);
+  exit;
+}
+
+/**
+ * Implements hook_boost_is_cacheable().
+ */
+function shield_boost_is_cacheable($parts, $request_type = 'normal') {
+  // If this page is protected by Shield, disable caching pages with Boost,
+  // which would otherwise be accessible since Boost delivers pages before
+  // Shield can influence authentication.
+  if (shield_get_status()) {
+    $parts['is_cacheable'] = FALSE;
+    $parts['is_cacheable_reason'] = t('Shield prevents all pages from being cached by Boost.');
+  }
+  return $parts;
+}

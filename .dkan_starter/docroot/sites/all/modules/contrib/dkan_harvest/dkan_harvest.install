@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * @file
+ * Install file for hhs_ckan_migrate.
+ */
+
+function dkan_harvest_install() {
+  dkan_harvest_uuid_length();
+}
+
+/**
+ * Implements hook_disable().
+ */
+function dkan_harvest_disable() {
+  Migration::deregisterMigration('dkan_harvest_data_json');
+}
+
+/**
+ * Implements hook_enable().
+ */
+function dkan_harvest_enable() {
+  Migration::registerMigration('dkan_harvest_data_json');
+
+  $table = _dkan_migrate_base_data_json_table('dkan_harvest_data_json');
+  dkan_migrate_base_add_modified_column($table);
+}
+
+/**
+ * Changes length of uuid field to support URLs.
+ */
+function dkan_harvest_update_7001(&$sandbox) {
+  dkan_harvest_uuid_length();
+}
+
+/**
+ * Changes length of uuid field to 144 chars.
+ */
+function dkan_harvest_uuid_length() {
+  $field = uuid_schema_field_definition();
+  $field['length'] = 144;
+  db_change_field('node', 'uuid', 'uuid', $field);
+}

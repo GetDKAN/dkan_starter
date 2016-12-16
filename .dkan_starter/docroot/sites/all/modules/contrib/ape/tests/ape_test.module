@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @file
+ * Provide callbacks to test cache headers.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function ape_test_menu() {
+  $items = array();
+
+  $items['ape_redirect_301'] = array(
+    'title' => 'ape redirect 301',
+    'access callback' => TRUE,
+    'page callback' => 'ape_test_redirect_callbacks',
+    'page arguments' => array('301'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['ape_redirect_302'] = array(
+    'title' => 'ape redirect 302',
+    'access callback' => TRUE,
+    'page callback' => 'ape_test_redirect_callbacks',
+    'page arguments' => array('302'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['ape_redirect_landing'] = array(
+    'title' => 'ape redirect landing',
+    'access callback' => TRUE,
+    'page callback' => 'ape_test_redirect_callbacks',
+    'page arguments' => array('landing'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Page callback for ape_test_menu() redirects.
+ *
+ * @param string $argument
+ *   Declares which reaction should happen.
+ */
+function ape_test_redirect_callbacks($argument) {
+  switch ($argument) {
+    case '301':
+      drupal_goto('ape_redirect_landing', array(), 301);
+      break;
+
+    case '302':
+      drupal_goto('ape_redirect_landing', array(), 302);
+      break;
+
+    case 'landing':
+      print t('Arrived at your final destination');
+      break;
+  }
+}

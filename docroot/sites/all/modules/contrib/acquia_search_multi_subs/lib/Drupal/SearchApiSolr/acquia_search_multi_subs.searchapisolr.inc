@@ -23,7 +23,16 @@ function acquia_search_multi_subs_searchapi_init() {
   $ah_site_name = isset($_ENV['AH_SITE_NAME']) ? $_ENV['AH_SITE_NAME'] : '';
   $ah_region = isset($_ENV['AH_CURRENT_REGION']) ? $_ENV['AH_CURRENT_REGION'] : '';
   $sites_foldername = substr(conf_path(), strrpos(conf_path(), '/') + 1);
-  $subscription_expected_search_cores = acquia_search_multi_subs_get_expected_search_cores($acquia_identifier, $ah_site_environment, $ah_site_name, $sites_foldername);
+  $ah_db_name = isset($GLOBALS['conf']['acquia_hosting_site_info']['db']['name']) ? $GLOBALS['conf']['acquia_hosting_site_info']['db']['name'] : '';
+
+  // Check if environment has changed comparing to last run.
+  $check_if_environment_is_same = acquia_search_multi_subs_check_and_cache_environment_detection($acquia_identifier, $ah_site_environment, $ah_site_name, $ah_region, $sites_foldername, $ah_db_name, 'searchapisolr');
+  if ($check_if_environment_is_same) {
+    return;
+  }
+
+  // Environment looks different, so continue.
+  $subscription_expected_search_cores = acquia_search_multi_subs_get_expected_search_cores($acquia_identifier, $ah_site_environment, $ah_site_name, $sites_foldername, $ah_db_name);
   // Get the search cores available in the subscription.
   $available_search_cores = acquia_search_multi_subs_get_search_cores();
 

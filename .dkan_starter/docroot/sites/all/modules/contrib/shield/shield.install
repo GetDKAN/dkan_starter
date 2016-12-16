@@ -1,0 +1,50 @@
+<?php
+/**
+ * @file
+ * Installation file for shield module
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function shield_requirements($phase) {
+  $requirements = array();
+  $t = get_t();
+
+  // Show warning if Boost is installed.
+  if ($phase === 'runtime' && module_exists('boost')) {
+    $requirements['shield_boost'] = array(
+      'title' => $t('Shield'),
+      'value' => $t('Boost caching suppressed'),
+      'description' => $t('Shield prevents shielded pages from being cached by Boost. This is because a Boost cache file can be delivered to unauthenticated users via the Boost .htaccess rules before Shield can influence authentication.'),
+      'severity' => REQUIREMENT_WARNING,
+    );
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function shield_uninstall() {
+  variable_del('shield_allow_cli');
+  variable_del('shield_enabled');
+  variable_del('shield_user');
+  variable_del('shield_pass');
+  variable_del('shield_print');
+  variable_del('shield_method');
+  variable_del('shield_paths');
+  variable_del('shield_ignored_addresses');
+  variable_del('shield_remote_address');
+}
+
+/**
+ * Moves shield_excluded_paths variable value to shield_paths variable.
+ */
+function shield_update_7001(&$sandbox) {
+  variable_set('shield_paths', variable_get('shield_excluded_paths', ''));
+  variable_del('shield_excluded_paths');
+
+  return t('"shield_excluded_paths" value is moved to "shield_paths" and the unused variable is deleted.');
+}

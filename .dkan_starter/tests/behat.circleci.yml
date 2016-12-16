@@ -1,0 +1,17 @@
+imports:
+  # dkan is the default profile
+  -  ../dkan/test/behat.yml
+  # data_stater will override dkan
+  -  behat.dkan_starter.yml
+  # custom has the last say
+  -  ../config/tests/behat.custom.yml
+
+default:
+  extensions:
+    Behat\MinkExtension:
+      base_url: http://127.0.0.1:8888
+      selenium2:
+        wd_host: http://127.0.0.1:4444/wd/hub
+    Drupal\DrupalExtension:
+      drupal:
+        drupal_root: %paths.base%/../docroot

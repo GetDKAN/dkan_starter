@@ -1,0 +1,42 @@
+default:
+  hostname: www.example.com
+  https_everywhere: FALSE
+  https_securepages: FALSE
+  clamav:
+    enable: FALSE
+  stage_file_proxy_origin: changeme
+  fast_file:
+    enable: TRUE
+    limit: 10MB
+    queue: 50MB
+
+redirectDomains:
+  - example.com
+  - oldsite.example.com
+
+private:
+  aws:
+    scrubbed_data_url: CHANGE ME  
+  probo:
+    password: CHANGE ME
+acquia:
+  subscription: 'professional'
+  search:
+    host: changeme
+    id: dkan_acquia_solr 
+  dev:
+    base_url: http://devurl
+    core_id: changeme
+    derived_key: changeme
+  test:
+    base_url: http://testurl
+    core_id: changeme
+    derived_key: changeme
+  ra:
+    base_url: http://testurl
+    core_id: changeme
+    derived_key: changeme
+  prod:
+    base_url: http://produrl
+    core_id: changeme
+    derived_key: changeme

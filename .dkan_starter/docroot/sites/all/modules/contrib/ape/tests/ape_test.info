@@ -1,0 +1,12 @@
+name = Advanced Page Expiration tests
+description = 'Support module for ape tests.'
+package = Testing
+core = 7.x
+hidden = TRUE
+
+; Information added by Drupal.org packaging script on 2015-02-13
+version = "7.x-1.1"
+core = "7.x"
+project = "ape"
+datestamp = "1423865520"
+

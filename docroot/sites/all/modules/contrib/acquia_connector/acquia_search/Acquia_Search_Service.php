@@ -35,8 +35,8 @@ class AcquiaSearchService extends DrupalApacheSolrService {
       $url .= "&";
     }
     $url .= 'request_id=' . $id;
-    // If we're hosted on Acquia, and have an Acquia request ID,
-    // append it to the request so that we map Solr queries to Acquia search requests.
+    // If we're hosted on Acquia, and have an Acquia request ID, append it to
+    // the request so that we map Solr queries to Acquia search requests.
     if (isset($_ENV['HTTP_X_REQUEST_ID'])) {
       $xid = empty($_ENV['HTTP_X_REQUEST_ID']) ? '-' : $_ENV['HTTP_X_REQUEST_ID'];
       $url .= '&x-request-id=' . rawurlencode($xid);
