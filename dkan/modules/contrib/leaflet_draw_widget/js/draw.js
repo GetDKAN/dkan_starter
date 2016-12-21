@@ -11,21 +11,102 @@
             var id = $(item).attr('id'),
             options = settings.leaflet_widget_widget[id];
             if (options.toggle) {
-              $('#' + id + '-input').before('<div class="map" style="cursor: pointer;" id="' + id + '-toggle">Add data manually</div>');
-              $('#' + id + '-toggle').click(function () {
+              $('#' + id + '-input').before('<div class="map btn btn-default" style="cursor: pointer;" id="' + id + '-geojson-toggle">GEOJSON</div>');
+              $('#' + id + '-input').before('<div class="map btn btn-default" style="cursor: pointer;" id="' + id + '-point-toggle">POINT</div></br><input type="text" id="manual-' + id + '-point-input" name="manual-point">');
+                $('#manual-' + id + '-point-input').hide();
+              $('#' + id + '-geojson-toggle').click(function () {
                 $(item).toggle();
                 if ($(this).hasClass('map')) {
                   $(this).text('Use map');
                   $(this).removeClass('map');
                   $('#' + id + '-input').get(0).type = 'text';
+
+                  //Hide select geographic areas if is enable.
+                  if (options.geographic_areas) {
+                    $('.geographic_areas_desc').hide();
+                  }
                 }
                 else {
-                  $(this).text('Add data manually');
+                  $(this).text('GEOJSON');
                   $('#' + id + '-input').get(0).type = 'hidden';
                   $(this).addClass('map');
+
+                  //Show select geographic areas if is enable.
+                  if (options.geographic_areas) {
+                    $('.geographic_areas_desc').show();
+                  }
                 }
               });
 
+               $('#' + id + '-point-toggle').click(function () {
+                $(item).toggle();
+                $('#manual-' + id + '-point-input').toggle();
+
+                if ($(this).hasClass('map')) {
+                  $(this).text('Use map');
+                  $(this).removeClass('map');
+                  $('#manual-' + id + '-point-input').get(0).type = 'text';
+
+                  //Hide select geographic areas if is enable.
+                  if (options.geographic_areas) {
+                    $('.geographic_areas_desc').hide();
+                  }
+                }
+                else {
+                  $(this).text('POINT');
+                  $('#' + id + '-input').get(0).type = 'hidden';
+                  $(this).addClass('map');
+                  var point_string = $('#manual-' + id + '-point-input').val();
+
+                  if (point_string) {
+                      var point_array = point_string.split(',');
+                      var geojsonFeature = {
+                        "type": "Feature",
+                        "properties": {},
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [point_array[0], point_array[1]]
+                        }
+                    };
+                    L.geoJson(geojsonFeature).addTo(map);
+                    leafletWidgetFormWrite(map._layers, id);
+                  }
+
+                  //Show select geographic areas if is enable.
+                  if (options.geographic_areas) {
+                    $('.geographic_areas_desc').show();
+                  }
+                }
+              });
+
+            }
+            if (options.geographic_areas) {
+              var json_data = {};
+              var selectList = "<div class='geographic_areas_desc'><p></br>Select a state to add into the map:</p><select id='geographic_areas' name='area'>";
+              selectList += "<option value='0'>" + Drupal.t('-none-') + "</option>";
+
+              for (i = 0; i < options.areas.length; i++) {
+                json_data = jQuery.parseJSON(options.areas[i]);
+                $.each(json_data.features, function (index, item) {
+                    selectList += "<option value='" + item.id + "'>" + item.properties.name + "</option>";
+                });
+              }
+              selectList += "</select></div></br>";
+              $('#' + id + '-input').before(selectList);
+
+              $('#geographic_areas').change(function() {
+                var area = $(this).val();
+
+                for (i = 0; i < options.areas.length; i++) {
+                  json_data = jQuery.parseJSON(options.areas[i]);
+                  $.each(json_data.features, function (index, item) {
+                    if (item.id == area) {
+                      L.geoJson(item).addTo(map);
+                      leafletWidgetFormWrite(map._layers, id);
+                    }
+                  });
+                }
+              });
             }
             var map = L.map(id, options.map);
 
@@ -101,7 +182,7 @@
       if (!write.length) {
         write = JSON.stringify({"type":"FeatureCollection","features":[]});
       }
-      $('#' + id + '-input').val(write);
+      $('#' + id + '-input').val('{"type":"FeatureCollection", "features":[' + write + ']}');
     }
 
     /**
