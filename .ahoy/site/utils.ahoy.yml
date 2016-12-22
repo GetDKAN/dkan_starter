@@ -172,7 +172,16 @@ commands:
 
   files-link:
     usage: Links files.
-    cmd: ahoy cmd-proxy ln -s ../../../$(ahoy utils name).prod.files/files docroot/sites/default/files
+    cmd: |
+      ASSET_FILE_DIR="$(ahoy site name).prod.files"
+      rm -rf docroot/sites/default/files
+      rm -rf docroot/sites/default/private
+      if [ -d "$ASSET_FILE_DIR/files" ]; then
+        ahoy cmd-proxy ln -s ../../../$(ahoy site name).prod.files/files docroot/sites/default/files
+      fi
+      if [ -d "$ASSET_FILE_DIR/private" ]; then
+        ahoy cmd-proxy ln -s ../../../$(ahoy site name).prod.files/private docroot/sites/default/private
+      fi
     hide: true
 
   files-fix-permissions:
