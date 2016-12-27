@@ -8,7 +8,7 @@ if [ -d docroot/sites/default/files ]; then
   find docroot/sites/default/files/ -type f -exec chmod o+rw {} \;
 fi
 
-if [ -d docroot/sites/default/private]; then
+if [ -d docroot/sites/default/private ]; then
   find docroot/sites/default/private/ -type d -exec chmod o+rwx {} \;
   find docroot/sites/default/private/ -type f -exec chmod o+rw {} \;
 fi
