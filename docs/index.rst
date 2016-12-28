@@ -36,3 +36,4 @@ Table of Contents
    troubleshooting/index
    modules/index
    deployment/index
+   customize/index
