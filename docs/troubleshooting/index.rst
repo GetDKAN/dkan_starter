@@ -24,6 +24,20 @@ When trying to connect to local docker machine:
     ahoy diagnose all
     ahoy docker up
 
+Container not running
+=====================================================
+
+If you get an error when running ``ahoy diagnose all`` like:
+
+.. code-block:: bash
+
+    [Error] The "db" container is not running: mysite_db_1          /entrypoint.sh mysqld            Exit 1
+
+then you can try:
+
+1. Restart the containers ``ahoy docker stop; ahoy docker up`` 
+2. Destroy the containers (WARNING: YOU WILL LOSE DATA) ``ahoy docker destroy; ahoy site up``
+3. Restart the docker maching ``docker-machine stop default; docker-machine start default; eval "$(docker-machine env default)"; ahoy site up``
 
 Could not open connection: Curl error
 =====================================
