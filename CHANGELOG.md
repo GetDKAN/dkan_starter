@@ -1,4 +1,12 @@
 # Change log
+## [1.12.13.0]
+- Update dkan version to 7.x-1.12.13 https://github.com/NuCivic/dkan/releases/tag/7.x-1.12.13
+- Recolection of customize dkan docs #47
+- Adds support for private files if available in s3 backup #49
+- Fix ahoy build update. #50
+- Typo in ahoy utils files-link #51
+- Add troubleshooting steps when container doesn't start #52
+- Fix `ahoy build custom libs` not working. #53
 
 ## [1.12.12.0]
 ### Changed
