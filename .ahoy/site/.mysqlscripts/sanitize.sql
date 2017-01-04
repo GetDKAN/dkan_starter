@@ -45,9 +45,16 @@ UPDATE users SET name = 'admin' WHERE name = 'administrator';
 UPDATE users SET pass = '$S$DAGmJJr.MOF1M6wTF/YEU6yBchL5kkAvaMGgvXQtVVJyD4KXmc5G'  WHERE uid = 1;
 UPDATE users set name = md5(name) where name <> 'admin' AND uid <> 0;
 
+CREATE TABLE IF NOT EXISTS flood (id int auto_increment primary key);
 TRUNCATE flood;
+
+CREATE TABLE IF NOT EXISTS history (id int auto_increment primary key);
 TRUNCATE history;
+
+CREATE TABLE IF NOT EXISTS sessions (id int auto_increment primary key);
 TRUNCATE sessions;
+
+CREATE TABLE IF NOT EXISTS watchdog (id int auto_increment primary key);
 TRUNCATE watchdog;
 
 SELECT concat('TRUNCATE TABLE ', TABLE_NAME, ';') FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'access%';
