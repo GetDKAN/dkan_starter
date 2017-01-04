@@ -11,6 +11,35 @@ define('FILE_SIZE_PREVIEW_LIMIT', 3000000);
 module_load_include('inc', 'recline', 'recline.field');
 
 /**
+ * Check if a preview it's embedded or not.
+ */
+function recline_embedded() {
+  return menu_get_item(current_path())['path'] === 'node/%/recline-embed';
+}
+
+/**
+ * Check if bootstrap is already added.
+ */
+function is_boostrap_available(){
+  global $theme;
+  $themes = list_themes();
+  $base_theme = drupal_find_base_themes($themes, $theme);
+
+  if($theme == 'nuboot_radix' || in_array('NuBoot Radix', $base_theme)) {
+    return TRUE;
+  } else {
+    $re = '/bootstrap(\\.min)?\\.js/';
+    $js = array_keys(drupal_add_js());
+    foreach ($js as $j) {
+      if(preg_match($re, $j)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+}
+
+/**
  * Implements hook_menu().
  */
 function recline_menu() {
@@ -164,19 +193,11 @@ function recline_theme() {
   return array(
     'recline_default_formatter' => array(
       'variables' => array('item' => NULL),
-      'file' => 'recline.field.inc',
-    ),
-    'recline_link_formatter' => array(
-      'variables' => array('item' => NULL),
-      'file' => 'recline.field.inc',
-    ),
-    'recline_url_formatter' => array(
-      'variables' => array('item' => NULL),
-      'file' => 'recline.field.inc',
+      'file' => 'recline.theme.inc',
     ),
     'recline_widget' => array(
       'render element' => 'element',
-      'file' => 'recline.field.inc',
+      'file' => 'recline.theme.inc',
     ),
     'recline_embed' => array(
       'variables' => array('title' => NULL, 'content' => NULL),
@@ -230,11 +251,6 @@ function recline_libraries_info() {
       ),
     ),
   );
-
-  if(!is_boostrap_available()) {
-    $libraries['recline']['files']['js'][] = 'vendor/bootstrap/3.2.0/js/bootstrap.js';
-    $libraries['recline']['files']['css'][] = 'vendor/bootstrap/3.2.0/css/bootstrap.css';
-  }
 
   $libraries['lodash'] = array(
     'name' => 'lodash',
@@ -418,29 +434,92 @@ function recline_libraries_info() {
     ),
   );
 
+  $libraries['xls'] = array(
+    'name' => 'xls',
+    'vendor url' => 'https://github.com/NuCivic/recline.backend.xlsx',
+    'version' => '0.0.1',
+    'files' => array(
+      'js' => array(
+        'dist/recline.backend.xlsx.min.js',
+      ),
+    ),
+  );
+
+  $libraries['jsxlsx'] = array(
+    'name' => 'jsxlsx',
+    'vendor url' => 'https://github.com/SheetJS/js-xls',
+    'version' => '0.7.5',
+    'files' => array(
+      'js' => array(
+        'dist/xlsx.core.min.js',
+      ),
+    ),
+  );
+
+  $libraries['jsonview'] = array(
+    'name' => 'jQuery JSONView',
+    'vendor url' => 'https://github.com/yesmeck/jquery-jsonview',
+    'download url' => 'https://github.com/yesmeck/jquery-jsonview',
+    'path' => '',
+    'version' => array(
+      'file' => 'bower.json',
+      'pattern' => '@+([0-9][.][0-9][.][0-9])@',
+      'lines' => 4,
+      'cols' => 14,
+    ),
+    'files' => array(
+      'js' => array(
+        'dist/jquery.jsonview.js',
+      ),
+      'css' => array(
+        'dist/jquery.jsonview.css',
+      ),
+    ),
+  );
+
+  $libraries['highlight'] = array(
+    'name' => 'Highlight.js',
+    'vendor url' => 'https://github.com/isagalaev/highlight.js',
+    'download url' => 'https://github.com/isagalaev/highlight.js',
+    'path' => '',
+    'version' => '8.8.0',
+    'files' => array(
+      'js' => array(
+        'highlight.pack.js',
+      ),
+      'css' => array(
+        'styles/default.css',
+      ),
+    ),
+  );
+
+  if(!is_boostrap_available()) {
+    $libraries['recline']['files']['js'][] = 'vendor/bootstrap/3.2.0/js/bootstrap.js';
+    $libraries['recline']['files']['css'][] = 'vendor/bootstrap/3.2.0/css/bootstrap.css';
+  }
+
   return $libraries;
 }
 
-/**
- * Check if bootstrap is already added.
- */
-function is_boostrap_available(){
-  global $theme;
-  $themes = list_themes();
-  $base_theme = drupal_find_base_themes($themes, $theme);
 
-  if($theme == 'nuboot_radix' || in_array('NuBoot Radix', $base_theme)) {
-    return TRUE;
-  } else {
-    $re = '/bootstrap(\\.min)?\\.js/';
-    $js = array_keys(drupal_add_js());
-    foreach ($js as $j) {
-      if(preg_match($re, $j)) {
-        return TRUE;
-      }
-    }
-    return FALSE;
-  }
+/**
+ * Implements hook_library().
+ */
+function recline_library() {
+  $module_path = drupal_get_path('module', 'recline');
+  $libraries['highlight'] = array(
+    'title' => 'Highlight.js',
+    'website' => 'https://github.com/isagalaev/highlight.js',
+    'version' => '8.8.0',
+    'js' => array(
+      $module_path . '/lib/highlight/highlight.pack.js' => array('group' => JS_DEFAULT),
+    ),
+    'css' => array(
+      $module_path . '/lib/highlight/styles/default.css',
+    ),
+  );
+
+  return $libraries;
 }
 
 /**
@@ -490,4 +569,16 @@ function recline_file_download($uri, $field_type = 'file') {
  */
 function recline_file_resup_supported_field_widget_types() {
   return 'recline_widget';
+}
+
+/*
+ * Returns array of possible view types supported by Recline.
+ */
+function recline_view_options() {
+  $options = array(
+    'grid' => t('Grid'),
+    'graph' => t('Graph'),
+    'map' => t('Map'),
+  );
+  return $options + module_invoke_all('recline_view_options');
 }
