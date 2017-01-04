@@ -76,17 +76,27 @@ commands:
   custom-libs:
     usage: Downloads 3rd party libraries
     cmd: |
-      if [ -f config/custom_libs.make ] && [ `cat config/custom_libs.make | sed '/^\s*$/d' | wc -l` -gt 3 ]; then
+      # Make writable so that error not thrown on second attempt.
+      mkdir -p contrib/libraries && chmod 777 contrib/libraries
+
+      if [ -f config/custom_libs.make ] && [ `cat config/custom_libs.make | sed '/^\s*$/d' | wc -l` -gt 2 ]; then
         ahoy drush -y make --no-core --contrib-destination=contrib config/custom_libs.make --no-recursion --no-cache --verbose
       
         # Remove old stuff first
         dirs=( $(find ./contrib/libraries -type d  -maxdepth 1 | sed 's/\.\/contrib\/libraries\///g') )
         for dir in "${dirs[@]}";
         do
-          rm -fR ./docroot/sites/all/libraies/$dir
+          # Skip root folder
+          if [ "$dir" == "./contrib/libraries" ]; then
+            continue;
+          fi
+          echo "Replace ./docroot/sites/all/libraries/$dir"
+          rm -fR ./docroot/sites/all/libraries/$dir
+          mv contrib/libraries/$dir docroot/sites/all/libraries/
         done
-        mv contrib/libraries/* docroot/sites/all/libraries
-        rm -rf contrib
+
+        rm -fR contrib
+  
       fi
 
   overrides:
