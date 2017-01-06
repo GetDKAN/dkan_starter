@@ -269,7 +269,7 @@ function autocomplete_deluxe_element_process($element) {
   $element['textfield'] = array(
     '#type' => 'textfield',
     '#size' => isset($element['#size']) ? $element['#size'] : '',
-    '#attributes' => array('class' => array('autocomplete-deluxe-form'), 'id' => array($html_id)),
+    '#attributes' => array('class' => array('autocomplete-deluxe-form'), 'id' => array($html_id), 'aria-label' => t('Autocomplete')),
     '#default_value' => '',
     '#prefix' => '<div class="autocomplete-deluxe-container">',
     '#suffix' => '</div>',
