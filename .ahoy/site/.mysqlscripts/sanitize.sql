@@ -45,16 +45,30 @@ UPDATE users SET name = 'admin' WHERE name = 'administrator';
 UPDATE users SET pass = '$S$DAGmJJr.MOF1M6wTF/YEU6yBchL5kkAvaMGgvXQtVVJyD4KXmc5G'  WHERE uid = 1;
 UPDATE users set name = md5(name) where name <> 'admin' AND uid <> 0;
 
-CREATE TABLE IF NOT EXISTS flood (id int auto_increment primary key);
 TRUNCATE flood;
-
-CREATE TABLE IF NOT EXISTS history (id int auto_increment primary key);
 TRUNCATE history;
-
-CREATE TABLE IF NOT EXISTS sessions (id int auto_increment primary key);
 TRUNCATE sessions;
 
-CREATE TABLE IF NOT EXISTS watchdog (id int auto_increment primary key);
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `watchdog` (
+  `wid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Primary Key: Unique watchdog event ID.',
+  `uid` int(11) NOT NULL DEFAULT '0' COMMENT 'The users.uid of the user who triggered the event.',
+  `type` varchar(64) NOT NULL DEFAULT '' COMMENT 'Type of log message, for example "user" or "page not found."',
+  `message` longtext NOT NULL COMMENT 'Text of log message to be passed into the t() function.',
+  `variables` longblob NOT NULL COMMENT 'Serialized array of variables that match the message string and that is passed into the t() function.',
+  `severity` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'The severity level of the event; ranges from 0 (Emergency) to 7 (Debug)',
+  `link` varchar(255) DEFAULT '' COMMENT 'Link to view the result of the event.',
+  `location` text NOT NULL COMMENT 'URL of the origin of the event.',
+  `referer` text COMMENT 'URL of referring page.',
+  `hostname` varchar(128) NOT NULL DEFAULT '' COMMENT 'Hostname of the user who triggered the event.',
+  `timestamp` int(11) NOT NULL DEFAULT '0' COMMENT 'Unix timestamp of when event occurred.',
+  PRIMARY KEY (`wid`),
+  KEY `type` (`type`),
+  KEY `uid` (`uid`),
+  KEY `severity` (`severity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table that contains logs of all system events.';
+/*!40101 SET character_set_client = @saved_cs_client */;
 TRUNCATE watchdog;
 
 SELECT concat('TRUNCATE TABLE ', TABLE_NAME, ';') FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'access%';
