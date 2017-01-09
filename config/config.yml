@@ -41,4 +41,4 @@ acquia:
 gaClientTrackingCode: UA-XXXXX-Y
 gaNuCivicTrackingCode: UA-XXXXX-Z
 hsts:
-  enable: FALSE
+  enable: TRUE
