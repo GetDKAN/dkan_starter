@@ -5,8 +5,6 @@
  * Migration File for DKAN Harvest Data.Json.
  */
 
-module_load_include('inc', 'dkan_harvest', 'dkan_harvest.migrate');
-
 /**
  * Migration class to harves POD endpoints.
  */
