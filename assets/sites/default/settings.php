@@ -271,6 +271,11 @@ search*";
     $conf['preprocess_js'] = 1;
     $conf['preprocess_css'] = 1;
     $conf['pathauto_update_action'] = 1;
+    
+    // Enable HSTS on production.
+    if (isset($conf['hsts']['enable']) && $conf['hsts']['enable']) {
+      header('Strict-Transport-Security: max-age:31536000; preload');
+    }
     break;
 
   default:
