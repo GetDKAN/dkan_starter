@@ -9,11 +9,9 @@ default:
     enable: TRUE
     limit: 10MB
     queue: 50MB
-
 redirectDomains:
   - example.com
   - oldsite.example.com
-
 private:
   aws:
     scrubbed_data_url: CHANGE ME  
@@ -40,6 +38,7 @@ acquia:
     base_url: http://produrl
     core_id: changeme
     derived_key: changeme
-
 gaClientTrackingCode: UA-XXXXX-Y
 gaNuCivicTrackingCode: UA-XXXXX-Z
+hsts:
+  enable: FALSE
