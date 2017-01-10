@@ -3,7 +3,7 @@ This details how to update the docker images for DKAN. NuCivic owns the containe
 Step-by-step guide
 -----------------
 
-Steps to pull, change, commit and push the docker web image:
+Steps to pull, change, and commit to the docker web image:
 Please substitute the following in the instructions with the proper details.
 
 .. code-block:: bash
