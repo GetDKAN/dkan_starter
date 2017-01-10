@@ -1,5 +1,0 @@
-name = dkan_harvest_example
-description = Example module for dkan_harvest
-core = 7.x
-
-dependencies[] = 'dkan_harvest'
