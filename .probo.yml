@@ -33,6 +33,8 @@ steps:
       time bash dkan/dkan-init.sh dkan --deps-only
       sudo apt-get update
       sudo apt-get install libdigest-hmac-perl clamav clamav-freshclam -y
+      # Clamav need virus database to function.
+      freshclam
 
       echo ""
       echo "-------> Setup the settings.local.php file and install a fresh database."
