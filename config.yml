@@ -1,3 +1,6 @@
 data_starter:
   version: 1.12.13.0
 
+acquia:
+  search:
+    host: useast1-c1.acquia-search.com
