@@ -132,7 +132,12 @@ ini_set('session.gc_maxlifetime', 200000);
 ini_set('session.cookie_lifetime', 2000000);
 
 // Disable cron. We run this from Jenkins.
-$conf['cron_safe_threshold'] = 0;
+// Except for CircleCI or test purpose
+$CI = getenv('CI');
+if (!$CI)
+{
+  $conf['cron_safe_threshold'] = 0;
+}
 
 // Disable git support for the environment indicator by default.
 $conf['environment_indicator_git_support'] = FALSE;
@@ -278,6 +283,16 @@ search*";
     print ("ENVIRONMENT set to " . ENVIRONMENT . ", but not mapped in settings.php");
     exit();
 }
+
+// 1.13 upgrade.
+if (!isset($conf['features_master_temp_disabled_modules'])) {
+  $conf['features_master_temp_disabled_modules'] = array();
+}
+
+$conf['features_master_temp_disabled_modules'][] = 'dkan_sitewide_demo_front';
+$conf['features_master_temp_disabled_modules'][] = 'menu_token';
+$conf['features_master_temp_disabled_modules'][] = 'remote_file_source';
+$conf['features_master_temp_disabled_modules'][] = 'update';
 
 // Fake the 'derived_key' used to connect to Solr, if we can't find the
 // Acquia-set "AH_PRODUCTION" environment variable.
