@@ -36,10 +36,6 @@ function data_config_update_7002() {
         $messages[] = $value->mlid . ' choropleth link deleted';
       }
     }
-    if (menu_rebuild()) {
-      drupal_flush_all_caches();
-      $messages[] = t('menu rebuilt');
-    }
   }
 
   if (!module_exists('visualization_entity_geojson_bundle')) {
@@ -59,10 +55,6 @@ function data_config_update_7002() {
           ->execute();
         $messages[] = $value->mlid . ' geojson link deleted';
       }
-    }
-    if (menu_rebuild()) {
-      drupal_flush_all_caches();
-      $messages[] = t('menu rebuilt');
     }
   }
 
@@ -92,10 +84,10 @@ function data_config_update_7002() {
         $messages[] = $value->mlid . ' geo_file link deleted';
       }
     }
-    if (menu_rebuild()) {
-      drupal_flush_all_caches();
-      $messages[] = t('menu rebuilt');
-    }
+  }
+  if (menu_rebuild()) {
+    drupal_flush_all_caches();
+    $messages[] = t('menu rebuilt');
   }
   return $messages;
 }
