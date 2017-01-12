@@ -167,8 +167,8 @@ commands:
       set -e
       AHOY_CMD_PROXY=''
       DIRNAME=${PWD##*/}
-      if [[ "$DIRNAME" != "data_starter_private" ]]; then
-        echo "This command should only be use from a data_starter_private working copy"
+      if [[ "$DIRNAME" != "dkan_starter" ]]; then
+        echo "This command should only be use from a dkan_starter working copy"
         exit 0
       fi
 
