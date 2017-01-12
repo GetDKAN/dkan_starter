@@ -183,7 +183,7 @@ commands:
       fi
       # No ahoy commands after cd-ing out of project folder.
       cd ..
-      git clone 'git@github.com:NuCivic/data_starter_private.git' {{args}} --depth=1
+      git clone 'git@github.com:NuCivic/dkan_starter.git' {{args}} --depth=1
       cd {{args}}
       rm -rf .git build.make build-dkan.make drupal-org-core.make
       echo "Site {{args}} initiated at ../{{args}}"
