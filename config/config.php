@@ -21,6 +21,7 @@ $conf = array (
       'limit' => '10MB',
       'queue' => '50MB',
     ),
+    'x_frame_options' => 'CHANGE ME',
   ),
   'redirectDomains' => 
   array (

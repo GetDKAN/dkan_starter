@@ -9,6 +9,7 @@ default:
     enable: TRUE
     limit: 10MB
     queue: 50MB
+  x_frame_options: 'CHANGE ME'
 
 redirectDomains:
   - example.com
