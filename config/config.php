@@ -73,4 +73,14 @@ $conf = array (
   ),
   'gaClientTrackingCode' => 'UA-XXXXX-Y',
   'gaNuCivicTrackingCode' => 'UA-XXXXX-Z',
+  'circle' => 
+  array (
+    'test_dirs' => 
+    array (
+      0 => 'tests/features',
+      1 => 'dkan/test/features',
+      2 => 'config/test/features',
+    ),
+    'memory_limit' => '256M',
+  ),
 );

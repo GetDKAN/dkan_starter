@@ -152,9 +152,8 @@ commands:
     usage: ahoy build config - Applies site specific changes stored in config.yml
     cmd: |
       # render custom .htaccess
-      tempdir=$(mktemp -d "/tmp/$0.XXXXXXXX")
-      ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb > $tempdir/.htaccess
-      cp $tempdir/.htaccess config/.htaccess
+      ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb > config/.htaccess
+      ahoy cmd-proxy ruby .ahoy/site/.scripts/circle.rb > circle.yml
 
       # Transpose config.yml to php
       cd .ahoy/site

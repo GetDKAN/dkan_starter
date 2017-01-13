@@ -19,6 +19,7 @@ private:
     scrubbed_data_url: CHANGE ME  
   probo:
     password: CHANGE ME
+
 acquia:
   subscription: 'professional'
   search:
@@ -43,3 +44,10 @@ acquia:
 
 gaClientTrackingCode: UA-XXXXX-Y
 gaNuCivicTrackingCode: UA-XXXXX-Z
+
+circle:
+  test_dirs:
+    - tests/features
+    - dkan/test/features
+    - config/test/features
+  memory_limit: 256M
