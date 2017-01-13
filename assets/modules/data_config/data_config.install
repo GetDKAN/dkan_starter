@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Additional setup tasks for DKAN.
+ */
+
+/**
  * Removes dkan_default_content.
  */
 function data_config_update_7001() {
@@ -8,3 +13,81 @@ function data_config_update_7001() {
   drupal_uninstall_modules(array("dkan_default_content"));
 }
 
+/**
+ * Remove disabled visualization menu links.
+ */
+function data_config_update_7002() {
+
+  if (!module_exists('visualization_entity_choropleth_bundle')) {
+    // Remove choropleth bundle.
+    db_delete('eck_bundle')
+      ->condition('name', 'choropleth_visualization')
+      ->execute();
+    // Remove choropleth links.
+    $query = db_select('menu_links', 'm');
+    $query->fields('m', array('mlid'));
+    $query->condition('link_path', '%' . db_like('choropleth') . '%', 'LIKE');
+    $result = $query->execute();
+    if ($result) {
+      foreach ($result as $value) {
+        db_delete('menu_links')
+          ->condition('mlid', $value->mlid)
+          ->execute();
+        $messages[] = $value->mlid . ' choropleth link deleted';
+      }
+    }
+  }
+
+  if (!module_exists('visualization_entity_geojson_bundle')) {
+    // Remove choropleth bundle.
+    db_delete('eck_bundle')
+      ->condition('name', 'geojson_visualization')
+      ->execute();
+    // Remove choropleth links.
+    $query = db_select('menu_links', 'm');
+    $query->fields('m', array('mlid'));
+    $query->condition('link_path', '%' . db_like('geojson_visualization') . '%', 'LIKE');
+    $result = $query->execute();
+    if ($result) {
+      foreach ($result as $value) {
+        db_delete('menu_links')
+          ->condition('mlid', $value->mlid)
+          ->execute();
+        $messages[] = $value->mlid . ' geojson link deleted';
+      }
+    }
+  }
+
+  if (!module_exists('geo_file_entity')) {
+    // Remove geo_file residuals.
+    db_delete('eck_bundle')
+      ->condition('name', 'geojson')
+      ->execute();
+    db_delete('eck_entity_type')
+      ->condition('name', 'geo_file')
+      ->execute();
+    db_drop_table('eck_geo_file');
+    db_drop_table('field_data_field_ve_geojson_key');
+    db_drop_table('field_data_field_ve_geojson_value');
+    db_drop_table('field_revision_field_ve_geojson_key');
+    db_drop_table('field_revision_field_ve_geojson_value');
+    // Remove geo_file links.
+    $query = db_select('menu_links', 'm');
+    $query->fields('m', array('mlid'));
+    $query->condition('link_path', '%' . db_like('geo_file') . '%', 'LIKE');
+    $result = $query->execute();
+    if ($result) {
+      foreach ($result as $value) {
+        db_delete('menu_links')
+          ->condition('mlid', $value->mlid)
+          ->execute();
+        $messages[] = $value->mlid . ' geo_file link deleted';
+      }
+    }
+  }
+  if (menu_rebuild()) {
+    drupal_flush_all_caches();
+    $messages[] = t('menu rebuilt');
+  }
+  return $messages;
+}
