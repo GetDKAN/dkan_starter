@@ -1,4 +1,7 @@
 # Change log
+## [1.12.13.2]
+- Fix broken template #69
+
 ## [1.12.13.1]
 - Fix `ahoy build new` #63
 - Update remote.ahoy.yml #64
