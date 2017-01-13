@@ -24,7 +24,7 @@ dependencies:
      - "~/.drush"
   pre:
     - rm /opt/circleci/php/$(phpenv global)/etc/conf.d/xdebug.ini
-    - echo "memory_limit = 256M" > $PHPENV_ROOT/versions/$(phpenv global)/etc/conf.d/memory.ini
+    - echo "memory_limit =  256M" > $PHPENV_ROOT/versions/$(phpenv global)/etc/conf.d/memory.ini
     - echo "always_populate_raw_post_data = -1" > $PHPENV_ROOT/versions/$(phpenv global)/etc/conf.d/deprecated.ini
     - sudo apt-get update -y && sudo apt-get install -y x11vnc clamav clamav-freshclam
     - yes | sudo perl -MCPAN -e "install Digest::HMAC_SHA1;"
@@ -50,7 +50,7 @@ dependencies:
 ## Customize test commands
 test:
   override:
-     - BEHAT_FOLDER=$HOME/$CIRCLE_PROJECT_REPONAME/tests ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug':
+    - BEHAT_FOLDER=$HOME/$CIRCLE_PROJECT_REPONAME/tests ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features config/test/features --tags='~@customizable&&~@fixme&&~@testBug':
         timeout: 1200
         parallel: true
   post:
