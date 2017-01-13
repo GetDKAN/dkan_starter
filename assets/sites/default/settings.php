@@ -153,6 +153,9 @@ $conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
 $conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
 $conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
 
+// Never disallow cli access via shield config.
+$conf['shield_allow_cli'] = 1;
+
 /******************************************************
  * OPTIONAL: Override default settings per environment.
  ******************************************************/
