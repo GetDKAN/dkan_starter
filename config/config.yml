@@ -49,5 +49,5 @@ circle:
   test_dirs:
     - tests/features
     - dkan/test/features
-    - config/test/features
+    - config/tests/features
   memory_limit: 256M
