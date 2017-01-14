@@ -79,7 +79,7 @@ $conf = array (
     array (
       0 => 'tests/features',
       1 => 'dkan/test/features',
-      2 => 'config/test/features',
+      2 => 'config/tests/features',
     ),
     'memory_limit' => '256M',
   ),
