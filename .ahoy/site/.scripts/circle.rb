@@ -9,8 +9,8 @@ class CircleCIConfig
 
   def initialize config
     default_test_dirs = ["tests/features", "dkan/test/features", "config/tests/features"]
-    @test_dirs = config["default"]["test_dirs"] ? config["default"]["test_dirs"] : default_test_dirs 
-    @memory_limit = config["default"]["memory_limit"] ? config["default"]["memory_limit"] : "256M"
+    @test_dirs = config["circle"]["test_dirs"] ? config["circle"]["test_dirs"] : default_test_dirs
+    @memory_limit = config["circle"]["memory_limit"] ? config["circle"]["memory_limit"] : "256M"
   end
 
   def render(template)
