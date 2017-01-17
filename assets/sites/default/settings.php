@@ -204,6 +204,21 @@ switch(ENVIRONMENT) {
       'syslog',
       'shield',
     );
+
+    // Disable dkan_worflow modules so that dkan tests pass
+    // See: https://jira.govdelivery.com/browse/CIVIC-5128
+    if (getenv('CI') == "true")
+    {
+      $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow';
+      $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow_permissions';
+      $conf['features_master_temp_disabled_modules'][] = 'link_badges';
+      $conf['features_master_temp_disabled_modules'][] = 'menu_badges';
+      $conf['features_master_temp_disabled_modules'][] = 'views_dkan_workflow_tree';
+      $conf['features_master_temp_disabled_modules'][] = 'workbench';
+      $conf['features_master_temp_disabled_modules'][] = 'workbench_email';
+      $conf['features_master_temp_disabled_modules'][] = 'workbench_moderation';
+    }
+
     // Show ALL errors when working locally.
     $conf['error_level'] = ERROR_REPORTING_DISPLAY_ALL;
     ini_set("display_errors", 1);
