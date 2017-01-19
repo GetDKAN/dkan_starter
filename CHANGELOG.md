@@ -1,4 +1,16 @@
 # Change log
+## [1.12.13.2]
+- Fix broken template #69
+
+## [1.12.13.1]
+- Fix `ahoy build new` #63
+- Update remote.ahoy.yml #64
+- Fix http to https redirects #65
+- Clean up db when vis_entity modules are disabled #66
+- Add drupal extension patch for some custom tests. #67
+- Make circle.yml configurable via config.yml #68
+- Always allow cli access #56
+
 ## [1.12.13.0]
 - Update dkan version to 7.x-1.12.13 https://github.com/NuCivic/dkan/releases/tag/7.x-1.12.13
 - Recolection of customize dkan docs #47

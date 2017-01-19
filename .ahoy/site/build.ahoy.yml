@@ -152,9 +152,8 @@ commands:
     usage: ahoy build config - Applies site specific changes stored in config.yml
     cmd: |
       # render custom .htaccess
-      tempdir=$(mktemp -d "/tmp/$0.XXXXXXXX")
-      ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb > $tempdir/.htaccess
-      cp $tempdir/.htaccess config/.htaccess
+      ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb > config/.htaccess
+      ahoy cmd-proxy ruby .ahoy/site/.scripts/circle.rb > circle.yml
 
       # Transpose config.yml to php
       cd .ahoy/site
@@ -167,8 +166,8 @@ commands:
       set -e
       AHOY_CMD_PROXY=''
       DIRNAME=${PWD##*/}
-      if [[ "$DIRNAME" != "data_starter_private" ]]; then
-        echo "This command should only be use from a data_starter_private working copy"
+      if [[ "$DIRNAME" != "dkan_starter" ]]; then
+        echo "This command should only be use from a dkan_starter working copy"
         exit 0
       fi
 
@@ -183,7 +182,7 @@ commands:
       fi
       # No ahoy commands after cd-ing out of project folder.
       cd ..
-      git clone 'git@github.com:NuCivic/data_starter_private.git' {{args}} --depth=1
+      git clone 'git@github.com:NuCivic/dkan_starter.git' {{args}} --depth=1
       cd {{args}}
       rm -rf .git build.make build-dkan.make drupal-org-core.make
       echo "Site {{args}} initiated at ../{{args}}"
