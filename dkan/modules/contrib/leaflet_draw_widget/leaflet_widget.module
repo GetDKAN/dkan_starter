@@ -264,7 +264,7 @@ function leaflet_widget_process_geojson($geojson) {
 function leaflet_widget_library() {
   $path = drupal_get_path('module', 'leaflet_widget');
   $leaflet_draw = libraries_get_path('leaflet_draw');
-  $leaflet_core = libraries_get_path('leaflet_core');
+  $leaflet = libraries_get_path('leaflet');
 
   $libraries = array();
 
@@ -289,19 +289,19 @@ function leaflet_widget_library() {
       "$leaflet_draw/dist/leaflet.draw.js" => array(),
     ),
     'dependencies' => array(
-      array('leaflet_widget', 'leaflet_core'),
+      array('leaflet_widget', 'leaflet'),
     ),
   );
 
-  $leaflet_image_path = $leaflet_core . '/dist/images/';
-  $libraries['leaflet_core'] = array(
+  $leaflet_image_path = $leaflet . '/dist/images/';
+  $libraries['leaflet'] = array(
     'title' => 'Leaflet (Leaflet Widget)',
     'version' => '1.0.2',
     'css' => array(
-      "$leaflet_core/dist/leaflet.css" => array(),
+      "$leaflet/dist/leaflet.css" => array(),
     ),
     'js' => array(
-      "$leaflet_core/dist/leaflet.js" => array(),
+      "$leaflet/dist/leaflet.js" => array(),
       'if (!L.Icon.Default.imagePath) L.Icon.Default.imagePath = "/' . $leaflet_image_path . '"' => array('type' => 'inline'),
     ),
   );
