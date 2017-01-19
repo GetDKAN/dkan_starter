@@ -5,7 +5,7 @@ api = 2
 libraries[recline][type] = libraries
 libraries[recline][download][type] = git
 libraries[recline][download][url] = "https://github.com/NuCivic/recline.js.git"
-libraries[recline][download][revision] = "aa5eeac080099584792e70dff839f0e85ae7380a"
+libraries[recline][download][branch] = "master"
 
 # LODASH
 libraries[lodash][type] = libraries
@@ -46,8 +46,8 @@ libraries[moment][download][revision] = "78a53b8cb53e967c6dac2e7325e18da2a472fc2
 # LEAFLET
 libraries[leaflet][type] = libraries
 libraries[leaflet][download][type] = git
-libraries[leaflet][download][url] = "https://github.com/Leaflet/Leaflet.git"
-libraries[leaflet][download][revision] = "8a5fdfc6e3db2807b8f0dd617474e4ab2949142b"
+libraries[leaflet][download][url] = "https://github.com/NuCivic/Leaflet.git"
+libraries[leaflet][download][tag] = "v1.0.2-alt-marker-shadow-5258"
 
 # FLOT
 libraries[flot][type] = libraries
@@ -74,7 +74,7 @@ libraries[leaflet_markercluster][type] = libraries
 libraries[leaflet_markercluster][download][type] = git
 libraries[leaflet_markercluster][download][url] = "https://github.com/Leaflet/Leaflet.markercluster.git"
 libraries[leaflet_markercluster][directory_name] = leaflet_markercluster
-libraries[leaflet_markercluster][download][revision] = "c5864dbfca9e71c86ac61b432862cc77f8fd8e68"
+libraries[leaflet_markercluster][download][revision] = "eb922a3646d2e1ef9ed9de99e20200709f1f9bb5"
 
 # XLS BACKEND
 libraries[xls][type] = libraries

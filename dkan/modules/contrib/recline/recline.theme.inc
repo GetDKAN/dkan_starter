@@ -238,8 +238,8 @@ function recline_preview_wms($url, $titles, $images, $north, $east, $south, $wes
   $output = "var map = L.map('map', {
         zoom: 7
       });";
-  drupal_add_js('https://cdn.jsdelivr.net/leaflet/0.7.3/leaflet.js', 'external');
-  drupal_add_css('https://cdn.jsdelivr.net/leaflet/0.7.3/leaflet.css', 'external');
+  drupal_add_js('https://cdn.jsdelivr.net/leaflet/1.0.2/leaflet.js', 'external');
+  drupal_add_css('https://cdn.jsdelivr.net/leaflet/1.0.2/leaflet.css', 'external');
   $output .= "var url = '" . $url . "';";
   $output .= "L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);";
   $output .= "var layers = ['" . implode(",", $titles) . "'];";
@@ -369,9 +369,9 @@ function recline_replace_lt_gt($data) {
  * Preview for arcgis and rest data.
  */
 function recline_preview_arcgis_feature($url) {
-  drupal_add_js('https://cdn.jsdelivr.net/leaflet/0.7.3/leaflet.js', 'external');
+  drupal_add_js('https://cdn.jsdelivr.net/leaflet/1.0.2/leaflet.js', 'external');
   drupal_add_js('https:////cdn.jsdelivr.net/leaflet.esri/1.0.0/esri-leaflet.js', 'external');
-  drupal_add_css('https://cdn.jsdelivr.net/leaflet/0.7.3/leaflet.css', 'external');
+  drupal_add_css('https://cdn.jsdelivr.net/leaflet/1.0.2/leaflet.css', 'external');
   drupal_add_css('body { margin:0; padding:0; } #rest-map { position: relative; height: 500px; width: 100%;}', 'inline');
   $lat = variable_get('recline_default_lat', "38");
   $lon = variable_get('recline_default_lon', "-99");
@@ -399,7 +399,7 @@ function recline_preview_geojson_leaflet($url) {
     return ;
   }
   libraries_load('leaflet_markercluster');
-  $leaflet_imgs = libraries_get_path('recline') . '/vendor/leaflet/0.7.3/images';
+  $leaflet_imgs = libraries_get_path('recline') . '/vendor/leaflet/1.0.2/images/';
   drupal_add_js('L.Icon.Default.imagePath = "/' . $leaflet_imgs . '"', 'inline');
   drupal_add_library('leaflet_widget', 'leaflet_core');
   $output = "var dataExtent = " . $geojson;
@@ -554,7 +554,7 @@ function recline_preview_multiview($variables) {
   // Update the leaflet library and test if this bug goes away.
   // That will involve a lot of QA but we have to do it a some point.
   if ($recline) {
-    $leaflet_imgs = $recline['library path'] . '/vendor/leaflet/0.7.3/images';
+    $leaflet_imgs = $recline['library path'] . '/vendor/leaflet/1.0.2/images/';
     drupal_add_js('L.Icon.Default.imagePath = "/' . $leaflet_imgs . '"', 'inline');
   }
 
