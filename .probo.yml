@@ -54,12 +54,6 @@ steps:
       ahoy ci deploy
 
       echo ""
-      echo "-------> Diagnose and fail build if necessary"
-      echo ""
-      ahoy utils fail-when-bad-disable
-      echo ""
-
-      echo ""
       echo "The url of this build should be at:"
       echo " https://$BUILD_ID.probo.build"
       echo ""
