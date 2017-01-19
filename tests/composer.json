@@ -5,7 +5,7 @@
         "devinci/devinci-behat-extension": "dev-master",
         "myplanetdigital/function_mock": "dev-master",
         "drupal/drupal-driver": "^1.2",
-        "drupal/drupal-extension": "~3.0"
+        "drupal/drupal-extension": "~3.0",
         "cweagans/composer-patches": "~1.0"
     },
     "autoload": {
