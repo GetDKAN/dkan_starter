@@ -31,7 +31,7 @@ else
 fi
 
 # Extra non-acquia steps.
-if [ "$env" == "local" ]; then
+if [ "$target_env" == "local" ]; then
   eval $(ahoy parse config/config.yml)
 
   ahoy dkan create-qa-users
