@@ -4,7 +4,7 @@
         "behat/behat": "3.1.*@dev",
         "devinci/devinci-behat-extension": "dev-master",
         "nucivic/dkanextension": "master-dev",
-        "cweagans/composer-patches": "~1.0,"
+        "cweagans/composer-patches": "~1.0",
         "myplanetdigital/function_mock": "dev-master",
         "drupal/drupal-driver": "^1.2",
         "drupal/drupal-extension": "~3.0",
