@@ -1,7 +1,0 @@
-# Ignore SASS files
-/.sass-cache
-.DS_Store
-*.codekit
-.idea
-bower_components
-node_modules

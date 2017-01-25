@@ -430,6 +430,7 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
         self.state = state;
         self.gotoStep(n);
         self.trigger('multistep:change', {step:n});
+        self.$('.chosen-choices .search-field input, .chosen-search input').attr('aria-label', 'Choose some options');
       };
     },
     gotoStep: function(n){
