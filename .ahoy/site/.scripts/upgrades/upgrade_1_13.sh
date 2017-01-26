@@ -16,7 +16,7 @@ drush @$drush_alias en dkan_ipe -y
 
 drush @$drush_alias en dkan_harvest_dashboard -y
 drush @$drush_alias en menu_admin_per_menu -y
-drush @$drush_alias php-eval "dkan_sitewide_convert_panel_page('page-front_page');"
+drush @$drush_alias php-eval "dkan_sitewide_convert_panel_page('front_page');"
 
 drush @$drush_alias fra -y
 drush @$drush_alias rr
