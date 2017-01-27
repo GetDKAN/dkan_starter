@@ -10,13 +10,13 @@ class CircleCIConfig
   def initialize config
     default_test_dirs = ["tests/features", "dkan/test/features", "config/tests/features"]
 
-    if !config["cirlce"] || !config["circle"]["test_dirs"]
+    if !config["circle"] || !config["circle"]["test_dirs"]
       @test_dirs = default_test_dirs
     else
       @test_dirs = config["circle"]["test_dirs"]
     end
 
-    if !config["cirlce"] || !config["circle"]["memory_limit"]
+    if !config["circle"] || !config["circle"]["memory_limit"]
       @memory_limit = "256M"
     else
       @memory_limit = config["circle"]["memory_limit"]
