@@ -14,7 +14,7 @@ function data_config_enabled_modules() {
     #'dkan_sitewide_demo_front' => 'dkan_sitewide_demo_front',
     #'menu_token' => 'menu_token',
     #'remote_file_source' => 'remote_file_source',
-    #'update' => 'update',
+    'update' => 'update',
     #'dkan_default_content' => 'dkan_default_content',
     'acquia_agent' => 'acquia_agent',
     'acquia_purge' => 'acquia_purge',

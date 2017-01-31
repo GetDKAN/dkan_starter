@@ -310,7 +310,6 @@ if (!isset($conf['features_master_temp_disabled_modules'])) {
 $conf['features_master_temp_disabled_modules'][] = 'dkan_sitewide_demo_front';
 $conf['features_master_temp_disabled_modules'][] = 'menu_token';
 $conf['features_master_temp_disabled_modules'][] = 'remote_file_source';
-$conf['features_master_temp_disabled_modules'][] = 'update';
 $conf['features_master_temp_disabled_modules'][] = 'drafty';
 
 // Fake the 'derived_key' used to connect to Solr, if we can't find the
