@@ -50,9 +50,6 @@ function devinci_custom_environment_switch($target_env, $current_env) {
       //db_query("DELETE FROM search_api_index where server IS NULL");
       db_query("UPDATE search_api_server set enabled = 0 WHERE machine_name <> 'local_solr_server'");
 
-      //Disable clamav
-      variable_set('clamav_enabled', FALSE);
-
     case 'development':
     case 'test':
     case 'production':
