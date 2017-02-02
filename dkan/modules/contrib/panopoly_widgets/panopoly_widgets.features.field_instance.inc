@@ -299,6 +299,7 @@ function panopoly_widgets_field_default_field_instances() {
           'langcode' => 'en',
           'link_text' => 'View larger map',
           'map_type' => 'm',
+          'static_scale' => 1,
           'zoom_level' => 14,
         ),
         'type' => 'simple_gmap',
