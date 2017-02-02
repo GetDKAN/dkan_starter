@@ -2,8 +2,6 @@ default:
   hostname: www.example.com
   https_everywhere: FALSE
   https_securepages: FALSE
-  clamav:
-    enable: FALSE
   stage_file_proxy_origin: changeme
   fast_file:
     enable: TRUE
@@ -16,7 +14,7 @@ redirectDomains:
 
 private:
   aws:
-    scrubbed_data_url: CHANGE ME  
+    scrubbed_data_url: CHANGE ME
   probo:
     password: CHANGE ME
 
@@ -24,7 +22,7 @@ acquia:
   subscription: 'professional'
   search:
     host: changeme
-    id: dkan_acquia_solr 
+    id: dkan_acquia_solr
   dev:
     base_url: http://devurl
     core_id: changeme
