@@ -193,6 +193,7 @@ switch(ENVIRONMENT) {
       'acquia_agent',
       'acquia_spi',
       'acquia_purge',
+      'expire_panels',
       'dkan_acquia_expire',
       'dkan_acquia_search_solr',
       'expire',
