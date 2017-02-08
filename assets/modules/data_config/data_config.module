@@ -58,7 +58,6 @@ function data_config_enabled_modules() {
     'dkan_datastore' => 'dkan_datastore',
     'dkan_datastore_api' => 'dkan_datastore_api',
     'dkan_default_topics' => 'dkan_default_topics',
-    'dkan_fixtures' => 'dkan_fixtures',
     'dkan_harvest' => 'dkan_harvest',
     'dkan_harvest_dashboard' => 'dkan_harvest_dashboard',
     'dkan_harvest_datajson' => 'dkan_harvest_datajson',
