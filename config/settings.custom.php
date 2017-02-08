@@ -32,6 +32,10 @@ switch(ENVIRONMENT) {
     //     'nucivic_data_devops',
     //   )
     // );
+
+    // Uncomment the following line if you expect https to be clear as well
+    // in acquia's varnish
+    // conf['acquia_purge_https'] = TRUE; 
     break;
 }
 
