@@ -35,6 +35,8 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
 
   if ($conf['default']['https_everywhere']) {
     $base_url = $base_url_https;
+    $conf['acquia_purge_https'] = TRUE;
+    $conf['acquia_purge_http'] = FALSE;
 
     // Disable securepages when https everywhere is enabled.
     $conf['features_master_temp_disabled_modules'][] = 'securepages';
