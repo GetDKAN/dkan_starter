@@ -153,7 +153,7 @@ commands:
     cmd: |
       # render custom .htaccess
       ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb > config/.htaccess
-      ahoy cmd-proxy ruby .ahoy/site/.scripts/circle.rb > circle.yml
+      ahoy cmd-proxy ruby .ahoy/site/.scripts/circle.rb
 
       # Transpose config.yml to php
       cd .ahoy/site

@@ -30,4 +30,4 @@ end
 
 config = YAML.load_file("config/config.yml")
 circle_ci_config = CircleCIConfig.new(config)
-puts circle_ci_config.render(template);
+File.write('circle.yml', circle_ci_config.render(template))
