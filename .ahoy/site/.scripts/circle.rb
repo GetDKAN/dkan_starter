@@ -21,10 +21,23 @@ class CircleCIConfig
     else
       @memory_limit = config["circle"]["memory_limit"]
     end
+
+    default_skip_tags = [ "customizable", "fixme", "testBug"]
+    if !config["circle"] || !config["circle"]["skip_tags"]
+      @skip_tags = process_skip_tags(default_skip_tags)
+    else
+      @skip_tags = process_skip_tags(config["circle"]["skip_tags"])
+    end
   end
 
   def render(template)
     ERB.new(template).result(binding)
+  end
+
+  private
+
+  def process_skip_tags(tags)
+    tags.map {|w| "~@#{w}" }
   end
 end
 

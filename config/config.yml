@@ -48,4 +48,8 @@ circle:
     - tests/features
     - dkan/test/features
     - config/tests/features
+  skip_tags:
+    - customizable 
+    - fixme
+    - testBug
   memory_limit: 256M
