@@ -34,6 +34,7 @@ dependencies:
     - mkdir $CIRCLE_ARTIFACTS/junit
     - cd tests; composer install; cd ..
     - bash dkan/dkan-init.sh dkan --deps-only
+    - drush dl -n registry_rebuild-7.x
     - ahoy site up --db-user=ubuntu --db-pass='' --db-host=127.0.0.1 --db-port=3306 --db-name=circle_test
     - ahoy utils fail-when-bad-disable
     # Run a webserver using drush.
