@@ -152,7 +152,7 @@ commands:
     usage: ahoy build config - Applies site specific changes stored in config.yml
     cmd: |
       # render custom .htaccess
-      ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb > config/.htaccess
+      ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb
       ahoy cmd-proxy ruby .ahoy/site/.scripts/circle.rb
 
       # Transpose config.yml to php

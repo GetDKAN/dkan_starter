@@ -31,4 +31,4 @@ end
 
 config = YAML.load_file("config/config.yml")
 htaccess = Htaccess.new(config)
-puts htaccess.render(htaccess_template);
+File.write('config/.htaccess', htaccess.render(htaccess_template))
