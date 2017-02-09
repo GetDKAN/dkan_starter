@@ -7,15 +7,16 @@ machine:
   environment:
     PATH: $PATH:$HOME/.config/composer/vendor/bin
     DATABASE_URL: mysql://ubuntu:@127.0.0.1:3306/circle_test
-    # Timeouts issues happen when selenium tries to spawn a new chrome 
-    # instance. I've nail that down to this selenium issue 
+    # Timeouts issues happen when selenium tries to spawn a new chrome instance.
+    # I've nail that down to this selenium issue
     # https://github.com/SeleniumHQ/docker-selenium/issues/87
     DBUS_SESSION_BUS_ADDRESS: /dev/null
 ## Customize checkout
 ## Note: Only post is supported.
 checkout:
   post:
-    # Remove the extra composer stuff that circleci loads and that is causing conflicts with drush.
+    # Remove the extra composer stuff that circleci loads and that is causing
+    # conflicts with drush.
     - rm -rf ~/.composer
 
 ## Customize dependencies
