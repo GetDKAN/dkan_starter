@@ -76,6 +76,7 @@ commands:
     usage: Prunes datasets and resources from site database
     hide: true
     cmd: |
+      ahoy drush search-api-disable --yes
       ahoy drush php-script .ahoy/site/.scripts/prune-database.php
 
   name:
