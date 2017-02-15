@@ -220,6 +220,7 @@ switch(ENVIRONMENT) {
       $conf['features_master_temp_disabled_modules'][] = 'workbench';
       $conf['features_master_temp_disabled_modules'][] = 'workbench_email';
       $conf['features_master_temp_disabled_modules'][] = 'workbench_moderation';
+      $conf['features_master_temp_disabled_modules'][] = 'drafty';
     }
 
     // Show ALL errors when working locally.
