@@ -2,6 +2,12 @@
 
 
 drush @$drush_alias rr
+
+drush @$drush_alias dis -y dkan_sitewide_demo_front menu_token remote_file_source rdf
+if [ "$CI" = "true" ]; then
+  drush @$drush_alias sql-query "truncate watchdog;"
+fi
+
 drush @$drush_alias fr dkan_dataset_content_types -y
 drush @$drush_alias fr dkan_permissions -y
 

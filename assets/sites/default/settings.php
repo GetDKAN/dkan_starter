@@ -302,15 +302,6 @@ search*";
     exit();
 }
 
-// 1.13 upgrade.
-if (!isset($conf['features_master_temp_disabled_modules'])) {
-  $conf['features_master_temp_disabled_modules'] = array();
-}
-
-$conf['features_master_temp_disabled_modules'][] = 'dkan_sitewide_demo_front';
-$conf['features_master_temp_disabled_modules'][] = 'menu_token';
-$conf['features_master_temp_disabled_modules'][] = 'remote_file_source';
-
 // Fake the 'derived_key' used to connect to Solr, if we can't find the
 // Acquia-set "AH_PRODUCTION" environment variable.
 // This will cause all requests to Acquia Search instances respond with 403.
