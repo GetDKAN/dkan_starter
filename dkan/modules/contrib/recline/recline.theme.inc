@@ -401,7 +401,7 @@ function recline_preview_geojson_leaflet($url) {
   libraries_load('leaflet_markercluster');
   $leaflet_imgs = libraries_get_path('recline') . '/vendor/leaflet/1.0.2/images/';
   drupal_add_js('L.Icon.Default.imagePath = "/' . $leaflet_imgs . '"', 'inline');
-  drupal_add_library('leaflet_widget', 'leaflet_core');
+  drupal_add_library('leaflet_widget', 'leaflet');
   $output = "var dataExtent = " . $geojson;
   $output .= "; var map = L.map('map');
     L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
