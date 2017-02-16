@@ -50,5 +50,24 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
       'derived_key' => $conf['acquia'][$env]['derived_key'],
     );
   }
+
+  // {{{1 Conditionally manage memory.
+  if (isset($conf['default']['odfe']) && $conf['default']['odfe']['enabled']) {
+    $admin_paths = array(
+      'admin',
+      'node/add',
+      'node/%node/edit',
+      'node/%node/moderation',
+      'file/ajax',
+    );
+    // Standarize node edit paths for validation.
+    $current_path = preg_replace("/\d+/", '%node', $_GET['q']);
+    foreach ($admin_paths as $admin_path) {
+      if (strpos($current_path, $admin_path) === 0) {
+        ini_set('memory_limit', '512M');
+      }
+    }
+  }
+
   acquia_hosting_db_choose_active();
 }
