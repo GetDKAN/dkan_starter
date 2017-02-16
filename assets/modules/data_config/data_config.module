@@ -218,6 +218,17 @@ function data_config_enabled_modules() {
     $features_master['modules']['clamav'] = 'clamav';
   }
 
+  if (isset($data_config['dkan_workflow']) && $data_config['dkan_workflow']['enable']) {
+    $features_master['modules']['dkan_workflow'] = 'dkan_workflow';
+    $features_master['modules']['dkan_workflow_permissions'] = 'dkan_workflow_permissions';
+    $features_master['modules']['link_badges'] = 'link_badges';
+    $features_master['modules']['menu_badges'] = 'menu_badges';
+    $features_master['modules']['views_dkan_workflow_tree'] = 'views_dkan_workflow_tree';
+    $features_master['modules']['workbench'] = 'workbench';
+    $features_master['modules']['workbench_email'] = 'workbench_email';
+    $features_master['modules']['workbench_moderation'] = 'workbench_moderation';
+  }
+
   return $features_master;
 
 }

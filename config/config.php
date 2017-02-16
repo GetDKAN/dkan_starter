@@ -14,6 +14,10 @@ $conf = array (
     array (
       'enable' => false,
     ),
+    'dkan_workflow' => 
+    array (
+      'enabled' => false,
+    ),
     'stage_file_proxy_origin' => 'changeme',
     'fast_file' => 
     array (
