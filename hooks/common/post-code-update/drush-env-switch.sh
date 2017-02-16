@@ -2,6 +2,7 @@
 #
 # Cloud Hook: drush-env-switch
 #
+set -e
 
 site=$1
 env=$2
@@ -38,6 +39,18 @@ echo "Running database update"
 drush @$drush_alias updatedb -y
 echo "Clearing caches"
 drush @$drush_alias cc all
+
+STOP_EXECUTION=false
+if [ -f  "config/custom-deploy.sh" ]; then
+  echo "Running pre deploy hook"
+  source "config/custom-deploy.sh"
+  if [ $STOP_EXECUTION = true ]; then
+    echo "Stopping execution after pre deploy hook"
+    exit 0
+  fi
+else
+  echo "No pre deploy hook included"
+fi
 
 echo "Checking drupal boostrap."
 drupal=$(drush @$drush_alias status | grep -e "Drupal bootstrap" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
