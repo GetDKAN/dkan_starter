@@ -4,6 +4,8 @@ default:
   https_securepages: FALSE
   clamav:
     enable: FALSE
+  dkan_workflow:
+    enabled: FALSE
   stage_file_proxy_origin: changeme
   fast_file:
     enable: TRUE
@@ -16,7 +18,7 @@ redirectDomains:
 
 private:
   aws:
-    scrubbed_data_url: CHANGE ME  
+    scrubbed_data_url: CHANGE ME
   probo:
     password: CHANGE ME
 
@@ -24,7 +26,7 @@ acquia:
   subscription: 'professional'
   search:
     host: changeme
-    id: dkan_acquia_solr 
+    id: dkan_acquia_solr
   dev:
     base_url: http://devurl
     core_id: changeme
@@ -50,4 +52,8 @@ circle:
     - tests/features
     - dkan/test/features
     - config/tests/features
+  skip_tags:
+    - customizable 
+    - fixme
+    - testBug
   memory_limit: 256M

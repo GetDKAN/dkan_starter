@@ -9,9 +9,9 @@ files[] = clamav.install
 files[] = clamav.module
 files[] = clamav.test
 
-; Information added by Drupal.org packaging script on 2016-06-09
-version = "7.x-1.0-beta1+7-dev"
+; Information added by Drupal.org packaging script on 2017-01-30
+version = "7.x-1.0+3-dev"
 core = "7.x"
 project = "clamav"
-datestamp = "1465465740"
+datestamp = "1485817390"
 

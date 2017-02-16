@@ -10,21 +10,34 @@ class CircleCIConfig
   def initialize config
     default_test_dirs = ["tests/features", "dkan/test/features", "config/tests/features"]
 
-    if !config["cirlce"] || !config["circle"]["test_dirs"]
+    if !config["circle"] || !config["circle"]["test_dirs"]
       @test_dirs = default_test_dirs
     else
       @test_dirs = config["circle"]["test_dirs"]
     end
 
-    if !config["cirlce"] || !config["circle"]["memory_limit"]
+    if !config["circle"] || !config["circle"]["memory_limit"]
       @memory_limit = "256M"
     else
       @memory_limit = config["circle"]["memory_limit"]
+    end
+
+    default_skip_tags = [ "customizable", "fixme", "testBug"]
+    if !config["circle"] || !config["circle"]["skip_tags"]
+      @skip_tags = process_skip_tags(default_skip_tags)
+    else
+      @skip_tags = process_skip_tags(config["circle"]["skip_tags"])
     end
   end
 
   def render(template)
     ERB.new(template).result(binding)
+  end
+
+  private
+
+  def process_skip_tags(tags)
+    tags.map {|w| "~@#{w}" }
   end
 end
 
