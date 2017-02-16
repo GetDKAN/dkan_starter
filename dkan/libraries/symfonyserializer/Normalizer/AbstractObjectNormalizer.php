@@ -95,7 +95,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
                 throw new LogicException(sprintf('Cannot normalize attribute "%s" because the injected serializer is not a normalizer', $attribute));
             }
 
-            $data = $this->updateData($data, $attribute, $this->serializer->normalize($attributeValue, $format, $context));
+            $data = $this->updateData($data, $attribute, $this->serializer->normalize($attributeValue, $format, $this->createChildContext($context, $attribute)));
         }
 
         return $data;
@@ -267,8 +267,9 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
                     throw new LogicException(sprintf('Cannot denormalize attribute "%s" for class "%s" because injected serializer is not a denormalizer', $attribute, $class));
                 }
 
-                if ($this->serializer->supportsDenormalization($data, $class, $format)) {
-                    return $this->serializer->denormalize($data, $class, $format, $context);
+                $childContext = $this->createChildContext($context, $attribute);
+                if ($this->serializer->supportsDenormalization($data, $class, $format, $childContext)) {
+                    return $this->serializer->denormalize($data, $class, $format, $childContext);
                 }
             }
 
