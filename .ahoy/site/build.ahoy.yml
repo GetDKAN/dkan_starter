@@ -135,14 +135,16 @@ commands:
       find dkan -type d -name .git -exec rm -rf {} \;
       find docroot/sites/all -type f -name .gitignore -exec rm -rf {} \;
       find docroot/sites/all -type d -name .git -exec rm -rf {} \;
-      # Clean out any CHANGELOG.txt files.
-      find . -type f -name CHANGELOG.txt -exec rm -rf {} \;
       # Setup custom modules folder outside of the drupal root.
       rm -rf docroot/sites/all/modules/custom
       rm -rf docroot/sites/all/modules/data_config
       ln -s ../../../../assets/modules/data_config docroot/sites/all/modules/data_config
       ln -s ../../../../config/modules/custom docroot/sites/all/modules/custom
       ln -s ../../../../config/themes/custom docroot/sites/all/themes/custom
+      # Remove README/INSTALL files for security reasons CIVIC-3122
+      find ./docroot -type f -name "README*" -exec rm -f {} \;
+      find ./docroot -type f -name "INSTALL*" -exec rm -f {} \;
+      find ./docroot -type f -name "CHANGELOG*" -exec rm -rf {} \;
       if [ "$(ahoy custom | grep post-build)" != '' ]
       then
         ahoy custom post-build
