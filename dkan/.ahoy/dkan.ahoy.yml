@@ -187,7 +187,8 @@ commands:
   uli:
     usage: log into the
     cmd: |
-      url=$(ahoy drush --uri="$(ahoy docker url)" uli {{args}})
+      uli=$(ahoy drush uli {{args}} | sed 's/^http.*\/default\/\(.*$\)/\1/g')
+      url="$(ahoy docker url)/$uli"
       os=$(uname)
 
       if [ "$os" = "Darwin" ]; then

@@ -85,6 +85,12 @@ $conf = array (
       1 => 'dkan/test/features',
       2 => 'config/tests/features',
     ),
+    'skip_tags' => 
+    array (
+      0 => 'customizable',
+      1 => 'fixme',
+      2 => 'testBug',
+    ),
     'memory_limit' => '256M',
   ),
 );

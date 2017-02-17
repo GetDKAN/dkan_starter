@@ -4,3 +4,5 @@ core = 7.x
 
 dependencies[] = libraries
 dependencies[] = file
+scripts[] = js/jsondataview.js
+scripts[] = js/restdataview.js
