@@ -1,4 +1,18 @@
 # Change log
+## [1.13.0.0]
+- Remake with dkan 7.x-1.13 #96
+- Make skip_tags configurable. #90
+- Remove INSTALL and README files from sites. #94
+- Upgrade dkan to 1.13.beta #57
+- Enable dkan-workflow via config.yml #92
+- Fix broken search index brakes DB pruning script #91
+- Only fail the build on circle (not probo) #75
+- Make git ignore asset files folder #80
+- Add registry_rebuild to CircleCi environment #89
+- Fix extra spaces in `ahoy dkan uli` output #86
+- Fix circle.rb script - #74
+- Add sql-drop step before database import #72
+
 ## [1.12.13.2]
 - Fix broken template #69
 
