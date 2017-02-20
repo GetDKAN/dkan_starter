@@ -4,7 +4,7 @@ Sometimes site developers may have a need to override an upstream suite configur
 
 ### Step-by-step guide
 
-1. open up config/tests/behat.custom.yml
+1. Open up ``config/tests/behat.custom.yml``
 2. If an entry for the suite you want to override is not present, then add it
 3. Add filters filters or override what contexts or where contexts being loaded from.  The example below shows us adding a name: filter to the dkan suite.
 
