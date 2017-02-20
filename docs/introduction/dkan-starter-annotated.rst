@@ -8,6 +8,7 @@ DKAN Starter Structure
 The following is the root structure for DKAN Starter:
 
 .. code-block:: bash
+
   .ahoy/                       [Ahoy files. See note below.]
   CHANGELOG.md                 [Changelog for DKAN Starter. All releases include an entry.]
   README.md                    [Description of DKAN Starter.]
@@ -26,7 +27,7 @@ The following is the root structure for DKAN Starter:
 
 
 ``docroot/``
-~~~~~~~~~~~
+~~~~~~~~~~~~
 
 This is the docroot that the webserver on your environments will point to. The docroot is never edited directly and is always rebuilt from a combination of sources. Everything except for:
 
@@ -39,7 +40,7 @@ come from the upstream version of DKAN Starter.
 The docroot is rebuilt by running *ahoy build update* command.
 
 ``.ahoy/``
-~~~~~~~~~
+~~~~~~~~~~
 
 This contains our ahoy scripts. All parts of the DKAN Starter workflow run through the ahoy commands.
 
@@ -51,11 +52,12 @@ This folder includes DKAN Starter modules, patches, and other miscellaneous asse
 ``config/``
 ~~~~~~~~~~~
 
-In in effort to simplify how we configure and customize projects we have  added `./config` to capture all configurations an customizations to a data_starter project.
+In an effort to simplify how we configure and customize projects we have  added `./config` to capture all configurations and customizations to a dkan_starter project.
 The idea with this folder is to capture all customizations across our sites in one place  as well as to separate the logic that uses custom configuration from the configuration itself.
 The current structure of the config folder is:
 
 .. code-block:: bash
+
   config/
     aliases.local.php
     config.php
@@ -81,7 +83,7 @@ The new files that have not been seen in previous setups are the config.yml, con
 config.php
 ~~~~~~~~~~~
 
-You should forget about.  This file is created automatically by running `ahoy build config` and it is derived in part by what you add to `./config/config.yml`.
+You should forget about it.  This file is created automatically by running `ahoy build config` and it is derived in part by what you add to `./config/config.yml`.
 
 config.yml
 ~~~~~~~~~~~
@@ -91,7 +93,7 @@ This is where we will now keep all of the site specific configurations.  This fi
 settings.custom.php
 ~~~~~~~~~~~~~~~~~~~
 
-This is where settings.php logic that is custom to a site will live, so that it will be much easier to see how, if at all, a site's settings logic is different from another.  Currently we use the devinci along with the environment module to automatically run changes between environments.  Often there are site specific difference that happen between the different installations.  This is where we can capture these logic difference.  Note, that we may move away from how we run deployments (a la devinci style) so this file may become unnecessary.
+This is where settings.php logic that is custom to a site will live, so that it will be much easier to see how, if at all, a site's settings logic is different from another.  Currently we use the devinci along with the environment module to automatically run changes between environments.  Often there are site specific differences that happen between the different installations.  This is where we can capture these logic difference.  Note, that we may move away from how we run deployments (a la devinci style) so this file may become unnecessary.
 
 custom.make
 ~~~~~~~~~~~
@@ -114,16 +116,16 @@ custom_libs.make
 3rd-party libraries are added to this make file.
 
 ``modules/custom/``
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Custom modules built for this project are added here. Any modules added to this folder are added to ``docroot/sites/all/modules/custom`` through a symlink.
 
 ``modules/custom/custom_config/``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This module is for custom configuration of DKAN. Implementers can use this module or another custom module for customizations.
 
 custom_config.features.features_master.inc
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``modules/custom/custom_config/custom_config.features.features_master.inc`` file contains a list of the modules that you want enabled on your site.
