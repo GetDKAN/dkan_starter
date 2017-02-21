@@ -1,4 +1,4 @@
-This details how to update the docker images for DKAN. NuCivic owns the containers but the same steps can be made to create your own images. We will also accept timely PRs with an updated container.
+This details how to update the docker images for DKAN. Granicus owns the containers but the same steps can be made to create your own images. We will also accept timely PRs with an updated container.
 
 Step-by-step guide
 -----------------

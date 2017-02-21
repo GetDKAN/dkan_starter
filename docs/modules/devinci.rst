@@ -12,7 +12,7 @@ This would, out of the box, set an ENVIRONMENT constant and do a number of reall
 
  * ENVIRONMENT is already set as a drupal constant
  * ENVIRONMENT is defined as a linux environment variable
- * the current instance is an acquia instance and adding the required require "/var/www/site-php/$sitegroup/$sitegroup-settings.inc"; setting file with the proper credentials for your subscription (Pantheon is on the roadmap)
+ * the current instance is an acquia instance and adding the required ``require "/var/www/site-php/$sitegroup/$sitegroup-settings.inc";`` setting file with the proper credentials for your subscription (Pantheon is on the roadmap)
  * there's a custom environment.settings.php file at DRUPAL_ROOT . '/' . conf_path() to be included.
 
 By default, DEVINCI extends the base environment module definitions (development and production) and adds the local and test environments to the mix.

@@ -1,7 +1,7 @@
 Releases
 ==========
 
-Releases for DKAN Starter are posted on the Github release page:  https://github.com/NuCivic/dkan_starter/releases)
+Releases for DKAN Starter are posted on the [Github release page](https://github.com/NuCivic/dkan_starter/releases)
 
 Please read DKAN Starter changelog for keeping up to date as well as the release notes.
 
@@ -18,9 +18,9 @@ So if we've got:
 
 That means:
 * *1.12.2* -> dkan's patch release dkan_starter is running
-* *.4* -> we've released 4 incremental updates over dkan_starter since we've rebuild data_starter using 1.12.2
+* *.4* -> we've released 4 incremental updates over dkan_starter since we've rebuild dkan_starter using 1.12.2
 
-Every time we rebuild data_starter using a new version we'll reset the counter to 0. So:
+Every time we rebuild dkan_starter using a new version we'll reset the counter to 0. So:
 * 1.13.0
 
-Means we just rebuilt data_starter with the ``7.x-1.13`` tag.
+Means we just rebuilt dkan_starter with the ``7.x-1.13`` tag.
