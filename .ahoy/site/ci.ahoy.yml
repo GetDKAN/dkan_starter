@@ -21,8 +21,8 @@ commands:
           ahoy utils files-link
         fi
         ahoy utils files-fix-permissions
-        # Drop the database to avoid any table/rows redundency.
-        ahoy drush sql-drop -y
+
+        # Old database should've been cleaned in the ahoy site reinstall step.
         ahoy drush sql-cli < backups/sanitized.sql
       fi
 
