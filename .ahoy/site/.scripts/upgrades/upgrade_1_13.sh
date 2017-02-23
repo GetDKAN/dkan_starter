@@ -23,11 +23,7 @@ drush @$drush_alias en dkan_ipe -y
 drush @$drush_alias en dkan_harvest_dashboard -y
 drush @$drush_alias en menu_admin_per_menu -y
 
-page_status=`drush @drush_alias php-eval "dkan_sitewide_page_is_frontpage('front_page');"`
-
-if [ "$page_status" = "FALSE" ]; then
-  drush @$drush_alias php-eval "dkan_sitewide_convert_panel_page('front_page');"
-fi
+drush @$drush_alias php-eval "dkan_sitewide_convert_panel_page('front_page', TRUE);"
 
 drush @$drush_alias fra -y
 drush @$drush_alias rr
