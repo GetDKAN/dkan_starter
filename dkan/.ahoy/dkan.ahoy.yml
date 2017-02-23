@@ -44,8 +44,13 @@ commands:
       if [ ! -d backups ]; then
         mkdir backups
       fi
+
+      # Drop the database to avoid any table/rows redundency.
+      # the sql-drop have the habit of quitting with error. Disable the shell
+      # error fail option just for this time.
+      set +e; ahoy drush sql-drop -y; set -e
+
       if [ -f backups/last_install.sql ] && ahoy confirm "An existing installation backup exists at backups/last_install.sql, do you want to use that instead of reinstalling from scratch?"; then
-        ahoy drush sql-drop -y && \
         ahoy dkan sqlc <  backups/last_install.sql && \
         echo "Installed dkan from backup"
       else
