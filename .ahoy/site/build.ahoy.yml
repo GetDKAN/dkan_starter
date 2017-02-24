@@ -76,6 +76,11 @@ commands:
   custom-libs:
     usage: Downloads 3rd party libraries
     cmd: |
+      if [ ! -d docroot/sites/all/libraries ]; then
+         echo 'Creating docroot/sites/all/libraries'
+         mkdir docroot/sites/all/libraries
+      fi
+
       # Make writable so that error not thrown on second attempt.
       mkdir -p contrib/libraries && chmod 777 contrib/libraries
 
