@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Serializer\Tests\DependencyInjection;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Serializer\DependencyInjection\SerializerPass;
 
@@ -19,7 +20,7 @@ use Symfony\Component\Serializer\DependencyInjection\SerializerPass;
  *
  * @author Javier Lopez <f12loalf@gmail.com>
  */
-class SerializerPassTest extends \PHPUnit_Framework_TestCase
+class SerializerPassTest extends TestCase
 {
     public function testThrowExceptionWhenNoNormalizers()
     {
@@ -35,7 +36,7 @@ class SerializerPassTest extends \PHPUnit_Framework_TestCase
             ->with('serializer.normalizer')
             ->will($this->returnValue(array()));
 
-        $this->setExpectedException('RuntimeException');
+        $this->{method_exists($this, $_ = 'expectException') ? $_ : 'setExpectedException'}(\RuntimeException::class);
 
         $serializerPass = new SerializerPass();
         $serializerPass->process($container);
@@ -62,7 +63,7 @@ class SerializerPassTest extends \PHPUnit_Framework_TestCase
             ->method('getDefinition')
             ->will($this->returnValue($definition));
 
-        $this->setExpectedException('RuntimeException');
+        $this->{method_exists($this, $_ = 'expectException') ? $_ : 'setExpectedException'}(\RuntimeException::class);
 
         $serializerPass = new SerializerPass();
         $serializerPass->process($container);
