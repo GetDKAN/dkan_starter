@@ -1,4 +1,10 @@
 # Change log
+## [1.13.1.0]
+- Remake with dkan 7.x-1.131 #106
+- Add example.config.yml on update. #103
+- Fix `ahoy drush custom-libs` #102
+- Fix backup database reuse #98
+
 ## [1.13.0.0]
 - Remake with dkan 7.x-1.13 #96
 - Make skip_tags configurable. #90
