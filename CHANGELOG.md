@@ -4,6 +4,7 @@
 - Add example.config.yml on update. #103
 - Fix `ahoy drush custom-libs` #102
 - Fix backup database reuse #98
+- Fixed homepage conversion call on upgrade script #100
 
 ## [1.13.0.0]
 - Remake with dkan 7.x-1.13 #96
