@@ -1,4 +1,7 @@
 # Change log
+## [1.13.1.0]
+- Fixed homepage conversion call on upgrade script #100
+
 ## [1.13.0.0]
 - Remake with dkan 7.x-1.13 #96
 - Make skip_tags configurable. #90
