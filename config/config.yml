@@ -5,7 +5,7 @@ default:
   clamav:
     enable: FALSE
   dkan_workflow:
-    enabled: FALSE
+    enable: FALSE
   stage_file_proxy_origin: changeme
   fast_file:
     enable: TRUE
