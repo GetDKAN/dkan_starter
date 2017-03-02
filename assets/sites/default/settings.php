@@ -41,7 +41,9 @@ if (file_exists($config_file)) {
  */
 function _data_starter_validates($variable = '') {
   global $conf;
-  $validates = isset($conf['default'][$variable]) && $conf['default'][$variable] != 'changeme';
+  $validates = isset($conf['default'][$variable])
+    && $conf['default'][$variable] != 'changeme'
+    && $conf['default'][$variable] != 'CHANGE ME' ;
   return $validates;
 }
 
@@ -149,6 +151,10 @@ $conf['install_profile'] = 'dkan';
 
 if (_data_starter_validates('stage_file_proxy_origin')) {
   $conf['stage_file_proxy_origin'] = $conf['default']['stage_file_proxy_origin'];
+}
+
+if (_data_starter_validates('x_frame_options')) {
+  $conf['x_frame_options'] = $conf['default']['x_frame_options'];
 }
 
 // KEY for dkan health status
