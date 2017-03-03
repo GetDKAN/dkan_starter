@@ -11,6 +11,7 @@
  */
 function search_api_acquia_uninstall() {
   variable_del('search_api_acquia_version');
+  variable_del('search_api_solr_http_get_max_length');
 }
 
 /**
@@ -29,4 +30,79 @@ function search_api_acquia_install() {
  */
 function search_api_acquia_update_7001() {
   variable_set('search_api_solr_http_get_max_length', 3600);
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function search_api_acquia_requirements($phase) {
+  $requirements = array();
+  // Ensure translations don't break at install time
+  $t = get_t();
+
+  // Skip install checks if install.php is running. The weak install profile
+  // API means install.php calls hook_requirements for every module in a profile.
+  if ($phase == 'install' && defined('MAINTENANCE_MODE') && MAINTENANCE_MODE != 'install') {
+    if (module_invoke('acquia_agent', 'has_credentials')) {
+      $severity = REQUIREMENT_OK;
+    }
+    else {
+      $severity = REQUIREMENT_ERROR;
+    }
+    $requirements['search_api_acquia_credentials'] = array(
+      'description' => $t('In order to use Search API Acquia module you must have an Acquia subscription. Please enter your Acquia subscription keys.'),
+      'severity' => $severity,
+      'value' => '',
+    );
+
+  }
+  if ($phase == 'runtime') {
+    // Check SSL support.
+    if (in_array('ssl', stream_get_transports(), TRUE)) {
+      $severity = REQUIREMENT_OK;
+      $requirements['search_api_acquia_ssl'] = array(
+        'description' => $t('The Search API Acquia module is using SSL to protect the privacy of your content.'),
+      );
+    }
+    else {
+      $severity = REQUIREMENT_WARNING;
+      $requirements['search_api_acquia_ssl'] = array(
+        'description' => $t('In order to protect the privacy of your content with the Search API Acquia module you must have SSL support enabled in PHP on your host.'),
+      );
+    }
+    $requirements['search_api_acquia_ssl']['title'] = $t('Search API Acquia');
+    $requirements['search_api_acquia_ssl']['severity'] = $severity;
+    $requirements['search_api_acquia_ssl']['value'] = '';
+
+    // Check if we are enforcing read-only mode.
+    global $conf;
+    if (!empty($conf['search_api_acquia_init_result'])) {
+      foreach ($conf['search_api_acquia_overrides'] as $server_id => $override) {
+        if ($override['overridden_by_acquia_search'] == SEARCH_API_ACQUIA_AUTO_SHOULD_OVERRIDE_READ_ONLY) {
+          $server = new StdClass();
+          $server->machine_name = $server_id;
+          $msg = search_api_acquia_get_read_only_mode_warning($server, $t);
+          $requirements['search_api_acquia_read_only']['title'] = $t('Search API Acquia');
+          $requirements['search_api_acquia_read_only']['severity'] = REQUIREMENT_WARNING;
+          $requirements['search_api_acquia_read_only']['value'] = $msg;
+        }
+      }
+    }
+
+    // Flag if acquia_search_multi_subs module is enabled.
+    if (module_exists('acquia_search_multi_subs')) {
+      $requirements['search_api_acquia_multi_subs']['title'] = $t('Search API Acquia');
+      $requirements['search_api_acquia_multi_subs']['severity'] = REQUIREMENT_WARNING;
+      $requirements['search_api_acquia_multi_subs']['value'] = $t(
+        'Warning: acquia_search_multi_subs.module is enabled, but most of its functionality is now included in the Search API Acquia module. Please read <a href="@url">our documentation</a>.',
+        array('@url' => 'https://docs.acquia.com/acquia-search/multiple-cores')
+      );
+    }
+  }
+  // Update the cached version whenever we may be updating the module.
+  if ($phase == 'runtime' || $phase == 'update') {
+    search_api_acquia_set_version();
+  }
+
+  return $requirements;
 }

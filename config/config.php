@@ -14,6 +14,10 @@ $conf = array (
     array (
       'enable' => false,
     ),
+    'dkan_workflow' => 
+    array (
+      'enable' => false,
+    ),
     'stage_file_proxy_origin' => 'changeme',
     'fast_file' => 
     array (
@@ -73,4 +77,20 @@ $conf = array (
   ),
   'gaClientTrackingCode' => 'UA-XXXXX-Y',
   'gaNuCivicTrackingCode' => 'UA-XXXXX-Z',
+  'circle' => 
+  array (
+    'test_dirs' => 
+    array (
+      0 => 'tests/features',
+      1 => 'dkan/test/features',
+      2 => 'config/tests/features',
+    ),
+    'skip_tags' => 
+    array (
+      0 => 'customizable',
+      1 => 'fixme',
+      2 => 'testBug',
+    ),
+    'memory_limit' => '256M',
+  ),
 );

@@ -1,4 +1,37 @@
 # Change log
+## [1.13.1.0]
+- Remake with dkan 7.x-1.131 #106
+- Add example.config.yml on update. #103
+- Fix `ahoy drush custom-libs` #102
+- Fix backup database reuse #98
+- Fixed homepage conversion call on upgrade script #100
+
+## [1.13.0.0]
+- Remake with dkan 7.x-1.13 #96
+- Make skip_tags configurable. #90
+- Remove INSTALL and README files from sites. #94
+- Upgrade dkan to 1.13.beta #57
+- Enable dkan-workflow via config.yml #92
+- Fix broken search index brakes DB pruning script #91
+- Only fail the build on circle (not probo) #75
+- Make git ignore asset files folder #80
+- Add registry_rebuild to CircleCi environment #89
+- Fix extra spaces in `ahoy dkan uli` output #86
+- Fix circle.rb script - #74
+- Add sql-drop step before database import #72
+
+## [1.12.13.2]
+- Fix broken template #69
+
+## [1.12.13.1]
+- Fix `ahoy build new` #63
+- Update remote.ahoy.yml #64
+- Fix http to https redirects #65
+- Clean up db when vis_entity modules are disabled #66
+- Add drupal extension patch for some custom tests. #67
+- Make circle.yml configurable via config.yml #68
+- Always allow cli access #56
+
 ## [1.12.13.0]
 - Update dkan version to 7.x-1.12.13 https://github.com/NuCivic/dkan/releases/tag/7.x-1.12.13
 - Recolection of customize dkan docs #47

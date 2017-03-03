@@ -1,7 +1,7 @@
 Setting up a project locally
 ----------------------------
 
-1. Install docker as described in :doc:`../getting_started/setting-up-local-docker`
+1. Install docker as described in `this guide <../docker-dev-env/installation.html>`_
 2. Run 
 
 .. code-block:: bash
@@ -72,4 +72,4 @@ of course the specific module will depend on your error.
 Hostname/alias errors
 ~~~~~~~~~~~~~~~~~~~~~
 
-The ahoy custom setup command will fail if you do not have the Acquia aliases set up correctly on your local environment. Make sure you are logged into Acquia (drush ac-api-login) then update your Acquia aliases (drush acquia-update).
+The `ahoy ci setup` command will fail if you do not have the Acquia aliases set up correctly on your local environment. Make sure you are logged into Acquia (drush ac-api-login) then update your Acquia aliases (drush acquia-update).

@@ -44,4 +44,4 @@ Without proper management updating a Drupal or DKAN site quickly can be very dif
 
 Config/
 -------
-All of the development for DKAN Starter implementers is done in the ``config/`` folder. Everything outside of the ``config/`` folder will be overwritten after every update. GovDelivery provides updates to DKAN Starter immediately after DKAN patch or minor releases or after an update to DKAN Starter. Implementers can simply run the command ``ahoy build update DKAN-STARTER-VERSION`` to get the latest version of DKAN and DKAN Starter.
+All of the development for DKAN Starter implementers is done in the ``config/`` folder. Everything outside of the ``config/`` folder will be overwritten after every update. Granicus provides updates to DKAN Starter immediately after DKAN patch or minor releases or after an update to DKAN Starter. Implementers can simply run the command ``ahoy build update DKAN-STARTER-VERSION`` to get the latest version of DKAN and DKAN Starter.

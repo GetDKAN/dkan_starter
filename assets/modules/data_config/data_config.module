@@ -11,6 +11,11 @@ function data_config_enabled_modules() {
   );
   
   $features_master['modules'] = array(
+    #'dkan_sitewide_demo_front' => 'dkan_sitewide_demo_front',
+    #'menu_token' => 'menu_token',
+    #'remote_file_source' => 'remote_file_source',
+    'update' => 'update',
+    #'dkan_default_content' => 'dkan_default_content',
     'acquia_agent' => 'acquia_agent',
     'acquia_purge' => 'acquia_purge',
     'acquia_spi' => 'acquia_spi',
@@ -21,13 +26,13 @@ function data_config_enabled_modules() {
     'ape' => 'ape',
     'autocomplete_deluxe' => 'autocomplete_deluxe',
     'beautytips' => 'beautytips',
+    'better_exposed_filters' => 'better_exposed_filters',
     'block' => 'block',
     'bueditor' => 'bueditor',
     'bueditor_plus' => 'bueditor_plus',
     'chosen' => 'chosen',
     'color_field' => 'color_field',
     'colorizer' => 'colorizer',
-    'conditional_fields' => 'conditional_fields',
     'conditional_styles' => 'conditional_styles',
     'contextual' => 'contextual',
     'ctools' => 'ctools',
@@ -49,13 +54,20 @@ function data_config_enabled_modules() {
     'dkan_dataset_content_types' => 'dkan_dataset_content_types',
     'dkan_dataset_groups' => 'dkan_dataset_groups',
     'dkan_dataset_groups_perms' => 'dkan_dataset_groups_perms',
+    'dkan_dataset_rest_api' => 'dkan_dataset_rest_api',
     'dkan_datastore' => 'dkan_datastore',
     'dkan_datastore_api' => 'dkan_datastore_api',
-    'dkan_health_status' => 'dkan_health_status',
     'dkan_default_topics' => 'dkan_default_topics',
+    'dkan_fixtures' => 'dkan_fixtures',
+    'dkan_harvest' => 'dkan_harvest',
+    'dkan_harvest_dashboard' => 'dkan_harvest_dashboard',
+    'dkan_harvest_datajson' => 'dkan_harvest_datajson',
+    'dkan_health_status' => 'dkan_health_status',
+    'dkan_ipe' => 'dkan_ipe',
+    'dkan_migrate_base' => 'dkan_migrate_base',
     'dkan_permissions' => 'dkan_permissions',
+    'dkan_plugins' => 'dkan_plugins',
     'dkan_sitewide' => 'dkan_sitewide',
-    'dkan_sitewide_demo_front' => 'dkan_sitewide_demo_front',
     'dkan_sitewide_menu' => 'dkan_sitewide_menu',
     'dkan_sitewide_panelizer' => 'dkan_sitewide_panelizer',
     'dkan_sitewide_panels' => 'dkan_sitewide_panels',
@@ -67,14 +79,12 @@ function data_config_enabled_modules() {
     'eck' => 'eck',
     'entity' => 'entity',
     'entity_path' => 'entity_path',
-    'entity_rdf' => 'entity_rdf',
     'entity_token' => 'entity_token',
     'entitycache' => 'entitycache',
     'entityreference' => 'entityreference',
     'entityreference_filter' => 'entityreference_filter',
     'environment' => 'environment',
     'environment_indicator' => 'environment_indicator',
-    'eva' => 'eva',
     'expire' => 'expire',
     'facet_icons' => 'facet_icons',
     'facetapi' => 'facetapi',
@@ -131,8 +141,10 @@ function data_config_enabled_modules() {
     'media_vimeo' => 'media_vimeo',
     'media_youtube' => 'media_youtube',
     'menu' => 'menu',
+    'menu_admin_per_menu' => 'menu_admin_per_menu',
     'menu_block' => 'menu_block',
-    'menu_token' => 'menu_token',
+    'migrate' => 'migrate',
+    'migrate_extras' => 'migrate_extras',
     'module_filter' => 'module_filter',
     'multistep' => 'multistep',
     'node' => 'node',
@@ -144,8 +156,11 @@ function data_config_enabled_modules() {
     'og_moderation' => 'og_moderation',
     'og_ui' => 'og_ui',
     'open_data_schema_ckan' => 'open_data_schema_ckan',
+    'open_data_schema_dcat' => 'open_data_schema_dcat',
     'open_data_schema_map' => 'open_data_schema_map',
     'open_data_schema_map_dkan' => 'open_data_schema_map_dkan',
+    'open_data_schema_map_dkan' => 'open_data_schema_map_dkan',
+    'open_data_schema_map_xml_output' => 'open_data_schema_map_xml_output',
     'open_data_schema_pod' => 'open_data_schema_pod',
     'options' => 'options',
     'page_manager' => 'page_manager',
@@ -161,18 +176,15 @@ function data_config_enabled_modules() {
     'pathauto' => 'pathauto',
     'r4032login' => 'r4032login',
     'radix_layouts' => 'radix_layouts',
-    'rdf' => 'rdf',
-    'rdfui' => 'rdfui',
-    'rdfx' => 'rdfx',
     'recline' => 'recline',
     'ref_field_sync' => 'ref_field_sync',
-    'roleassign' => 'roleassign',
-    'remote_file_source' => 'remote_file_source',
     'remote_stream_wrapper' => 'remote_stream_wrapper',
     'rest_server' => 'rest_server',
     'restws' => 'restws',
+    'roleassign' => 'roleassign',
     'rules' => 'rules',
     'rules_admin' => 'rules_admin',
+    'safeword' => 'safeword',
     'search_api' => 'search_api',
     'search_api_acquia' => 'search_api_acquia',
     'search_api_db' => 'search_api_db',
@@ -192,7 +204,6 @@ function data_config_enabled_modules() {
     'text' => 'text',
     'token' => 'token',
     'user' => 'user',
-    'update' => 'update',
     'uuid' => 'uuid',
     'uuidreference' => 'uuidreference',
     'uuidreference_select' => 'uuidreference_select',
@@ -216,6 +227,18 @@ function data_config_enabled_modules() {
 
   if (isset($data_config['clamav']) && $data_config['clamav']['enable']) {
     $features_master['modules']['clamav'] = 'clamav';
+  }
+
+  if (isset($data_config['dkan_workflow']) && $data_config['dkan_workflow']['enable']) {
+    $features_master['modules']['dkan_workflow'] = 'dkan_workflow';
+    $features_master['modules']['dkan_workflow_permissions'] = 'dkan_workflow_permissions';
+    $features_master['modules']['link_badges'] = 'link_badges';
+    $features_master['modules']['menu_badges'] = 'menu_badges';
+    $features_master['modules']['views_dkan_workflow_tree'] = 'views_dkan_workflow_tree';
+    $features_master['modules']['workbench'] = 'workbench';
+    $features_master['modules']['workbench_email'] = 'workbench_email';
+    $features_master['modules']['workbench_moderation'] = 'workbench_moderation';
+    $features_master['modules']['drafty'] = 'drafty';
   }
 
   return $features_master;
@@ -246,8 +269,9 @@ function data_config_modules_disabled($modules) {
         }
         $dependencies[$module] = array_intersect($dependencies[$module], $modules_warn);
       }
-      module_load_include('inc','custom_config','features.features_master');
-      $feature_master_list = function_exists('custom_config_features_master_defaults') ? custom_config_features_master_defaults(): array();
+      module_load_include('inc','custom_config','custom_config.features.features_master');
+      $feature_master_list = function_exists('custom_config_features_master_defaults') ?
+        custom_config_features_master_defaults(): array('modules' => array());
       $feature_master_list = array_keys($feature_master_list['modules']);
       $dpt_output = array(
         array('Modules being disabled', 'In feature master list?', 'Cross Dependencies with modules being disabled'),

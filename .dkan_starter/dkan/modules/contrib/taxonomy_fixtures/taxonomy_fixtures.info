@@ -1,6 +1,0 @@
-name = Taxonomy Fixtures
-core = 7.x
-package = DKAN
-version = 7.x-1.0
-project = taxonomy_fixtures
-dependencies[] = taxonomy

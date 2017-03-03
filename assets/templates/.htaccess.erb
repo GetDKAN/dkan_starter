@@ -120,11 +120,11 @@ DirectoryIndex index.php index.html index.htm
   # RewriteBase /
   
   <% if @https_everywhere %>
-    # Redirect to HTTP.
-    RewriteCond %{HTTPS} on
-    RewriteCond %{SERVER_PORT} 443
-    RewriteCond %{HTTP:X-Forwarded-Proto} =https
-    RewriteRule ^(.*)$ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # https://docs.acquia.com/article/redirecting-traffic-between-http-and-https-acquia-cloud
+  # Redirect HTTP to HTTPS
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   <% end %>
 
   # Pass all requests not referring directly to files in the filesystem to

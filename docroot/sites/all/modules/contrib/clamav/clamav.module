@@ -4,11 +4,15 @@
  * Integrate ClamAV to allow uploaded files to be scanned for viruses.
  */
 
-// Scan using a ClamAV Daemon
+
+// Scan using a ClamAV Daemon over TCP/IP.
 define('CLAMAV_USE_DAEMON', 0);
-// Scan using a ClamAV executable
+// Scan using a ClamAV executable.
 define('CLAMAV_USE_EXECUTABLE', 1);
-// Default: use Daemon-mode
+// Scan using a ClamAV Daemon over unix-socket.
+define('CLAMAV_USE_DAEMON_UNIX_SOCKET', 2);
+
+// Default: use Daemon-mode over TCP/IP.
 define('CLAMAV_DEFAULT_MODE', CLAMAV_USE_DAEMON);
 
 // Behaviour if the ClamAV scanner is unavailable or does not respond.
@@ -27,6 +31,8 @@ define('CLAMAV_DEFAULT_PORT', 3310);
 define('CLAMAV_DEFAULT_PATH', '/usr/bin/clamscan');
 // Default params for executable
 define('CLAMAV_DEFAULT_PARAMS', '');
+// Default unix socket.
+define('CLAMAV_DEFAULT_UNIX_SOCKET', '/var/clamav/clamd');
 
 // The file was not checked (e.g. because the AV daemon wasn't running).
 define('CLAMAV_SCANRESULT_UNCHECKED', -1);
@@ -77,6 +83,11 @@ function clamav_menu() {
  */
 function clamav_file_validate($file) {
   $errors = array();
+
+  // If ClamAV scanning has been disabled on the config page, abort early.
+  if (!variable_get('clamav_enabled', TRUE)) {
+    return $errors;
+  }
 
   // Check whether files of this scheme should be scanned.
   $scheme = clamav_get_file_scheme($file);

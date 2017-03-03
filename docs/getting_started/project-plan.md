@@ -4,7 +4,7 @@ Before you [Create a new project](creating-a-new-project.md) read the following 
 
 There are many reasons why teams can't use the tools below and we have worked with many of them that have had successful workflows and deployments.
 
-## Determine Which Tools You Can User
+## Determine Which Tools You Can Use
 
 DKAN Starter is optimized to work with the following:
 
@@ -56,7 +56,7 @@ If you are unable to use Jenkins it is recommended to use a similar task runner.
 If you are unable to use Amazon's S3 for backups you need to setup a place to keep backups that is secure and developers and CI tools can access.
 
 ### Acquia
-If you are unable to use Acquia there many hosts that can be substituted or a bespoke hosting platform can be setup however it needs to have the following characteristics:
+If you are unable to use Acquia there are many hosts that can be substituted or a bespoke hosting platform can be setup, however, it needs to have the following characteristics:
 
 * Git integration
 * Drush alias support
@@ -72,6 +72,6 @@ If you are unable to use Acquia there many hosts that can be substituted or a be
 
 You can use [this checklist](https://docs.google.com/spreadsheets/d/167rJVtwfg5S5kBdsbr34i27nDR3-u8Ligh4lypobips/edit#gid=0) as a tool for preparing your Project Plan. Make a copy for your own project.
 
-## Contact GovDelivery
+## Contact Granicus
 
-We would love to hear from you if you are using DKAN Starter. Contact us through the DKAN channels: https://github.com/NuCivic/dkan#getting-help-with-dkan or email us at ``aaron.couch (at) govdelivery.com``. Let us know your use case, questions or concerns.
+We would love to hear from you if you are using DKAN Starter. Contact us through the [DKAN channels](https://getdkan.com/community). Let us know your use case, questions or concerns.
