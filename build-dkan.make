@@ -9,3 +9,6 @@ projects[dkan][type] = profile
 projects[dkan][download][type] = git
 projects[dkan][download][url] = https://github.com/NuCivic/dkan.git
 projects[dkan][download][tag] = 7.x-1.13.1
+
+projects[dkan][patch][1] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1769.diff
+
