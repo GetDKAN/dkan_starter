@@ -11,4 +11,4 @@ projects[dkan][download][url] = https://github.com/NuCivic/dkan.git
 projects[dkan][download][tag] = 7.x-1.13.1
 
 projects[dkan][patch][1] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1769.diff
-
+projects[dkan][patch][2] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1761.diff
