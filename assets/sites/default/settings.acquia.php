@@ -60,10 +60,15 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
       'node/%node/moderation',
       'file/ajax',
     );
+
+    $endpoint_paths = array(
+      'api/action/datastore/search.json'
+    );
+
     // Standarize node edit paths for validation.
     $current_path = preg_replace("/\d+/", '%node', $_GET['q']);
     foreach ($admin_paths as $admin_path) {
-      if (strpos($current_path, $admin_path) === 0) {
+      if ((strpos($current_path, $admin_path) === 0) || (strpos($current_path, $endpoint_path) === 0)) {
         ini_set('memory_limit', '512M');
       }
     }
