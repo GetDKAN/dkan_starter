@@ -8,7 +8,7 @@ The best workflow for this is to:
 
 1. Add the module 
     
-   1. Add the module as if it was just another "contributed" module: Add a contributed module
+   1. Add the module as if it was just another "contributed" module: `Add a contributed module <../add-contrib-module.html>`_
     
    2. Once this is done a link to the module should exist in ``custom.make``.
 
@@ -36,7 +36,7 @@ The best workflow for this is to:
 Example
 ^^^^^^^
 
-Lets say you are working on a module which adds [hover-bear](http://fakeplus.com/pictures/jpg/-hover-bear_20120503062245.jpg) functionality to a client project and the module lives at http://github.com/nucivic/dkan_hover_bears.
+Lets say you are working on a module which adds `hover-bear <http://fakeplus.com/pictures/jpg/-hover-bear_20120503062245.jpg>`_ functionality to a client project and the module lives at http://github.com/nucivic/dkan_hover_bears.
 
 1. Add the module
 
@@ -61,6 +61,7 @@ Lets say you are working on a module which adds [hover-bear](http://fakeplus.com
 2. Delete the module
 
 .. code-block:: bash
+
   rm -r docroot/sites/all/modules/contrib/dkan_hover_bears
 
 3. Clone the module
@@ -71,7 +72,7 @@ Lets say you are working on a module which adds [hover-bear](http://fakeplus.com
   
 4. Commit local changes
 
-   1. cd into``docroot/sites/all/modules/contrib/dkan_hover_bears``
+   1. cd into ``docroot/sites/all/modules/contrib/dkan_hover_bears``
  
    2. commit changes
 

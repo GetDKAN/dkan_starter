@@ -91,3 +91,55 @@ function data_config_update_7002() {
   }
   return $messages;
 }
+
+/**
+ * Removes deprecated modules from the database.
+ */
+function data_config_update_7003() {
+  if (!module_exists('conditional_fields')) {
+    db_delete('system')
+      ->condition('name', 'conditional_fields')
+      ->execute();
+  }
+  if (!module_exists('eva')) {
+    db_delete('system')
+      ->condition('name', 'eva')
+      ->execute();
+  }
+  if (!module_exists('entity_rdf')) {
+    db_delete('system')
+      ->condition('name', 'entity_rdf')
+      ->execute();
+  }
+  if (!module_exists('rdf')) {
+    db_delete('system')
+      ->condition('name', 'rdf')
+      ->execute();
+    db_delete('system')
+      ->condition('name', 'rdf_test')
+      ->execute();
+  }
+  if (!module_exists('rdfx')) {
+    db_delete('system')
+      ->condition('name', 'rdfx')
+      ->execute();
+  }
+  if (!module_exists('rdfui')) {
+    db_delete('system')
+      ->condition('name', 'rdfui')
+      ->execute();
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Update DKAN acquia cache settings.
+ *
+ * Node references should get updated when reference node is updated.
+ * REF CIVIC-5966
+ */
+function data_config_update_7004() {
+  if (module_exists('dkan_acquia_expire')) {
+    features_revert_module('dkan_acquia_expire');
+  }
+}

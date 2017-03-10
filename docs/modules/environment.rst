@@ -48,10 +48,10 @@ it will enable all the module defined in the $devel_modules variable. On the oth
 
     drush env-switch production
 
-The opposite will happen (all the devel modules will be disable). This is of course a very simple implementation of what you can achieve with this module.
+The opposite will happen (all the devel modules will be disabled). This is of course a very simple implementation of what you can achieve with this module.
 
 For DKAN Starter we are making heavy use of the environment module to allow stuff to happen when we deploy code and copy databases through environments. If you want to fully grasp how we are doing this you need to read the following pieces of documentation:
 
  * :doc:`custom-config`
  * :doc:`devinci`
- * Hands free deployments
+ * `Hands free deployments <../deployment/index.html#concept-behind-hands-free-deployments>`_

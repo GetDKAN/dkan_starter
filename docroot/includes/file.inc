@@ -600,7 +600,14 @@ function file_load($fid) {
  */
 function file_save(stdClass $file) {
   $file->timestamp = REQUEST_TIME;
-  $file->filesize = filesize($file->uri);
+
+  // We can't use filesize() because that doesn't handle remote streams.
+  if ($wrapper = file_stream_wrapper_get_instance_by_uri($file->uri)) {
+    $wrapper->stream_open($file->uri, 'r', NULL, $file->uri);
+    $fstat = $wrapper->stream_stat();
+    $wrapper->stream_close();
+    $file->filesize = $fstat['size'];
+  }
 
   // Load the stored entity, if any.
   if (!empty($file->fid) && !isset($file->original)) {

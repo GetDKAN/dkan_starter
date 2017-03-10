@@ -7,4 +7,4 @@ To run updates from config.yml run:
 
 .. code-block:: bash
 
-  ahoy build custom
+  ahoy build config

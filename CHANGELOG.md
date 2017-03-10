@@ -1,4 +1,41 @@
 # Change log
+
+## [1.13.1.4]
+- Update dkan acquia cache settings #118
+
+## [1.13.1.3]
+- Added patches on DKAN to include modifications made on PR#1766 and PR#1788.
+
+## [1.13.1.2]
+- Fix pass NULL in data_config_enabled_modules() #109
+- Do not disable dkan_sitewide_demo_front via script #110
+- Added 'no-main-menu' tag on tests #112
+- Added patches on DKAN to include modifications made on PR#1769, PR#1761 and PR#1763
+
+## [1.13.1.1]
+- Update the 1.13 upgrade script #107
+
+## [1.13.1.0]
+- Remake with dkan 7.x-1.131 #106
+- Add example.config.yml on update. #103
+- Fix `ahoy drush custom-libs` #102
+- Fix backup database reuse #98
+- Fixed homepage conversion call on upgrade script #100
+
+## [1.13.0.0]
+- Remake with dkan 7.x-1.13 #96
+- Make skip_tags configurable. #90
+- Remove INSTALL and README files from sites. #94
+- Upgrade dkan to 1.13.beta #57
+- Enable dkan-workflow via config.yml #92
+- Fix broken search index brakes DB pruning script #91
+- Only fail the build on circle (not probo) #75
+- Make git ignore asset files folder #80
+- Add registry_rebuild to CircleCi environment #89
+- Fix extra spaces in `ahoy dkan uli` output #86
+- Fix circle.rb script - #74
+- Add sql-drop step before database import #72
+
 ## [1.12.13.2]
 - Fix broken template #69
 

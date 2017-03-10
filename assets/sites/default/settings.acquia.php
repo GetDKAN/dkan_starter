@@ -35,6 +35,8 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
 
   if ($conf['default']['https_everywhere']) {
     $base_url = $base_url_https;
+    $conf['acquia_purge_https'] = TRUE;
+    $conf['acquia_purge_http'] = FALSE;
 
     // Disable securepages when https everywhere is enabled.
     $conf['features_master_temp_disabled_modules'][] = 'securepages';
@@ -48,5 +50,26 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
       'derived_key' => $conf['acquia'][$env]['derived_key'],
     );
   }
+
+  // {{{1 Conditionally manage memory.
+  if (isset($conf['default']['odfe']) && $conf['default']['odfe']['enabled']) {
+    $high_memory_paths = array(
+      'admin',
+      'node/add',
+      'node/%node/edit',
+      'node/%node/moderation',
+      'file/ajax',
+      'api/action/datastore/search.json'
+    );
+
+    // Standarize node edit paths for validation.
+    $current_path = preg_replace("/\d+/", '%node', $_GET['q']);
+    foreach ($high_memory_paths as $high_memory_path) {
+      if ((strpos($current_path, $high_memory_path) === 0)) {
+        ini_set('memory_limit', '512M');
+      }
+    }
+  }
+
   acquia_hosting_db_choose_active();
 }

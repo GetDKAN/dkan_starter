@@ -8,9 +8,10 @@ To upgrade to the latest available version of DKAN, run:
 
 .. code-block:: bash
 
-  ahoy build update DATA-STARTER-VERSION
+  ahoy build update DKAN-STARTER-VERSION
 
 This command: 
-* updates everything in the repo except the config/ folder from data_starter
+
+* updates everything in the repo except the config/ folder from dkan_starter
 * runs custom.make and overrides.make
 * runs config.yml customizations
