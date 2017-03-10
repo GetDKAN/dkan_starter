@@ -86,6 +86,7 @@ function data_config_enabled_modules() {
     'environment' => 'environment',
     'environment_indicator' => 'environment_indicator',
     'expire' => 'expire',
+    'expire_panels' => 'expire_panels',
     'facet_icons' => 'facet_icons',
     'facetapi' => 'facetapi',
     'facetapi_bonus' => 'facetapi_bonus',
