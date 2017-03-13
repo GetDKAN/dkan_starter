@@ -1,0 +1,6 @@
+name = Custom Dash
+description = Holds custom settings for client implementations
+core = 7.x
+package = NuCivic
+version = 7.x-1.x
+dependencies[] = dkan_dash

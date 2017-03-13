@@ -1,0 +1,13 @@
+<?php
+
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function custom_dash_preprocess_node(&$variables) {
+  if($variables['type'] == 'react_dashboard') {
+    drupal_add_css(drupal_get_path('module', 'custom_dash') . '/css/custom.css');
+    drupal_add_js(drupal_get_path('module', 'custom_dash') . '/js/dataHandlers.js', array('scope' => 'footer', 'weight' => 0));
+    drupal_add_js(drupal_get_path('module', 'custom_dash') . '/js/stateHandlers.js', array('scope' => 'footer', 'weight' => 1));
+  }
+}
