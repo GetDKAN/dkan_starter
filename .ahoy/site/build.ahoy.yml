@@ -245,9 +245,9 @@ commands:
       fi
       git add . -A
       git commit -m "Updates build-dkan.make from $tag_old $version_old to $tag_new $version_new"
-      command -v hub >/dev/null 2>&1 || { echo >&2 "Hub not installed, please push code and create PR manually."; exit 1; }
-      git push -f origin "$pr_branch";
-      hub pull-request -m "Updates DKAN from $tag_old $version_old to $tag_new $version_new" >/dev/null 2>&1
+      #command -v hub >/dev/null 2>&1 || { echo >&2 "Hub not installed, please push code and create PR manually."; exit 1; }
+      #git push -f origin "$pr_branch";
+      #hub pull-request -m "Updates DKAN from $tag_old $version_old to $tag_new $version_new" >/dev/null 2>&1
 
   update-dkan-starter:
     usage: Updates data starter.
