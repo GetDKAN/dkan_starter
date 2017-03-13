@@ -1,0 +1,531 @@
+<?php
+
+include_once DRUPAL_ROOT . '/includes/xmlrpc.inc';
+include_once DRUPAL_ROOT . '/includes/xmlrpcs.inc';
+
+/**
+ * @file
+ * Test endpoint for Acquia Connector XML-RPC calls.
+ */
+
+define('ACQTEST_SUBSCRIPTION_NOT_FOUND'       , 1000);
+define('ACQTEST_SUBSCRIPTION_KEY_MISMATCH'    , 1100);
+define('ACQTEST_SUBSCRIPTION_EXPIRED'         , 1200);
+define('ACQTEST_SUBSCRIPTION_REPLAY_ATTACK'   , 1300);
+define('ACQTEST_SUBSCRIPTION_KEY_NOT_FOUND'   , 1400);
+define('ACQTEST_SUBSCRIPTION_MESSAGE_FUTURE'  , 1500);
+define('ACQTEST_SUBSCRIPTION_MESSAGE_EXPIRED' , 1600);
+define('ACQTEST_SUBSCRIPTION_MESSAGE_INVALID' , 1700);
+define('ACQTEST_SUBSCRIPTION_VALIDATION_ERROR', 1800);
+define('ACQTEST_SUBSCRIPTION_SITE_NOT_FOUND'  , 1900);
+define('ACQTEST_SUBSCRIPTION_PROVISION_ERROR' , 9000);
+define('ACQTEST_SUBSCRIPTION_MESSAGE_LIFETIME', 15*60);
+define('ACQTEST_EMAIL', 'TEST_networkuser@example.com');
+define('ACQTEST_PASS', 'TEST_password');
+define('ACQTEST_ID', 'TEST_AcquiaConnectorTestID');
+define('ACQTEST_KEY', 'TEST_AcquiaConnectorTestKey');
+define('ACQTEST_ERROR_ID', 'TEST_AcquiaConnectorTestIDErr');
+define('ACQTEST_ERROR_KEY', 'TEST_AcquiaConnectorTestKeyErr');
+define('ACQTEST_EXPIRED_ID', 'TEST_AcquiaConnectorTestIDExp');
+define('ACQTEST_EXPIRED_KEY', 'TEST_AcquiaConnectorTestKeyExp');
+define('ACQTEST_503_ID', 'TEST_AcquiaConnectorTestID503');
+define('ACQTEST_503_KEY', 'TEST_AcquiaConnectorTestKey503');
+define('ACQTEST_site_uuid', 'TEST_cdbd59f5-ca7e-4652-989b-f9e46d309613');
+define('ACQTEST_uuid', 'cdbd59f5-ca7e-4652-989b-f9e46d312458');
+if (!defined('ACQUIA_DEVELOPMENT_NOSSL')) {
+  define('ACQUIA_DEVELOPMENT_NOSSL', TRUE);
+}
+
+function acquia_connector_test_xmlrpc() {
+  return array(
+    array(
+      'acquia.agent.validate',
+      'acquia_connector_test_validate',
+      array('boolean', 'array'),
+      t('Test validates an Acquia Network authenticator.')),
+    array(
+      'acquia.agent.subscription',
+      'acquia_connector_test_subscription',
+      array('struct', 'array'),
+      t('Test validates an Acquia Network subscription.')),
+    array(
+      'acquia.agent.mail.exists',
+      'acquia_connector_test_mail_exists',
+      array('boolean', 'array'),
+      t('Test returns TRUE if the e-mail address matches a registered user')),
+    array(
+      'acquia.agent.provision.get_user_details',
+      'acquia_connector_test_provision_get_user_details',
+      array('struct', 'array'),
+      t('Test returns details of an existing user.')),
+    array(
+      'acquia.agent.communication.settings',
+      'acquia_connector_test_get_communication_settings',
+      array('struct', 'array'),
+      t('Test return communication settings for an account.')),
+    array(
+      'acquia.agent.subscription.credentials',
+      'acquia_connector_test_credentials',
+      array('struct', 'array'),
+      t('Test returns subscriptions for an email.')),
+    array(
+      'acquia.agent.subscription.name',
+      'acquia_connector_test_subscription_name',
+      array('struct', 'array'),
+      t('Test returns subscription name for an indentifer.')),
+    array(
+      'acquia.agent.cloud.migration.environments',
+      'acquia_connector_test_cloud_migration_environments',
+      array('struct', 'array'),
+      t('Test returns environments available for site import.')),
+    array(
+      'acquia.agent.cloud.migration.complete',
+      'acquia_connector_test_migration_complete',
+      array('struct', 'array'),
+      t('Test complete final migration')),
+    array(
+      'acquia.nspi.update',
+      'acquia_connector_test_nspi_update',
+      array('array', 'array'),
+      t('Test incoming site profile information.')
+    ),
+  );
+}
+
+function acquia_connector_test_menu() {
+  $items['spi_def/get/%'] = array(
+    'page callback' => 'acquia_connector_test_spi_definition',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+  );
+  $items['system/acquia-connector-test-upload'] = array(
+    'page callback' => 'acquia_connector_test_upload',
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+
+function acquia_connector_test_spi_definition($arg_version) {
+  $vars = array('file_temporary_path' => array('optional' => FALSE, 'description' => 'file_temporary_path'), 'page_compression' => array('optional' => TRUE, 'description' => 'page_compression'), 'user_admin_role' => array('optional' => TRUE, 'description' => 'user_admin_role'));
+  $data = array(
+    'drupal_version' => $arg_version,
+    'timestamp' => (string) (REQUEST_TIME + 9),
+    'acquia_spi_variables' => $vars,
+  );
+  drupal_json_output($data);
+}
+
+function acquia_connector_test_upload() {
+  $data = 'invalid request';
+  $response_code = 400;
+
+  if (variable_get('acquia_connector_test_upload_server_to_fail', FALSE)) {
+    $data = '';
+    $response_code = 500;
+  }
+
+  return (object) array(
+    'data' => $data,
+    'code' => $response_code,
+  );
+}
+
+function acquia_connector_test_validate($data) {
+  $result = acquia_connector_test_validate_authenticator($data);
+  if (empty($result->is_error)) {
+    return TRUE;
+  }
+  unset($result->secret);
+  xmlrpc_error($result->code, $result->message);
+}
+
+function acquia_connector_test_subscription($data) {
+  $result = acquia_connector_test_validate_authenticator($data);
+  if (empty($result->is_error)) {
+    $result->authenticator['hash'] = _acquia_agent_hmac($result->secret['key'], $result->authenticator['time'], $result->authenticator['nonce'], $result->body);
+    unset($result->secret);
+    return (array) $result;
+  }
+  unset($result->secret);
+  xmlrpc_error($result->code, $result->message);
+}
+
+function acquia_connector_test_mail_exists($data) {
+  // return object
+}
+
+function acquia_connector_test_provision_get_user_details($data) {
+  // return object
+}
+
+function acquia_connector_test_get_communication_settings($data) {
+  // Authenticate.
+  $fields = array(
+    'time' => 'is_numeric',
+    'nonce' => 'is_string',
+    'hash' => 'is_string',
+  );
+  $result = acquia_connector_test_basic_authenticator($fields, $data);
+  if (!empty($result->is_error)) {
+    return $result;
+  }
+
+  if (!isset($data['body']) || !isset($data['body']['email'])) {
+    return xmlrpc_error(ACQSUBSCRIPTION_VALIDATION_ERROR, t('Invalid arguments'));
+  }
+
+  $account = user_load_by_mail($data['body']['email']);
+
+  if (empty($account) || $account->uid == 0) {
+    return xmlrpc_error(ACQTEST_SUBSCRIPTION_VALIDATION_ERROR, t('Account not found'));
+  }
+  else {
+    $result = array(
+      'algorithm' => 'sha512',
+      'hash_setting' => substr($account->pass, 0, 12),
+      'extra_md5' => FALSE,
+    );
+    return $result;
+  }
+  return TRUE;
+}
+
+function acquia_connector_test_credentials($data) {
+  $fields = array(
+    'time' => 'is_numeric',
+    'nonce' => 'is_string',
+    'hash' => 'is_string',
+  );
+  $result = acquia_connector_test_basic_authenticator($fields, $data);
+  if (!empty($result->is_error)) {
+    return $result;
+  }
+
+  if (!empty($data['body']['email'])) {
+    $account = user_load_by_mail($data['body']['email']);
+    if (empty($account) || $account->uid == 0) {
+      return xmlrpc_error(ACQSUBSCRIPTION_VALIDATION_ERROR, t('Account not found'));
+    }
+  }
+  else {
+    return xmlrpc_error(ACQSUBSCRIPTION_VALIDATION_ERROR, t('Invalid arguments'));
+  }
+
+  $hash = _acquia_agent_hmac($account->pass, $data['authenticator']['time'], $data['authenticator']['nonce'], $data['body']);
+  if ($hash === $data['authenticator']['hash']) {
+    $result = array();
+    $result['is_error'] = FALSE;
+    $result['body']['subscription'][] = array(
+      'identifier' => ACQTEST_ID,
+      'key' => ACQTEST_KEY,
+      'name' => ACQTEST_ID,
+    );
+    return $result;
+  }
+  else {
+    return xmlrpc_error(ACQSUBSCRIPTION_VALIDATION_ERROR, t('Incorrect password.'));
+  }
+}
+
+function acquia_connector_test_subscription_name($data) {
+  $fields = array(
+    'time' => 'is_numeric',
+    'nonce' => 'is_string',
+    'hash' => 'is_string',
+  );
+  $result = acquia_connector_test_basic_authenticator($fields, $data);
+  if (!empty($result->is_error)) {
+    return $result;
+  }
+  if (!empty($data['body']['identifier'])) {
+    if (strpos($data['body']['identifier'], 'TEST_') !== 0) {
+      return xmlrpc_error(ACQTEST_SUBSCRIPTION_VALIDATION_ERROR, t('Subscription not found'));
+    }
+    $result = array();
+    $result['is_error'] = FALSE;
+    $result['body']['subscription'] = array(
+      'site_name' => $data['body']['identifier'],
+    );
+    return $result;
+  }
+  else {
+    return xmlrpc_error(ACQTEST_SUBSCRIPTION_VALIDATION_ERROR, t('Invalid arguments'));
+  }
+}
+
+function acquia_connector_test_cloud_migration_environments($data) {
+  $fields = array(
+    'time' => 'is_numeric',
+    'nonce' => 'is_string',
+    'hash' => 'is_string',
+  );
+  $result = acquia_connector_test_basic_authenticator($fields, $data);
+  if (!empty($result->is_error)) {
+    return $result;
+  }
+  if (!empty($data['body']['identifier'])) {
+    if (strpos($data['body']['identifier'], 'TEST_') !== 0) {
+      return xmlrpc_error(ACQTEST_SUBSCRIPTION_VALIDATION_ERROR, t('Subscription not found'));
+    }
+  }
+  else {
+    return xmlrpc_error(ACQTEST_SUBSCRIPTION_VALIDATION_ERROR, t('Invalid arguments'));
+  }
+  if ($data['body']['identifier'] == ACQTEST_ERROR_ID) {
+    return xmlrpc_error(ACQTEST_SUBSCRIPTION_SITE_NOT_FOUND, t("Hosting not available under your subscription. Upgrade your subscription to continue with import."));
+  }
+  $result = array();
+  $result['is_error'] = FALSE;
+  foreach (array('dev' => 'Development', 'test' => 'Stage', 'prod' => 'Production') as $key => $name) {
+    $result['body']['environments'][$key] = array(
+      'url' => url('system/acquia-connector-test-upload/AH_UPLOAD', array('absolute' => TRUE)),
+      'stage' => $key,
+      'nonce' => 'nonce',
+      'secret' => 'secret',
+      'site_name' => $name,
+    );
+  }
+  return $result;
+}
+
+function acquia_connector_test_migration_complete($data) {
+  // return array
+}
+
+function acquia_connector_test_nspi_update($data) {
+  $fields = array(
+    'time' => 'is_numeric',
+    'nonce' => 'is_string',
+    'hash' => 'is_string',
+  );
+  $result = acquia_connector_test_basic_authenticator($fields, $data);
+  if (!empty($result->is_error)) {
+    return $result;
+  }
+  if (!empty($data['authenticator']['identifier'])) {
+    if ($data['authenticator']['identifier'] != ACQTEST_ID && $data['authenticator']['identifier'] != ACQTEST_ERROR_ID) {
+      return xmlrpc_error(ACQTEST_SUBSCRIPTION_VALIDATION_ERROR, t('Subscription not found'));
+    }
+    if ($data['authenticator']['identifier'] == ACQTEST_ERROR_ID) {
+      return FALSE;
+    }
+    else {
+      $result = acquia_connector_test_validate_authenticator($data);
+      $spi_data = $data['body'];
+      $result->body = array('spi_data_received' => TRUE);
+      if (isset($spi_data['spi_def_update'])) {
+        $result->body['update_spi_definition'] = TRUE;
+      }
+
+      // Reflect send_method as nspi_messages if set.
+      if (isset($spi_data['send_method'])) {
+        $result->body['nspi_messages'][] = $spi_data['send_method'];
+      }
+      $result->body['rpc_version'] = 3;
+      $result->authenticator['hash'] = _acquia_agent_hmac($result->secret['key'], $result->authenticator['time'], $result->authenticator['nonce'], $result->body);
+
+      if (isset($spi_data['test_validation_error'])) {
+        $result->authenticator['nonce'] = 'TEST'; // Force a validation fail.
+      }
+
+      $site_action = $spi_data['env_changed_action'];
+      // First connection.
+      if (empty($spi_data['site_uuid'])) {
+        $site_action = 'create';
+      }
+
+      switch ($site_action) {
+        case 'create':
+          $result->body['site_uuid'] = ACQTEST_site_uuid;
+          variable_set('acqtest_site_machine_name', $spi_data['machine_name']);
+          variable_set('acqtest_site_name', $spi_data['name']);
+          $acquia_hosted = (int) filter_var($spi_data['acquia_hosted'], FILTER_VALIDATE_BOOLEAN);
+          variable_set('acqtest_site_acquia_hosted', $acquia_hosted);
+          $result->body['nspi_messages'][] = t('This is the first connection from this site, it may take awhile for it to appear on the Acquia Network.');
+
+          return (array) $result;
+          break;
+        case 'update':
+          break;
+        case 'unblock':
+          break;
+        case 'block':
+          break;
+      }
+
+      unset($result->secret);
+      return (array) $result;
+    }
+  }
+  else {
+    return xmlrpc_error(ACQTEST_SUBSCRIPTION_VALIDATION_ERROR, t('Invalid arguments'));
+  }
+}
+
+function acquia_connector_test_basic_authenticator($fields, $data) {
+  $result = new stdClass();
+
+  foreach ($fields as $field => $type) {
+    if (empty($data['authenticator'][$field]) || !$type($data['authenticator'][$field])) {
+      $result->code = ACQTEST_SUBSCRIPTION_MESSAGE_INVALID;
+      $result->message = t('Authenticator field @field is missing or invalid.', array('@field' => $field));
+      $result->is_error = TRUE;
+      return $result;
+    }
+  }
+
+  $now = REQUEST_TIME;
+  if ($data['authenticator']['time'] > ($now + ACQTEST_SUBSCRIPTION_MESSAGE_LIFETIME)) {
+    $result->code = ACQTEST_SUBSCRIPTION_MESSAGE_FUTURE;
+    $result->message = t('Message time ahead of server time.');
+    $result->is_error = TRUE;
+    return $result;
+  }
+  else if ($data['authenticator']['time'] < ($now - ACQTEST_SUBSCRIPTION_MESSAGE_LIFETIME)) {
+    $result->code = ACQTEST_SUBSCRIPTION_MESSAGE_EXPIRED;
+    $result->message = t('Message is too old.');
+    $result->is_error = TRUE;
+    return $result;
+  }
+
+  $result->is_error = FALSE;
+  return $result;
+}
+
+function acquia_connector_test_validate_authenticator($data) {
+  $fields = array(
+    'time' => 'is_numeric',
+    'identifier' => 'is_string',
+    'nonce' => 'is_string',
+    'hash' => 'is_string',
+   );
+
+  $result = acquia_connector_test_basic_authenticator($fields, $data);
+  if (!empty($result->is_error)) {
+    return $result;
+  }
+  if (strpos($data['authenticator']['identifier'], 'TEST_') !== 0) {
+    $result->code = ACQTEST_SUBSCRIPTION_NOT_FOUND;
+    $result->message = t('Subscription not found.');
+    $result->is_error = TRUE;
+    return $result;
+  }
+
+  switch ($data['authenticator']['identifier']) {
+    case ACQTEST_ID:
+      $key = ACQTEST_KEY;
+      break;
+    case ACQTEST_EXPIRED_ID:
+      $key = ACQTEST_EXPIRED_KEY;
+      break;
+    case ACQTEST_503_ID:
+      $key = ACQTEST_503_KEY;
+      break;
+    default:
+      $key = ACQTEST_ERROR_KEY;
+      break;
+  }
+  $hash = _acquia_agent_hmac($key, $data['authenticator']['time'], $data['authenticator']['nonce'], $data['body']);
+  $hash_simple = _acquia_agent_hmac($key, $data['authenticator']['time'], $data['authenticator']['nonce'], array());
+
+  if (($hash !== $data['authenticator']['hash']) && ($hash_simple != $data['authenticator']['hash'])) {
+    $result->code = ACQTEST_SUBSCRIPTION_VALIDATION_ERROR;
+    $result->message = t('HMAC validation error: ')."{$hash} != {$data['authenticator']['hash']}";
+    $result->is_error = TRUE;
+    return $result;
+  }
+
+  if ($key === ACQTEST_EXPIRED_KEY) {
+    $result->code = ACQTEST_SUBSCRIPTION_EXPIRED;
+    $result->message = t('Subscription expired.');
+    $result->is_error = TRUE;
+    return $result;
+  }
+
+  // Record connections.
+  $connections = variable_get('acquia_connector_test_connections' . $data['authenticator']['identifier'], 0);
+  $connections++;
+  variable_set('acquia_connector_test_connections' . $data['authenticator']['identifier'], $connections);
+  if ($connections == 3 && $data['authenticator']['identifier'] == ACQTEST_503_ID) {
+    $result->code = 9999;
+    $result->message = t('General error.');
+    $result->is_error = TRUE;
+    return $result;
+  }
+  $result->is_error = FALSE;
+  $result->body['active'] = 1;
+  $result->body['href'] = 'TEST';
+  $result->body['expiration_date']['value'] = '2023-10-08T06:30:00';
+  $result->body['product'] = '91990';
+  $result->body['derived_key_salt'] = $data['authenticator']['identifier'] . '_KEY_SALT';
+  $result->body['update_service'] = 1;
+  $result->body['search_service_enabled'] = 1;
+  $result->body['uuid'] = ACQTEST_uuid;
+  if (isset($data['body']['rpc_version'])) {
+    $result->body['rpc_version'] = $data['body']['rpc_version'];
+  }
+  $result->secret['data'] = $data;
+  $result->secret['nid'] = '91990';
+  $result->secret['node'] = $data['authenticator']['identifier'] . '_NODE';
+  $result->secret['key'] = $key;
+  $result->authenticator = $data['authenticator'];
+  $result->authenticator['hash'] = '';
+  $result->authenticator['time'] += 1;
+
+  return $result;
+}
+
+function _acquia_connector_test_increment_requests() {
+  $requests = variable_get('acquia_connector_test-requests', 0);
+  $requests++;
+  variable_set('acquia_connector_test-requests', $requests);
+}
+
+function acquia_connector_test_xmlrpc_server_emulator($method, $data){
+
+  _acquia_connector_test_increment_requests();
+
+
+  $result = array();
+
+  switch ($method) {
+    case 'acquia.agent.communication.settings':
+      $result = acquia_connector_test_get_communication_settings($data);
+      break;
+
+    case 'acquia.agent.subscription.credentials':
+      $result = acquia_connector_test_credentials($data);
+      break;
+
+    case 'acquia.agent.subscription.name':
+      $result = acquia_connector_test_subscription_name($data);
+      break;
+
+    case 'acquia.agent.validate':
+      $result = acquia_connector_test_validate($data);
+      break;
+
+    case 'acquia.agent.subscription':
+      $result = acquia_connector_test_subscription($data);
+      break;
+
+    case 'acquia.agent.cloud.migration.environments':
+      $result = acquia_connector_test_cloud_migration_environments($data);
+      break;
+
+    case 'acquia.agent.cloud.migration.complete':
+      $result = acquia_connector_test_migration_complete($data);
+      break;
+
+    case 'acquia.nspi.update':
+      $result = acquia_connector_test_nspi_update($data);
+      break;
+
+  }
+
+  if (xmlrpc_errno()) {
+    return FALSE;
+  }
+
+  return $result;
+}

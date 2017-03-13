@@ -1,0 +1,238 @@
+<?php
+
+/**
+ * @file
+ * Tests for fast_404.module.
+ */
+
+
+/**
+ * Class Fast404ExtensionTestCase
+ *
+ * Tests the extension checking functionality.
+ */
+class Fast404ExtensionTestCase extends DrupalWebTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Fast 404 Extension Check',
+      'description' => 'Test fast 404 extension checking.',
+      'group' => 'Fast 404'
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('fast_404');
+  }
+
+  // Run a selection of files and that should return a fast 404.
+  public function testExtensionCheck() {
+
+    $extensions = array(
+      'jpg',
+      'png',
+      'txt',
+    );
+
+    foreach ($extensions as $ext) {
+      $this->drupalGet('unknownfile.' . $ext);
+      $this->assertResponse(404);
+      $this->assertRaw('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "/unknownfile.' . $ext . '" was not found on this server.</p></body></html>');
+    }
+  }
+
+  // Add new extensions to the list checked to verify they also get blocked.
+  public function testExtensionCustomisation() {
+    $this->drupalGet('unknownfile.doc');
+    $this->assertResponse(404);
+    $this->assertText('Create new account');
+    variable_set('fast_404_exts', '/^(?!robots).*\.(doc|txt|png|gif|jpe?g|css|js|ico|swf|flv|cgi|bat|pl|dll|exe|asp)$/i');
+    $this->drupalGet('unknownfile.doc');
+    $this->assertResponse(404);
+    $this->assertRaw('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "/unknownfile.doc" was not found on this server.</p></body></html>');
+  }
+}
+
+/**
+ * Class Fast404PathTestCase
+ *
+ * Tests the path checking functionality.
+ */
+class Fast404PathTestCase extends DrupalWebTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Fast 404 Path Check',
+      'description' => 'Test fast 404 path matching and blocking functionality.',
+      'group' => 'Fast 404'
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('fast_404');
+  }
+
+  public function testPathCheck() {
+
+    // Ensure path check isn't activated by default.
+    $this->drupalGet('notdrupal');
+    $this->assertResponse(404);
+    $this->assertText('Create new account');
+
+    // Turn on path check and detect fast_404 page.
+    variable_set('fast_404_path_check', TRUE);
+    $this->drupalGet('notdrupal');
+    $this->assertResponse(404);
+    $this->assertRaw('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "/notdrupal" was not found on this server.</p></body></html>');
+  }
+}
+
+/**
+ * Class Fast404CustomReponseTestCase
+ *
+ * Tests custom responses that Fast 404 provides.
+ */
+class Fast404CustomReponseTestCase extends DrupalWebTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Fast 404 Custom Response',
+      'description' => 'Tests custom responses provided by the module.',
+      'group' => 'Fast 404'
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('fast_404');
+  }
+
+  // Tests returning 410 GONE instead of 404 NOT FOUND.
+  public function test410Response() {
+    variable_set('fast_404_path_check', TRUE);
+    variable_set('fast_404_return_gone', TRUE);
+    $this->drupalGet('notdrupal');
+    $this->assertResponse(410);
+  }
+
+  // Tests the custom HTML error page instead of text.
+  public function testCustom404Page() {
+    variable_set('fast_404_HTML_error_all_paths', TRUE);
+    variable_set('fast_404_HTML_error_page', 'sites/all/modules/fast_404/tests/custom-404.html');
+    $this->drupalGet('unfound.flv');
+    $this->assertResponse(404);
+    $this->assertRaw('<html>
+  <head>
+    <title>404 Not Found</title>
+  </head>
+  <body>
+    <h1>Custom 404!</h1>
+  </body>
+</html>');
+  }
+}
+
+/**
+ * Class Fast404WhitelistTestCase
+ *
+ * Tests Fast 404's whitelisting abilities.
+ */
+class Fast404WhitelistTestCase extends DrupalWebTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Fast 404 Whitelist',
+      'description' => 'Test whitelisting requests.',
+      'group' => 'Fast 404'
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('fast_404');
+    variable_set('fast_404_url_whitelisting', TRUE);
+    variable_set('fast_404_exts', '/^(?!robots).*\.(xml|txt|png|gif|jpe?g|css|js|ico|swf|flv|cgi|bat|pl|dll|exe|asp)$/i');
+  }
+
+  // Tests exact matches to the whitelist.
+  public function testWhitelist() {
+    $this->drupalGet('sitemap.xml');
+    $this->assertResponse(404);
+    $this->assertRaw('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "/sitemap.xml" was not found on this server.</p></body></html>');
+    variable_set('fast_404_string_whitelisting', array('sitemap.xml'));
+    $this->drupalGet('sitemap.xml');
+    $this->assertResponse(404);
+    $this->assertText('Create new account');
+  }
+
+  // Tests the whitelist pattern matching functionality.
+  public function testStringWhitelisting() {
+    $this->drupalGet('delicious.xml');
+    variable_set('fast_404_string_whitelisting', array('deli'));
+    $this->drupalGet('delicious.xml');
+  }
+}
+
+/**
+ * Class Fast404LocaleTestCase
+ *
+ * Ensure fast_404 doesn't clobber localised content.
+ */
+class Fast404LocaleTestCase extends DrupalWebTestCase {
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Fast 404 Locale',
+      'description' => 'Test locale integration.',
+      'group' => 'Fast 404'
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('fast_404', 'locale', 'path');
+  }
+
+  public function testLocalisedContent() {
+    variable_set('fast_404_path_check', TRUE);
+    variable_set('language_content_type_article', 1);
+
+    // Set the site up to use locale. Mainly cribbed from locale.test.
+    $admin_user = $this->drupalCreateUser(array(
+      'administer languages',
+      'access administration pages',
+      'create article content',
+      'edit own article content',
+      'administer url aliases',
+      'create url aliases',
+    ));
+
+    $this->drupalLogin($admin_user);
+
+    // Add predefined language.
+    $edit = array(
+      'langcode' => 'fr',
+    );
+    $this->drupalPost('admin/config/regional/language/add', $edit, t('Add language'));
+
+    // Set language negotiation.
+    $edit = array(
+      'language[enabled][locale-url]' => TRUE,
+    );
+    $this->drupalPost('admin/config/regional/language/configure', $edit, t('Save settings'));
+
+    // Set the article path alias.
+    $alias = $this->randomName();
+
+    // Create a localised article.
+    $edit = array(
+      'type' => 'article',
+      'title' => $this->randomName(),
+      'body' => array('fr' => array(array('value' => $this->randomName()))),
+      'language' => 'fr',
+      'path' => array('alias' => $alias),
+    );
+    $node = $this->drupalCreateNode($edit);
+
+    $this->drupalGet('fr/node/' . $node->nid . '/edit');
+
+    // Check the potential URLs the node is available from.
+    $this->drupalGet('fr/node/' . $node->nid);
+    $this->assertResponse(200);
+    $this->drupalGet('fr/' . $alias);
+  }
+
+}

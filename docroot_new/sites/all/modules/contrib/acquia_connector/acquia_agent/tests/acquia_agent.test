@@ -1,0 +1,477 @@
+<?php
+
+/**
+* Tests the functionality of the Acquia Agent module.
+*/
+class AcquiaAgentTestCase extends DrupalWebTestCase {
+  protected $privileged_user;
+  protected $network_user;
+  protected $setup_path;
+  protected $credentials_path;
+  protected $settings_path;
+  protected $help_path;
+  protected $cloud_free_url;
+  protected $acquia_test_id;
+  protected $acquia_test_key;
+  protected $migrate_path;
+  protected $status_report_url;
+
+  public static function getInfo() {
+    // Note: getInfo() strings are not translated with t().
+    return array(
+      'name' => 'Acquia Agent UI & Connection',
+      'description' => 'Test Acquia Agent UI and connecting to Acquia Insight.',
+      'group' => 'Acquia',
+    );
+  }
+
+  public function setUp() {
+    global $base_url;
+    // Enable any modules required for the test
+    parent::setUp('acquia_agent', 'acquia_connector_test');
+    // Create and log in our privileged user.
+    $this->privileged_user = $this->drupalCreateUser(array(
+      'access toolbar',
+      'access dashboard',
+      'administer site configuration',
+      'access administration pages',
+    ));
+    $this->drupalLogin($this->privileged_user);
+    // Create a user that has a Network subscription.
+    $this->network_user = $this->drupalCreateUser();
+    user_save($this->network_user, array('mail' => ACQTEST_EMAIL, 'pass' => ACQTEST_PASS));
+    // Setup variables.
+    $this->setup_path = 'admin/config/system/acquia-agent/setup';
+    $this->credentials_path = 'admin/config/system/acquia-agent/credentials';
+    $this->settings_path = 'admin/config/system/acquia-agent';
+    $this->help_path = 'admin/help/acquia_agent';
+    $this->cloud_free_url = 'https://www.acquia.com/acquia-cloud-free';
+    $this->status_report_url = 'admin/reports/status';
+    $this->migrate_path = 'admin/config/system/acquia-agent/migrate';
+    variable_set('acquia_network_address', $base_url);
+    variable_set('acquia_spi_server', $base_url);
+    variable_set('acquia_spi_ssl_override', TRUE);
+    variable_set('acquia_agent_verify_peer', FALSE);
+  }
+
+  /**
+   * Helper function for storing UI strings.
+   *
+   * @param string $id
+   *   UI string id.
+   *
+   * @return string
+   */
+  private function acquiaAgentStrings($id) {
+    switch ($id) {
+      case 'free':
+        return 'Sign up for Acquia Cloud Free, a free Drupal sandbox to experiment with new features, test your code quality, and apply continuous integration best practices.';
+      case 'get-connected':
+        return 'If you have an Acquia Subscription, connect now. Otherwise, you can turn this message off by disabling the Acquia Subscription modules.';
+      case 'enter-email':
+        return 'Enter the email address you use to sign in to Acquia';
+      case 'enter-password':
+        return 'Enter your Acquia account password';
+      case 'account-not-found':
+        return 'Account not found';
+      case 'id-key':
+        return 'Enter your identifier and key from your subscriptions overview or log in to connect your site to Acquia Insight.';
+      case 'enter-key':
+        return 'Network key';
+      case 'subscription-not-found':
+        return 'Error: Subscription not found (1800)';
+      case 'saved':
+        return 'The Acquia configuration options have been saved.';
+      case 'subscription':
+        return 'Subscription: ' . ACQTEST_ID; // Assumes subscription name is same as id.
+      case 'migrate':
+        return 'Transfer a fully-functional copy of your site to Acquia Cloud.';
+      case 'migrate-hosting-404':
+        return 'Error: Hosting not available under your subscription. Upgrade your subscription to continue with import.';
+      case 'migrate-select-environments':
+        return 'Select environment for migration';
+      case 'migrate-files-label':
+        return 'Migrate files directory';
+      case 'menu-active':
+        return 'Subscription active (expires 2023/10/8)';
+      case 'menu-inactive':
+        return 'Subscription not active';
+    }
+    return '';
+  }
+
+  public function testAcquiaAgentGetConnected() {
+    // Check for call to get connected.
+    $this->drupalGet('admin');
+    $this->assertText($this->acquiaAgentStrings('free'), 'The explanation of services text exists');
+    $this->assertLinkByHref($this->cloud_free_url, 0, 'Link to Acquia.com Cloud Services exists');
+    $this->assertText($this->acquiaAgentStrings('get-connected'), 'The call-to-action to connect text exists');
+    $this->assertLink('connect now', 0, 'The "connect now" link exists');
+    // Check connection setup page.
+    $this->drupalGet($this->setup_path);
+    $this->assertText($this->acquiaAgentStrings('enter-email'), 'The email address field label exists');
+    $this->assertText($this->acquiaAgentStrings('enter-password'), 'The password field label exists');
+    $this->assertLinkByHref($this->cloud_free_url, 0, 'Link to Acquia.com free signup exists');
+    // Check errors on automatic setup page.
+    $edit_fields = array(
+      'email' => $this->randomName(),
+      'pass' => $this->randomName(),
+    );
+    $submit_button = 'Next';
+    $this->drupalPost($this->setup_path, $edit_fields, $submit_button);
+    $this->assertText($this->acquiaAgentStrings('account-not-found'), 'Account not found for random automatic setup attempt');
+    $this->assertText($this->acquiaAgentStrings('menu-inactive'), 'Subscription not active menu message appears');
+    // Check manual connection.
+    $this->drupalGet($this->credentials_path);
+    $this->assertText($this->acquiaAgentStrings('id-key'), 'The network key and id description exists');
+    $this->assertText($this->acquiaAgentStrings('enter-key'), 'The network key field label exists');
+    $this->assertLinkByHref($this->cloud_free_url, 0, 'Link to Acquia.com free signup exists');
+    // Check errors on connection page.
+    $edit_fields = array(
+      'acquia_identifier' => $this->randomName(),
+      'acquia_key' => $this->randomName(),
+    );
+    $submit_button = 'Connect';
+    $this->drupalPost($this->credentials_path, $edit_fields, $submit_button);
+    $this->assertText($this->acquiaAgentStrings('subscription-not-found'), 'Subscription not found for random credentials');
+    $this->assertText($this->acquiaAgentStrings('menu-inactive'), 'Subscription not active menu message appears');
+    // Connect site on key and id.
+    $edit_fields = array(
+      'acquia_identifier' => ACQTEST_ID,
+      'acquia_key' => ACQTEST_KEY,
+    );
+    $submit_button = 'Connect';
+    $this->drupalPost($this->credentials_path, $edit_fields, $submit_button);
+    $this->drupalGet($this->settings_path);
+    $this->assertText($this->acquiaAgentStrings('subscription'), 'Subscription connected with key and identifier');
+    $this->assertLinkByHref($this->setup_path, 0, 'Link to change subscription exists');
+    $this->assertText($this->acquiaAgentStrings('migrate'), 'Acquia Cloud Migrate description exists');
+    // Connect via automatic setup.
+    variable_del('acquia_identifier');
+    variable_del('acquia_key');
+    $edit_fields = array(
+      'email' => ACQTEST_EMAIL,
+      'pass' => ACQTEST_PASS,
+    );
+    $submit_button = 'Next';
+    $this->drupalPost($this->setup_path, $edit_fields, $submit_button);
+    $this->drupalGet($this->setup_path);
+    $this->drupalGet($this->settings_path);
+    $this->assertText($this->acquiaAgentStrings('subscription'), 'Subscription connected with credentials');
+    // Confirm menu reports active subscription.
+    $this->drupalGet('admin');
+    $this->assertText($this->acquiaAgentStrings('menu-active'), 'Subscription active menu message appears');
+    // Test dynamic banner.
+    $edit_fields = array(
+      'acquia_dynamic_banner' => TRUE,
+    );
+    $submit_button = 'Save settings';
+    $this->drupalPost($this->settings_path, $edit_fields, $submit_button);
+    $this->assertFieldChecked('edit-acquia-dynamic-banner', '"Receive updates from Acquia" option stays saved');
+  }
+
+  /**
+   * Test Agent subscription methods.
+   */
+  public function testAcquiaAgentSubscription() {
+
+    // Starts as inactive.
+    $active = acquia_agent_subscription_is_active();
+    $this->assertFalse($active, 'Subscription is not currently active.');
+    // Confirm HTTP request count is 0 because without credentials no request
+    // should have been made.
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 0);
+    $subscription = acquia_agent_check_subscription();
+    $this->assertFalse($subscription, 'Subscription is currently false.');
+    // Confirm HTTP request count is still 0.
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 0);
+    // Fail a connection.
+    $random_id = $this->randomName();
+    $edit_fields = array(
+      'acquia_identifier' => $random_id,
+      'acquia_key' => $this->randomName(),
+    );
+    $submit_button = 'Connect';
+    $this->drupalPost($this->credentials_path, $edit_fields, $submit_button);
+    // Confirm HTTP request count is 1.
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 1, 'Made 1 HTTP request in attempt to connect subscription.');
+    $active = acquia_agent_subscription_is_active();
+    $this->assertFalse($active, 'Subscription is not active after failed attempt to connect.');
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 1, 'Still have made only 1 HTTP request');
+    $subscription = acquia_agent_check_subscription();
+    $this->assertFalse($subscription, 'Subscription is false after failed attempt to connect.');
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 1, 'Still have made only 1 HTTP request');
+    // Test default from acquia_agent_settings().
+    $stored = acquia_agent_settings('acquia_subscription_data');
+    // Not identical since acquia_agent_has_credentials() causes stored to be
+    // deleted.
+    $this->assertNotIdentical($subscription, $stored, 'Stored subscription data not same before connected subscription.');
+    $this->assertTrue($stored['active'] === FALSE, 'Default is inactive.');
+
+    // Reset HTTP request counter;
+    variable_set('acquia_connector_test-requests', 0);
+    // Connect.
+    $edit_fields = array(
+      'acquia_identifier' => ACQTEST_ID,
+      'acquia_key' => ACQTEST_KEY,
+    );
+    $this->drupalPost($this->credentials_path, $edit_fields, $submit_button);
+    // HTTP requests should now be 3 (acquia.agent.subscription.name and
+    // acquia.agent.subscription and acquia.agent.validate.
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 3, '3 HTTP requests were made during first connection.');
+    $active = acquia_agent_subscription_is_active();
+    $this->assertTrue($active, 'Subscription is active after successful connection.');
+    $subscription = acquia_agent_check_subscription();
+    $this->assertTrue(is_array($subscription), 'Subscription is array after successful connection.');
+    // Now stored subscription data should match.
+    $stored = acquia_agent_settings('acquia_subscription_data');
+    $this->assertIdentical($subscription, $stored, 'Stored expected subscription data.');
+
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 4, '1 additional HTTP request made via acquia_agent_check_subscription().');
+    $this->drupalGet('/');
+    $this->drupalGet('admin');
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 4, 'No extra requests made during visits to other pages.');
+
+    // Reset HTTP request counter;
+    variable_set('acquia_connector_test-requests', 0);
+    // Connect on expired subscription.
+    $edit_fields = array(
+      'acquia_identifier' => ACQTEST_EXPIRED_ID,
+      'acquia_key' => ACQTEST_EXPIRED_KEY,
+    );
+    $this->drupalPost($this->credentials_path, $edit_fields, $submit_button);
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 3, '3 HTTP requests were made during expired connection attempt.');
+    $active = acquia_agent_subscription_is_active();
+    $this->assertFalse($active, 'Subscription is not active after connection with expired subscription.');
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 3, 'No additional HTTP requests made via acquia_agent_subscription_is_active().');
+    $this->drupalGet('/');
+    $this->drupalGet('admin');
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 3, 'No HTTP requests made during visits to other pages.');
+
+    // Stored subscription data will now be the expired integer.
+    $subscription = acquia_agent_check_subscription();
+    $this->assertIdentical($subscription, SUBSCRIPTION_EXPIRED, 'Subscription is expired after connection with expired subscription.');
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 4, '1 additional request made via acquia_agent_check_subscription().');
+    $stored = acquia_agent_settings('acquia_subscription_data');
+    $this->assertIdentical($subscription, $stored, 'Stored expected subscription data.');
+
+    // Reset HTTP request counter;
+    variable_set('acquia_connector_test-requests', 0);
+    // Connect on subscription that will trigger a 503 response..
+    $edit_fields = array(
+      'acquia_identifier' => ACQTEST_503_ID,
+      'acquia_key' => ACQTEST_503_KEY,
+    );
+    $this->drupalPost($this->credentials_path, $edit_fields, $submit_button);
+    $active = acquia_agent_subscription_is_active();
+    $this->assertTrue($active, 'Subscription is active after successful connection.');
+    // Hold onto subcription data for comparison.
+    $stored = acquia_agent_settings('acquia_subscription_data');
+    // Make another request which will trigger 503 server error.
+    $subscription = acquia_agent_check_subscription();
+    $this->assertNotIdentical($subscription, '503', 'Subscription is not storing 503.');
+    $this->assertTrue(is_array($subscription), 'Storing subscription array data.');
+    $this->assertIdentical($stored, $subscription, 'Subscription data is the same.');
+    $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 4, 'Have made 4 HTTP requests so far.');
+  }
+
+  public function testAcquiaAgentCloudMigrate() {
+    // Connect site on pair that will trigger an error for migration.
+    $edit_fields = array(
+      'acquia_identifier' => ACQTEST_ERROR_ID,
+      'acquia_key' => ACQTEST_ERROR_KEY,
+    );
+    $submit_button = 'Connect';
+    $this->drupalPost($this->credentials_path, $edit_fields, $submit_button);
+    $this->drupalGet($this->migrate_path);
+    $this->assertText($this->acquiaAgentStrings('migrate-hosting-404'), 'Cannot migrate when hosting not enabled on subscription.');
+    // Connect with correct pair.
+    $edit_fields = array(
+      'acquia_identifier' => ACQTEST_ID,
+      'acquia_key' => ACQTEST_KEY,
+    );
+    $this->drupalPost($this->credentials_path, $edit_fields, $submit_button);
+    $this->drupalGet($this->migrate_path);
+    $this->assertNoText($this->acquiaAgentStrings('migrate-hosting-404'), 'Did not get "cannot migrate" text.');
+    $this->assertText($this->acquiaAgentStrings('migrate-select-environments'), 'Environment selection label appears.');
+    $this->assertText($this->acquiaAgentStrings('migrate-files-label'), 'The files label controls do appear.');
+    variable_set('acquia_agent_cloud_migration', 'test');
+    $this->drupalGet($this->migrate_path);
+    $this->assertText($this->acquiaAgentStrings('migrate-files-label'), 'The files label controls do appear after setting the migration variable.');
+    $edit_fields = array(
+      'environment' => 'dev',
+      'migrate_files' => FALSE,
+    );
+    $submit_button = 'Migrate';
+    $this->drupalPost($this->migrate_path, $edit_fields, $submit_button);
+    $this->drupalGet($this->migrate_path);
+    $this->assertNoFieldChecked('edit-migrate-files', "The migrate files checkbox is not checked.");
+
+    // Test migration setup and destination.
+    variable_set('drupal_http_request_function', 'acquia_connector_test_upload');
+    variable_set('acquia_connector_test_upload_server_to_fail', TRUE);
+
+    $edit_fields = array(
+      'environment' => 'dev',
+      'migrate_files' => TRUE,
+      'reduce_db_size' => TRUE,
+    );
+
+    $this->drupalPost($this->migrate_path, $edit_fields, 'Migrate');
+    $this->assertText('Unable to connect to migration destination site (unexpected response code: 500)');
+
+    variable_del('acquia_connector_test_upload_server_to_fail');
+    $this->drupalPost($this->migrate_path, $edit_fields, 'Migrate');
+    $this->assertNoText('Unable to connect to migration destination site (unexpected response code: 500)');
+    variable_del('drupal_http_request_function');
+  }
+
+  /**
+   * Tests the site status callback.
+   */
+  public function testAcquiaAgentSiteStatus() {
+    module_load_include('inc', 'acquia_agent', 'acquia_agent.pages');
+
+    $uuid = '0dee0d07-4032-44ea-a2f2-84182dc10d54';
+    $test_url = "https://insight.acquia.com/node/uuid/{$uuid}/dashboard";
+    $variable_keys = array('maintenance_mode', 'cache', 'block_cache');
+
+    $test_data = array(
+      'active' => 1,
+      'href' => $test_url,
+    );
+    // Set some sample test data.
+    variable_set('acquia_subscription_data', $test_data);
+
+    // Test _acquia_agent_get_id_from_url().
+    $key = _acquia_agent_get_id_from_sub($test_data);
+    $this->assertIdentical($key, $uuid);
+
+    // Add a 'uuid' key to the data and make sure that is returned.
+    $test_data['uuid'] = $uuid;
+    $test_data['href'] = 'http://example.com';
+
+    $key = _acquia_agent_get_id_from_sub($test_data);
+    $this->assertIdentical($key, $uuid);
+
+    $query = array(
+      'key' => hash('sha1', "{$key}:test"),
+      'nonce' => 'test',
+    );
+    $json = $this->drupalGetAJAX('system/acquia-connector-status', array('query' => $query));
+
+    // Test the version.
+    $this->assertIdentical($json['version'], '1.0', 'Correct API version found.');
+
+    // Test all of the original values match.
+    foreach ($variable_keys as $variable) {
+      $this->assertEqual($json['data'][$variable], variable_get($variable));
+    }
+
+    // Set the variables to TRUE.
+    foreach ($variable_keys as $variable) {
+      variable_set($variable, true);
+    }
+
+    $json = $this->drupalGetAJAX('system/acquia-connector-status', array('query' => $query));
+
+    // Test the the values again.
+    foreach ($variable_keys as $variable) {
+      $this->assertEqual($json['data'][$variable], variable_get($variable));
+    }
+
+    // Test invalid query string parameters for access.
+    // A random key value should fail.
+    $query['key'] = $this->randomString(16);
+    $this->drupalGetAJAX('system/acquia-connector-status', array('query' => $query));
+    $this->assertResponse(403);
+  }
+
+  /**
+   * Test acquia_agent_get_server_superglobal.
+   */
+  public function testServerSuperglobal() {
+    $server = array(
+      'acquia_agent_test_string'       => 'acquia_agent_test_string_value',
+      'acquia_agent_test_array'        => array(1, 2, 3),
+      'acquia_agent_test_empty_string' => '',
+      'acquia_agent_test_empty_array'  => array(),
+      'acquia_agent_test_null'         => NULL,
+    );
+
+    $this->assertIdentical(acquia_agent_get_server_superglobal(), $_SERVER, 'acquia_agent_get_server_superglobal() returns expected value');
+
+    variable_set('acquia_agent_server_superglobal', $server);
+    $this->assertIdentical(acquia_agent_get_server_superglobal(), $server, 'acquia_agent_get_server_superglobal() returns expected value');
+
+    variable_del('acquia_agent_server_superglobal');
+  }
+}
+
+class AquiaAgentUnitTestCase extends DrupalUnitTestCase {
+  public static function getInfo() {
+    // Note: getInfo() strings should not be translated.
+    return array(
+      'name' => 'Acquia Agent unit tests',
+      'description' => 'Test Acquia Agent methods.',
+      'group' => 'Acquia',
+    );
+  }
+
+  /**
+   * Overrides DrupalUnitTestCase::setUp().
+   *
+   * Includes the required files in the Acquia Agent module.
+   */
+  public function setUp() {
+    parent::setUp();
+    require_once dirname(dirname(__FILE__)) . '/acquia_agent.module';
+  }
+
+  public function testAuthenticators() {
+    $identifier = $this->randomName();
+    $key = $this->randomName();
+    $required_keys = array('time', 'nonce', 'hash');
+    // Test _acquia_agent_authenticator().
+    $result = _acquia_agent_authenticator(array(), $identifier, $key);
+    $valid = is_array($result);
+    $this->assertTrue($valid, '_acquia_agent_authenticator returns an array');
+    if ($valid) {
+      foreach ($required_keys as $key) {
+        if (!array_key_exists($key, $result)) {
+          $valid = FALSE;
+          break;
+        }
+      }
+      $this->assertTrue($valid, 'Array has expected keys');
+    }
+    // Test _acquia_agent_create_authenticator().
+    $result = _acquia_agent_create_authenticator(array(), $identifier);
+    $valid = is_array($result);
+    $this->assertTrue($valid, '_acquia_agent_create_authenticator returns an array');
+    if ($valid) {
+      foreach ($required_keys as $key) {
+        if (!array_key_exists($key, $result)) {
+          $valid = FALSE;
+          break;
+        }
+      }
+      $this->assertTrue($valid, 'Array has expected keys');
+    }
+  }
+
+  public function testIdFromSub() {
+    $uuid = _acquia_agent_get_id_from_sub(array('uuid' => 'test'));
+    $this->assertIdentical('test', $uuid, 'UUID property identical');
+    $data = array('href'=> 'http://example.com/network/uuid/test/dashboard');
+    $uuid = _acquia_agent_get_id_from_sub($data);
+    $this->assertIdentical('test', $uuid, 'UUID extracted from href');
+  }
+
+  /**
+   * Test acquia_agent_get_server_superglobal.
+   */
+  public function testServerSuperglobal() {
+    $this->assertIdentical(acquia_agent_get_server_superglobal(), $_SERVER, 'acquia_agent_get_server_superglobal() returns expected value');
+  }
+}

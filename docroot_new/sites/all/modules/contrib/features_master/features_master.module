@@ -1,0 +1,411 @@
+<?php
+
+/**
+ * Implements hook_features_api().
+ */
+function features_master_features_api() {
+  return array(
+    'features_master' => array(
+      'name' => t('Master - Modules and Permissions'),
+      'default_hook' => 'features_master_defaults',
+      'default_file' => FEATURES_DEFAULTS_INCLUDED,
+      'feature_source' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_permission().
+ *
+ * @return array
+ */
+function features_master_permission() {
+  // Get all of
+  $permissions = array();
+  $orphans = _features_master_get_permissions(true);
+  foreach ($orphans as $perm_name => $roles) {
+    $permissions[$perm_name] = array(
+      'title' => t('(orphan): -  @perm', array('@perm' => $perm_name)),
+      'description' => t('Permission temporarily provided because @module is disabled.
+          you can still update and export permissions as usual, but they won\'t be used,')
+    );
+  }
+  return $permissions;
+}
+
+/**
+ * Implements hook_features_export_options().
+ */
+function features_master_features_export_options() {
+  return array(
+    'modules' => t('Enabled Modules'),
+    'permissions' => t('All permissions'),
+    'themes' => t('Enabled Themes'),
+  );
+}
+
+/**
+ * Implements hook_features_export().
+ */
+function features_master_features_export($data, &$export, $module_name = '') {
+  $pipe = array();
+  foreach ($data as $component_name) {
+    if ($component_name == 'modules') {
+      $export['features']['features_master']['modules'] = 'modules';
+    }
+    if ($component_name == 'themes') {
+      $export['features']['features_master']['themes'] = 'themes';
+    }
+    if ($component_name == 'permissions') {
+      $export['features']['features_master']['permissions'] = 'permissions';
+    }
+  }
+ return $pipe;
+}
+
+function _features_master_get_modules($feature_module = NULL) {
+  $modules = module_list();
+   if (!empty($feature_module) && !in_array($feature_module, $modules)) {
+    $modules[$feature_module] = $feature_module;
+  }
+  features_master_temporary_modules_alter($modules, 'export');
+  asort($modules);
+  return $modules;
+}
+
+function _features_master_get_themes($feature_module = NULL) {
+
+  $themes = list_themes();
+
+  $reduced_themes = array();
+  foreach($themes as $theme){
+    if($theme->status) {
+      // We only want the theme name
+      $reduced_themes[$theme->name] = $theme->name;
+    }
+  }
+  asort($reduced_themes);
+
+  return $reduced_themes;
+}
+
+/**
+ * Load ALL permissions that are declared in hook_perm plus orphans.
+ *
+ * @param bool|FALSE $orphan
+ * @return array
+ */
+function _features_master_get_permissions($orphans_only = false) {
+  module_load_include('inc', 'features', 'features.export');
+  features_include();
+
+  $exported_perms = _features_master_exported_permissions();
+  $current_perms = _features_master_get_db_permissions();
+  $hook_perms = _features_master_hook_permissions();
+  $orphan_perms = array();
+
+
+  // Check each permission from the hooks and add it if it doesn't exist.
+  foreach ($hook_perms as $perm_name => $hook_details) {
+    if (!isset($current_perms[$perm_name])) {
+      // If not in the DB, then no roles.
+      $current_perms[$perm_name] = array('name' => $perm_name, 'roles' => array());
+    }
+  }
+
+  // Look for orphans in the exported perms and add them to the list just in case..
+  foreach ($exported_perms as $perm_name => $perm) {
+    if (!isset($current_perms[$perm_name])) {
+      // ..plus keep a separate array around in case we just want orphans.
+      $orphan_perms[$perm_name] = array('name' => $perm_name, 'roles' => array());
+      $current_perms[$perm_name] = array('name' => $perm_name, 'roles' => array());
+    }
+  }
+
+  if ($orphans_only == true) {
+    ksort($orphan_perms);
+    return $orphan_perms;
+  }
+  ksort($current_perms);
+  return $current_perms;
+}
+
+/**
+ * Load the
+ */
+function _features_master_hook_permissions() {
+
+// Load all the currently provided permissions.
+  $modules = module_implements('permission');
+  $hook_perms = array();
+  foreach ($modules as $module) {
+    // Ignore features_master module to avoid a race condition.
+    if ($module !== 'features_master') {
+      $add = module_invoke($module, 'permission');
+      // Some modules return null instead of array (looking at you ds_ui!)
+      if (is_array($add)) {
+        $hook_perms = array_merge($hook_perms, module_invoke($module, 'permission'));
+      }
+    }
+    else {
+      // TODO any permissions that this module needs to provide for it's own access.
+      $skip = TRUE;
+    }
+  }
+  return $hook_perms;
+}
+
+/**
+ * Get all permissions that were exported using features_master.
+ *
+ * @return array
+ */
+function _features_master_exported_permissions() {
+  module_load_include('inc', 'features', 'features.export');
+  features_include();
+  $default_map = features_get_default_map('features_master');
+  $exported_perms = array();
+  if (isset($default_map['permissions'])) {
+    // There should be only a single module that exports all the permissions.
+    $export_module = $default_map['permissions'];
+    $features_master_export = features_get_default('features_master', $export_module);
+    $exported_perms = $features_master_export['permissions'];
+  }
+  return $exported_perms;
+}
+
+/**
+ * Returns a list of the current saved permissions and their roles.
+ */
+function _features_master_get_db_permissions() {
+  // Make sure that features is fully loaded.
+  module_load_include('inc', 'features', 'features.export');
+  features_include();
+
+  $query = db_select('role', 'r');
+  $query->fields('r', array('rid', 'name'));
+  $query->fields('p',array('permission'));
+  $query->orderBy('p.permission');
+  $query->orderBy('name');
+  $query->innerJoin('role_permission', 'p', 'r.rid = p.rid');
+  $results = $query->execute();
+
+  // Go through each permission and add it's roles to it's array.
+  $output = array();
+  foreach ($results as $result) {
+    // Use features to cleanup the taxonomy permissions.
+    $perm_name = $result->permission;
+    _user_features_change_term_permission($perm_name, 'machine_name');
+    if (!isset($output[$perm_name])) {
+      $output[$perm_name] = array('name' => $perm_name, 'roles' => array());
+    }
+    $output[$perm_name]['roles'][$result->name] = $result->name;
+  }
+  return $output;
+}
+
+/**
+ * Implements hook_features_export_render().
+ */
+function features_master_features_export_render($module, $data, $export = NULL) {
+  $code = array();
+  $code[] = '  $features_master = array();';
+  $code[] = '';
+  foreach ($data as $name) {
+     if ($name == 'modules') {
+      $system_export = features_var_export(_features_master_get_modules(), '  ');
+      $code[] = "  \$features_master['modules'] = {$system_export};";
+     }
+    if ($name == 'themes') {
+      $system_export = features_var_export(_features_master_get_themes(), '  ');
+      $code[] = "  \$features_master['themes'] = {$system_export};";
+    }
+    if ($name == 'permissions') {
+      $system_export = features_var_export(_features_master_get_permissions(), '  ');
+      $code[] = "  \$features_master['permissions'] = {$system_export};";
+    }
+  }
+  $code[] = '';
+  $code[] = '  return $features_master;';
+  $code = implode("\n", $code);
+  return array('features_master_defaults' => $code);
+}
+
+/**
+ * Implements hook_features_revert().
+ */
+function features_master_features_revert($module) {
+  // Make sure that features is fully loaded.
+  module_load_include('inc', 'features', 'features.export');
+  features_include();
+
+  if ($data = features_get_default('features_master', $module)) {
+    // downside is that you can't selectively revert components,
+    // because there is only ONE component so we do all of them.
+    _features_master_features_revert_modules($module, $data);
+    _features_master_features_revert_permissions($module, $data);
+    _features_master_features_revert_themes($module, $data);
+  }
+}
+
+/**
+ * Revert permissions.
+ *
+ * @param $module
+ * @param $data
+ */
+function _features_master_features_revert_permissions($module, $data) {
+   
+  $data_permissions = is_array($data['permissions']) ? $data['permissions'] : array();
+
+  if (!$data_permissions) {
+    // Permissions aren't defined so don't revert.
+    return;
+  }
+
+  // Make sure the list of available node types is up to date, especially when
+  // installing multiple features at once, for example from an install profile
+  // or via drush.
+  node_types_rebuild();
+
+  //$modules = user_permission_get_modules();
+  $roles = _user_features_get_roles();
+  $permissions = _features_master_get_permissions();
+
+  // Write the updated permissions per user.
+  foreach ($roles as $rid => $role) {
+    $write_perms = array();
+    foreach ($permissions as $perm_name => $perm) {
+      $p_roles = array();
+      if (is_array($data_permissions[$perm_name]['roles'])) {
+        $p_roles = $data_permissions[$perm_name]['roles'];
+      }
+      if (in_array($role, $p_roles)) {
+        $write_perms[$perm_name] = $perm_name;
+      }
+      else {
+        $write_perms[$perm_name] = FALSE;
+      }
+    }
+    user_role_change_permissions($rid, $write_perms);
+  }
+}
+
+/**
+ * Revert themes.
+ *
+ * @param $module
+ * @param $data
+ */
+function _features_master_features_revert_themes($module, $data) {
+
+  $current_enabled_themes = _features_master_get_themes();
+  $data_themes = is_array($data['themes']) ? $data['themes'] : array();
+
+  if (!$data_themes) {
+    // Themes aren't defined so don't revert.
+    return;
+  }
+
+  // Enable the defined themes
+  if ($enable_themes = array_diff_key($data_themes, $current_enabled_themes)) {
+
+    theme_enable(array_values($enable_themes));
+
+    $themes_string = implode(", ", $enable_themes);
+    drupal_set_message(t('FEATURES MASTER: The following themes were enabled successfully: @themes', array('@themes' => $themes_string)));
+  }
+  if ($disable_themes = array_diff_key($current_enabled_themes, $data_themes)) {
+    theme_disable(array_values($disable_themes));
+
+    $themes_string = implode(", ", $disable_themes);
+    drupal_set_message(t('FEATURES MASTER: The following themes were disabled successfully: @themes', array('@themes' => $themes_string)));
+  }
+}
+
+/**
+ * Revert modules.
+ */
+function _features_master_features_revert_modules($module, $data) {
+  $data_modules = is_array($data['modules']) ? $data['modules'] : array();
+
+  if (!$data_modules) {
+    // Modules aren't defined so don't revert.
+    return;
+  }
+  features_master_temporary_modules_alter($data_modules, 'revert');
+  $current_enabled_modules = module_list();
+  if ($enable_modules = array_diff_key($data_modules, $current_enabled_modules)) {
+    foreach ($enable_modules as $module) {
+      // TODO: We could speed the process up by checking the database each time to see if a module was already enabled,
+      // perhaps as a dependency of another module just installed.
+      try {
+        $success = module_enable(array($module));
+      } catch (Exception $e) {
+        $success = false;
+        drupal_set_message(t('FEATURES MASTER: Enabling @module or one of it\'s dependencies caused an exception: @ex', array('@module' => $module, '@ex' => $e->getMessage())));
+      }
+      if (!$success) {
+        // Consider these modules as not enabled;
+        unset($enable_modules[$module]);
+        drupal_set_message(t('FEATURES MASTER: @module has unmet dependencies, is not installed, or has some other issue and could not be enabled', array('@module' => $module)));
+      }
+    }
+
+    if(empty($enable_modules)){
+      drupal_set_message(t('FEATURES MASTER: No modules were enabled, either there was an error enabling them or none were set to enable.'));
+    }
+    else {
+      $modules_string = implode(", ", $enable_modules);
+      drupal_set_message(t('FEATURES MASTER: The following modules were enabled successfully: @modules_string', array('@modules_string' => $modules_string)));
+    }
+  }
+  if ($disable_modules = array_diff_key($current_enabled_modules, $data_modules)) {
+    foreach ($disable_modules as $module) {
+      // TODO: We don't get any return value from module_disable unfortunately. We should add a try catch here as well.
+      module_disable(array($module));
+    }
+    $modules_string = implode(", ", $disable_modules);
+    drupal_set_message(t('FEATURES MASTER: The following modules were disabled successfully: @modules_string', array('@modules_string' => $modules_string)));
+  }
+}
+
+
+
+/**
+ * Alter the list of modules using variables.
+ *
+ * @param $modules
+ * @param $mode
+ *   Either 'revert' or 'export'. 'revert' will add/remove temporary modules. 'export' does the opposite.
+ * @throws \Exception
+ */
+function features_master_temporary_modules_alter(&$modules, $mode) {
+  // Handle temporary enabling and disabling of modules.
+  if ($mode == 'revert') {
+    $add_modules = variable_get('features_master_temp_enabled_modules', array());
+    $rm_modules = variable_get('features_master_temp_disabled_modules', array());
+  }
+  // Reverse the adding and removing if in export mode.
+  elseif ($mode == 'export') {
+    $rm_modules = variable_get('features_master_temp_enabled_modules', array());
+    $add_modules = variable_get('features_master_temp_disabled_modules', array());
+  }
+  else {
+    throw new Exception("features_master_temporary_modules_alter: mode not recognized.");
+  }
+
+  foreach ($rm_modules as $module) {
+    if (in_array($module, $modules)) {
+      unset($modules[$module]);
+    }
+  }
+
+  // Add the temporarily enabled modules
+  foreach ($add_modules as $module) {
+    if (!in_array($module, $modules)) {
+      $modules[$module] = $module;
+    }
+  }
+  //TODO: Maybe replace this with a drupal_alter so that other modules could effect this without the need for variables.
+}

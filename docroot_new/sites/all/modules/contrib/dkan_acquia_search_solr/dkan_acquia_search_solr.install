@@ -1,0 +1,23 @@
+<?php
+/**
+ * @file
+ * Code for the HHS Search feature.
+ */
+
+/**
+ * Implements hook_enable().
+ */
+function dkan_acquia_search_solr_enable() {
+  variable_del('memcache_wildcard_flushes');
+  acquia_agent_refresh_status();
+}
+
+/**
+ * Implements hook_disable().
+ */
+function dkan_acquia_search_solr_disable() {
+  // Delete dkan_acquia_solr server
+  if ($server=dkan_acquia_search_solr_query_dkan_server('dkan_acquia_solr')) {
+    entity_delete('search_api_server', array_keys($server)[0]);
+  }
+}
