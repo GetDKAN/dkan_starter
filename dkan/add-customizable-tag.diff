@@ -1,0 +1,13 @@
+diff --git a/test/features/topics.feature b/test/features/topics.feature
+index 793217b..87d3669 100644
+--- a/test/features/topics.feature
++++ b/test/features/topics.feature
+@@ -13,7 +13,7 @@ Feature: Topics
+       | name         | url                                        |
+       | Add Topic    | /admin/structure/taxonomy/dkan_topics/add  |
+ 
+-  @api @Topics @defaultHomepage
++  @api @Topics @defaultHomepage @customizable
+   Scenario: See topics on the homepage as anonymous user
+     When I am on the homepage
+     Then I should see "Topic1"
