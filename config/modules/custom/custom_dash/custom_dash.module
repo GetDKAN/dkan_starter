@@ -1,19 +1,17 @@
 <?php
 
 
+
 /**
  * Implements hook_preprocess_node().
  */
 function custom_dash_preprocess_node(&$variables) {
   if($variables['type'] == 'react_dashboard') {
 
-    $custom_css = drupal_get_path('module', 'custom_dash') . '/css/custom.css';
-    if(file_exists($custom_css)) drupal_add_css($custom_css);
+    $css = drupal_get_path('module', 'custom_dash') . '/css/customDash.css';
+    if(file_exists($css)) drupal_add_css($css);
 
-    $data_handlers = drupal_get_path('module', 'custom_dash') . '/js/dataHandlers.js';
-    if(file_exists($data_handlers)) drupal_add_js($data_handlers, array('scope' => 'footer', 'weight' => 0));
-
-    $state_handlers = drupal_get_path('module', 'custom_dash') . '/js/stateHandlers.js';
-    if(file_exists($state_handlers)) drupal_add_js($state_handlers, array('scope' => 'footer', 'weight' => 1));
+    $js = drupal_get_path('module', 'custom_dash') . '/js/customDash.js';
+    if(file_exists($js)) drupal_add_js($js, array('scope' => 'footer', 'weight' => 0));
   }
 }

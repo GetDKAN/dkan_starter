@@ -1,0 +1,1 @@
+Drupal.settings.dkanDash.dataHandlers = {};
