@@ -15,4 +15,5 @@ projects[dkan][patch][2] = https://patch-diff.githubusercontent.com/raw/NuCivic/
 projects[dkan][patch][3] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1763.diff
 projects[dkan][patch][4] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1766.diff
 projects[dkan][patch][5] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1788.diff
-projects[dkan][patch][6] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1795.diff
+projects[dkan][patch][6] = config/patches/add-customizable-tag.diff
+
