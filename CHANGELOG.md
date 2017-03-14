@@ -1,5 +1,8 @@
 # Change log
 
+## [1.13.1.5]
+- Added patch on DKAN to include modifications made on PR#1795.
+
 ## [1.13.1.4]
 - Update dkan acquia cache settings #118
 
