@@ -6,8 +6,14 @@
  */
 function custom_dash_preprocess_node(&$variables) {
   if($variables['type'] == 'react_dashboard') {
-    drupal_add_css(drupal_get_path('module', 'custom_dash') . '/css/custom.css');
-    drupal_add_js(drupal_get_path('module', 'custom_dash') . '/js/dataHandlers.js', array('scope' => 'footer', 'weight' => 0));
-    drupal_add_js(drupal_get_path('module', 'custom_dash') . '/js/stateHandlers.js', array('scope' => 'footer', 'weight' => 1));
+
+    $custom_css = drupal_get_path('module', 'custom_dash') . '/css/custom.css';
+    if(file_exists($custom_css)) drupal_add_css($custom_css);
+
+    $data_handlers = drupal_get_path('module', 'custom_dash') . '/js/dataHandlers.js';
+    if(file_exists($data_handlers)) drupal_add_js($data_handlers, array('scope' => 'footer', 'weight' => 0));
+
+    $state_handlers = drupal_get_path('module', 'custom_dash') . '/js/stateHandlers.js';
+    if(file_exists($state_handlers)) drupal_add_js($state_handlers, array('scope' => 'footer', 'weight' => 1));
   }
 }
