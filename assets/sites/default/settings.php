@@ -155,14 +155,16 @@ if (_data_starter_validates('stage_file_proxy_origin')) {
 $conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
 
 // Add tracking codes for Google Analytics.
-if (isset($conf['gaClientTrackingCode'])) {
+if (isset($conf['gaClientTrackingCode']) && $conf['gaClientTrackingCode'] != 'UA-XXXXX-Y') {
   $conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
 }
-elseif (isset($conf['gaNuCivicTrackingCode'])) {
+elseif (isset($conf['gaNuCivicTrackingCode']) && $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
   $conf['googleanalytics_account'] = $conf['gaNuCivicTrackingCode'];
 }
 
-if (isset($conf['gaNuCivicTrackingCode']) && $conf['googleanalytics_account'] != $conf['gaNuCivicTrackingCode']) {
+if (isset($conf['gaNuCivicTrackingCode']) &&
+  $conf['googleanalytics_account'] != $conf['gaNuCivicTrackingCode'] &&
+  $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
   $conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'auto', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
 }
 
