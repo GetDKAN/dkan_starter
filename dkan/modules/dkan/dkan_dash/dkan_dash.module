@@ -1,0 +1,81 @@
+<?php
+
+include_once 'dkan_dash.features.inc';
+
+/*
+ * Implement hook_theme().
+ */
+function dkan_dash_theme($existing, $type, $theme, $path){
+  $theme = array();
+  $theme['node__react_dashboard'] = array(
+    'render element' => 'content',
+    'base hook' => 'node',
+    'template' => 'node--react_dashboard',
+    'path' => drupal_get_path('module', 'dkan_dash') . '/templates',
+  );
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function dkan_dash_preprocess_node(&$variables) {
+  if($variables['type'] == 'react_dashboard') {
+    drupal_add_js(array(
+      'dkanDash' => array(
+        'currentNid' => $variables['nid'],
+        'dashboard' => json_decode($variables['field_dash_settings'][0]['value']),
+        'dataHandlers' =>  (object)array(),
+      )
+    ), 'setting');
+    drupal_add_css(drupal_get_path('module', 'dkan_dash') . '/dist/dkan_dash.min.css');
+    drupal_add_js(drupal_get_path('module', 'dkan_dash') . '/dist/dkan_dash.min.js', array('scope' => 'footer', 'weight' => 10));
+  }
+}
+/**
+ * Implements hook_menu().
+ */
+function dkan_dash_menu() {
+  $items['dashboard/%node/autocomplete'] = array(
+    'title' => 'Dashboard Autocomplete',
+    'page arguments' => array(1),
+    'page callback' => 'dkan_dash_autocomplete',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+
+  return $items;
+}
+
+/**
+ * Create and endpoint ready to be consumed by the react autocomplete
+ * component included inside the react dashboard library.
+ *
+ * e.g. [ {label: 'One', value: 'one'}, {label: 'Two', value: 'two'}]
+ */
+function dkan_dash_autocomplete($node, $field, $value) {
+  $options = array();
+  if(empty($node) || empty($field)) return drupal_json_output($options);
+  $datastore = dkan_datastore_go($node->uuid);
+  $table = $datastore->tableName;
+  $limit = array(0, 100);
+  try {
+    $query = db_select($table , 'r')
+      ->fields('r')
+      ->groupBy($field);
+    if(!empty($value)) {
+      $query->condition($field, '%'. $value . '%', 'LIKE');
+    }
+    $result = $query
+      ->range($limit[0], $limit[1])
+      ->execute();
+
+    while ($row = $result->fetchAssoc()) {
+      $options[] = array('label' => $row[$field], 'value' => $row[$field]);
+    }
+  } catch(Exception $e) {
+    return drupal_json_output(array('error' => $e->getMessage()));
+  }
+
+  return drupal_json_output($options);
+}
