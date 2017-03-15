@@ -5,11 +5,11 @@
  */
 function data_config_enabled_modules() {
   $features_master = array();
-  
+
   $features_master['themes'] = array(
     'nuboot_radix' => 'nuboot_radix',
   );
-  
+
   $features_master['modules'] = array(
     #'dkan_sitewide_demo_front' => 'dkan_sitewide_demo_front',
     #'menu_token' => 'menu_token',
@@ -37,6 +37,7 @@ function data_config_enabled_modules() {
     'contextual' => 'contextual',
     'ctools' => 'ctools',
     'custom_config' => 'custom_config',
+    'custom_dash' => 'custom_dash',
     'data' => 'data',
     'data_config' => 'data_config',
     'date' => 'date',
@@ -48,6 +49,7 @@ function data_config_enabled_modules() {
     'dkan' => 'dkan',
     'dkan_acquia_expire' => 'dkan_acquia_expire',
     'dkan_acquia_search_solr' => 'dkan_acquia_search_solr',
+    'dkan_dash' => 'dkan_dash',
     'dkan_data_dashboard' => 'dkan_data_dashboard',
     'dkan_data_story' => 'dkan_data_story',
     'dkan_dataset' => 'dkan_dataset',
@@ -221,7 +223,7 @@ function data_config_enabled_modules() {
   );
 
   $data_config = variable_get('default');
- 
+
   if (isset($data_config['fast_file']) && $data_config['fast_file']['enable']) {
     $features_master['modules']['dkan_datastore_fast_import'] = 'dkan_datastore_fast_import';
   }
