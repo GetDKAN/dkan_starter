@@ -1,0 +1,116 @@
+<?php
+
+/**
+ * Implements hook_hook_info().
+ */
+ function features_banish_hook_info() {
+   $hooks['features_banish_alter'] = array(
+     'group' => 'features_banish'
+   );
+   return $hooks;
+ }
+
+/**
+ * Implements features_export_alter().
+ */
+function features_banish_features_export_alter(&$export, $module_name) {
+  // Exclude banished items from ever being exported.
+  $banished_items = features_banish_get_banished();
+  foreach($banished_items as $component => $items) {
+    // Handle dependencies as a special case.
+    if ($component == 'dependencies') {
+      features_banish_unset_items($items, $export['dependencies']);
+    }
+    elseif (!empty($export['features'][$component])) {
+      features_banish_unset_items($items, $export['features'][$component]);
+    }
+  }
+}
+
+/**
+ * Implements features_export_options_alter().
+ *
+ * Currently this requires a patch to features. See @todo.
+ */
+function features_banish_features_export_options_alter(&$options, $component) {
+  $items = features_banish_get_banished($component);
+  if ($component == 'dependencies') {
+    // We can't actually alter the list of dependencies from the options.
+  }
+  else {
+    features_banish_unset_items($items, $options);
+  }
+}
+
+/**
+ * Helper function to unset a list of items from an array.
+ */
+function features_banish_unset_items($items, &$root_array) {
+  foreach($items as $item) {
+    unset($root_array[$item]);
+  }
+}
+
+/**
+ * Grab all of the banished items.
+ */
+function features_banish_get_banished($component = NULL) {
+  $banished = &drupal_static(__FUNCTION__);
+
+  if (!isset($banished)) {
+    // Grab the feature data (info files).
+    $features = features_get_features();
+
+    // Allow non-features modules and settings.php to add specific items
+    // that should be banished.
+    $banished = variable_get('features_banish_items', array());
+
+    // If any modules have features_banish settings, merge them.
+    foreach($features as $feature) {
+      $info = isset($feature->info['features_banish']) ? $feature->info['features_banish'] : array();
+      $banished = array_merge_recursive($banished, $info);
+    }
+
+    // Also allow for a hook to modify any of the banished settings.
+    drupal_alter('features_banish', $banished);
+  }
+  // If a component was asked for, return only that.
+  if ($component) {
+    return isset($banished[$component]) ? $banished[$component] : array();
+  }
+  return $banished;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Add a list of banished items to the features settings form.
+ */
+function features_banish_form_features_settings_form_alter(&$form, &$form_values) {
+
+  // TODO: Check the patch status by calling module_hook_info().
+
+  $form['features_banish'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Banished Items'),
+    '#description' => t("These items have been banished using features_banish module."
+      . " They will not be exported or show in the Features UI."
+      . " See features_banish.api.php for details, but you can only add items by:</br>"
+      . " - Changing a modules info file, i.e. features_banish[varaible][] = some_var </br>"
+      . " - Setting variable <i>features_banish_items</i> </br>"
+      . " - Implementing hook_features_banish_items_alter().</br>"
+
+    ),
+  );
+
+  $banished = features_banish_get_banished();
+  foreach($banished as $component => $items) {
+    // Show each component's items as disabled checkboxes for ease of use.
+    $form['features_banish'][$component] = array(
+      '#type' => 'checkboxes',
+      '#title' => check_plain($component),
+      '#options' => $items,
+      '#disabled' => TRUE,
+    );
+  }
+}
