@@ -276,136 +276,150 @@ function file_entity_field_formatter_settings_summary($field, $instance, $view_m
  * Implements hook_field_formatter_view().
  */
 function file_entity_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-  $element = array();
   $settings = $display['settings'];
+  $element = array();
 
-  switch ($display['type']) {
-    case 'file_rendered':
-      foreach ($items as $delta => $item) {
-        // Protect ourselves from recursive rendering.
-        static $recursive_render_depth = array();
-        $recursive_render_id = $entity_type . $field['field_name'] . $item['fid'];
+  if ($display['type'] == 'file_rendered') {
+    $view_mode = $settings['file_view_mode'];
 
-        if (isset($recursive_render_depth[$recursive_render_id])) {
-          $recursive_render_depth[$recursive_render_id]++;
-        }
-        else {
-          $recursive_render_depth[$recursive_render_id] = 1;
-        }
+    // To prevent infinite recursion caused by reference cycles, we store
+    // diplayed nodes in a recursion queue.
+    $recursion_queue = &drupal_static(__FUNCTION__, array());
 
-        if ($recursive_render_depth[$recursive_render_id] > 20) {
-          watchdog(
-            'file_entity',
-            'Recursive rendering detected when rendering entity %entity_type: %entity_id, using the %field_name field. Aborting rendering.',
-            array(
-              '%entity_type' => 'file',
-              '%entity_id' => $item['fid'],
-              '%field_name' => $field['field_name'],
-            ),
-            WATCHDOG_ERROR
-          );
-          return $element;
-        }
+    // If no 'referencing entity' is set, we are starting a new 'reference
+    // thread' and need to reset the queue.
+    // @todo Bug: $entity->referencing_entity on files referenced in a different
+    // thread on the page.
+    // E.g: 1 references 1+2 / 2 references 1+2 / visit homepage.
+    // We'd need a more accurate way...
+    if (!isset($entity->referencing_entity)) {
+      $recursion_queue = array();
+    }
 
-        $file = (object) $item;
+    // The recursion queue only needs to track files.
+    if ($entity_type == 'file') {
+      list($id) = entity_extract_ids($entity_type, $entity);
+      $recursion_queue[$id] = $id;
+    }
 
-        // Add some references to the referencing entity.
-        // @see https://www.drupal.org/node/2333107
-        $file->referencing_entity = $entity;
-        $file->referencing_entity_type = $entity_type;
-        $file->referencing_field = $field['field_name'];
+    // Prevent 'empty' fields from causing a WSOD.
+    $items = array_filter($items);
 
-        $element[$delta] = file_view($file, $settings['file_view_mode'], $langcode);
-      }
-      break;
-
-    case 'file_download_link':
-      foreach ($items as $delta => $item) {
-        $file = (object) $item;
-        if (file_entity_access('download', $file)) {
-          $element[$delta] = array(
-            '#theme' => 'file_entity_download_link',
-            '#file' => $file,
-            '#text' => $settings['text'],
-          );
+    // Check the recursion queue to determine which nodes should be fully
+    // displayed, and which nodes will only be displayed as a title.
+    $files_display = array();
+    foreach ($items as $delta => $item) {
+      if (!isset($recursion_queue[$item['fid']])) {
+        $files_display[$item['fid']] = file_load($item['fid']);
+        if (!empty($item['description'])) {
+          $files_display[$item['fid']]->description = $item['description'];
         }
       }
-      break;
+    }
 
-    case 'file_audio':
-      $multiple_file_behavior = $settings['multiple_file_behavior'];
-
-      // Prevent 'empty' fields from causing a WSOD.
-      $items = array_filter($items);
-
-      // Build an array of sources for each <audio> element.
-      $source_lists = array();
-      if ($multiple_file_behavior == 'tags') {
-        foreach ($items as $delta => $item) {
-          if ($item['type'] == 'audio') {
-            $source_lists[$delta] = array($item);
-          }
-        }
+    // Load and build the fully displayed nodes.
+    if ($files_display) {
+      foreach ($files_display as $fid => $file) {
+        $files_display[$fid]->referencing_entity = $entity;
+        $files_display[$fid]->referencing_entity_type = $entity_type;
+        $files_display[$fid]->referencing_field = $field['field_name'];
       }
-      else {
-        foreach ($items as $delta => $item) {
-          if ($item['type'] == 'audio') {
-            $source_lists[0][$delta] = $item;
-          }
-        }
-      }
+      $output = file_view_multiple($files_display, $view_mode);
+      // Remove the first level from the output array.
+      $files_built = reset($output);
+    }
 
-      // Render each source list as an <audio> element.
-      foreach ($source_lists as $delta => $sources) {
+    // Assemble the render array.
+    foreach ($items as $delta => $item) {
+      if (isset($files_built[$item['fid']])) {
+        $element[$delta] = $files_built[$item['fid']];
+      }
+    }
+  }
+  elseif ($display['type'] == 'file_download_link') {
+    foreach ($items as $delta => $item) {
+      $file = (object) $item;
+      if (file_entity_access('download', $file)) {
         $element[$delta] = array(
-          '#theme' => 'file_entity_file_audio',
-          '#files' => $sources,
-          '#controls' => $settings['controls'],
-          '#autoplay' => $settings['autoplay'],
-          '#loop' => $settings['loop'],
-          '#preload' => $settings['preload'],
+          '#theme' => 'file_entity_download_link',
+          '#file' => $file,
+          '#text' => $settings['text'],
         );
       }
-      break;
+    }
+  }
+  elseif ($display['type'] == 'file_audio') {
+    $multiple_file_behavior = $settings['multiple_file_behavior'];
 
-    case 'file_video':
-      $multiple_file_behavior = $settings['multiple_file_behavior'];
+    // Prevent 'empty' fields from causing a WSOD.
+    $items = array_filter($items);
 
-      // Prevent 'empty' fields from causing a WSOD.
-      $items = array_filter($items);
-
-      // Build an array of sources for each <video> element.
-      $source_lists = array();
-      if ($multiple_file_behavior == 'tags') {
-        foreach ($items as $delta => $item) {
-          if ($item['type'] == 'video') {
-            $source_lists[$delta] = array($item);
-          }
+    // Build an array of sources for each <audio> element.
+    $source_lists = array();
+    if ($multiple_file_behavior == 'tags') {
+      foreach ($items as $delta => $item) {
+        if ($item['type'] == 'audio') {
+          $source_lists[$delta] = array($item);
         }
       }
-      else {
-        foreach ($items as $delta => $item) {
-          if ($item['type'] == 'video') {
-            $source_lists[0][$delta] = $item;
-          }
+    }
+    else {
+      foreach ($items as $delta => $item) {
+        if ($item['type'] == 'audio') {
+          $source_lists[0][$delta] = $item;
         }
       }
+    }
 
-      // Render each source list as an <video> element.
-      foreach ($source_lists as $delta => $sources) {
-        $element[$delta] = array(
-          '#theme' => 'file_entity_file_video',
-          '#files' => $sources,
-          '#controls' => $settings['controls'],
-          '#autoplay' => $settings['autoplay'],
-          '#loop' => $settings['loop'],
-          '#muted' => $settings['muted'],
-          '#width' => $settings['width'],
-          '#height' => $settings['height'],
-          '#preload' => $settings['preload'],
-        );
+    // Render each source list as an <audio> element.
+    foreach ($source_lists as $delta => $sources) {
+      $element[$delta] = array(
+        '#theme' => 'file_entity_file_audio',
+        '#files' => $sources,
+        '#controls' => $settings['controls'],
+        '#autoplay' => $settings['autoplay'],
+        '#loop' => $settings['loop'],
+        '#preload' => $settings['preload'],
+      );
+    }
+  }
+  elseif ($display['type'] == 'file_video') {
+    $multiple_file_behavior = $settings['multiple_file_behavior'];
+
+    // Prevent 'empty' fields from causing a WSOD.
+    $items = array_filter($items);
+
+    // Build an array of sources for each <video> element.
+    $source_lists = array();
+    if ($multiple_file_behavior == 'tags') {
+      foreach ($items as $delta => $item) {
+        if ($item['type'] == 'video') {
+          $source_lists[$delta] = array($item);
+        }
       }
-      break;
+    }
+    else {
+      foreach ($items as $delta => $item) {
+        if ($item['type'] == 'video') {
+          $source_lists[0][$delta] = $item;
+        }
+      }
+    }
+
+    // Render each source list as an <video> element.
+    foreach ($source_lists as $delta => $sources) {
+      $element[$delta] = array(
+        '#theme' => 'file_entity_file_video',
+        '#files' => $sources,
+        '#controls' => $settings['controls'],
+        '#autoplay' => $settings['autoplay'],
+        '#loop' => $settings['loop'],
+        '#muted' => $settings['muted'],
+        '#width' => $settings['width'],
+        '#height' => $settings['height'],
+        '#preload' => $settings['preload'],
+      );
+    }
   }
 
   return $element;

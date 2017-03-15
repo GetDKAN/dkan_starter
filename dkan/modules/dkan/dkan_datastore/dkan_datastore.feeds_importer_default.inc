@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_datastore.feeds_importer_default.inc

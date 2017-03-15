@@ -1,4 +1,3 @@
-# time:0m23.59s
 Feature: Data Dashboard
 
   Background:

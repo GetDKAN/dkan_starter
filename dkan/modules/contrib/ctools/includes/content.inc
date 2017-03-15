@@ -155,11 +155,6 @@ function ctools_content_get_subtypes($type) {
   // Walk through the subtypes and ensure minimal settings are
   // retained.
   foreach ($subtypes as $id => $subtype) {
-    // Ensure that the 'subtype_id' value exists.
-    if (!isset($subtype['subtype_id'])) {
-      $subtype['subtype_id'] = $id;
-    }
-
     // Use exact name since this is a modify by reference.
     ctools_content_prepare_subtype($subtypes[$id], $plugin);
   }
@@ -222,7 +217,6 @@ function ctools_content_prepare_subtype(&$subtype, $plugin) {
     }
   }
 
-  // Trigger hook_ctools_content_subtype_alter().
   drupal_alter('ctools_content_subtype', $subtype, $plugin);
 }
 
@@ -247,8 +241,8 @@ function ctools_content_prepare_subtype(&$subtype, $plugin) {
  *   Any incoming content, if this display is a wrapper.
  *
  * @return
- *   The content as rendered by the plugin, or NULL.
- *   This content should be an object with the following possible properties:
+ *   The content as rendered by the plugin. This content should be an array
+ *   with the following possible keys:
  *   - title: The safe to render title of the content.
  *   - title_heading: The title heading.
  *   - content: The safe to render HTML content.

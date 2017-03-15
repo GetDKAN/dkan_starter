@@ -1,4 +1,3 @@
-# time:1m32.15s
 @javascript @api
 Feature: Markdown Editor
   In order to create content

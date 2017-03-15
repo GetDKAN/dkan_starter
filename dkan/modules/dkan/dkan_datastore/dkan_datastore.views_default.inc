@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_datastore.views_default.inc

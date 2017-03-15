@@ -1,4 +1,3 @@
-# time:0m18.30s
 @api
 Feature: Dataset Features
   In order to realize a named business value
@@ -38,29 +37,17 @@ Background:
     | Health  |
     | Gov     |
   And datasets:
-    | title      | publisher | author  | published        | tags     | description | modified source date | date changed |
-    | Dataset 01 | Group 01  | Gabriel | Yes              | Health   | Test        | 2015-01-02           |  -5 year     |
-    | Dataset 02 | Group 01  | Gabriel | Yes              | Gov      | Test        | 2015-01-02           |  -5 year     |
-    | Dataset 03 | Group 01  | Katie   | Yes              | Health   | Test        | 2015-01-02           |  -5 year     |
-    | Dataset 04 | Group 02  | Celeste | No               | Gov      | Test        | 2015-01-02           |  -5 year     |
-    | Dataset 05 | Group 01  | Katie   | No               | Gov      | Test        | 2015-01-02           |  -5 year     |
+    | title      | publisher | author  | published        | tags     | description |
+    | Dataset 01 | Group 01  | Gabriel | Yes              | Health   | Test        |
+    | Dataset 02 | Group 01  | Gabriel | Yes              | Gov      | Test        |
+    | Dataset 03 | Group 01  | Katie   | Yes              | Health   | Test        |
+    | Dataset 04 | Group 02  | Celeste | No               | Gov      | Test        |
+    | Dataset 05 | Group 01  | Katie   | No               | Gov      | Test        |
   And resources:
-    | title       | publisher | author | published | dataset    | description |
-    | Resource 01 | Group 01  | Katie  | Yes       | Dataset 01 |             |
-    | Resource 02 | Group 01  | Katie  | Yes       | Dataset 01 |             |
-    | Resource 03 | Group 01  | Katie  | Yes       | Dataset 02 |             |
-
-  @noworkflow
-  Scenario: Replace node changed date with modified source date for harvested datasets
-    Given I am logged in as "Gabriel"
-    And I am on "Dataset 05" page
-    When I click "Edit"
-    ## If you use selenium uncomment this
-    # When I click "Publishing options"
-    And I check the box "Published"
-    And I press "Finish"
-    Then I should see "Dataset Dataset 05 has been updated"
-    And I should see "2015-01-02"
+    | title       | publisher | format | author | published | dataset    | description |
+    | Resource 01 | Group 01  | csv    | Katie  | Yes       | Dataset 01 |             |
+    | Resource 02 | Group 01  | html   | Katie  | Yes       | Dataset 01 |             |
+    | Resource 03 | Group 01  | html   | Katie  | Yes       | Dataset 02 |             |
 
   @noworkflow
   Scenario: Edit any dataset associated with the groups that I am a member of
@@ -76,8 +63,6 @@ Background:
     Given I am logged in as "Gabriel"
     And I am on "Dataset 05" page
     When I click "Edit"
-    ## If you use selenium uncomment this
-    # When I click "Publishing options"
     And I check the box "Published"
     And I press "Finish"
     Then I should see "Dataset Dataset 05 has been updated"
@@ -96,3 +81,8 @@ Background:
     When I press "Delete"
     And I press "Delete"
     Then I should see "Dataset Dataset 03 has been deleted"
+
+  # https://github.com/Behat/Behat/issues/834
+  @dummy
+  Scenario: Dummy test
+    Given I am on "/"

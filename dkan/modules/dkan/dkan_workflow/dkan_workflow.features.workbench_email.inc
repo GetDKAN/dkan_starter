@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_workflow.features.workbench_email.inc
