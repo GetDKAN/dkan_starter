@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_dataset_groups.strongarm.inc
@@ -46,9 +45,6 @@ function dkan_dataset_groups_strongarm() {
       'form' => array(
         'title' => array(
           'weight' => '0',
-        ),
-        'path' => array(
-          'weight' => '5',
         ),
       ),
       'display' => array(),

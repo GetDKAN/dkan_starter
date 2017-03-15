@@ -12,7 +12,7 @@ class CtoolsCssTestCase extends DrupalWebTestCase {
     return array(
       'name' => 'CSS Tools tests',
       'description' => '...',
-      'group' => 'ctools',
+      'group' => 'Chaos Tools Suite',
     );
   }
 

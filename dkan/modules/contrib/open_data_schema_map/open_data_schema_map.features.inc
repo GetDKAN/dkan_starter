@@ -94,13 +94,11 @@ function open_data_schema_apis_features_rebuild($module) {
     foreach ($defaults as $machine_name => $definition) {
       $existing = open_data_schema_map_api_load($machine_name);
       // @todo add open_data_schema_map_schema_save() function to replace this
-      $record = (object) $definition;
-      $record->id = $existing->id;
       if ($existing && isset($existing->id)) {
-        drupal_write_record('open_data_schema_map', $record, 'id');
+        drupal_write_record('open_data_schema_map', $definition, $existing->id);
       }
       else {
-        drupal_write_record('open_data_schema_map', $record);
+        drupal_write_record('open_data_schema_map', $definition);
       }
     }
   }

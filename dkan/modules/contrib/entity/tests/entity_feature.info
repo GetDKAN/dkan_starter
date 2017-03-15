@@ -7,6 +7,6 @@ dependencies[] = entity_test
 hidden = TRUE
 
 ; Information added by drush on 2017-03-08
-version = "7.x-1.8"
+version = "7.x-1.7"
 project = "entity"
 datestamp = "1489006926"

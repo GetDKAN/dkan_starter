@@ -15,10 +15,8 @@ module.exports = function (config) {
 	].concat(leafletSources, libSources, [
 		"spec/after.js",
 		"node_modules/happen/happen.js",
-		"node_modules/prosthetic-hand/dist/prosthetic-hand.js",
 		"spec/suites/SpecHelper.js",
 		"spec/suites/**/*.js",
-		"dist/*.css",
 		{pattern: "dist/images/*.png", included: false}
 	]);
 
@@ -62,23 +60,7 @@ module.exports = function (config) {
 		// - Safari (only Mac)
 		// - PhantomJS
 		// - IE (only Windows)
-		browsers: [
-			'PhantomJSCustom'
-		],
-
-		customLaunchers: {
-			'PhantomJSCustom': {
-				base: 'PhantomJS',
-				flags: ['--load-images=true'],
-				options: {
-					onCallback: function (data) {
-						if (data.render) {
-							page.render(data.render);
-						}
-					}
-				}
-			}
-		},
+		browsers: ['PhantomJS'],
 
 		// If browser does not capture in given timeout [ms], kill it
 		captureTimeout: 5000,
