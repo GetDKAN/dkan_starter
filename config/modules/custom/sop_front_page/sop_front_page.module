@@ -1,0 +1,226 @@
+<?php
+/**
+ * @file
+ * Code for the SOP Front Page feature.
+ */
+
+include_once 'sop_front_page.features.inc';
+/**
+ * @file
+ * Code for the SOP Front Page feature.
+ */
+
+/**
+ * Implements hook_views_api().
+ */
+function sop_front_page_views_api($module = NULL, $api = NULL) {
+  return array(
+    "api" => "3.0",
+    'template path' => drupal_get_path('module', 'sop_front_page') . '/templates/views',
+    );
+}
+
+/**
+ * Implements hook_init().
+ */
+function sop_front_page_init() {
+  if(drupal_is_front_page()){
+    $module_path = drupal_get_path('module', 'sop_front_page');
+     // CSS
+    drupal_add_css($module_path . '/css/wddh-front-page.css');
+    drupal_add_css($module_path . '/css/slick.css');
+    drupal_add_css($module_path . '/css/slick.theme.css');
+     // JS
+    drupal_add_js($module_path . '/js/wddh-front-page.js');
+    drupal_add_js($module_path . '/js/slick.min.js');
+    drupal_add_js($module_path . '/js/jquery-ui.min.js');
+  }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function sop_front_page_block_info() {
+  $blocks['page_submenu'] = array(
+    'info' => t('Page Submenu'),
+    'cache' => DRUPAL_CACHE_PER_PAGE
+    );
+  $blocks['page_data_types'] = array(
+    'info' => t('Page Data Types'),
+    'cache' => DRUPAL_CACHE_PER_PAGE
+    );
+  $blocks['page_region_countries'] = array(
+    'info' => t('Page Regions and Countries'),
+    'cache' => DRUPAL_CACHE_PER_PAGE
+    );
+  $blocks['page_applications'] = array(
+    'info' => t('Page Applications'),
+    'cache' => DRUPAL_CACHE_PER_PAGE
+    );
+  $blocks['deposit_button'] = array(
+    'info' => t('Deposit Button'),
+    'cache' => DRUPAL_CACHE_PER_PAGE
+    );
+  $blocks['profile_region'] = array(
+    'info' => t('Profile Region and social sharing'),
+    'cache' => DRUPAL_CACHE_PER_PAGE
+    );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function sop_front_page_block_view($delta = '') {
+  switch ($delta) {
+    case 'page_submenu':
+      $block['content'] = theme('page_submenu', array());
+      break;
+    case 'page_data_types':
+      $block['content'] = theme('page_data_types', array());
+      break;
+    case 'page_region_countries':
+      $block['content'] = theme('page_region_countries', array());
+      break;
+    case 'page_applications':
+      $block['content'] = theme('page_applications', array());
+      break;
+    case 'deposit_button':
+      $block['content'] = theme('deposit_button', array());
+      break;
+    case 'profile_region':
+      $block['content'] = _profile_region();
+      break;
+  }
+  return $block;
+}
+
+function _profile_region() {
+  global $user, $base_path, $base_url;
+  $prf_link =  $picture = $name = '';
+  $uid = 0;
+
+  if ($user->uid > 0) {
+    $user = user_load($user->uid);
+    $name = !empty($user->field_sop_first_name[LANGUAGE_NONE][0]['value']) ? $user->field_sop_first_name[LANGUAGE_NONE][0]['value'] :$user->name;
+    if (strlen($name) > 30) {
+      $name = trim(substr($name, 0, 26)) . " ...";
+    }
+    $prf_link = drupal_get_path_alias('user/' . $user->uid);
+    if (!empty($user->picture)) {
+      // change this to image cache later.
+      $picture = theme('image', array(
+        'path' => $user->picture->uri,
+        'alt' => t('Profile image'),
+        'title' => t('Profile image'),
+        'width' => '25px',
+        'height' => '25px',
+        'attributes' => array(
+          'class' => 'icon-profile'
+        ),
+      ));
+    }
+    else {
+      $picture = theme('image', array(
+        'path' => '/'.drupal_get_path('module', 'sop_front_page') . '/images/' . 'profile-media.png',
+        'alt' => t('Profile image'),
+        'title' => t('Profile image'),
+        'attributes' => array(
+          'class' => 'icon-profile'
+        ),
+      ));
+    }
+  }
+
+  $parameters = array(
+    'base_path' => $base_path,
+    'base_url' => $base_url,
+    'name' => $name,
+    'prf_link' => $prf_link,
+    'picture' => $picture
+  );
+
+  return theme('profile_region', array('user' => $user, 'params' => $parameters));
+}
+
+/**
+ * Implements hook_theme().
+ */
+function sop_front_page_theme($existing, $type, $theme, $path) {
+  $module_path = drupal_get_path('module', 'sop_front_page');
+  $images_path = $module_path . '/images';
+  $templates_path = drupal_get_path('module', 'sop_front_page') . '/templates';
+  $vocab = taxonomy_vocabulary_machine_name_load('country');
+  $terms = taxonomy_get_tree($vocab->vid);
+  if (!empty($terms)) {
+    $countries = array();
+    foreach($terms as $key => $val){
+      $countries[$val->name]["name"] = $val->name;
+      $countries[$val->name]["uuid"] = $val->uuid;
+    }
+  }
+sort($countries);
+  $africa = array("South Sudan", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde", "Cameroon", "Central African Republic", "Chad", "Comoros", "Congo, Democratic Republic of", "Congo, Republic of", "Cote d'Ivoire", "Equatorial Guinea", "Eritrea", "Ethiopia", "Gabon", "Gambia, The", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", "Liberia", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Mozambique", "Namibia", "Niger", "Nigeria", "Reunion", "Rwanda", "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone", "Somalia", "South Africa", "Sudan", "Swaziland", "Tanzania", "Togo", "Uganda", "Zambia", "Zimbabwe");
+  $east_asia_n_pacific = array("American Samoa", "Australia", "Brunei Darussalam", "Cambodia", "China", "Cook Islands", "Fiji", "French Polynesia", "Guam", "Hong Kong SAR, China", "Indonesia", "Japan", "Kiribati", "Korea, Democratic People's Republic of", "Korea, Republic of", "Lao People's Democratic Republic", "Macao SAR, China", "Malaysia", "Marshall Islands", "Micronesia, Federated States of", "Mongolia", "Myanmar", "New Caledonia", "New Zealand", "Northern Mariana Islands", "Palau", "Papua New Guinea", "Philippines", "Samoa", "Singapore", "Solomon Islands", "Taiwan, China", "Thailand", "Timor-Leste", "Tonga", "Tuvalu", "Vanuatu", "Vietnam");
+  $europe_n_central_asia = array("Albania", "Andorra", "Armenia", "Austria", "Azerbaijan", "Belarus", "Belgium", "Bosnia and Herzegovina", "Bulgaria", "Commonwealth of Independent States", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Georgia", "Germany", "Greece", "Hungary", "Iceland", "Ireland", "Isle of Man", "Italy", "Kazakhstan", "Kosovo", "Kyrgyz Republic", "Latvia", "Liechtenstein", "Lithuania", "Luxembourg", "Macedonia, former Yugoslav Republic of", "Moldova", "Monaco", "Montenegro", "Netherlands", "Norway", "Poland", "Portugal", "Romania", "Russian Federation", "Serbia", "Slovak Republic", "Slovenia", "Spain", "Sweden", "Switzerland", "Tajikistan", "Turkey", "Turkmenistan", "Ukraine", "United Kingdom", "Uzbekistan");
+  $latin_america_n_caribbean = array("Curacao", "Anguilla", "Antigua and Barbuda", "Argentina", "Aruba", "Bahamas, The", "Barbados", "Belize", "Bermuda", "Bolivia", "Brazil", "Cayman Islands", "Chile", "Colombia", "Costa Rica", "Cuba", "Dominica", "Dominican Republic", "Ecuador", "El Salvador", "Falkland Islands (Malvinas)", "French Guiana", "Grenada", "Guadeloupe", "Guatemala", "Guyana", "Haiti", "Honduras", "Jamaica", "Martinique", "Mexico", "Montserrat", "Netherlands Antilles", "Nicaragua", "Panama", "Paraguay", "Peru", "Puerto Rico", "St. Kitts and Nevis", "St. Lucia", "St. Vincent and the Grenadines", "Suriname", "Trinidad and Tobago", "Turks and Caicos Islands", "Uruguay", "Venezuela, Republica Bolivariana de", "Virgin Islands, British");
+  $middle_east_n_north_africa = array("Algeria", "Bahrain", "Djibouti", "Egypt, Arab Republic of", "Gibraltar", "Iran, Islamic Republic of", "Iraq", "Israel", "Jordan", "Kuwait", "Lebanon", "Libya", "Malta", "Morocco", "Oman", "Qatar", "Saudi Arabia", "Syrian Arab Republic", "Tunisia", "United Arab Emirates", "West Bank and Gaza", "Yemen, Republic of");
+  $south_asia = array("Afghanistan", "Bangladesh", "Bhutan", "India", "Maldives", "Nepal", "Pakistan", "Sri Lanka");
+  $variables = array('images_path' => $images_path, 'countries' => $countries, 'africa' => $africa, 'east_asia_n_pacific' => $east_asia_n_pacific, 'europe_n_central_asia' => $europe_n_central_asia, 'latin_america_n_caribbean' => $latin_america_n_caribbean, 'middle_east_n_north_africa' => $middle_east_n_north_africa, 'south_asia' => $south_asia);
+  return array(
+    'page_submenu' => array(
+      'variables' => $variables,
+      'template' => 'page-submenu',
+      'path' => $templates_path,
+      ),
+    'page_data_types' => array(
+      'variables' => $variables,
+      'template' => 'page-data-types',
+      'path' => $templates_path,
+      ),
+    'page_region_countries' => array(
+      'variables' => $variables,
+      'template' => 'page-regions-countries',
+      'path' => $templates_path,
+      ),
+    'page_applications' => array(
+      'variables' => $variables,
+      'template' => 'page-applications',
+      'path' => $templates_path,
+      ),
+    'deposit_button' => array(
+      'variables' => $variables,
+      'template' => 'deposit-button',
+      'path' => $templates_path,
+      ),
+    'profile_region' => array(
+      'variables' => array('user' => NULL, 'params' => NULL),
+      'template' => 'profile-region',
+      'path' => $templates_path,
+      ),
+    );
+}
+
+/**
+ * Implements hook_block_view_alter().
+ */
+function sop_front_page_block_view_alter(&$data, $block) {
+  // print_r($data);
+  // print_r($block);
+}
+
+/**
+ * Implements hook_block_view_MODULE_DELTA_alter().
+ */
+function sop_front_page_block_view_dkan_sitewide_demo_front_dkan_demo_front_alter(&$data, $block) {
+  $default = sop_demo_front_block();
+  $data['content'] = check_markup(variable_get('dkan_sitewide_demo_front_dkan_demo_front_text', $default), variable_get('dkan_sitewide_demo_front_dkan_demo_front_format', 'html'));
+}
+
+/**
+ * Overrides 'dkan_demo_front' block content.
+ */
+function sop_demo_front_block() {
+  $content = t('A central resource where staff can search, browse, share, and download development data.');
+  return $content;
+}

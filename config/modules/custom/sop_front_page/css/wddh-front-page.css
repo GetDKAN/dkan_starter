@@ -1,0 +1,203 @@
+.view-dkan-topics-featured .views-field-name {
+  padding-right: 6px;
+  padding-left: 6px;
+  cursor: pointer;
+}
+
+.view-dkan-topics-featured .field-content a{
+  text-transform: capitalize;
+}
+
+/*#apps_container h2.pane-title {
+  color: white !important;
+}
+*/
+/*#apps_container > div > p {
+  width: 70%;
+  margin: 0 auto;
+  font-size: 14px;
+}*/
+
+/*#apps_container h3 {
+  color: white !important;
+  font-weight: bold;
+  font-size: 29px;
+}*/
+
+/*#apps_container .apps-rhs p {
+  font-size: 14px;
+}*/
+
+#deposit_button {
+  display: inline-block;
+  height: 45px;
+  width: 155.3877px;
+  background-color: #ffde79;
+  color: black;
+  text-decoration: none;
+  text-align: center;
+  line-height: 45px;
+  border: none;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+#deposit_button span {
+  display: inline-block;
+  float: left;
+  height: 25px;
+  width: 25px;
+  background-image: url("../images/sprite.png");
+  background-position: 300px -3px;
+  margin-top: 10px;
+  margin-left: 15px;
+}
+
+/*Collections*/
+#collection_container { padding-left: 80px; padding-right: 80px; }
+.slick-dotted.slick-slider { margin-bottom: 0; }
+.collections-sec .menu-heading + p { margin-bottom: 55px; }
+.slick-item { background-color: #fff; position: relative; border: 1px solid #ececec; }
+.collection-list { margin: 20px; text-align: center; position: relative; height: 99px; }
+.collection-list > img { position: absolute; vertical-align: middle; top: 0; left: 0; bottom: 0; right: 0; margin: auto; }
+.slick-initialized .slick-slide { margin: 0 10px; }
+
+.country-tab { display: inline-block; margin: 0 auto; text-align: center; }
+@media screen and (min-width:1024px){
+  .country-tab{width:80%;}
+}
+.country-tab .nav-tabs li a { border: medium none; color: #666; font-size: 13px; min-height: 140px; padding: 15px 10px; position: relative; border-radius: 0; margin-right: 0; width: 135px; }
+.country-tab .nav-tabs { background: #fbfbfb; border-bottom: 1px solid #d5e7f5; display: inline-block; }
+.country-tab .nav-tabs > li { margin-bottom: 0; padding: 0 10px; white-space: normal; }
+.country-tab .nav-tabs > li.active > a, .country-tab .nav-tabs > li.active > a:hover, .country-tab .nav-tabs > li.active > a:focus { border: none; font-weight: 600; background: #fff; border-radius: 0; box-shadow: 0 -4px 10px #ddd; color: #00528e; outline: none; }
+.country-tab .nav-tabs > li.active > a::before, .country-tab .nav-tabs > li.active > a::after { border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #fff; bottom: -9px; z-index: 6; content: ""; left: 50%; margin-left: -10px; position: absolute; }
+.country-tab .nav-tabs > li.active > a::after { border-top: 10px solid #d5e7f5; z-index: 5; bottom: -11px; }
+.regions-icons { display: block; width: 62px; height: 62px; text-align: center; margin: 0 auto 10px; border: 1px solid #b3b3b3; border-radius: 50%; }
+
+.topics-list-data li { display: inline-block; color: #c2c2c2; padding-bottom: 5px; text-indent: -5px; }
+.topics-list-data li:before { content: "-"; position: absolute; margin-left: -5px; }
+.topics-list-data li > a { color: #005999; text-transform: capitalize; padding-left: 5px; }
+
+/*Applications*/
+/*.apps-sec { background: #7d7d7d; padding: 50px 20px; color: #fff; }
+.apps-carousel { margin: 30px 20px 50px; }
+.apps-carousel .slick-track { margin: 8% 0; }
+.apps-carousel .slick-slide { height: 246px; background: #656565; }
+.apps-sec .apps-lhs { padding: 0; }
+.apps-sec .apps-lhs img { margin-top: -15%; float: right; }
+.apps-sec .apps-rhs h1 { margin: 38px 0 20px; font-size: 29px; }
+.apps-sec p { font-size: 14px; }*/
+
+.sprite { display: inline-block; vertical-align: middle; width: 25px; height: 25px;
+ background: url("../images/sprite.png") no-repeat; }
+
+/* home page icons starts */
+.icon-map, .icon-comments, .star-full, .star-empty, .icon-menu { width: 21px; height: 16px; }
+.icon-map { background-position: -418px -4px; width: 18px; }
+.icon-comments { background-position: -395px -3px; }
+.star-full { width: 17px; /*background-position: -395px -26px;*/
+ background: url("../images/star-full.png") no-repeat; }
+.star-empty { width: 17px; /*background-position: -395px -26px;*/
+ background: url("../images/star-empty.png") no-repeat;}
+.icon-menu { width: 23px; height: 24px; background-position:-565px -9px; margin-right: 10px; }
+.icon-back { width: 16px; height: 16px; margin-right: 5px; background-position: -502px -187px; }
+.sprite.icon-m, .icon-m { display: inline-block; height: 98px; width: 92px; margin-bottom: 10px; }
+.icon-m.datatypes { background-position: 0px -52px; }
+.icon-m.regions { background-position: -103px -52px; }
+.icon-m.topics { background-position: -203px -52px; }
+.icon-m.featured { background-position: -303px -52px; }
+.icon-m.application { background-position: -397px -52px; }
+.icon-m.collection { background-position: -497px -52px; }
+.icon-despositdata { background-position: -300px -3px; }
+.icon-viewmore { background-position: -300px -32px; width: 5px; height: 10px; }
+/* Data types Icons */
+.menu-datatypes .sprite{width: 125px; height: 123px; margin: 15px;}
+.sprite.icon-ts{background-position: -1px -470px;}
+.sprite.icon-md{background-position: -152px -470px;}
+.sprite.icon-gs{background-position: -304px -470px;}
+/* Region & Countries Icons */
+.regions-icons .sprite { width: 30px; height: 30px; margin: 15px; }
+.country-tab .nav-tabs > li.active .regions-icons { border-color: #00528e; }
+.sprite.icon-africa { background-position: -1px -164px; }
+.country-tab .nav-tabs > li.active .icon-africa { background-position: -1px -202px; }
+.sprite.icon-eastasia { background-position: -40px -164px; }
+.country-tab .nav-tabs > li.active .icon-eastasia { background-position: -40px -202px; }
+.sprite.icon-europe { background-position: -80px -164px; width: 46px; margin: 15px auto; }
+.country-tab .nav-tabs > li.active .icon-europe { background-position: -80px -202px; }
+.sprite.icon-latinamerica { background-position: -133px -164px; width: 22px; }
+.country-tab .nav-tabs > li.active .icon-latinamerica { background-position: -133px -202px; }
+.sprite.icon-middlewast { background-position: -164px -171px; width: 50px; height: 19px; margin: 19px auto 11px; }
+.country-tab .nav-tabs > li.active .icon-middlewast { background-position: -164px -208px; }
+.sprite.icon-southasia { background-position: -222px -165px; }
+.country-tab .nav-tabs > li.active .icon-southasia { background-position: -222px -206px; }
+/* Topics Icons */
+.sprite.img-topic { width: 65px; height: 43px; vertical-align: bottom; position: absolute; bottom: 65px; left: 0; right: 0; margin: auto; }
+.sprite.icon-agriculture { background-position: -262px -198px; width: 29px; }
+.topic-name .topic-list:hover .icon-agriculture { background-position: -295px -198px; }
+.sprite.icon-information { background-position: -260px -163px; height: 32px; width: 45px; }
+.topic-name .topic-list:hover .icon-information { background-position: -310px -163px; }
+.sprite.icon-health { background-position: -190px -315px; height: 40px; width: 42px; }
+.topic-name .topic-list:hover .icon-health { background-position: -236px -315px; }
+.sprite.icon-education { background-position: -361px -164px; height: 28px; }
+.topic-name .topic-list:hover .icon-education { background-position: -431px -164px; }
+.sprite.icon-energy { background-position: -107px -257px; width: 31px; height: 51px; }
+.topic-name .topic-list:hover .icon-energy { background-position: -142px -257px; }
+.sprite.icon-natural { background-position: -177px -257px; width: 49px; height: 49px; }
+.topic-name .topic-list:hover .icon-natural { background-position: -232px -257px; }
+.sprite.icon-financial { background-position: -102px -315px; width: 40px; height: 39px; }
+.topic-name .topic-list:hover .icon-financial { background-position: -146px -315px; }
+.sprite.icon-conflict { background-position: -288px -258px; width: 43px; height: 49px; }
+.topic-name .topic-list:hover .icon-conflict { background-position: -338px -258px; }
+.sprite.icon-gender { background-position: -428px -197px; width: 31px; height: 44px; }
+.topic-name .topic-list:hover .icon-gender { background-position: -464px -197px; }
+.sprite.icon-climatechange { background-position: -4px -253px; width: 45px; height: 58px; }
+.topic-name .topic-list:hover .icon-climatechange { background-position: -55px -253px; }
+.sprite.icon-job { background-position: -3px -412px; width: 56px; }
+.topic-name .topic-list:hover .icon-job { background-position: -64px -412px; }
+.sprite.icon-policies { background-position: -4px -312px; width: 45px; height: 45px; }
+.topic-name .topic-list:hover .icon-policies { background-position: -53px -312px; }
+.sprite.icon-debt { background-position: -282px -315px; height: 42px; width: 45px; }
+.topic-name .topic-list:hover .icon-debt { background-position: -331px -315px; }
+.sprite.icon-social-dev { background-position: -390px -258px; width: 45px; height: 49px; }
+.topic-name .topic-list:hover .icon-social-dev { background-position: -443px -258px; }
+.sprite.icon-labor { background-position: -301px -361px; height: 46px; width: 42px; }
+.topic-name .topic-list:hover .icon-labor { background-position: -346px -361px; }
+.sprite.icon-trade { background-position: -393px -357px; width: 47px; height: 52px; }
+.topic-name .topic-list:hover .icon-trade { background-position: -445px -357px; }
+.sprite.icon-transport { background-position: -381px -315px; height: 34px; width: 57px; }
+.topic-name .topic-list:hover .icon-transport { background-position: -441px -315px; }
+.sprite.icon-urban { background-position: -214px -408px; width: 45px; }
+.topic-name .topic-list:hover .icon-urban { background-position: -265px -408px; }
+.sprite.icon-water { background-position: -316px -407px; width: 43px; }
+.topic-name .topic-list:hover .icon-water { background-position: -364px -407px; }
+.sprite.icon-economic { background-position: -330px -200px; width: 44px; height: 40px; }
+.topic-name .topic-list:hover .icon-economic { background-position: -378px -200px; }
+.sprite.icon-poverty { background-position: -3px -361px; height: 46px; width: 45px; }
+.topic-name .topic-list:hover .icon-poverty { background-position: -52px -361px; }
+.sprite.icon-sector { background-position: -126px -412px; width: 37px; }
+.topic-name .topic-list:hover .icon-sector { background-position: -169px -412px; }
+.sprite.icon-ps-management { background-position: -100px -361px; height: 45px; width: 45px; }
+.topic-name .topic-list:hover .icon-ps-management { background-position: -149px -361px; }
+.sprite.icon-public-private { background-position: -200px -363px; height: 41px; width: 45px; }
+.topic-name .topic-list:hover .icon-public-private { background-position: -250px -363px; }
+/* home page icons ends */
+
+/* Listing Page icons starts */
+.icon-download{background-position: -554px -159px; width: 15px; height: 15px;}
+.icon-api{background-position: -539px -159px; width: 15px; height: 15px;}
+.icon-mapview{background-position: -521px -159px; width: 15px; height: 15px;}
+.icon-share{background-position: -518px -187px; width: 18px; height: 15px;}
+.icon-msg{background-position: -540px -187px; width: 16px; height:15px;}
+.icon-view{background-position: -559px -185px; width: 20px; height: 15px;}
+.icon-search{background-position: -502px -339px ; width: 18px; height: 18px;}
+/* Listing Page icons ends */
+
+/* details page icon starts */
+.icon-csv{background-position: -506px -208px; width: 35px; height: 40px;}
+.icon-zip{background-position: -547px -208px; width: 35px; height: 40px;}
+.icon-download-blue{background-position: -572px -159px; width: 15px; height: 15px;}
+.icon-preview{background-position: -583px -187px; width: 15px; height: 15px;}
+.icon-downloadapi{background-position: -502px -256px; width: 28px; height: 32px;}
+.icon-db{background-position: -540px -256px; width: 28px; height: 32px;}
+.icon-tables{background-position: -502px -298px; width: 28px; height: 32px;}
+.icon-ios{background-position: -540px -298px; width: 28px; height: 32px;}
+/* details page icon ends */

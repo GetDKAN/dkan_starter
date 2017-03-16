@@ -1,0 +1,56 @@
+// Mixins
+// -----------------------------------------------------------------------------
+@mixin searchbox {
+  form {
+    display:block;
+    margin:8px 0;
+    position:relative;
+    width: 100%;
+  }
+  input.form-text {
+    height: 39px;
+    border-radius: 0;
+  }
+  button[type="submit"],
+  input[type="submit"] {
+    background-image: url("/sites/all/themes/custom/singapore_open_data/assets/images/magnify.png");
+    border:none;
+    border-radius: 0;
+    display: inline-block;
+    margin: 0;
+    padding:0;
+    position: absolute;
+    top: 0;
+    right:0;
+    width:39px;
+    height: 39px;
+  }
+}
+
+%screenreader {
+  position: absolute;
+  top:0;
+  left:-9999px
+}
+
+%button {
+  border-radius: 0;
+}
+
+%button-attached {
+  border-radius: 0;
+}
+
+@mixin sprite {
+  display: inline-block;
+  vertical-align: middle;
+  width: 25px;
+  height: 25px;
+  background-image: url('../images/sprite.png');
+}
+
+@mixin border-radius($radius: 1px) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  border-radius: $radius;
+}
