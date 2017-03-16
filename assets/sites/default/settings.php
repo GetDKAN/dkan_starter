@@ -79,7 +79,7 @@ $conf['clamav_mode'] = 1;
 if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
   $conf['dkan_datastore_fast_import_selection'] = 2;
   $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
-  $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
+  $conf['dkan_datastore_load_data_type'] = 'load_data_infile';
   $conf['queue_filesize_threshold'] = $conf['default']['fast_file']['queue'];
   $conf['dkan_datastore_class'] = 'DkanDatastoreFastImport';
 
