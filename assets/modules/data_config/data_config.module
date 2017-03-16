@@ -1,21 +1,22 @@
 <?php
 
 /**
+ * @file
+ * data_config.module
+ */
+
+/**
  * Declares default modules for custom_config features master.
  */
 function data_config_enabled_modules() {
   $features_master = array();
-  
+
   $features_master['themes'] = array(
     'nuboot_radix' => 'nuboot_radix',
   );
-  
+
   $features_master['modules'] = array(
-    #'dkan_sitewide_demo_front' => 'dkan_sitewide_demo_front',
-    #'menu_token' => 'menu_token',
-    #'remote_file_source' => 'remote_file_source',
     'update' => 'update',
-    #'dkan_default_content' => 'dkan_default_content',
     'acquia_agent' => 'acquia_agent',
     'acquia_purge' => 'acquia_purge',
     'acquia_spi' => 'acquia_spi',
@@ -221,7 +222,7 @@ function data_config_enabled_modules() {
   );
 
   $data_config = variable_get('default');
- 
+
   if (isset($data_config['fast_file']) && $data_config['fast_file']['enable']) {
     $features_master['modules']['dkan_datastore_fast_import'] = 'dkan_datastore_fast_import';
   }
@@ -242,6 +243,19 @@ function data_config_enabled_modules() {
     $features_master['modules']['drafty'] = 'drafty';
   }
 
+  if (isset($data_config['odfe']) && $data_config['odfe']['enable']) {
+    $features_master['module']['open_data_federal_extras'] = 'open_data_federal_extras';
+    $features_master['module']['autocomplete_deluxe'] = 'autocomplete_deluxe';
+    $features_master['module']['ctools'] = 'ctools';
+    $features_master['module']['dkan_dataset_content_types'] = 'dkan_dataset_content_types';
+    $features_master['module']['features'] = 'features';
+    $features_master['module']['field_group'] = 'field_group';
+    $features_master['module']['link'] = 'link';
+    $features_master['module']['list'] = 'list';
+    $features_master['module']['options'] = 'options';
+    $features_master['module']['strongarm'] = 'strongarm';
+    $features_master['module']['text'] = 'text';
+  }
   return $features_master;
 
 }
@@ -261,7 +275,7 @@ function data_config_modules_disabled($modules) {
       ['modules' => $modules_warn], WATCHDOG_ERROR);
     if (module_exists('custom_config') && function_exists('drush_print_table')) {
       $dependencies = array();
-      foreach($modules_warn as $module) {
+      foreach ($modules_warn as $module) {
         // Add dependencies to the list, with a placeholder weight.
         // The new modules will be processed as the while loop continues.
         $dependencies[$module] = array();
@@ -270,34 +284,40 @@ function data_config_modules_disabled($modules) {
         }
         $dependencies[$module] = array_intersect($dependencies[$module], $modules_warn);
       }
-      module_load_include('inc','custom_config','custom_config.features.features_master');
+      module_load_include('inc', 'custom_config', 'custom_config.features.features_master');
       $feature_master_list = function_exists('custom_config_features_master_defaults') ?
-        custom_config_features_master_defaults(): array('modules' => array());
+        custom_config_features_master_defaults() : array('modules' => array());
       $feature_master_list = array_keys($feature_master_list['modules']);
       $dpt_output = array(
-        array('Modules being disabled', 'In feature master list?', 'Cross Dependencies with modules being disabled'),
+        array(
+          'Modules being disabled',
+          'In feature master list?',
+          'Cross Dependencies with modules being disabled',
+        ),
       );
-      foreach($modules_warn as $module) {
-        array_push($dpt_output, array($module, in_array($module, $feature_master_list) ? "YES": "NO", implode(',', $dependencies[$module])));
+      foreach ($modules_warn as $module) {
+        array_push($dpt_output, array($module, in_array($module, $feature_master_list) ?
+          "YES" : "NO", implode(',', $dependencies[$module]),
+        ));
       }
-      drush_print_table($dpt_output, $header=TRUE);
+      drush_print_table($dpt_output, $header = TRUE);
     }
   }
 }
 
-
 /**
- * Implements hook_search_api_index_load()
+ * Implements hook_search_api_index_load().
  *
  * Forces read-only mode on Search API indexes if the current environment
  * is NOT an Acquia-Hosted production environment. (Including a local copy
  * of this site)
  */
- function data_config_search_api_index_load($indexes) {
+function data_config_search_api_index_load($indexes) {
   // Assume that we need to override and force read-only mode.
   $set_read_only = TRUE;
 
-  // Avoid forcing index read-only mode, if on Acquia Hosting + in a production environment
+  // Avoid forcing index read-only mode.
+  // If on Acquia Hosting + in a production environment.
   if (isset($_ENV["AH_SITE_ENVIRONMENT"])) {
     return;
   }
