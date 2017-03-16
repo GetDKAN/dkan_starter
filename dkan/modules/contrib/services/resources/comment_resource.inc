@@ -245,10 +245,13 @@ function _comment_resource_create($comment) {
  *   The comment object
  */
 function _comment_resource_retrieve($cid) {
+
   $comment = comment_load($cid);
-  return $comment ?
-    services_field_permissions_clean('view', 'comment', $comment) :
-    services_error(t('Comment @cid not found', array('@cid' => $cid)), 404);
+
+  //Lets check field_permissions
+  $comment = services_field_permissions_clean('view', 'comment', $comment);
+
+  return $comment;
 }
 
 /**
