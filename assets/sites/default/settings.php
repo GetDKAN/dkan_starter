@@ -154,22 +154,31 @@ if (_data_starter_validates('stage_file_proxy_origin')) {
 // KEY for dkan health status.
 $conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
 
-// Add tracking codes for Google Analytics.
-if (isset($conf['gaClientTrackingCode']) && $conf['gaClientTrackingCode'] != 'UA-XXXXX-Y') {
-  $conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
-}
-elseif (isset($conf['gaNuCivicTrackingCode']) && $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
-  $conf['googleanalytics_account'] = $conf['gaNuCivicTrackingCode'];
-}
-
-if (isset($conf['gaNuCivicTrackingCode']) &&
-  $conf['googleanalytics_account'] != $conf['gaNuCivicTrackingCode'] &&
-  $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
-  $conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'auto', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
-}
-
 // Never disallow cli access via shield config.
 $conf['shield_allow_cli'] = 1;
+
+// Only enable GA codes in production. This was not put in the switch statement
+// below as it is production only setting.
+if (ENVIRONMENT == 'production') {
+  // Add tracking codes for Google Analytics.
+  if (isset($conf['gaClientTrackingCode']) && $conf['gaClientTrackingCode'] != 'UA-XXXXX-Y') {
+    $conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
+  }
+  elseif (isset($conf['gaNuCivicTrackingCode']) && $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
+    $conf['googleanalytics_account'] = $conf['gaNuCivicTrackingCode'];
+  }
+
+  if (isset($conf['gaNuCivicTrackingCode']) &&
+    $conf['googleanalytics_account'] != $conf['gaNuCivicTrackingCode'] &&
+    $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
+    $conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'auto', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
+  }
+}
+else {
+  // Make sure GA is not enabled on non production envs.
+  unset($conf['googleanalytics_account']);
+  unset($conf['googleanalytics_codesnippet_after']);
+}
 
 /******************************************************
  * OPTIONAL: Override default settings per environment.
