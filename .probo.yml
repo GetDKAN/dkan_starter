@@ -52,6 +52,7 @@ steps:
       fi
       ahoy ci setup
       ahoy ci deploy
+      chmod -R 777 /var/www/html/sites/default/files
 
       echo ""
       echo "The url of this build should be at:"
