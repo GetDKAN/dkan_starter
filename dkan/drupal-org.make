@@ -111,8 +111,13 @@ projects:
   feeds_flatstore_processor:
     download:
       type: git
+<<<<<<< HEAD
       url: 'https://github.com/NuCivic/feeds_flatstore_processor.git'
       branch: master
+=======
+      url: https://github.com/NuCivic/feeds_flatstore_processor.git
+      revision: 60ebdc5a688914b00f2f3ee15849a933acb5d751
+>>>>>>> 0269ec5db95d9862b2e88026d91716ef9093edb6
   field_group:
     version: '1.5'
     patch:
@@ -245,8 +250,13 @@ projects:
   open_data_schema_map:
     download:
       type: git
+<<<<<<< HEAD
       url: 'https://github.com/NuCivic/open_data_schema_map.git'
       branch: 7.x-1.x
+=======
+      url: https://github.com/NuCivic/open_data_schema_map.git
+      tag: 7.x-1.13.2
+>>>>>>> 0269ec5db95d9862b2e88026d91716ef9093edb6
   panelizer:
     version: '3.4'
   panels:
@@ -275,8 +285,13 @@ projects:
   recline:
     download:
       type: git
+<<<<<<< HEAD
       url: 'https://github.com/NuCivic/recline.git'
       branch: 7.x-1.x
+=======
+      url: https://github.com/NuCivic/recline.git
+      tag: 7.x-1.13.2
+>>>>>>> 0269ec5db95d9862b2e88026d91716ef9093edb6
   ref_field:
     download:
       type: git
@@ -291,7 +306,11 @@ projects:
   remote_stream_wrapper:
     version: '1.0-rc1'
     patch:
+<<<<<<< HEAD
       2833837: 'https://www.drupal.org/files/issues/prevent-download-intent-open-stream-2833837-4.patch'
+=======
+      2833837: https://www.drupal.org/files/issues/prevent-download-intent-open-stream-2833837-4.patch
+>>>>>>> 0269ec5db95d9862b2e88026d91716ef9093edb6
   role_export:
     version: '1.0'
   rules:

@@ -1,4 +1,26 @@
 # Change log
+
+## [1.13.4.0]
+- Upgrade DKAN to version 1.13.2  PR#136
+
+## [1.13.1.5]
+- Added patch on DKAN to include modifications made on PR#1795.
+
+## [1.13.1.4]
+- Update dkan acquia cache settings #118
+
+## [1.13.1.3]
+- Added patches on DKAN to include modifications made on PR#1766 and PR#1788.
+
+## [1.13.1.2]
+- Fix pass NULL in data_config_enabled_modules() #109
+- Do not disable dkan_sitewide_demo_front via script #110
+- Added 'no-main-menu' tag on tests #112
+- Added patches on DKAN to include modifications made on PR#1769, PR#1761 and PR#1763
+
+## [1.13.1.1]
+- Update the 1.13 upgrade script #107
+
 ## [1.13.1.0]
 - Remake with dkan 7.x-1.131 #106
 - Add example.config.yml on update. #103

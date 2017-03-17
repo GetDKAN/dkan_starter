@@ -1,0 +1,75 @@
+<?php
+/**
+ * @file
+ * Flush cache of panels page.
+ */
+
+module_load_include('inc', 'expire_panels', 'expire_panels.admin');
+
+// Panels actions.
+define('EXPIRE_PANELS_DISPLAY_UPDATE', 1);
+define('EXPIRE_PANELS_DISPLAY_DELETE', 2);
+
+// Default values.
+define('EXPIRE_PANELS_PANEL_PAGE', FALSE);
+define('EXPIRE_PANELS_PANELIZER_PAGE', FALSE);
+define('EXPIRE_PANELS_FRONT_PAGE', FALSE);
+define('EXPIRE_PANELS_CUSTOM', FALSE);
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function expire_panels_form_expire_admin_settings_form_alter(&$form, &$form_state, $form_id) {
+  expire_panels_admin_settings_form_elements($form, $form_state, $form_id);
+}
+
+/**
+ * Implements hook_panels_display_save().
+ */
+function expire_panels_panels_display_save($display) {
+  expire_panels_execute_expiration('panels', $display, EXPIRE_PANELS_DISPLAY_UPDATE);
+}
+
+/**
+ * Implements hook_panels_delete_display().
+ */
+function expire_panels_panels_delete_display($did) {
+  $display = new stdClass();
+  $display->did = $did;
+  expire_panels_execute_expiration('panels', $display, EXPIRE_PANELS_DISPLAY_DELETE);
+}
+
+/**
+ * Execute expiration method for object.
+ */
+function expire_panels_execute_expiration($type, $object, $action) {
+  $status = variable_get('expire_status', EXPIRE_STATUS_DISABLED);
+  if ($status) {
+    if ($handler = _expire_get_expiration_handler($type)) {
+      $handler->expire($object, $action);
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function expire_panels_entity_update($entity, $type) {
+  // Support for fieldable_panel_panes.
+  if (isset($entity->fpid)) {
+    $get_did = db_select('panels_pane', 'pp')
+      ->fields('pp', array('did'))
+      ->condition('subtype', 'fpid:' . $entity->fpid)
+      ->execute()
+      ->fetchAll();
+    if (empty($get_did)) {
+      // Current fpp doesn't added to panels at all.
+      return;
+    }
+    foreach($get_did as $display) {
+      // Expire needed panel.
+      expire_panels_execute_expiration('panels', $display, EXPIRE_PANELS_DISPLAY_UPDATE);
+    }
+  }
+}

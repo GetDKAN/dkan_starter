@@ -75,23 +75,6 @@ devinci_set_env($env_map);
 // Use the executable scan method for ClamAV by default (Daemon mode can cause some problems)
 $conf['clamav_mode'] = 1;
 
-// Adds support for fast file if enabled in config.yml.
-if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
-  $conf['dkan_datastore_fast_import_selection'] = 2;
-  $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
-  $conf['dkan_datastore_load_data_type'] = 'load_data_infile';
-  $conf['queue_filesize_threshold'] = $conf['default']['fast_file']['queue'];
-  $conf['dkan_datastore_class'] = 'DkanDatastoreFastImport';
-
-  $databases['default']['default']['pdo'] = array(
-    PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
-    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
-  );
-}
-else {
-  $conf['dkan_datastore_fast_import_selection'] = 0;
-}
-
 // Don't show any errors.
 $conf['error_level'] = ERROR_REPORTING_HIDE;
 ini_set('error_reporting', E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
@@ -151,12 +134,22 @@ if (_data_starter_validates('stage_file_proxy_origin')) {
   $conf['stage_file_proxy_origin'] = $conf['default']['stage_file_proxy_origin'];
 }
 
-// KEY for dkan health status
+// KEY for dkan health status.
 $conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
 
 // Add tracking codes for Google Analytics.
-$conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
-$conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
+if (isset($conf['gaClientTrackingCode']) && $conf['gaClientTrackingCode'] != 'UA-XXXXX-Y') {
+  $conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
+}
+elseif (isset($conf['gaNuCivicTrackingCode']) && $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
+  $conf['googleanalytics_account'] = $conf['gaNuCivicTrackingCode'];
+}
+
+if (isset($conf['gaNuCivicTrackingCode']) &&
+  $conf['googleanalytics_account'] != $conf['gaNuCivicTrackingCode'] &&
+  $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
+  $conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'auto', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
+}
 
 // Never disallow cli access via shield config.
 $conf['shield_allow_cli'] = 1;
@@ -198,6 +191,7 @@ switch(ENVIRONMENT) {
       'acquia_agent',
       'acquia_spi',
       'acquia_purge',
+      'expire_panels',
       'dkan_acquia_expire',
       'dkan_acquia_search_solr',
       'expire',
