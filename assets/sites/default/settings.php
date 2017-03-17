@@ -276,8 +276,13 @@ switch(ENVIRONMENT) {
     // Enable caching like in production.
     $conf['page_cache_maximum_age'] = 21600;
     $conf['ape_alternative_lifetime'] = 300;
-    $conf['ape_alternatives'] = "search
-    search*";
+    $conf['ape_alternatives'] = <<<EOT
+search
+search*
+search/*
+search/type/*
+EOT;
+
     $conf['page_compression'] = 1;
     $conf['cache'] = 1;
     $conf['preprocess_js'] = 1;
