@@ -4,6 +4,8 @@ default:
   https_securepages: FALSE
   clamav:
     enable: FALSE
+  odfe:
+    enable: FALSE
   dkan_workflow:
     enable: FALSE
   stage_file_proxy_origin: changeme

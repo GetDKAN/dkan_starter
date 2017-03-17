@@ -14,6 +14,10 @@ $conf = array (
     array (
       'enable' => false,
     ),
+    'odfe' => 
+    array (
+      'enable' => false,
+    ),
     'dkan_workflow' => 
     array (
       'enable' => false,
