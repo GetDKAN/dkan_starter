@@ -1,10 +1,8 @@
 <?php
+
 /**
- * Example settings.php
- *
- * To fully leverage environment switching with the devinci module, you should
- * copy this file into your settings.php file and edit settings as appropriate.
- * This file should be able to replace the one created by Acquia or pantheon.
+ * @file
+ * Main settings.php.
  */
 
 /**
@@ -23,7 +21,7 @@ $settings_docker = DRUPAL_ROOT . '/' . conf_path() . '/settings.docker.php';
 if (file_exists($settings_local)) {
   include $settings_local;
 }
-else if (file_exists($settings_docker)) {
+elseif (file_exists($settings_docker)) {
   include $settings_docker;
 }
 
@@ -71,8 +69,13 @@ devinci_set_env($env_map);
 /********************************************************
  * OPTIONAL: Setup default settings for ALL environments.
  ********************************************************/
+// Init 'features_master_temp_enabled_modules' and
+// 'features_master_temp_disabled_modules'.
+$conf['features_master_temp_enabled_modules'] = array();
+$conf['features_master_temp_disabled_modules'] = array();
 
-// Use the executable scan method for ClamAV by default (Daemon mode can cause some problems)
+// Use the executable scan method for ClamAV by default (Daemon mode can cause
+// some problems)
 $conf['clamav_mode'] = 1;
 
 // Adds support for fast file if enabled in config.yml.
@@ -97,14 +100,14 @@ $conf['error_level'] = ERROR_REPORTING_HIDE;
 ini_set('error_reporting', E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 ini_set("display_errors", 0);
 
-//Ensure we don't send emails by default.
-$conf['mail_system'] = array (
+// Ensure we don't send emails by default.
+$conf['mail_system'] = array(
   'default-system' => 'MaillogMailSystem',
   'maillog' => 'MaillogMailSystem',
 );
 $conf['maillog_send'] = 0;
 
-// Disable all caching
+// Disable all caching.
 $conf['page_cache_maximum_age'] = 0;
 $conf['cache'] = 0;
 $conf['preprocess_js'] = 0;
@@ -125,17 +128,16 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
 $conf['allow_authorize_operations'] = FALSE;
 $update_free_access = FALSE;
 
-// Garbage collector settings from default.settings.php
+// Garbage collector settings from default.settings.php.
 ini_set('session.gc_probability', 1);
 ini_set('session.gc_divisor', 100);
 ini_set('session.gc_maxlifetime', 200000);
 ini_set('session.cookie_lifetime', 2000000);
 
 // Disable cron. We run this from Jenkins.
-// Except for CircleCI or test purpose
+// Except for CircleCI or test purpose.
 $CI = getenv('CI');
-if (!$CI)
-{
+if (!$CI) {
   $conf['cron_safe_threshold'] = 0;
 }
 
@@ -146,7 +148,6 @@ $conf['environment_indicator_git_support'] = FALSE;
 $conf['install_profile'] = 'dkan';
 
 // This should be updated to the actual live site url if using stage_file_proxy.
-
 if (_data_starter_validates('stage_file_proxy_origin')) {
   $conf['stage_file_proxy_origin'] = $conf['default']['stage_file_proxy_origin'];
 }
@@ -154,75 +155,96 @@ if (_data_starter_validates('stage_file_proxy_origin')) {
 // KEY for dkan health status.
 $conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
 
-// Add tracking codes for Google Analytics.
-if (isset($conf['gaClientTrackingCode']) && $conf['gaClientTrackingCode'] != 'UA-XXXXX-Y') {
-  $conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
-}
-elseif (isset($conf['gaNuCivicTrackingCode']) && $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
-  $conf['googleanalytics_account'] = $conf['gaNuCivicTrackingCode'];
-}
-
-if (isset($conf['gaNuCivicTrackingCode']) &&
-  $conf['googleanalytics_account'] != $conf['gaNuCivicTrackingCode'] &&
-  $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
-  $conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'auto', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
-}
-
 // Never disallow cli access via shield config.
 $conf['shield_allow_cli'] = 1;
+
+// Only enable GA codes in production. This was not put in the switch statement
+// below as it is production only setting.
+if (ENVIRONMENT == 'production') {
+  // Add tracking codes for Google Analytics.
+  if (isset($conf['gaClientTrackingCode']) && $conf['gaClientTrackingCode'] != 'UA-XXXXX-Y') {
+    $conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
+  }
+  elseif (isset($conf['gaNuCivicTrackingCode']) && $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
+    $conf['googleanalytics_account'] = $conf['gaNuCivicTrackingCode'];
+  }
+
+  if (isset($conf['gaNuCivicTrackingCode']) &&
+    $conf['googleanalytics_account'] != $conf['gaNuCivicTrackingCode'] &&
+    $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
+    $conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'auto', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
+  }
+}
+else {
+  // Make sure GA is not enabled on non production envs.
+  $conf['features_master_temp_disabled_modules'] = array_merge(
+    $conf['features_master_temp_disabled_modules'],
+    array(
+      'googleanalytics',
+      'google_tag',
+    ));
+}
 
 /******************************************************
  * OPTIONAL: Override default settings per environment.
  ******************************************************/
-switch(ENVIRONMENT) {
+switch (ENVIRONMENT) {
 
   /**
-   * Local Environment
+   * Local Environment.
    */
   case 'local':
     // Features Master module supoorts temporarily enabling modules.
     // This will add modules in the local environment, but EXCLUDE them
     // from being exported using features_master.
-    $conf['features_master_temp_enabled_modules'] = array(
-      'dblog',
-      'devel',
+    $conf['features_master_temp_enabled_modules'] = array_merge(
+      $conf['features_master_temp_enabled_modules'],
+      array(
+        'dblog',
+        'devel',
       // This is temporary, there's a recline dependency on field_ui that
       // needs to be removed. See https://github.com/NuCivic/recline/pull/34
       // When the above is merged, unconment the following line and update
       // the custom_config feature master list.
-      // 'field_ui',
-      'maillog',
-      'views_ui',
+      // 'field_ui',.
+        'maillog',
+        'views_ui',
       // Add clamav to local environment so that tests will continue to pass.
       // TODO: change clamav feature tests so that they enable clamav.
-      'clamav',
-    );
+        'clamav',
+      ));
+
     if (_data_starter_validates('stage_file_proxy_origin')) {
-      $conf['features_master_temp_enabled_modules'][] = 'stage_file_proxy';
+      $conf['features_master_temp_disabled_modules'] = array_merge(
+        $conf['features_master_temp_disabled_modules'],
+        array(
+          'stage_file_proxy',
+        ));
     }
 
     // Features Master also supports temporarily disabling modules.
     // This will disable modules in the local environment, but INCLUDE them
     // when exporting using features_master.
-     $conf['features_master_temp_disabled_modules'] = array(
-      'acquia_agent',
-      'acquia_spi',
-      'acquia_purge',
-      'expire_panels',
-      'dkan_acquia_expire',
-      'dkan_acquia_search_solr',
-      'expire',
-      'search_api_solr',
-      'search_api_acquia',
-      'securepages',
-      'syslog',
-      'shield',
-    );
+    $conf['features_master_temp_disabled_modules'] = array_merge(
+      $conf['features_master_temp_disabled_modules'],
+      array(
+        'acquia_agent',
+        'acquia_spi',
+        'acquia_purge',
+        'expire_panels',
+        'dkan_acquia_expire',
+        'dkan_acquia_search_solr',
+        'expire',
+        'search_api_solr',
+        'search_api_acquia',
+        'securepages',
+        'syslog',
+        'shield',
+      ));
 
     // Disable dkan_worflow modules so that dkan tests pass
     // See: https://jira.govdelivery.com/browse/CIVIC-5128
-    if (getenv('CI') == "true")
-    {
+    if (getenv('CI') == "true") {
       $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow';
       $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow_permissions';
       $conf['features_master_temp_disabled_modules'][] = 'link_badges';
@@ -244,33 +266,42 @@ switch(ENVIRONMENT) {
     break;
 
   /**
-   * Development Environment
+   * Development Environment.
    */
   case 'development':
-    $conf['features_master_temp_enabled_modules'] = array(
-      'dblog',
-      'devel',
-      'field_ui',
-      'maillog',
-      'views_ui',
-      // Only send Acquia Insite scores from prod.
-      'acquia_spi',
-    );
+    $conf['features_master_temp_enabled_modules'] = array_merge(
+        $conf['features_master_temp_enabled_modules'],
+        array(
+
+          'dblog',
+          'devel',
+          'field_ui',
+          'maillog',
+          'views_ui',
+          // Only send Acquia Insite scores from prod.
+          'acquia_spi',
+        ));
     // Enable git support for the environment indicator to show current branch.
     $conf['environment_indicator_git_support'] = TRUE;
     break;
 
   /**
-   * Test Environment
+   * Test Environment.
    */
   case 'test':
-    $conf['features_master_temp_enabled_modules'] = array(
-      // Only send Acquia Insite scores from prod.
-      'acquia_spi',
-    );
-    $conf['features_master_temp_enabled_modules'] = array(
-      'maillog',
-    );
+    $conf['features_master_temp_enabled_modules'] = array_merge(
+        $conf['features_master_temp_enabled_modules'],
+        array(
+          // Only send Acquia Insite scores from prod.
+          'acquia_spi',
+        ));
+
+    $conf['features_master_temp_disabled_modules'] = array_merge(
+        $conf['features_master_temp_disabled_modules'],
+        array(
+          'maillog',
+        ));
+
     $conf['error_level'] = ERROR_REPORTING_HIDE;
 
     // Enable caching like in production.
@@ -292,12 +323,12 @@ EOT;
     break;
 
   /**
-   * Production Environment
+   * Production Environment.
    */
   case 'production':
     // Enable the ability to send emails - via core mail in this case,
     // but it coulbe be update to use SMTP or mail API.
-    $conf['mail_system'] = array (
+    $conf['mail_system'] = array(
       'default-system' => 'DefaultMailSystem',
     );
     // Enable caching for production.
@@ -328,9 +359,9 @@ if (!isset($_ENV["AH_SITE_ENVIRONMENT"])) {
   $search_api_server_machine_name = 'dkan_acquia_solr';
 
   $conf['search_api_acquia_overrides'][$search_api_server_machine_name] = array(
-      #'path' => '/solr/[core_ID]',
-      #'host' => '[hostname].acquia-search.com',
-      'derived_key' => 'FAKE',
+      // 'path' => '/solr/[core_ID]',
+      // 'host' => '[hostname].acquia-search.com',.
+    'derived_key' => 'FAKE',
   );
 }
 
