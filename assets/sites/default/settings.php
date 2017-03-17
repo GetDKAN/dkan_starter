@@ -221,6 +221,13 @@ switch(ENVIRONMENT) {
       $conf['features_master_temp_disabled_modules'][] = 'workbench_email';
       $conf['features_master_temp_disabled_modules'][] = 'workbench_moderation';
       $conf['features_master_temp_disabled_modules'][] = 'drafty';
+
+      // Unset default options.
+      unset($conf['dkan_datastore_fast_import_selection']);
+      unset($conf['dkan_datastore_fast_import_selection_threshold']);
+      unset($conf['dkan_datastore_load_data_type']);
+      unset($conf['queue_filesize_threshold']);
+      unset($conf['dkan_datastore_class']);
     }
 
     // Show ALL errors when working locally.
