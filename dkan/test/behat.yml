@@ -1,6 +1,6 @@
 default:
   suites:
-     dkan:
+     default:
         contexts:
           - FeatureContext #Temporary overrides only!
           - Drupal\DrupalExtension\Context\MinkContext

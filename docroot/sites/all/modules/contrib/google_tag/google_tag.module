@@ -11,14 +11,34 @@
  */
 
 /**
+ * Default for matching all items except listed.
+ */
+const GOOGLE_TAG_EXCLUDE_LISTED = 'exclude listed';
+
+/**
+ * Default for matching only listed items.
+ */
+const GOOGLE_TAG_INCLUDE_LISTED = 'include listed';
+
+/**
  * Default list of relative paths.
  */
-define('GOOGLETAGMANAGER_PATHS', "admin*\nbatch*\nnode/add*\nnode/*/*\nuser/*/*");
+define('GOOGLE_TAG_PATHS', "admin*\nbatch*\nnode/add*\nnode/*/edit\nnode/*/delete\nuser/*/edit*\nuser/*/cancel*");
 
 /**
  * Default list of HTTP response statuses that override path conditions.
  */
-define('GOOGLETAGMANAGER_STATUSES', "403 Forbidden\n404 Not Found");
+define('GOOGLE_TAG_STATUSES', "403 Forbidden\n404 Not Found");
+
+/**
+ * Default list of tag classes to allow.
+ */
+define('GOOGLE_TAG_WHITELIST_CLASSES', "google\nnonGooglePixels\nnonGoogleScripts\nnonGoogleIframes");
+
+/**
+ * Default list of tag classes to forbid.
+ */
+define('GOOGLE_TAG_BLACKLIST_CLASSES', "customScripts\ncustomPixels");
 
 /**
  * Implements hook_help().
@@ -45,19 +65,44 @@ function google_tag_permission() {
 }
 
 /**
- * Implements hook_page_alter().
+ * Implements hook_variable_group_info().
+ */
+function google_tag_variable_group_info() {
+  module_load_include('inc', 'google_tag', 'includes/variable');
+  return _google_tag_variable_group_info();
+}
+
+/**
+ * Implements hook_variable_info().
+ */
+function google_tag_variable_info($options) {
+  module_load_include('inc', 'google_tag', 'includes/variable');
+  return _google_tag_variable_info($options);
+}
+
+/**
+ * Element validation handler for google_tag_container_id.
+ */
+function google_tag_validate_container_id($variable, $options, $element, $form, &$form_state) {
+  module_load_include('inc', 'google_tag', 'includes/variable');
+  return _google_tag_validate_container_id($variable, $options, $element, $form, $form_state);
+}
+
+/**
+ * Implements hook_page_build().
  *
- * Adds a post_render callback and loads the include file.
+ * Adds the snippet to the page array if the insertion conditions are met.
  *
  * @see drupal_render_page()
  */
-function google_tag_page_alter(&$page) {
+function google_tag_page_build(&$page) {
   if (!google_tag_insert_snippet()) {
     return;
   }
 
   // Call sequence:
   // - drupal_render_page()
+  //   - hook_page_build()
   //   - hook_page_alter()
   //   - drupal_render()
   // - drupal_render()
@@ -67,83 +112,113 @@ function google_tag_page_alter(&$page) {
   //   - callbacks in $elements['#post_render']
   //     - google_tag_page_process(): callback set here
 
-  // Add callback routine.
-  $page['#post_render'][] = 'google_tag_page_process';
-  // Load include file.
-  module_load_include('inc', 'google_tag', 'includes/snippet');
+  $wrapper = file_stream_wrapper_get_instance_by_uri('public://');
+
+  // Add data_layer and script snippets to head (by default).
+  $include_script_as_file = variable_get('google_tag_include_file', 1);
+  if ($include_script_as_file) {
+    $base_path = variable_get('file_public_path', conf_path() . '/files');
+    foreach (array('data_layer', 'script') as $type) {
+      $path = "$base_path/js/google_tag.$type.js";
+      // @todo Will it matter if file is empty?
+      drupal_add_js($path, array('group' => JS_LIBRARY * 2));
+    }
+  }
+  else {
+    $base_path = $wrapper->realpath();
+    foreach (array('data_layer', 'script') as $type) {
+      $url = "$base_path/js/google_tag.$type.js";
+      $contents = @file_get_contents($url);
+      // @see drupal_get_js()
+      // For inline JavaScript to validate as XHTML, all JavaScript containing
+      // XHTML needs to be wrapped in CDATA.
+      if ($contents) {
+        drupal_add_js($contents, array('type' => 'inline', 'group' => JS_LIBRARY * 2));
+      }
+    }
+  }
+
+  // Add noscript snippet to page_top region.
+  $base_path = $wrapper->realpath();
+  $url = "$base_path/js/google_tag.noscript.js";
+  $noscript = @file_get_contents($url);
+
+  if ($noscript) {
+    // Note: for any theme that follows the pattern of core html.tpl.php in the
+    // system module (e.g. bootstrap theme), this does not place the snippet
+    // immediately after the body tag but rather after the 'skip-link' div.
+    $page['page_top']['google_tag'] = array(
+      '#markup' => $noscript,
+      '#weight' => -10,
+    );
+  }
+
 }
 
 /**
- * Returns the state of snippet insertion on the current page response.
+ * Determines whether to insert the snippet on the response.
  *
- * @return boolean
+ * @return bool
  *   TRUE if the conditions are met; FALSE otherwise.
  */
 function google_tag_insert_snippet() {
-  global $user;
-
   $id = variable_get('google_tag_container_id', '');
 
   if (empty($id)) {
     // No container ID.
     return FALSE;
   }
-  if (!_google_tag_status_check() && !_google_tag_path_check()) {
-    // Omit snippet based on the response status and path conditions.
-    return FALSE;
+  $satisfied = TRUE;
+  if (!_google_tag_status_check() || !_google_tag_path_check() || !_google_tag_role_check()) {
+    // Omit snippet if any condition is not met.
+    $satisfied = FALSE;
   }
-  if (!_google_tag_role_check($user)) {
-    // Omit snippet based on the user role condition.
-    return FALSE;
-  }
-  return TRUE;
+  // Allow other modules to alter the insertion criteria.
+  drupal_alter('google_tag_insert', $satisfied);
+  return $satisfied;
 }
 
 /**
- * Returns state of snippet insertion based on HTTP response status code.
+ * Determines whether to insert the snippet based on status code settings.
  *
- * @return boolean
+ * @return bool
  *   TRUE if the status conditions are met; FALSE otherwise.
  */
 function _google_tag_status_check() {
   static $satisfied;
 
   if (!isset($satisfied)) {
-    $toggle = variable_get('google_tag_status_toggle', 0);
-    $statuses = variable_get('google_tag_status_list', GOOGLETAGMANAGER_STATUSES);
+    $toggle = variable_get('google_tag_status_toggle', GOOGLE_TAG_EXCLUDE_LISTED);
+    $statuses = variable_get('google_tag_status_list', GOOGLE_TAG_STATUSES);
 
-    if (!$toggle) {
-      $satisfied = $toggle;
+    if (empty($statuses)) {
+      $satisfied = ($toggle == GOOGLE_TAG_EXCLUDE_LISTED);
     }
     else {
       // Get the HTTP response status.
       $status = drupal_get_http_header('status');
       $satisfied = strpos($statuses, $status) !== FALSE;
-      $headers = drupal_get_http_header();
+      $satisfied = ($toggle == GOOGLE_TAG_EXCLUDE_LISTED) ? !$satisfied : $satisfied;
     }
   }
   return $satisfied;
 }
 
 /**
- * Returns state of snippet insertion based on HTTP request URI.
+ * Determines whether to insert the snippet based on the path settings.
  *
- * @return boolean
+ * @return bool
  *   TRUE if the path conditions are met; FALSE otherwise.
  */
 function _google_tag_path_check() {
   static $satisfied;
 
   if (!isset($satisfied)) {
-    $toggle = variable_get('google_tag_path_toggle', 0);
-    $paths = variable_get('google_tag_path_list', GOOGLETAGMANAGER_PATHS);
-
-    // Meaning of $toggle
-    // - 0: all paths except listed paths
-    // - 1: only the listed paths
+    $toggle = variable_get('google_tag_path_toggle', GOOGLE_TAG_EXCLUDE_LISTED);
+    $paths = variable_get('google_tag_path_list', GOOGLE_TAG_PATHS);
 
     if (empty($paths)) {
-      $satisfied = !$toggle;
+      $satisfied = ($toggle == GOOGLE_TAG_EXCLUDE_LISTED);
     }
     else {
       // @todo Are not some paths case sensitive???
@@ -155,46 +230,35 @@ function _google_tag_path_check() {
       if ($path != $_GET['q']) {
         $satisfied = $satisfied || drupal_match_path($_GET['q'], $paths);
       }
-      $satisfied = !($toggle xor $satisfied);
+      $satisfied = ($toggle == GOOGLE_TAG_EXCLUDE_LISTED) ? !$satisfied : $satisfied;
     }
   }
   return $satisfied;
 }
 
 /**
- * Returns state of snippet insertion based on user roles.
+ * Determines whether to insert the snippet based on the user role settings.
  *
- * @param object $account
- *   A user object containing an array of roles to check.
- *
- * @return boolean
+ * @return bool
  *   TRUE if the role conditions are met; FALSE otherwise.
  */
-function _google_tag_role_check($account) {
+function _google_tag_role_check() {
+  global $user;
   static $satisfied;
 
   if (!isset($satisfied)) {
-    $toggle = variable_get('google_tag_role_toggle', 0);
+    $toggle = variable_get('google_tag_role_toggle', GOOGLE_TAG_EXCLUDE_LISTED);
     $roles = variable_get('google_tag_role_list', array());
-
-    // Meaning of $toggle
-    // - 0: all roles except listed roles
-    // - 1: only the listed roles
+    $roles = array_filter($roles);
 
     if (empty($roles)) {
-      $satisfied = !$toggle;
+      $satisfied = ($toggle == GOOGLE_TAG_EXCLUDE_LISTED);
     }
     else {
       $satisfied = FALSE;
       // Check user roles against listed roles.
-      foreach (array_keys($account->roles) as $rid) {
-        if (isset($roles[$rid]) && $roles[$rid] == $rid) {
-          // User is a member of a listed role.
-          $satisfied = TRUE;
-          break;
-        }
-      }
-      $satisfied = !($toggle xor $satisfied);
+      $satisfied = (bool) array_intersect($roles, $user->roles);
+      $satisfied = ($toggle == GOOGLE_TAG_EXCLUDE_LISTED) ? !$satisfied : $satisfied;
     }
   }
   return $satisfied;

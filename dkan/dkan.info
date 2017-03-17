@@ -1,7 +1,7 @@
 name = DKAN
 core = 7.x
 exclusive = TRUE
-version = 7.x-1.12.11
+version = 7.x-1.12.x
 project = dkan
 
 ; Core
@@ -127,3 +127,4 @@ dependencies[] = dkan_datastore
 dependencies[] = dkan_datastore_api
 dependencies[] = open_data_schema_map_dkan
 dependencies[] = visualization_entity_charts_dkan
+version = 7.x-1.12.14

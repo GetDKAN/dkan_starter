@@ -1,3 +1,11 @@
+# 1.2.2
+
+* scale.colors() now returns the original colors instead of just min/max range
+
+# 1.2.0
+
+* added chroma.average for averaging colors
+
 # 1.1.0
 
 * refactored chroma.scale

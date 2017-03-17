@@ -77,6 +77,19 @@ class SearchApiAcquiaSearchService extends SearchApiSolrService {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getExtraInformation() {
+    $extra = parent::getExtraInformation();
+    $extra[] = array(
+      'info' => search_api_acquia_get_search_status_message($this->server),
+      'label' => t('Acquia Search status'),
+    );
+    return $extra;
+  }
+
+
+  /**
    * Set some special overrides for Acquia Search
    */
   public function setConnectionOptions() {
@@ -96,6 +109,7 @@ class SearchApiAcquiaSearchService extends SearchApiSolrService {
 
     $this->options['host'] = $search_host;
     $this->options['path'] = $search_path;
+    $this->options['derived_key'] = search_api_acquia_get_derived_key_for_core($identifier);
 
     // We can also have overrides per server setting.
     // Apply the overrides in the "search_api_acquia_overrides" variable.
@@ -175,11 +189,11 @@ class SearchApiAcquiaSearchService extends SearchApiSolrService {
 
     // We cannot connect directly to the Solr instance, so don't make it a link.
     if (isset($form['server_description'])) {
-      $url = $this->options['scheme'] . '://' . $this->options['host'] . ':' . $this->options['port'] . $this->options['path'];
+      $status_message = search_api_acquia_get_search_status_message($this->server);
       $form['server_description'] = array(
         '#type' => 'item',
-        '#title' => t('Acquia Search URI'),
-        '#description' => check_plain($url),
+        '#title' => t('Acquia Search status for this connection'),
+        '#description' => $status_message,
         '#weight' => -40,
       );
     }

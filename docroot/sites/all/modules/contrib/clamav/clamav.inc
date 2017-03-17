@@ -56,6 +56,13 @@ function clamav_scan_file($filepath, $filename = NULL) {
 
     case CLAMAV_USE_EXECUTABLE:
       return _clamav_scan_via_exec($filepath, $filename);
+
+    case CLAMAV_USE_DAEMON_UNIX_SOCKET:
+      return _clamav_scan_via_unix_socket($filepath, $filename);
+
+    default:
+      watchdog('ClamAV', 'Unrecognised configuration.', array(), WATCHDOG_ERROR);
+      return CLAMAV_SCANRESULT_UNCHECKED;
   }
 }
 
@@ -83,10 +90,62 @@ function _clamav_scan_via_daemon($filepath, $filename) {
   $handler = ($host && $port) ? @fsockopen($host, $port) : FALSE;
 
   if (!$handler) {
-    watchdog('clamav', 'The clamav module can not connect to the clamav daemon.  The uploaded file %filename could not be scanned.', array('%filename' => $filename), WATCHDOG_WARNING);
+    watchdog('clamav', 'The clamav module can not connect to the clamav daemon over TCP/IP.  The uploaded file %filename could not be scanned.', array('%filename' => $filename), WATCHDOG_WARNING);
     return CLAMAV_SCANRESULT_UNCHECKED;
   }
 
+  return _clamav_scan_via_daemon_handler($handler, $filepath, $filename);
+}
+
+/**
+ * Scan a single file by connecting to ClamAV over a unix socket.
+ *
+ * @param String $filepath
+ * Full filepath to the file which is to be scanned. This must be a file which
+ * is readable by the web server.
+ * @param String $filename
+ * Filename of the uploaded file (used for logging).
+ *
+ * @return int
+ * one of:
+ * - CLAMAV_SCANRESULT_UNCHECKED
+ * - CLAMAV_SCANRESULT_CLEAN
+ * - CLAMAV_SCANRESULT_INFECTED
+ */
+function _clamav_scan_via_unix_socket($filepath, $filename) {
+  $socket_path = variable_get('clamav_daemon_unix_socket', CLAMAV_DEFAULT_UNIX_SOCKET);
+  $socket = "unix://{$socket_path}";
+
+  // try to open a socket to clamav
+  $handler = ($socket_path) ? @fsockopen($socket) : FALSE;
+
+  if (!$handler) {
+    watchdog('clamav', 'The clamav module can not connect to the clamav daemon over unix socket.  The uploaded file %filename could not be scanned.', array('%filename' => $filename), WATCHDOG_WARNING);
+    return CLAMAV_SCANRESULT_UNCHECKED;
+  }
+
+  return _clamav_scan_via_daemon_handler($handler, $filepath, $filename);
+}
+
+/**
+ * Scan a single file via ClamAV daemon.
+ *
+ *
+ * @param resource $handler
+ * An opened connection to a daemon socket resource.
+ * @param String $filepath
+ * Full filepath to the file which is to be scanned. This must be a file which
+ * is readable by the web server.
+ * @param String $filename
+ * Filename of the uploaded file (used for logging).
+ *
+ * @return int
+ * one of:
+ * - CLAMAV_SCANRESULT_UNCHECKED
+ * - CLAMAV_SCANRESULT_CLEAN
+ * - CLAMAV_SCANRESULT_INFECTED
+ */
+function _clamav_scan_via_daemon_handler($handler, $filepath, $filename) {
   // Request a scan from the daemon.
   $filehandler = fopen($filepath, 'r');
   if ($filehandler) {
@@ -294,6 +353,10 @@ function clamav_get_version($settings) {
   }
   elseif (is_array($settings) && isset($settings['host']) && isset($settings['port'])) {
     return _clamav_get_version_via_daemon($settings['host'], $settings['port']);
+  }
+  elseif (is_array($settings) && isset($settings['unix_socket_path'])) {
+    $socket = "unix://{$settings['unix_socket_path']}";
+    return _clamav_get_version_via_daemon($socket, NULL);
   }
 }
 

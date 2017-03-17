@@ -5919,8 +5919,7 @@ button.close {
 :root .fa-rotate-270,
 :root .fa-flip-horizontal,
 :root .fa-flip-vertical {
-  -webkit-filter: none;
-          filter: none; }
+  filter: none; }
 
 .fa-stack {
   position: relative;
@@ -9022,6 +9021,9 @@ body.maintenance-page .form-actions .media-widget > a:active:first-child {
 
 .node-dataset .resource-list li {
   padding: 0 260px 0 45px; }
+  @media all and (max-width: 767px) {
+    .node-dataset .resource-list li {
+      padding-right: 0; } }
 
 p.dkan-profile-page-user-name {
   display: inline-block; }
@@ -9169,6 +9171,9 @@ div.horizontal-tabs {
 .form-managed-file .input-group-btn {
   display: inline-block;
   vertical-align: top; }
+
+.has-error .form-managed-file span.file {
+  border: 2px solid red; }
 
 .path-form.panel-default {
   border-color: transparent; }
@@ -10516,5 +10521,12 @@ img {
 
 .view-admin-content table {
   margin-top: 0; }
+
+.recline-nvd3 svg {
+  height: 480px; }
+
+@media (max-width: 767px) {
+  .recline-nvd3 svg {
+    height: 360px; } }
 
 /*# sourceMappingURL=nuboot_radix.style.css.map */

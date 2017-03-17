@@ -5,7 +5,259 @@
  *   Integration between Acquia Drupal and Acquia's hosted solr search service.
  */
 
+use Drupal\acquia_search\PreferredSearchCoreService;
+
 define('ACQUIA_SEARCH_ENVIRONMENT_ID', 'acquia_search_server_1');
+define('ACQUIA_SEARCH_OVERRIDE_AUTO_SET', 1);
+define('ACQUIA_SEARCH_AUTO_OVERRIDE_READ_ONLY', 2);
+define('ACQUIA_SEARCH_EXISTING_OVERRIDE', 3);
+
+/**
+ * Implements hook_init().
+ */
+function acquia_search_init() {
+
+  // Add apachesolr module connection overrides if applicable.
+  $auto_switch_disabled = variable_get('acquia_search_disable_auto_switch', 0);
+  $subscription = acquia_agent_settings('acquia_subscription_data');
+  $sub_active = !empty($subscription['active']);
+
+  if (!$auto_switch_disabled && $sub_active && !module_exists('acquia_search_multi_subs')) {
+
+    module_load_include('php', 'acquia_search', 'src/PreferredSearchCoreService');
+
+    global $conf;
+
+    $acquia_identifier = acquia_agent_settings('acquia_identifier');
+    $ah_env = isset($_SERVER['AH_SITE_ENVIRONMENT']) ? $_SERVER['AH_SITE_ENVIRONMENT'] : '';
+    $sites_foldername = substr(conf_path(), strrpos(conf_path(), '/') + 1);
+    $ah_db_name = isset($conf['acquia_hosting_site_info']['db']['name']) ? $conf['acquia_hosting_site_info']['db']['name'] : '';
+
+    $available_cores = acquia_search_available_cores($subscription);
+    $environments = apachesolr_load_all_environments();
+
+    $core_service = new PreferredSearchCoreService($acquia_identifier, $ah_env, $sites_foldername, $ah_db_name, $available_cores);
+
+    $overrode = acquia_search_add_apachesolr_overrides($core_service, $environments);
+
+    if ($overrode) {
+      // If an override was applied, then clear the corresponding cache item.
+      cache_clear_all('apachesolr:environments', 'cache_apachesolr');
+    }
+
+  }
+
+}
+
+/**
+ * Overrides apachesolr configs to talk to the proper Acquia search core.
+ *
+ * It determines proper (preferred) Acquia search core to which the site should
+ * be connected and overrides the apachesolr config accordingly. If a proper
+ * search core is not found, it enables the read-only mode so that the site
+ * does not unintentionally connect to the wrong core and corrupts its index.
+ *
+ * @param Drupal\acquia_search\PreferredSearchCoreService $core_service
+ * @param array $environments
+ *   The apachesolr environments.
+ *
+ * @return bool|NULL
+ *   True if preferred core has been found in the list of available cores and
+ *   it was used to override the search settings.
+ */
+function acquia_search_add_apachesolr_overrides($core_service, $environments) {
+
+  global $conf;
+
+  $overrode = FALSE;
+
+  foreach ($environments as $acquia_env_id => $environment) {
+
+    // Override Acquia search environments only.
+    if ($environment['service_class'] != 'AcquiaSearchService') {
+      continue;
+    }
+
+    // Skip if the Acquia search environment has already been overridden.
+    if (!empty($conf['apachesolr_environments'][$acquia_env_id])) {
+      continue;
+    }
+
+    $conf['apachesolr_environments'][$acquia_env_id]['acquia_search_possible_cores'] = $core_service->getListOfPossibleCores();
+
+    if ($core_service->isPreferredCoreAvailable()) {
+
+      $derived_key = acquia_search_get_derived_key_for_core($core_service->getPreferredCoreId());
+      $conf['apachesolr_environments'][$acquia_env_id]['url'] = $core_service->getPreferredCoreUrl();
+      $conf['apachesolr_environments'][$acquia_env_id]['conf'] = array('acquia_search_key' => $derived_key);
+      $conf['apachesolr_environments'][$acquia_env_id]['overridden_by_acquia_search'] = ACQUIA_SEARCH_OVERRIDE_AUTO_SET;
+      drupal_static_reset('apachesolr_load_all_environments');
+      $overrode = TRUE;
+      continue;
+    }
+
+    // At this point none of the available search cores match to what is
+    // expected. Switch the search into read-only mode.
+    if (!variable_get('acquia_search_disable_auto_read_only', 0)) {
+      $conf['apachesolr_environments'][$acquia_env_id]['conf'] = array('apachesolr_read_only' => 1);
+      $conf['apachesolr_environments'][$acquia_env_id]['overridden_by_acquia_search'] = ACQUIA_SEARCH_AUTO_OVERRIDE_READ_ONLY;
+      drupal_static_reset('apachesolr_load_all_environments');
+      $overrode = TRUE;
+    }
+
+  }
+
+  return $overrode;
+
+}
+
+/**
+ * Returns derived key for the given core ID.
+ *
+ * @param $core_id
+ *
+ * @return string
+ */
+function acquia_search_get_derived_key_for_core($core_id) {
+  $salt = acquia_search_derived_key_salt();
+  $key = acquia_agent_settings('acquia_key');
+  return _acquia_search_create_derived_key($salt, $core_id, $key);
+}
+
+/**
+ * Retrieves all available search cores as set in the subscription.
+ *
+ * @param $subscription
+ *   Acquia Subscription array.
+ *
+ * @return array
+ */
+function acquia_search_available_cores($subscription) {
+  if (!empty($subscription['heartbeat_data']['search_cores'])) {
+    return $subscription['heartbeat_data']['search_cores'];
+  }
+}
+
+/**
+ * Pings the search core.
+ *
+ * @param string $env_id
+ * @param string $op
+ *
+ * @return bool
+ */
+function acquia_search_ping($env_id, $op = 'ping') {
+
+  try {
+    return (bool) apachesolr_get_solr($env_id)->$op();
+  }
+  catch (Exception $e) {
+    watchdog_exception('acquia_search', $e, 'Exception thrown when calling @op on Apachesolr. %type: !message in %function (line %line of %file).', array(
+      '@op' => $op
+    ));
+  }
+
+}
+
+/**
+ * Adds Acquia search connection details to the given form.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param array $environment
+ *   An Apache Solr module environment.
+ */
+function acquia_search_add_form_status_message(&$form, &$form_state, $environment) {
+
+  $form['acquia_search_message'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Acquia Search status for this connection'),
+    '#collapsible' => FALSE,
+    '#weight' => -10,
+  );
+  $form['acquia_search_message']['message'] = array(
+    '#markup' => acquia_search_get_search_status_message($environment),
+  );
+
+}
+
+/**
+ * Returns formatted message about read-only mode.
+ *
+ * @param array $environment
+ *   An Apache Solr module environment.
+ * @param string $t
+ *
+ * @return string
+ */
+function acquia_search_get_read_only_mode_warning($environment, $t = 't') {
+
+  $msg = $t('To protect your data, Acquia Search module is enforcing
+    read-only mode, because it could not figure out what Acquia-hosted Solr
+    index to connect to. This helps you avoid writing to a production index
+    if you copy your site to a development or other environment(s).');
+
+  if (!empty($environment['acquia_search_possible_cores'])) {
+
+    $list = theme('item_list', array(
+      'items' => $environment['acquia_search_possible_cores']
+    ));
+
+    $msg .= '<p>';
+    $msg .= $t('These index IDs would have worked, but could not be found on
+      your Acquia subscription: !list', array('!list' => $list));
+    $msg .= '</p>';
+
+  }
+
+  $msg .= $t('To fix this problem, please read <a href="@url">our documentation</a>.', array(
+    '@url' => 'https://docs.acquia.com/acquia-search/multiple-cores'
+  ));
+
+  return $msg;
+
+}
+
+/**
+ * Returns formatted message about Acquia Search connection details.
+ *
+ * @param array $environment
+ *   An Apache Solr module environment.
+ * @return string
+ */
+function acquia_search_get_search_status_message($environment) {
+
+  $items = array(
+    t('apachesolr.module environment ID: @env', array('@env' => $environment['env_id'])),
+    t('URL: @url', array('@url' => $environment['url'])),
+  );
+
+  if (acquia_search_ping($environment['env_id'])) {
+    $items[] = t('Solr index is currently reachable and up.');
+  }
+  else {
+    // Add message with error class.
+    $items[] = array(
+      'data' => t('Solr index is currently unreachable.'),
+      'class' => array('error'),
+    );
+  }
+
+  // Deep-ping the Solr index to ensure authentication is working.
+  if (acquia_search_ping($environment['env_id'], 'getFields')) {
+    $items[] = t('Requests to Solr index are passing authentication checks.');
+  }
+  else {
+    // Add message with error class.
+    $items[] = array(
+      'data' => t('Solr core authentication check fails.'),
+      'class' => array('error'),
+    );
+  }
+
+  return t('Connection managed by Acquia Search module.') . theme('item_list', array('items' => $items));
+
+}
 
 /**
  * Predefined Acquia Search network environment
@@ -70,7 +322,10 @@ function acquia_search_help($path, $arg) {
     case 'admin/config/search/apachesolr':
       $env_id = isset($arg[5]) ? $arg[5] : apachesolr_default_environment();
       $environment = apachesolr_environment_load($env_id);
-      if (acquia_search_environment_connected($environment) && acquia_agent_subscription_is_active()) {
+      $subscription = acquia_agent_settings('acquia_subscription_data');
+      $sub_active = !empty($subscription['active']);
+
+      if (acquia_search_environment_connected($environment) && $sub_active) {
         $as_link = l(t('Acquia Search'), 'http://www.acquia.com/products-services/acquia-search');
         return t("Search is being provided by the !as network service.", array('!as' => $as_link));
       }
@@ -219,7 +474,7 @@ function acquia_search_environment_connected($environment) {
  * Delete environment page access.
  */
 function acquia_search_environment_delete_access($environment) {
-  if ($environment['env_id'] == ACQUIA_SEARCH_ENVIRONMENT_ID) {
+  if (strstr($environment['env_id'], ACQUIA_SEARCH_ENVIRONMENT_ID)) {
     return FALSE;
   }
   // Fall back to the original check.
@@ -231,7 +486,9 @@ function acquia_search_environment_delete_access($environment) {
  */
 function acquia_search_form_apachesolr_settings_alter(&$form, $form_state) {
   // Don't alter the form if there is no subscription.
-  if (acquia_agent_subscription_is_active()) {
+  $subscription = acquia_agent_settings('acquia_subscription_data');
+  $sub_active = !empty($subscription['active']);
+  if ($sub_active) {
     // Don't show delete operation for the Default AS environment. This means
     // that cloned acquia search environments can be deleted
     foreach ($form['apachesolr_host_settings']['table']['#rows'] as &$row) {
@@ -259,8 +516,21 @@ function acquia_search_form_apachesolr_environment_edit_form_alter(&$form, $form
   $env_id = isset($form['env_id']['#default_value']) ? $form['env_id']['#default_value'] : '';
   $environment = ($env_id) ? apachesolr_environment_load($env_id) : FALSE;
 
+  // Add message to Acquia-connected indexes.
   if ($environment && acquia_search_environment_connected($environment)) {
+    acquia_search_add_form_status_message($form, $form_state, $environment);
+
+    if (acquia_search_is_environment_overridden_to_read_only($environment)) {
+      $dsm = acquia_search_get_read_only_mode_warning($environment);
+      drupal_set_message($dsm, 'warning', FALSE);
+
+      // Avoid accidental saving of overridden values into the Database.
+      $form['conf']['apachesolr_read_only']['#disabled'] = TRUE;
+      $form['conf']['apachesolr_read_only']['#type'] = 'hidden';
+    }
+
     $form['url']['#disabled'] = TRUE;
+    $form['url']['#type'] = 'hidden';
     $form['env_id']['#disabled'] = TRUE;
   }
   // Don't let the user delete the initial environment.
@@ -269,6 +539,43 @@ function acquia_search_form_apachesolr_environment_edit_form_alter(&$form, $form
     $form['actions']['delete']['#access'] = FALSE;
   }
   $form['actions']['save']['#validate'][] = 'acquia_search_environment_edit_form_validate';
+}
+
+/**
+ * Implementation of hook_form_[form_id]_alter().
+ */
+function acquia_search_form_apachesolr_index_action_form_alter(&$form, $form_state) {
+
+  $env_id = isset($form['action']['env_id']['#value']) ? $form['action']['env_id']['#value'] : '';
+  $environment = ($env_id) ? apachesolr_environment_load($env_id) : FALSE;
+
+  // Add message to Acquia-connected indexes.
+  if ($environment && acquia_search_environment_connected($environment)) {
+
+    acquia_search_add_form_status_message($form, $form_state, $environment);
+
+    if (acquia_search_is_environment_overridden_to_read_only($environment)) {
+      $dsm = acquia_search_get_read_only_mode_warning($environment);
+      drupal_set_message($dsm, 'warning', FALSE);
+    }
+
+  }
+
+}
+
+/**
+ * Determines whether the given environment is in the read-only mode.
+ *
+ * @param $environment
+ *   Apachesolr environment.
+ *
+ * @return bool
+ *   True if the environment has been switched to read-only mode by Acquia
+ *   Search.
+ */
+function acquia_search_is_environment_overridden_to_read_only($environment){
+  return isset($environment['overridden_by_acquia_search']) &&
+    ($environment['overridden_by_acquia_search'] == ACQUIA_SEARCH_AUTO_OVERRIDE_READ_ONLY);
 }
 
 function acquia_search_environment_edit_form_validate($form, &$form_state) {
@@ -397,6 +704,7 @@ function _acquia_search_derived_key($env_id = NULL) {
         $derived_key[$env_id] = $search_key;
       }
     }
+
     // In any case, this is equal for all subscriptions. Also
     // even if the search sub is different, the main subscription should be
     // active
@@ -411,12 +719,36 @@ function _acquia_search_derived_key($env_id = NULL) {
       $derived_key[$env_id] = '';
     }
     elseif (!isset($derived_key[$env_id])) {
-      $derived_key[$env_id] = _acquia_search_create_derived_key($derived_key_salt, $identifier, $key);
+
+      // Get the Solr core identifier from the URL, to build the correct derived key.
+      $environment = apachesolr_environment_load($env_id);
+      if (isset($environment['url'])) {
+        $core_id = acquia_search_extract_core_id_from_environment_url($environment['url']);
+        $derived_key[$env_id] = _acquia_search_create_derived_key($derived_key_salt, $core_id, $key);
+      }
+
     }
   }
+
   return $derived_key[$env_id];
 }
 
+/**
+ * Extracts and return a core ID from given URL.
+ *
+ * Returns the last part of URL within given environment URL which represents
+ * the core ID. E.g. for 'http://useast1-c1.acquia-search.com/solr/GHTV-36910'
+ * it returns 'GHTV-36910'.
+ * For 'http://useast1-c1.acquia-search.com/solr/GHTV-36910.dev.mysitedev'
+ * it returns 'GHTV-36910.dev.mysitedev'.
+ *
+ * @param string $url
+ *
+ * @return string
+ */
+function acquia_search_extract_core_id_from_environment_url($url) {
+  return substr($url, strrpos($url, '/') + 1);
+}
 
 /**
  * Derive a key for the solr hmac using a salt, id and key.

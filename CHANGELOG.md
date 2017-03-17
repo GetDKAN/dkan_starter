@@ -1,4 +1,7 @@
 # Change log
+## [1.12.14.0]
+### Changed
+- Remake dkan to 1.12.14 
 
 ## [1.12.10.3]
 ### Changed

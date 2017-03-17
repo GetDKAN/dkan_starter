@@ -140,9 +140,7 @@ install_dependencies() {
 
   if [ ! "$(which ahoy)" ]; then
     echo "> Installing Ahoy";
-    version=1.1.0
-    os=`uname -s | tr '[:upper:]' '[:lower:]'`
-    $AUTO_SUDO wget -q https://nucivic-binaries.s3-us-west-1.amazonaws.com/ahoy/$version/ahoy-$os-amd64  -O /usr/local/bin/ahoy -O /usr/local/bin/ahoy &&
+    $AUTO_SUDO wget -q https://github.com/devinci-code/ahoy/releases/download/1.1.0/ahoy-`uname -s`-amd64 -O /usr/local/bin/ahoy &&
     $AUTO_SUDO chown $this_user /usr/local/bin/ahoy &&
     $AUDO_SUDO chmod +x /usr/local/bin/ahoy
     if [ ! "$(which ahoy)" ]; then

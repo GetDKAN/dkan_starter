@@ -7,7 +7,7 @@
 $conf = array (
   'default' => 
   array (
-    'hostname' => 'localhost',
+    'hostname' => 'www.example.com',
     'https_everywhere' => false,
     'https_securepages' => false,
     'clamav' => 
@@ -21,6 +21,11 @@ $conf = array (
       'limit' => '10MB',
       'queue' => '50MB',
     ),
+  ),
+  'redirectDomains' => 
+  array (
+    0 => 'example.com',
+    1 => 'oldsite.example.com',
   ),
   'private' => 
   array (

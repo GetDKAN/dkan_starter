@@ -9,10 +9,11 @@ dependencies[] = search_api_solr
 files[] = includes/SearchApiAcquiaSearchConnection.php
 files[] = includes/SearchApiAcquiaSearchHttpTransport.php
 files[] = includes/SearchApiAcquiaSearchService.php
+files[] = tests/search_api_acquia.test
 
-; Information added by Drupal.org packaging script on 2016-02-05
-version = "7.x-2.2"
+; Information added by Drupal.org packaging script on 2017-02-16
+version = "7.x-2.3"
 core = "7.x"
 project = "search_api_acquia"
-datestamp = "1454687961"
+datestamp = "1487274188"
 

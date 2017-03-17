@@ -30,6 +30,8 @@ define('ACQTEST_EXPIRED_ID', 'TEST_AcquiaConnectorTestIDExp');
 define('ACQTEST_EXPIRED_KEY', 'TEST_AcquiaConnectorTestKeyExp');
 define('ACQTEST_503_ID', 'TEST_AcquiaConnectorTestID503');
 define('ACQTEST_503_KEY', 'TEST_AcquiaConnectorTestKey503');
+define('ACQTEST_site_uuid', 'TEST_cdbd59f5-ca7e-4652-989b-f9e46d309613');
+define('ACQTEST_uuid', 'cdbd59f5-ca7e-4652-989b-f9e46d312458');
 if (!defined('ACQUIA_DEVELOPMENT_NOSSL')) {
   define('ACQUIA_DEVELOPMENT_NOSSL', TRUE);
 }
@@ -319,12 +321,38 @@ function acquia_connector_test_nspi_update($data) {
       if (isset($spi_data['send_method'])) {
         $result->body['nspi_messages'][] = $spi_data['send_method'];
       }
-
+      $result->body['rpc_version'] = 3;
       $result->authenticator['hash'] = _acquia_agent_hmac($result->secret['key'], $result->authenticator['time'], $result->authenticator['nonce'], $result->body);
 
       if (isset($spi_data['test_validation_error'])) {
         $result->authenticator['nonce'] = 'TEST'; // Force a validation fail.
       }
+
+      $site_action = $spi_data['env_changed_action'];
+      // First connection.
+      if (empty($spi_data['site_uuid'])) {
+        $site_action = 'create';
+      }
+
+      switch ($site_action) {
+        case 'create':
+          $result->body['site_uuid'] = ACQTEST_site_uuid;
+          variable_set('acqtest_site_machine_name', $spi_data['machine_name']);
+          variable_set('acqtest_site_name', $spi_data['name']);
+          $acquia_hosted = (int) filter_var($spi_data['acquia_hosted'], FILTER_VALIDATE_BOOLEAN);
+          variable_set('acqtest_site_acquia_hosted', $acquia_hosted);
+          $result->body['nspi_messages'][] = t('This is the first connection from this site, it may take awhile for it to appear on the Acquia Network.');
+
+          return (array) $result;
+          break;
+        case 'update':
+          break;
+        case 'unblock':
+          break;
+        case 'block':
+          break;
+      }
+
       unset($result->secret);
       return (array) $result;
     }
@@ -432,6 +460,7 @@ function acquia_connector_test_validate_authenticator($data) {
   $result->body['derived_key_salt'] = $data['authenticator']['identifier'] . '_KEY_SALT';
   $result->body['update_service'] = 1;
   $result->body['search_service_enabled'] = 1;
+  $result->body['uuid'] = ACQTEST_uuid;
   if (isset($data['body']['rpc_version'])) {
     $result->body['rpc_version'] = $data['body']['rpc_version'];
   }
@@ -455,6 +484,7 @@ function _acquia_connector_test_increment_requests() {
 function acquia_connector_test_xmlrpc_server_emulator($method, $data){
 
   _acquia_connector_test_increment_requests();
+
 
   $result = array();
 

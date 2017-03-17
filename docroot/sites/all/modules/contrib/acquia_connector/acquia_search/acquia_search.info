@@ -13,9 +13,9 @@ dependencies[] = search
 files[] = Acquia_Search_Service.php
 files[] = tests/acquia_search.test
 
-; Information added by Drupal.org packaging script on 2016-05-06
-version = "7.x-2.17"
+; Information added by Drupal.org packaging script on 2017-01-30
+version = "7.x-3.1"
 core = "7.x"
 project = "acquia_connector"
-datestamp = "1462555141"
+datestamp = "1485787086"
 
