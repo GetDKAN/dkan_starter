@@ -10,3 +10,4 @@ projects[dkan][download][type] = git
 projects[dkan][download][url] = https://github.com/NuCivic/dkan.git
 projects[dkan][download][tag] = 7.x-1.13.2
 
+projects[dkan][patch][1703] = 'https://github.com/NuCivic/dkan/pull/1703.diff'
