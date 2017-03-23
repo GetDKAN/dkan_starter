@@ -14,50 +14,135 @@ function clamav_admin_settings($form, &$form_state) {
 
   $form = array();
 
-  $form['antivirus'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('ClamAV'),
-    '#collapsible' => TRUE,
-    '#collapsed' => FALSE,
-  );
-  $form['antivirus']['clamav_enabled'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Enable ClamAV anti-virus scans'),
+  $form['clamav_enabled'] = array(
+    '#type'          => 'checkbox',
+    '#title'         => t('Enable ClamAV anti-virus scans'),
     '#default_value' => variable_get('clamav_enabled', TRUE),
   );
-  $form['antivirus']['clamav_mode'] = array(
-    '#type' => 'radios',
-    '#title' => t('Select scan method'),
+
+  $form['scan_mechanism_wrapper'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Scan mechanism'),
+    '#collapsible' => TRUE,
+    '#collapsed'   => FALSE,
+  );
+  $form['scan_mechanism_wrapper']['clamav_mode'] = array(
+    '#type'    => 'radios',
+    '#title'   => t('Select scan method'),
     '#options' => array(
-      CLAMAV_USE_DAEMON => t('Daemon mode'),
-      CLAMAV_USE_EXECUTABLE => t('Executable'),
+      CLAMAV_USE_EXECUTABLE         => t('Executable'),
+      CLAMAV_USE_DAEMON             => t('Daemon mode (over TCP/IP)'),
+      CLAMAV_USE_DAEMON_UNIX_SOCKET => t('Daemon mode (over Unix socket)'),
     ),
     '#default_value' => variable_get('clamav_mode', CLAMAV_DEFAULT_MODE),
-    '#description' => t("Set the scan-method according to how the ClamAV software is configured on the server.<br /><strong>Daemon-mode is recommended</strong>, because it is usually quicker than running as an executable.  The Daemon will not require read-access to the file: it is streamed directly to the daemon by the web-server."),
   );
-  $form['antivirus']['clamav_unchecked_files'] = array(
-    '#type' => 'radios',
+
+  // Wrapper for each of the scan mechanisms.
+  $form['scan_mechanism_wrapper']['scan_mechanisms'] = array();
+
+
+  // Executable-mode.
+  $form['scan_mechanism_wrapper']['scan_mechanisms']['executable'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Executable mode configuration'),
+    '#collapsible' => TRUE,
+    '#collapsed'   => FALSE,
+    '#states' => array(
+      'visible' => array(
+        ':input[name="clamav_mode"]' => array('value' => CLAMAV_USE_EXECUTABLE),
+      ),
+    ),
+  );
+  $form['scan_mechanism_wrapper']['scan_mechanisms']['executable']['clamav_executable_path'] = array(
+    '#type'          => 'textfield',
+    '#title'         => t('Executable path'),
+    '#default_value' => variable_get('clamav_executable_path', CLAMAV_DEFAULT_PATH),
+    '#maxlength'     => 255,
+    '#description'   => t("Full path to the 'clamscan' utility."),
+  );
+  $form['scan_mechanism_wrapper']['scan_mechanisms']['executable']['clamav_executable_parameters'] = array(
+    '#type'          => 'textfield',
+    '#title'         => t('Executable parameters'),
+    '#default_value' => variable_get('clamav_executable_parameters', CLAMAV_DEFAULT_PARAMS),
+    '#maxlength'     => 255,
+    '#description'   => t("Extra options for the 'clamscan' utility (e.g. --no-summary). See man clamscan."),
+  );
+
+
+  // Daemon-mode (over TCP/IP).
+  $form['scan_mechanism_wrapper']['scan_mechanisms']['daemon'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Daemon mode configuration (over TCP/IP)'),
+    '#collapsible' => TRUE,
+    '#collapsed'   => FALSE,
+    '#states' => array(
+      'visible' => array(
+        ':input[name="clamav_mode"]' => array('value' => CLAMAV_USE_DAEMON),
+      ),
+    ),
+  );
+  $form['scan_mechanism_wrapper']['scan_mechanisms']['daemon']['clamav_daemon_host'] = array(
+    '#type'          => 'textfield',
+    '#title'         => t('Hostname'),
+    '#default_value' => variable_get('clamav_daemon_host', CLAMAV_DEFAULT_HOST),
+    '#maxlength'     => 255,
+    '#description'   => t('The hostname for the Clam-AV daemon.  Defaults to localhost.'),
+  );
+  $form['scan_mechanism_wrapper']['scan_mechanisms']['daemon']['clamav_daemon_port'] = array(
+    '#type'          => 'textfield',
+    '#title'         => t('Port'),
+    '#default_value' => variable_get('clamav_daemon_port', CLAMAV_DEFAULT_PORT),
+    '#size'          => 6,
+    '#maxlength'     => 8,
+    '#description'   => t('The port for the Clam-AV daemon.  Defaults to port 3310.  Must be between 0 and 65535.'),
+  );
+
+
+  // Daemon-mode (over unix socket).
+  $form['scan_mechanism_wrapper']['scan_mechanisms']['daemon_unix_socket'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Daemon mode configuration (over Unix socket)'),
+    '#collapsible' => TRUE,
+    '#collapsed'   => FALSE,
+    '#states' => array(
+      'visible' => array(
+        ':input[name="clamav_mode"]' => array('value' => CLAMAV_USE_DAEMON_UNIX_SOCKET),
+      ),
+    ),
+  );
+  $form['scan_mechanism_wrapper']['scan_mechanisms']['daemon_unix_socket']['clamav_daemon_unix_socket'] = array(
+    '#type'          => 'textfield',
+    '#title'         => t('Unix socket path'),
+    '#default_value' => variable_get('clamav_daemon_unix_socket', CLAMAV_DEFAULT_UNIX_SOCKET),
+    '#maxlength'     => 255,
+    '#description'   => t('The path to the ClamAV unix socket. Defaults to /var/clamav/clamd.'),
+  );
+
+
+  // Outage action: behaviour when ClamAV is unavailable.
+  $form['outage_actions_wrapper'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Outage behaviour'),
+    '#collapsible' => TRUE,
+    '#collapsed'   => FALSE,
+   );
+  $form['outage_actions_wrapper']['clamav_unchecked_files'] = array(
+    '#type'  => 'radios',
     '#title' => t('Action when ClamAV is not available'),
-    //Allow file uploads if the daemon is not running or program is not found'),
     '#options' => array(
       CLAMAV_BLOCK_UNCHECKED => t('Block unchecked files'),
       CLAMAV_ALLOW_UNCHECKED => t('Allow unchecked files'),
     ),
     '#default_value' => variable_get('clamav_unchecked_files', CLAMAV_DEFAULT_UNCHECKED),
-    '#description' => t('Scans may fail - for example: if ClamAV is not running, or the path to the executable is invalid.  Choose whether files should be blocked or allowed when a scan cannot be completed.'),
-  );
-  $form['antivirus']['clamav_verbose'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Verbose'),
-    '#default_value' => variable_get('clamav_verbose', CLAMAV_VERBOSE_DEFAULT),
-    '#description' => t('Log all scanned files, including files which pass the virus-check.'),
+    '#description'   => t('Scans may fail - for example: if ClamAV is not running, or the path to the executable is invalid.  Choose whether files should be blocked or allowed when a scan cannot be completed.'),
   );
 
+  // Stream-wrappers to scan.
   $form['schemes'] = array(
-    '#type' => 'fieldset',
-    '#title' => 'Scannable schemes / stream wrappers',
+    '#type'        => 'fieldset',
+    '#title'       => 'Scannable schemes / stream wrappers',
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#collapsed  ' => TRUE,
     '#description' => t('By default only !local schemes are scannable.',
       array('!local' => l('STREAM_WRAPPERS_LOCAL',
         'https://api.drupal.org/api/drupal/includes!stream_wrappers.inc/7')
@@ -70,110 +155,34 @@ function clamav_admin_settings($form, &$form_state) {
 
   if (count($local_schemes)) {
     $form['schemes']['clamav_local_schemes'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('Local schemes'),
-      '#options' => $local_schemes,
+      '#type'          => 'checkboxes',
+      '#title'         => t('Local schemes'),
+      '#options'       => $local_schemes,
       '#default_value' => clamav_scheme_options_defaults('local'),
     );
   }
   if (count($remote_schemes)) {
     $form['schemes']['clamav_remote_schemes'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('Remote schemes'),
-      '#options' => $remote_schemes,
+      '#type'          => 'checkboxes',
+      '#title'         => t('Remote schemes'),
+      '#options'       => $remote_schemes,
       '#default_value' => clamav_scheme_options_defaults('remote'),
     );
   }
 
 
-  // ---
-  // --- DAEMON MODE configuration
-  // ---
-  // Check for a daemon on the current settings.
-  $daemon_config = array(
-    'host' => variable_get('clamav_daemon_host', CLAMAV_DEFAULT_HOST),
-    'port' => variable_get('clamav_daemon_port', CLAMAV_DEFAULT_PORT),
-  );
-  $clamav_daemon_version = clamav_get_version($daemon_config);
-
-  $clamav_daemon_version = preg_match('/ClamAV/', $clamav_daemon_version) ? $clamav_daemon_version : NULL;
-  $message = isset($clamav_daemon_version)
-     ? t("The clamav-daemon at %host:%port gives the version:<br /><code>@version_string</code>", array('%host' => $daemon_config['host'], '%port' => $daemon_config['port'], '@version_string' => $clamav_daemon_version))
-     : t('The clamav-daemon was not found at %host:%port.', array('%host' => $daemon_config['host'], '%port' => $daemon_config['port']));
-
-  $form['daemon'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('ClamAV daemon'),
-    '#description' => t("Configure the connection settings when using Daemon-mode.") . '<br />' . $message,
+  // Verbosity of error-reporting.
+  $form['verbosity_wrapper'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Verbosity'),
     '#collapsible' => TRUE,
-    // Uncollapse the fieldset if the current config is 'Daemon mode'.
-    '#collapsed' => !(variable_get('clamav_mode', CLAMAV_DEFAULT_MODE) == CLAMAV_USE_DAEMON),
+    '#collapsed'   => FALSE,
   );
-  $form['daemon']['clamav_daemon_host'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Hostname'),
-    '#default_value' => variable_get('clamav_daemon_host', CLAMAV_DEFAULT_HOST),
-    '#maxlength' => 255,
-    '#description' => t('The hostname for the Clam-AV daemon.  Defaults to localhost.'),
-  );
-  $form['daemon']['clamav_daemon_port'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Port'),
-    '#default_value' => variable_get('clamav_daemon_port', CLAMAV_DEFAULT_PORT),
-    '#size' => 6,
-    '#maxlength' => 8,
-    '#description' => t('The port for the Clam-AV daemon.  Defaults to port 3310.  Must be between 0 and 65535.'),
-  );
-
-
-
-
-  // ---
-  // --- EXECUTABLE MODE configuration
-  // ---
-  // Check that the executable-path matches the default clamscan
-  $msg = '';
-
-  $executable = variable_get('clamav_executable_path', CLAMAV_DEFAULT_PATH);
-  $version_string = clamav_get_version($executable);
-  if ($version_string) {
-    $msg .= t("The clamscan at %executable_filepath gives the version:<br /><code>@version_string</code>.", array('%executable_filepath' => $executable, '@version_string' => $version_string));
-  }
-  else {
-    $msg .= t("The clamscan at %executable_filepath did not respond.", array('%executable_filepath' => $executable));
-  }
-
-  $default_executable_path = exec('which clamscan 2>/dev/null');
-  if ($default_executable_path && $default_executable_path != variable_get('clamav_executable_path', CLAMAV_DEFAULT_PATH)) {
-    $version_string = clamav_get_version($default_executable_path);
-    if ($default_executable_version_string) {
-      $msg .= "<br />";
-      $msg .= t("The clamscan at %executable_filepath gives the version:<br />@version_string.", array('%executable_filepath' => $default_executable_path, '@version_string' => $version_string));
-    }
-  }
-
-  $form['executable'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('ClamAV executable'),
-    '#description' => t('These settings will be used if you have chosen "Executable" as the scan-method.') . '<br />' . $msg,
-    '#collapsible' => TRUE,
-    // Uncollapse the fieldset if the current config is 'Executable mode'.
-    '#collapsed' => !(variable_get('clamav_mode', CLAMAV_DEFAULT_MODE) == CLAMAV_USE_EXECUTABLE),
-  );
-
-  $form['executable']['clamav_executable_path'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Executable path'),
-    '#default_value' => variable_get('clamav_executable_path', CLAMAV_DEFAULT_PATH),
-    '#maxlength' => 255,
-    '#description' => t("Full path to the 'clamscan' utility."),
-  );
-  $form['executable']['clamav_executable_parameters'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Executable parameters'),
-    '#default_value' => variable_get('clamav_executable_parameters', CLAMAV_DEFAULT_PARAMS),
-    '#maxlength' => 255,
-    '#description' => t("Extra options for the 'clamscan' utility (e.g. --no-summary). See man clamscan."),
+  $form['verbosity_wrapper']['clamav_verbose'] = array(
+    '#type'          => 'checkbox',
+    '#title'         => t('Verbose'),
+    '#default_value' => variable_get('clamav_verbose', CLAMAV_VERBOSE_DEFAULT),
+    '#description'   => t('Log all scanned files, including files which pass the virus-check.'),
   );
 
 

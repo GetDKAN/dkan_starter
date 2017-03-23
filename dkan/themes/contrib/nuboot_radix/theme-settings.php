@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Theme settings.
@@ -23,7 +24,7 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
     '#title' => t('Copyright'),
     '#type' => 'text_format',
     '#format' => 'html',
-    '#default_value' => isset($copyright['value']) ? $copyright['value'] : t('Powered by <a href="http://nucivic.com/dkan">DKAN</a>, a project of <a href="http://nucivic.com">NuCivic</a>'),
+    '#default_value' => isset($copyright['value']) ? $copyright['value'] : t('Powered by <a href="http://getdkan.com/">DKAN</a>, a project of <a href="http://granicus.com">Granicus</a>'),
   );
 
   // Hero fieldset.
@@ -71,7 +72,7 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
       'file_validate_extensions' => array('svg'),
     ),
   );
-  
+
   $form['#submit'][] = 'nuboot_radix_hero_system_theme_settings_form_submit';
 
   // Return the additional form widgets.
@@ -79,10 +80,10 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
 }
 
 /**
- * Helper function to validate background color field
+ * Helper function to validate background color field.
  */
 function _background_option_setting($element, &$form, &$form_state) {
-  if(!empty($element['#value'])) {
+  if (!empty($element['#value'])) {
     $hex = $element['#value'];
     // Must be a string.
     $valid = is_string($hex);
@@ -117,7 +118,7 @@ function nuboot_radix_hero_system_theme_settings_form_submit(&$form, &$form_stat
 }
 
 /**
- *  Sets file to FILE_STATUS_PERMANENT so it won't be erased by cron.
+ * Sets file to FILE_STATUS_PERMANENT so it won't be erased by cron.
  */
 function _nuboot_radix_file_set_permanent($fid) {
   $file = file_load($fid);

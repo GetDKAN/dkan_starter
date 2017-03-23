@@ -13,14 +13,14 @@ includes[leaflet_draw_widget_make] = https://raw.githubusercontent.com/NuCivic/l
 ; Recline specific
 projects[recline][download][type] = git
 projects[recline][download][url] = https://github.com/NuCivic/recline.git
-projects[recline][download][tag] = 7.x-1.12.13
+projects[recline][download][tag] = 7.x-1.12.14
 projects[recline][subdir] = contrib
 
-includes[recline_make] = https://raw.githubusercontent.com/NuCivic/recline/7.x-1.12.13/recline.make
+includes[recline_make] = https://raw.githubusercontent.com/NuCivic/recline/7.x-1.12.14/recline.make
 
 ; Contrib Modules
 projects[autocomplete_deluxe][subdir] = contrib
-projects[autocomplete_deluxe][version] = 2.1
+projects[autocomplete_deluxe][version] = 2.2
 
 projects[beautytips][download][type] = git
 projects[beautytips][download][branch] = 7.x-2.x
@@ -76,6 +76,7 @@ projects[features][subdir] = contrib
 
 projects[field_group][version] = 1.5
 projects[field_group][patch][2042681] = http://drupal.org/files/issues/field-group-show-ajax-2042681-8.patch
+projects[field_group][patch][2831815] = https://www.drupal.org/files/issues/hash-location-sanitization.diff
 projects[field_group][subdir] = contrib
 
 projects[field_group_table][download][type] = git
@@ -136,12 +137,12 @@ projects[og_extras][version] = 1.2
 projects[og_extras][subdir] = contrib
 projects[og_extras][type] = module
 
-includes[open_data_schema_map_make] = https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-1.12.13/open_data_schema_map.make
+includes[open_data_schema_map_make] = https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-1.12.14/open_data_schema_map.make
 
 projects[open_data_schema_map][type] = module
 projects[open_data_schema_map][download][type] = git
 projects[open_data_schema_map][download][url] = https://github.com/NuCivic/open_data_schema_map.git
-projects[open_data_schema_map][download][tag] = 7.x-1.12.13
+projects[open_data_schema_map][download][tag] = 7.x-1.12.14
 projects[open_data_schema_map][subdir] = contrib
 
 projects[open_data_schema_map_dkan][type] = module
@@ -194,7 +195,7 @@ projects[token][subdir] = contrib
 projects[uuid][version] = 1.0-beta2
 projects[uuid][subdir] = contrib
 
-projects[views][version] = 3.14
+projects[views][version] = 3.15
 projects[views][subdir] = contrib
 
 projects[views_responsive_grid][version] = 1.3

@@ -4,6 +4,8 @@
  * Tests for the Acquia Search module.
  */
 
+use Drupal\acquia_search\PreferredSearchCoreService;
+
 /**
  * Unit tests of the functionality of the Acquia Search module.
  */
@@ -132,6 +134,245 @@ class AcquiaSearchUnitTestCase extends DrupalUnitTestCase {
     $bad_extracted2 = acquia_search_extract_hmac($this->randomName());
     $this->assertEqual('', $bad_extracted2, t('Empty string returned by HMAC extraction function when an invalid header is passed.'), 'Acquia Search');
   }
+
+  /**
+   * Tests that Acquia Search properly overrides the Apachesolr connection
+   * details to avoid unintended writing to a wrong search index.
+   */
+  public function testApacheSolrOverride() {
+
+    global $conf;
+
+    $acquia_identifier = $this->id;
+    $site_folder = $this->randomName(32);
+    $solr_hostname = $this->randomName(10) . '.acquia-search.com';
+    $available_cores = array(
+      array('balancer' => $solr_hostname, 'core_id' => "{$acquia_identifier}.dev.{$site_folder}"),
+      array('balancer' => $solr_hostname, 'core_id' => "{$acquia_identifier}.dev.testdbname"),
+      array('balancer' => $solr_hostname, 'core_id' => "{$acquia_identifier}"),
+    );
+    $environments = $this->getMockedEnvironments();
+
+    // No Acquia hosting and DB detected - should override into Readonly.
+    unset($conf['apachesolr_environments']);
+    $ah_env = NULL;
+    $ah_db_name = '';
+
+    $core_service = new PreferredSearchCoreService($acquia_identifier, $ah_env, $site_folder, $ah_db_name, $available_cores);
+    acquia_search_add_apachesolr_overrides($core_service, $environments);
+
+    $this->assertTrue($conf['apachesolr_environments']['ACQUIA']['conf']['apachesolr_read_only']);
+    $this->assertTrue(empty($conf['apachesolr_environments']['ACQUIA']['conf']['acquia_search_key']));
+
+
+    // Acquia Dev hosting environment detected - configs point to the index on the Dev environment.
+    unset($conf['apachesolr_environments']);
+    $ah_env = 'dev';
+
+    $core_service = new PreferredSearchCoreService($acquia_identifier, $ah_env, $site_folder, $ah_db_name, $available_cores);
+    acquia_search_add_apachesolr_overrides($core_service, $environments);
+
+    $this->assertTrue(empty($conf['apachesolr_environments']['ACQUIA']['conf']['apachesolr_read_only']));
+    $this->assertTrue(!empty($conf['apachesolr_environments']['ACQUIA']['conf']['acquia_search_key']));
+    $this->assertIdentical($conf['apachesolr_environments']['ACQUIA']['url'], "http://{$solr_hostname}/solr/{$acquia_identifier}.dev.{$site_folder}");
+
+
+    // Acquia dev environment and a DB name.
+    unset($conf['apachesolr_environments']);
+    $ah_env = 'dev';
+    $ah_db_name = 'testdbname';
+
+    $core_service = new PreferredSearchCoreService($acquia_identifier, $ah_env, $site_folder, $ah_db_name, $available_cores);
+    acquia_search_add_apachesolr_overrides($core_service, $environments);
+
+    $this->assertTrue(empty($conf['apachesolr_environments']['ACQUIA']['conf']['apachesolr_read_only']));
+    $this->assertTrue(!empty($conf['apachesolr_environments']['ACQUIA']['conf']['acquia_search_key']));
+    $this->assertIdentical($conf['apachesolr_environments']['ACQUIA']['url'], "http://{$solr_hostname}/solr/{$acquia_identifier}.dev.{$ah_db_name}");
+
+
+    // Acquia Test environment and a DB name. According to the mock, no cores available for the Test environment so it is read only.
+    unset($conf['apachesolr_environments']);
+    $ah_env = 'test';
+    $ah_db_name = 'testdbname';
+
+    $core_service = new PreferredSearchCoreService($acquia_identifier, $ah_env, $site_folder, $ah_db_name, $available_cores);
+    acquia_search_add_apachesolr_overrides($core_service, $environments);
+
+    $this->assertTrue($conf['apachesolr_environments']['ACQUIA']['conf']['apachesolr_read_only']);
+    $this->assertTrue(empty($conf['apachesolr_environments']['ACQUIA']['conf']['acquia_search_key']));
+    $this->assertTrue(empty($conf['apachesolr_environments']['ACQUIA']['url']));
+
+
+    // Acquia Prod environment and a DB name but AH_PRODUCTION isn't set - so read only.
+    unset($conf['apachesolr_environments']);
+    $ah_env = 'prod';
+    $ah_db_name = 'testdbname';
+
+    $core_service = new PreferredSearchCoreService($acquia_identifier, $ah_env, $site_folder, $ah_db_name, $available_cores);
+    acquia_search_add_apachesolr_overrides($core_service, $environments);
+
+    $this->assertTrue($conf['apachesolr_environments']['ACQUIA']['conf']['apachesolr_read_only']);
+    $this->assertTrue(empty($conf['apachesolr_environments']['ACQUIA']['conf']['acquia_search_key']));
+    $this->assertTrue(empty($conf['apachesolr_environments']['ACQUIA']['url']));
+
+
+    // Acquia Prod environment and a DB name and AH_PRODUCTION is set - so it should override to connect to the prod index.
+    unset($conf['apachesolr_environments']);
+    $_SERVER['AH_PRODUCTION'] = 1;
+    $ah_env = 'prod';
+    $ah_db_name = 'testdbname';
+
+    $core_service = new PreferredSearchCoreService($acquia_identifier, $ah_env, $site_folder, $ah_db_name, $available_cores);
+    acquia_search_add_apachesolr_overrides($core_service, $environments);
+
+    $this->assertTrue(empty($conf['apachesolr_environments']['ACQUIA']['conf']['apachesolr_read_only']));
+    $this->assertTrue(!empty($conf['apachesolr_environments']['ACQUIA']['conf']['acquia_search_key']));
+    $this->assertIdentical($conf['apachesolr_environments']['ACQUIA']['url'], "http://{$solr_hostname}/solr/{$acquia_identifier}");
+
+
+    // Trying to override already overridden settings should not succeed.
+    unset($_SERVER['AH_PRODUCTION']);
+    $ah_env = 'dev';
+    $ah_db_name = 'testdbname';
+
+    $core_service = new PreferredSearchCoreService($acquia_identifier, $ah_env, $site_folder, $ah_db_name, $available_cores);
+    acquia_search_add_apachesolr_overrides($core_service, $environments);
+
+    $this->assertTrue(empty($conf['apachesolr_environments']['ACQUIA']['conf']['apachesolr_read_only']));
+    $this->assertTrue(!empty($conf['apachesolr_environments']['ACQUIA']['conf']['acquia_search_key']));
+    $this->assertIdentical($conf['apachesolr_environments']['ACQUIA']['url'], "http://{$solr_hostname}/solr/{$acquia_identifier}");
+
+  }
+
+  /**
+   * Tests that it selects the correct preferred search core ID for the
+   * override URL when limited number of core ID is available.
+   */
+  public function testApacheSolrOverrideWhenCoreWithDbNameNotAvailable() {
+
+    // When the core ID with the DB name in it is not available, it should
+    // override the URL value with the core ID that has the site folder name
+    // in it.
+
+    global $conf;
+    unset($conf['apachesolr_environments']);
+
+    $acquia_identifier = $this->id;
+    $site_folder = $this->randomName(32);
+    $solr_hostname = $this->randomName(10) . '.acquia-search.com';
+
+    $available_cores = array(
+      array('balancer' => $solr_hostname, 'core_id' => "{$acquia_identifier}.dev.{$site_folder}"),
+      array('balancer' => $solr_hostname, 'core_id' => "{$acquia_identifier}"),
+    );
+    $environments = $this->getMockedEnvironments();
+
+    $ah_env = 'dev';
+    $ah_db_name = 'testdbname';
+
+    $core_service = new PreferredSearchCoreService($acquia_identifier, $ah_env, $site_folder, $ah_db_name, $available_cores);
+    acquia_search_add_apachesolr_overrides($core_service, $environments);
+
+    $expected_url = "http://{$solr_hostname}/solr/{$acquia_identifier}.dev.{$site_folder}";
+
+    $this->assertIdentical($conf['apachesolr_environments']['ACQUIA']['url'], $expected_url);
+
+  }
+
+  /**
+   * Tests that all existing Acquia Search environments for apachesolr get
+   * overridden.
+   */
+  public function testApacheSolrOverrideAllAcquiaEnvironments() {
+
+    global $conf;
+    unset($conf['apachesolr_environments']);
+
+    $acquia_identifier = $this->id;
+    $site_folder = $this->randomName(32);
+    $solr_hostname = $this->randomName(10) . '.acquia-search.com';
+
+    $available_cores = array(
+      array('balancer' => $solr_hostname, 'core_id' => "{$acquia_identifier}.dev.{$site_folder}"),
+      array('balancer' => $solr_hostname, 'core_id' => "{$acquia_identifier}.dev.testdbname"),
+      array('balancer' => $solr_hostname, 'core_id' => "{$acquia_identifier}"),
+    );
+    $environments = $this->getMockedEnvironments();
+
+    $ah_env = 'dev';
+    $ah_db_name = 'testdbname';
+
+    $core_service = new PreferredSearchCoreService($acquia_identifier, $ah_env, $site_folder, $ah_db_name, $available_cores);
+    acquia_search_add_apachesolr_overrides($core_service, $environments);
+
+    $expected_url = "http://{$solr_hostname}/solr/{$acquia_identifier}.dev.{$ah_db_name}";
+
+    $this->assertIdentical($conf['apachesolr_environments']['ACQUIA']['url'], $expected_url);
+
+    $this->assertIdentical($conf['apachesolr_environments']['ACQUIA_2']['url'], $expected_url);
+
+    $this->assertTrue(empty($conf['apachesolr_environments']['NON-ACQUIA']['url']));
+
+  }
+
+  /**
+   * Returns mocked apachesolr environments.
+   */
+  public function getMockedEnvironments () {
+
+    return array(
+      'ACQUIA' => array(
+        'env_id' => 'acquia_search_server_1',
+        'name' => 'Acquia Search',
+        'url' => 'http://mock.acquia-search.com/solr/ABCD-12345',
+        'service_class' => 'AcquiaSearchService',
+        'table' => 'apachesolr_environment',
+        'type' => 'Normal',
+        'export_type' => 1,
+        'index_bundles' => array(
+          'node' => array(
+            0 => 'article',
+            1 => 'page',
+          ),
+        ),
+      ),
+      'ACQUIA_2' => array(
+        'env_id' => 'acquia_search_server_2',
+        'name' => 'Acquia Search 2',
+        'url' => 'http://mock.acquia-search.com/solr/XYZW-12345',
+        'service_class' => 'AcquiaSearchService',
+        'table' => 'apachesolr_environment',
+        'type' => 'Normal',
+        'export_type' => 1,
+        'index_bundles' => array(
+          'node' => array(
+            0 => 'article',
+            1 => 'page',
+          ),
+        ),
+      ),
+      'NON-ACQUIA' => array(
+        'env_id' => 'solr',
+        'name' => 'localhost server',
+        'url' => 'http://localhost:8983/solr',
+        'service_class' => '',
+        'table' => 'apachesolr_environment',
+        'type' => 'Normal',
+        'export_type' => 1,
+        'index_bundles' => array(
+          'node' => array(
+            0 => 'article',
+            1 => 'page',
+          ),
+        ),
+        'conf' => array(
+          'apachesolr_index_last' => array(),
+        ),
+      ),
+    );
+
+  }
+
 }
 
 /**

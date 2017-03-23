@@ -35,6 +35,7 @@ dependencies:
      #- "~/backups"
      #- "test/sites/default"
   pre:
+    - sudo apt-get update
     - echo "memory_limit = 256M" > ~/.phpenv/versions/5.5.11/etc/conf.d/memory.ini
   override:
     - mkdir $CIRCLE_ARTIFACTS/junit

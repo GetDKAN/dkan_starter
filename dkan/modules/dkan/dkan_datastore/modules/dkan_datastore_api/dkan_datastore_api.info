@@ -4,3 +4,4 @@ package = DKAN API
 core = 7.x
 dependencies[] = services
 files[] = tests/dkan_datastore_api.test
+version = 7.x-1.12.14
