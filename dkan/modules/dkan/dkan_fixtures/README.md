@@ -1,3 +1,0 @@
-# DKAN Fixtures
-
-See documentation.
