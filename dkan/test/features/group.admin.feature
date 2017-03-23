@@ -1,4 +1,3 @@
-# time:1m2.37s
 @api
 Feature: Site managers administer groups
   In order to manage site organization
@@ -29,10 +28,6 @@ Feature: Site managers administer groups
       | Group 01 | John   | Yes       |
       | Group 02 | John   | Yes       |
       | Group 03 | John   | No        |
-    And "Tags" terms:
-      | name    |
-      | world   |
-      | results |
     And group memberships:
       | user    | group    | role on group        | membership status |
       | Gabriel | Group 01 | administrator member | Active            |
@@ -45,38 +40,37 @@ Feature: Site managers administer groups
       | election |
     And datasets:
       | title      | publisher | tags       | author  | published | description                |
-      | Dataset 01 | Group 01  | world      | Katie   | Yes       | Increase of toy prices     |
-      | Dataset 02 | Group 01  | world      | Katie   | No        | Cost of oil in January     |
-      | Dataset 03 | Group 01  | results    | Gabriel | Yes       | Election results           |
+      | Dataset 01 | Group 01  | price      | Katie   | Yes       | Increase of toy prices     |
+      | Dataset 02 | Group 01  | price      | Katie   | No        | Cost of oil in January     |
+      | Dataset 03 | Group 01  | election   | Gabriel | Yes       | Election districts         |
     And "format" terms:
       | name |
       | csv  |
-      | zip |
+      | html |
     And resources:
       | title       | publisher | format | author | published | dataset    | description |
       | Resource 01 | Group 01  | csv    | Katie  | Yes       | Dataset 01 |             |
-      | Resource 02 | Group 01  | zip    | Katie  | Yes       | Dataset 01 |             |
+      | Resource 02 | Group 01  | html   | Katie  | Yes       | Dataset 01 |             |
 
   Scenario: Create group
     Given I am logged in as "John"
     And I am on "Groups" page
     And I follow "Add Group"
     When I fill in the following:
-      | Title         | My group       |
-      | Description   | This is a body |
+      | Title  | My group       |
+      | Body   | This is a body |
     And I press "Save"
     Then I should see the success message "Group My group has been created"
     And I should see the heading "My group"
     And I should see "This is a body"
-    And I should see the "img" element in the "group block" region
 
   Scenario: Create group with previous same title
     Given I am logged in as "John"
     And I am on "Groups" page
     And I follow "Add Group"
     When I fill in the following:
-      | Title       | Group 01       |
-      | Description | This is a body |
+      | Title     | Group 01       |
+      | Body      | This is a body |
     And I press "Save"
     Then I should see "A group with title Group 01 exists on the site. Please use another title."
 
@@ -118,7 +112,7 @@ Feature: Site managers administer groups
     Given I am logged in as "John"
     And I am on "Group 02" page
     When I click "Edit"
-    And I fill in "Description" with "Group 02 edited"
+    And I fill in "Body" with "Group 02 edited"
     And I press "Save"
     Then I should see "Group Group 02 has been updated"
     And I should be on the "Group 02" page

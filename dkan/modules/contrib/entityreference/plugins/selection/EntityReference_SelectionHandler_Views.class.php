@@ -138,9 +138,7 @@ class EntityReference_SelectionHandler_Views implements EntityReference_Selectio
     if ($this->initializeView(NULL, 'CONTAINS', 0, $ids)) {
       // Get the results.
       $entities = $this->view->execute_display($display_name, $args);
-      if (!empty($entities)) {
-        $result = array_keys($entities);
-      }
+      $result = array_keys($entities);
     }
     return $result;
   }

@@ -16,8 +16,6 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
-var scssLint = require('gulp-scss-lint');
-var jshint = require('gulp-jshint');
 
 // CSS.
 gulp.task('css', function() {
@@ -41,8 +39,27 @@ gulp.task('css', function() {
     }))
     .pipe(autoprefix('last 2 versions', '> 1%', 'ie 9', 'ie 10'))
     .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest(config.css.dest))
-    .pipe(browserSync.reload({ stream: true, match: '**/*.css' }));
+    .pipe(gulp.dest(config.css.dest));
+});
+
+// JS
+gulp.task('js', function() {
+  return gulp.src(config.js.src)
+    .pipe(sourcemaps.init())
+    .pipe(concat(config.js.file))
+    .pipe(plumber({
+      errorHandler: function (error) {
+        notify.onError({
+          title:    "JS",
+          subtitle: "Failure!",
+          message:  "Error: <%= error.message %>",
+          sound:    "Beep"
+        }) (error);
+        this.emit('end');
+      }}))
+    .pipe(uglify())
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest(config.js.dest));
 });
 
 // Compress images.
@@ -62,38 +79,22 @@ gulp.task('fonts', function() {
     .pipe(gulp.dest(config.fonts.dest));
 });
 
-// Watch task.
-gulp.task('watch', function() {
-  gulp.watch(config.css.src, ['css']);
-  gulp.watch(config.images.src, ['images']);
-});
-
 // Static Server + Watch
-gulp.task('serve', ['css', 'fonts', 'watch'], function() {
+gulp.task('serve', ['css', 'js', 'fonts'], function() {
   browserSync.init({
     proxy: config.browserSyncProxy
   });
+
+  gulp.watch(config.js.src, ['js']);
+  gulp.watch(config.css.src, ['css']);
+  gulp.watch(config.images.src, ['images']);
+  gulp.watch('assets/**/*').on('change', browserSync.reload);
 });
 
 // Run drush to clear the theme registry.
 gulp.task('drush', shell.task([
   'drush cache-clear theme-registry'
 ]));
-
-// SCSS Linting.
-gulp.task('scss-lint', function() {
-  return gulp.src([config.css.src])
-    .pipe(scssLint())
-    .pipe(scssLint.format())
-    .pipe(scssLint.failOnError());
-});
-
-// JS Linting.
-gulp.task('js-lint', function() {
-  return gulp.src(config.js.src)
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
-});
 
 // Default Task
 gulp.task('default', ['serve']);

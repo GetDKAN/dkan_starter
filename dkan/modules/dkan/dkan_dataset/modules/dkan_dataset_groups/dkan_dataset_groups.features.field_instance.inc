@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_dataset_groups.features.field_instance.inc
@@ -72,18 +71,15 @@ function dkan_dataset_groups_field_default_field_instances() {
     ),
     'widget' => array(
       'active' => 0,
-      'module' => 'options',
-      'settings' => array(
-        'apply_chosen' => '',
-      ),
-      'type' => 'options_select',
-      'weight' => 3,
+      'module' => 'og',
+      'settings' => array(),
+      'type' => 'og_complex',
+      'weight' => 14,
     ),
   );
 
   // Exported field_instance: 'node-group-body'.
   $field_instances['node-group-body'] = array(
-    'bueditor_profile' => -1,
     'bundle' => 'group',
     'default_value' => NULL,
     'deleted' => 0,
@@ -107,22 +103,21 @@ function dkan_dataset_groups_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'body',
-    'label' => 'Description',
-    'required' => 0,
+    'label' => 'Body',
+    'required' => FALSE,
     'settings' => array(
-      'display_summary' => 0,
+      'display_summary' => TRUE,
       'text_processing' => 1,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'active' => 1,
       'module' => 'text',
       'settings' => array(
         'rows' => 20,
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 2,
+      'weight' => 6,
     ),
   );
 
@@ -190,26 +185,25 @@ function dkan_dataset_groups_field_default_field_instances() {
           ),
           'source_reference' => array(
             'autocomplete' => 0,
-            'search_all_fields' => 0,
           ),
         ),
-        'manualcrop_crop_info' => 1,
-        'manualcrop_default_crop_area' => 1,
-        'manualcrop_enable' => 0,
-        'manualcrop_inline_crop' => 0,
-        'manualcrop_instant_crop' => 0,
-        'manualcrop_instant_preview' => 1,
-        'manualcrop_keyboard' => 1,
-        'manualcrop_maximize_default_crop_area' => 0,
+        'manualcrop_crop_info' => TRUE,
+        'manualcrop_default_crop_area' => TRUE,
+        'manualcrop_enable' => FALSE,
+        'manualcrop_inline_crop' => FALSE,
+        'manualcrop_instant_crop' => FALSE,
+        'manualcrop_instant_preview' => TRUE,
+        'manualcrop_keyboard' => TRUE,
+        'manualcrop_maximize_default_crop_area' => FALSE,
         'manualcrop_require_cropping' => array(),
         'manualcrop_styles_list' => array(),
         'manualcrop_styles_mode' => 'include',
-        'manualcrop_thumblist' => 0,
+        'manualcrop_thumblist' => FALSE,
         'preview_image_style' => 'thumbnail',
         'progress_indicator' => 'throbber',
       ),
       'type' => 'image_image',
-      'weight' => 1,
+      'weight' => 5,
     ),
   );
 
@@ -263,13 +257,13 @@ function dkan_dataset_groups_field_default_field_instances() {
         'display_label' => 0,
       ),
       'type' => 'options_onoff',
-      'weight' => 4,
+      'weight' => 2,
     ),
   );
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Description');
+  t('Body');
   t('Determine if this is an OG group.');
   t('Group');
   t('Image');

@@ -20,6 +20,7 @@ function dkan_datastore_install() {
 
 }
 
+
 /**
  * Implements hook_update_N().
  */

@@ -57,10 +57,9 @@ function search_view($module = NULL, $keys = '') {
     }
     // Only search if there are keywords or non-empty conditions.
     if ($keys || !empty($conditions)) {
-       if (variable_get('search_logging', TRUE)) {
-         // Log the search keys.
-         watchdog('search', 'Searched %type for %keys.', array('%keys' => $keys, '%type' => $info['title']), WATCHDOG_NOTICE, l(t('results'), 'search/' . $info['path'] . '/' . $keys));
-       }
+      // Log the search keys.
+      watchdog('search', 'Searched %type for %keys.', array('%keys' => $keys, '%type' => $info['title']), WATCHDOG_NOTICE, l(t('results'), 'search/' . $info['path'] . '/' . $keys));
+
       // Collect the search results.
       $results = search_data($keys, $info['module'], $conditions);
     }

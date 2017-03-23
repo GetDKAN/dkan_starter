@@ -240,7 +240,6 @@ function data_config_enabled_modules() {
     $features_master['modules']['workbench'] = 'workbench';
     $features_master['modules']['workbench_email'] = 'workbench_email';
     $features_master['modules']['workbench_moderation'] = 'workbench_moderation';
-    $features_master['modules']['drafty'] = 'drafty';
   }
 
   if (isset($data_config['odfe']) && $data_config['odfe']['enable']) {

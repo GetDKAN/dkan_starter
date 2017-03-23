@@ -2,7 +2,7 @@
 echo "Target environment is $target_env"
 echo "Drush alias is $drush_alias"
 
-upgrade_version=upgrade_1_13
+upgrade_version=upgrade_1_12
 upgrade_status=`drush @$drush_alias vget $upgrade_version --pipe`
 
 if [ "$upgrade_status" != 'upgraded' ]; then

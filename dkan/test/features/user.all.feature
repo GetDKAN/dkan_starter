@@ -1,4 +1,3 @@
-# time:0m23.59s
 @api
 Feature: User
 
@@ -31,12 +30,12 @@ Feature: User
       | Celeste | Group 02 | member               | Active            |
     And "Tags" terms:
       | name    |
-      | world   |
-      | results |
+      | Health  |
+      | Gov     |
     And datasets:
       | title      | publisher | author  | published        | tags     | description |
-      | Dataset 01 | Group 01  | Katie   | Yes              | world    | Test        |
-      | Dataset 02 | Group 01  | Katie   | Yes              | world    | Test        |
+      | Dataset 01 | Group 01  | Katie   | Yes              | Health   | Test        |
+      | Dataset 02 | Group 01  | Katie   | Yes              | Health   | Test        |
 
   Scenario: Login
     Given I am on the homepage
@@ -52,13 +51,13 @@ Feature: User
     When I follow "Log out"
     Then I should see "Log in"
 
-  @javascript @deleteTempUsers @customizable
+  @deleteTempUsers @customizable @javascript
   Scenario: Register
     Given I am on the homepage
     When I follow "Register"
     # Needed because honeypot module give error when filling out the register form
     # too quickly, so we need to add a wait.
-    And I wait for "6" seconds
+    And I wait for 6 seconds
     And I fill in "Username" with "tempuser"
     And I fill in "E-mail address" with "tempuser@example.com"
     And I press "Create new account"
@@ -93,7 +92,7 @@ Feature: User
     And I should see "2" items in the "user content" region
 
   Scenario: See list of user memberships on user profile
-    Given I am logged in as "Katie"
-    And I am on "Katie" page
-    Then I should see "Group 01" in the "user profile" region
+    Given I am on "Katie" page
+    Then I should see "Group membership:"
+    Then I should see "Group 01"
     And I should not see "Group 02"

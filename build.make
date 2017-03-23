@@ -50,6 +50,21 @@ projects[] = acquia_search_multi_subs
 ; ======
 projects[] = search_api_solr
 
+; DKAN Migrate
+; ============
+projects[] = migrate
+; DKAN Migrate Base
+projects[dkan_migrate_base][type] = module
+projects[dkan_migrate_base][download][type] = git
+projects[dkan_migrate_base][download][url] = https://github.com/NuCivic/dkan_migrate_base.git
+projects[dkan_migrate_base][download][branch] = 7.x-1.x
+
+; DKAN Harvest
+projects[dkan_harvest][type] = module
+projects[dkan_harvest][download][type] = git
+projects[dkan_harvest][download][url] = https://github.com/NuCivic/dkan_harvest.git
+projects[dkan_harvest][download][branch] = 7.x-1.x
+
 ; Additional Visualization Entity Components
 ; ==========================================
 projects[visualization_entity_maps][type] = module
@@ -74,7 +89,6 @@ projects[visualization_entity_tables][download][branch] = master
 ; Performance
 ; ===========
 projects[] = expire
-projects[] = expire_panels
 projects[] = memcache
 projects[] = entitycache
 projects[] = admin_views

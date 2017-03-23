@@ -7,6 +7,7 @@ if (!Array.prototype.map) {
 		}
 
 		var t = Object(this),
+			// jshint bitwise: false
 			len = t.length >>> 0;
 
 		if (typeof fun !== 'function') {

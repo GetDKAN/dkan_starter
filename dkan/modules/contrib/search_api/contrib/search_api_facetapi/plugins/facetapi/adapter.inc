@@ -61,10 +61,6 @@ class SearchApiFacetapiAdapter extends FacetapiAdapter {
   public function initActiveFilters($query) {
     $search_id = $query->getOption('search id');
     $index_id = $this->info['instance'];
-    // Only act on queries from the right index.
-    if ($index_id != $query->getIndex()->machine_name) {
-      return;
-    }
     $facets = facetapi_get_enabled_facets($this->info['name']);
     $this->fields = array();
 
@@ -87,16 +83,13 @@ class SearchApiFacetapiAdapter extends FacetapiAdapter {
 
       if (array_search($search_id, $facet_search_ids) === FALSE) {
         if (!$default_true) {
-          // We are only to show facets for explicitly named search ids.
-          continue;
+          continue; // We are only to show facets for explicitly named search ids.
         }
       }
       elseif ($default_true) {
-        // The 'facet_search_ids' in the settings are to be excluded.
-        continue;
+        continue; // The 'facet_search_ids' in the settings are to be excluded.
       }
-      $facet_key = $facet['name'] . '@' . $this->getSearcher();
-      $active[$facet_key] = $search_id;
+      $active[$facet['name']] = $search_id;
       $this->fields[$facet['name']] = array(
         'field'             => $facet['field'],
         'limit'             => $options['hard_limit'],

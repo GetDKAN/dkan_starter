@@ -7,6 +7,7 @@
 
 /**
  * Load a local settings.php file if one exists.
+ *
  *  - It should declare the ENVIRONMENT constant to be 'local' by using:
  *    define('ENVIRONMENT', 'local');
  *  - It should also set the $database settings for your local environment.
@@ -237,7 +238,6 @@ switch (ENVIRONMENT) {
       $conf['features_master_temp_disabled_modules'][] = 'workbench';
       $conf['features_master_temp_disabled_modules'][] = 'workbench_email';
       $conf['features_master_temp_disabled_modules'][] = 'workbench_moderation';
-      $conf['features_master_temp_disabled_modules'][] = 'drafty';
     }
 
     // Show ALL errors when working locally.

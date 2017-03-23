@@ -3,10 +3,6 @@ Radix is a base theme for Drupal and BackdropCMS. It has Bootstrap, Sass, Gulp, 
 
 ![alt tag](https://www.drupal.org/files/drupal-radix.png)
 
-## Status
-
-[![Documentation Status](https://readthedocs.org/projects/radix/badge/?version=latest)](http://docs.radixtheme.org/en/latest/?badge=latest)
-
 ## Distributions using Radix
 ##### [Open Atrium](http://openatrium.com/)
 Open Atrium is an intranet in a box that has group spaces to allow different teams to have their own conversations and collaboration.
@@ -32,6 +28,3 @@ The Open Restaurant distribution has everything you need to kickstart your resta
 * Documentation:  http://docs.radixtheme.org
 * Demo:           http://dev-radix.chapterthree.com
 * Support:        https://www.drupal.org/project/issues/radix
-
-## License
-http://www.gnu.org/licenses/old-licenses/gpl-2.0.html

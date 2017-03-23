@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Code for the DKAN Sitewide Roles and Permissions feature.
@@ -7,9 +6,6 @@
 
 include_once 'dkan_sitewide_roles_perms.features.inc';
 
-/**
- * Return message role information.
- */
 function dkan_sitewide_roles_perms_set_admin_role() {
   if (!variable_get('user_admin_role')) {
     if ($role = user_role_load_by_name('administrator')) {

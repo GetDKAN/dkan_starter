@@ -8,7 +8,7 @@
 /**
  * The current system version.
  */
-define('VERSION', '7.54');
+define('VERSION', '7.52');
 
 /**
  * Core API compatibility.
@@ -719,16 +719,6 @@ function drupal_valid_http_host($host) {
 }
 
 /**
- * Checks whether an HTTPS request is being served.
- *
- * @return bool
- *   TRUE if the request is HTTPS, FALSE otherwise.
- */
-function drupal_is_https() {
-  return isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on';
-}
-
-/**
  * Sets the base URL, cookie domain, and session name from configuration.
  */
 function drupal_settings_initialize() {
@@ -741,7 +731,7 @@ function drupal_settings_initialize() {
   if (file_exists(DRUPAL_ROOT . '/' . conf_path() . '/settings.php')) {
     include_once DRUPAL_ROOT . '/' . conf_path() . '/settings.php';
   }
-  $is_https = drupal_is_https();
+  $is_https = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on';
 
   if (isset($base_url)) {
     // Parse fixed base URL from settings.php.

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_topics.facetapi_defaults.inc
