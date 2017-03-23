@@ -210,11 +210,10 @@ class SearchApiFacetapiDate extends SearchApiFacetapiTerm implements FacetapiQue
   public function build() {
     $facet = $this->adapter->getFacet($this->facet);
     $search_ids = drupal_static('search_api_facetapi_active_facets', array());
-    $facet_key = $facet['name'] . '@' . $this->adapter->getSearcher();
-    if (empty($search_ids[$facet_key]) || !search_api_current_search($search_ids[$facet_key])) {
+    if (empty($search_ids[$facet['name']]) || !search_api_current_search($search_ids[$facet['name']])) {
       return array();
     }
-    $search_id = $search_ids[$facet_key];
+    $search_id = $search_ids[$facet['name']];
     $build = array();
     $search = search_api_current_search($search_id);
     $results = $search[1];

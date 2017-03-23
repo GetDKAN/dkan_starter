@@ -8,12 +8,11 @@
 /**
  * Class for DKAN Datastores.
  */
-class DkanDatastoreFastImport extends DkanDatastore implements DatastoreFormInterface {
+class DkanDatastoreFastImport extends DkanDatastore implements DatastoreForm {
 
   public $endpoint = 'api/action/datastore/search.json';
   const QUEUE_FILESIZE_THRESHOLD_DEFAULT = '30MB';
   const FAST_IMPORT_THRESHOLD_DEFAULT = '30MB';
-
   /**
    * Sets default items for datastore object.
    */
@@ -33,7 +32,7 @@ class DkanDatastoreFastImport extends DkanDatastore implements DatastoreFormInte
     $this->addConfig(array($processor => $form_state['values'][$processor]));
     $this->save();
 
-    // Bypass feeds to improve the import performance.
+    // Bypass feeds to improve the import performance
     $table = feeds_flatstore_processor_table($source, array());
     $node = entity_metadata_wrapper('node', $form_state['build_info']['args'][0]);
     $file = $node->field_upload->value();
@@ -44,12 +43,12 @@ class DkanDatastoreFastImport extends DkanDatastore implements DatastoreFormInte
 
     // If a remote file is provided we fallback to feeds importer
     // else we perform a fast import.
-    if (!empty($file_remote) || !$use_fast_import) {
+    if(!empty($file_remote) || !$use_fast_import) {
       $this->import();
     }
     else {
-      // Avoid the queueing the resource if it's small.
-      if ($filesize > $queue_filesize_threshold) {
+      // Avoid the queueing the resource if it's small
+      if($filesize > $queue_filesize_threshold) {
         $item = array(
           'source' => $source,
           'node' => $node,
@@ -63,9 +62,8 @@ class DkanDatastoreFastImport extends DkanDatastore implements DatastoreFormInte
         try {
           dkan_datastore_fast_import_import($source, $node, $table, $form_state['values'][$parser]);
           drupal_set_message(t('File was succesfully imported into the datastore'), 'status');
-        }
-        catch (Exception $e) {
-          drupal_set_message(t('An error occurred trying to import this file: @error', array('@error' => $e->getMessage())), 'error');
+        } catch (Exception $e) {
+          drupal_set_message(t('An error occurred trying to import this file: ' . $e->getMessage()), 'error');
         }
       }
     }

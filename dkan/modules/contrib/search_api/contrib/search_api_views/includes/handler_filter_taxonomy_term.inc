@@ -27,7 +27,6 @@ class SearchApiViewsHandlerFilterTaxonomyTerm extends SearchApiViewsHandlerFilte
 
     $options['type'] = array('default' => !empty($this->definition['vocabulary']) ? 'textfield' : 'select');
     $options['hierarchy'] = array('default' => 0);
-    $options['expose']['contains']['reduce'] = array('default' => FALSE);
     $options['error_message'] = array('default' => TRUE, 'bool' => TRUE);
 
     return $options;
@@ -73,13 +72,13 @@ class SearchApiViewsHandlerFilterTaxonomyTerm extends SearchApiViewsHandlerFilte
     }
     else {
       if ($vocabulary && !empty($this->options['hierarchy'])) {
-        $tree = taxonomy_get_tree($vocabulary->vid, 0, NULL, TRUE);
+        $tree = taxonomy_get_tree($vocabulary->vid);
         $options = array();
 
         if ($tree) {
           foreach ($tree as $term) {
             $choice = new stdClass();
-            $choice->option = array($term->tid => str_repeat('-', $term->depth) . check_plain(entity_label('taxonomy_term', $term)));
+            $choice->option = array($term->tid => str_repeat('-', $term->depth) . $term->name);
             $options[] = $choice;
           }
         }
@@ -98,15 +97,8 @@ class SearchApiViewsHandlerFilterTaxonomyTerm extends SearchApiViewsHandlerFilte
           $query->condition('tv.machine_name', $vocabulary->machine_name);
         }
         $result = $query->execute();
-        $tids = array();
-
         foreach ($result as $term) {
-          $tids[] = $term->tid;
-        }
-        $terms = taxonomy_term_load_multiple($tids);
-
-        foreach ($terms as $term) {
-          $options[$term->tid] = check_plain(entity_label('taxonomy_term', $term));
+          $options[$term->tid] = $term->name;
         }
       }
 
@@ -240,14 +232,6 @@ class SearchApiViewsHandlerFilterTaxonomyTerm extends SearchApiViewsHandlerFilte
   /**
    * {@inheritdoc}
    */
-  public function expose_options() {
-    parent::expose_options();
-    $this->options['expose']['reduce'] = FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function validate_entity_strings(array &$form, array $values) {
     if (empty($values)) {
       return array();
@@ -298,23 +282,15 @@ class SearchApiViewsHandlerFilterTaxonomyTerm extends SearchApiViewsHandlerFilte
    */
   public function expose_form(&$form, &$form_state) {
     parent::expose_form($form, $form_state);
-
-    if ($this->options['type'] == 'select') {
-      $form['expose']['reduce'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Limit list to selected items'),
-        '#description' => t('If checked, the only items presented to the user will be the ones selected here.'),
-        '#default_value' => $this->options['expose']['reduce'],
-      );
+    if ($this->options['type'] != 'select') {
+      unset($form['expose']['reduce']);
     }
-    else {
-      $form['error_message'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Display error message'),
-        '#description' => t('Display an error message if one of the entered terms could not be found.'),
-        '#default_value' => $this->options['error_message'],
-      );
-    }
+    $form['error_message'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Display error message'),
+      '#description' => t('Display an error message if one of the entered terms could not be found.'),
+      '#default_value' => !empty($this->options['error_message']),
+    );
   }
 
   /**

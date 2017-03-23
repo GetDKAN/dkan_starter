@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_topics.features.field_base.inc

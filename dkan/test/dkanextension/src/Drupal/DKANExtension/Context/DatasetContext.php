@@ -10,14 +10,10 @@ use SearchApiQuery;
  */
 class DatasetContext extends RawDKANEntityContext {
 
-  use ModeratorTrait;
-
   public function __construct() {
     parent::__construct(
       'node',
-      'dataset',
-      NULL,
-      array('moderation', 'moderation_date')
+      'dataset'
     );
   }
 
@@ -30,6 +26,7 @@ class DatasetContext extends RawDKANEntityContext {
     $this->groupContext = $environment->getContext('Drupal\DKANExtension\Context\GroupContext');
     $this->dkanContext = $environment->getContext('Drupal\DKANExtension\Context\DKANContext');
   }
+
 
   /**
    * Creates datasets from a table.
@@ -48,7 +45,8 @@ class DatasetContext extends RawDKANEntityContext {
    * @throws \Exception
    *   If region or text within it cannot be found.
    */
-  public function iShouldSeeADatasetCalled($text) {
+  public function iShouldSeeADatasetCalled($text)
+  {
     $session = $this->getSession();
     $page = $session->getPage();
     $search_region = $page->find('css', '.view-dkan-datasets');
@@ -63,27 +61,6 @@ class DatasetContext extends RawDKANEntityContext {
     if (!$found) {
       throw new \Exception(sprintf("The text '%s' was not found", $text));
     }
-  }
-
-  /**
-   * @Then The dataset :title is in :state moderation state
-   */
-  public function theDatasetIsInModerationState($title, $state) {
-    $node = reset($this->getNodeByTitle($title));
-    if(!$node) {
-      throw new \Exception(sprintf($title . " node not found."));
-    }
-    $this->isNodeInModerationState($node, $state);
-  }
-
-  public function pre_save($wrapper, $fields) {
-    $this->preSaveModerate($wrapper, $fields);
-    parent::pre_save($wrapper, $fields);
-  }
-
-  public function post_save($wrapper, $fields) {
-    parent::post_save($wrapper, $fields);
-    $this->moderate($wrapper, $fields);
   }
 
   /**
@@ -268,7 +245,7 @@ class DatasetContext extends RawDKANEntityContext {
       'field_landing_page' => 'Homepage URL',
       'field_conforms_to' => 'Data Standard',
       'field_language' => 'Language',
-      'og_group_ref' => 'Groups'
+      'og_group_ref' => 'Publisher'
     );
 
     $dataset_fieldsets = array(
@@ -314,58 +291,5 @@ class DatasetContext extends RawDKANEntityContext {
         throw new \Exception("$fieldset_name was not found in the form with CSS selector '$form_css_selector'");
       }
     }
-  }
-
-  /**
-   * @Given I :operation the :option on DKAN Dataset Forms
-   */
-  public function iTheOnDkanDatasetForms($operation, $option)
-  {
-    $enabled = 0;
-    if ($operation === "enable") {
-      $enabled = 1;
-    }
-
-    switch ($option) {
-      case 'Strict POD validation':
-        variable_set('dkan_dataset_form_pod_validation', $enabled);
-        break;
-      case 'Groups validation':
-        variable_set('dkan_dataset_form_group_validation', $enabled);
-        break;
-      default:
-        break;
-    }
-  }
-
-  /**
-   * @Then I should see the :option groups option
-   */
-  public function iShouldSeeTheGroupsOption($option)
-  {
-    $element = $this->find_select_option('og_group_ref[und][]', $option);
-    if (!$element) {
-      throw new \Exception(sprintf('The %s option could not be found.', $option));
-    }
-  }
-
-  /**
-   * @Then I should not see the :option groups option
-   */
-  public function iShouldNotSeeTheGroupsOption($option)
-  {
-    $element = $this->find_select_option('og_group_ref[und][]', $option);
-    if ($element) {
-      throw new \Exception(sprintf('The %s option was found.', $option));
-    }
-  }
-
-  /**
-   * Helper function to search for an option element inside a select element.
-   */
-  private function find_select_option($select_name, $option) {
-    $session = $this->getSession();
-    $xpath = "//select[@name='" . $select_name . "']//option[text()='" . $option . "']";
-    return $session->getPage()->find('xpath', $session->getSelectorsHandler()->selectorToXpath('xpath', $xpath));
   }
 }

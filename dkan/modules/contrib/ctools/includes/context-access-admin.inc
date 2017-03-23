@@ -367,6 +367,7 @@ function ctools_access_ajax_edit($fragment = NULL, $id = NULL) {
     'contexts' => $contexts,
     'title' => t('Edit criteria'),
     'ajax' => TRUE,
+    'ajax' => TRUE,
     'modal' => TRUE,
     'modal return' => TRUE,
   );

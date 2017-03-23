@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Implements a transition email proxy for dkan_workflow.
@@ -20,7 +19,6 @@
  * Implemenation of the a transition email proxy.
  */
 class DkanWorkflowEmailProxy {
-
   /**
    * Constructor function.
    */
@@ -51,10 +49,9 @@ class DkanWorkflowEmailProxy {
     if (user_has_role($this->roles['Workflow Moderator'], $this->user)) {
       $user_groups = og_get_entity_groups('user', $this->user);
       $node_groups = og_get_entity_groups('node', $this->node);
-      if (isset($user_groups['node']) && isset($node_groups['node'])) {
+      if(isset($user_groups['node']) && isset($node_groups['node'])) {
         $intersect = array_intersect($user_groups['node'], $node_groups['node']);
-      }
-      else {
+      } else {
         $intersect = array();
       }
       return !empty($intersect);

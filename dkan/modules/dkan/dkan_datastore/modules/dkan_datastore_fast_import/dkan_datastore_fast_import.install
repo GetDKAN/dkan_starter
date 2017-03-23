@@ -1,10 +1,4 @@
 <?php
-
-/**
- * @file
- * Fast import install.
- */
-
 /**
  * Implements hook_enable().
  */
