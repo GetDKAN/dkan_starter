@@ -344,15 +344,13 @@ class SearchApiViewsQuery extends views_plugin_query {
     // FALSE.
     $skip_result_count = $this->query->getOption('skip result count', TRUE);
     if ($skip_result_count) {
-      $skip_result_count = !$this->pager || (!$this->pager->use_count_query() && empty($view->get_total_rows));
+      $skip_result_count = !$this->pager->use_count_query() && empty($view->get_total_rows);
       $this->query->setOption('skip result count', $skip_result_count);
     }
 
     try {
       // Trigger pager pre_execute().
-      if ($this->pager) {
-        $this->pager->pre_execute($this->query);
-      }
+      $this->pager->pre_execute($this->query);
 
       // Views passes sometimes NULL and sometimes the integer 0 for "All" in a
       // pager. If set to 0 items, a string "0" is passed. Therefore, we unset
@@ -387,9 +385,7 @@ class SearchApiViewsQuery extends views_plugin_query {
       $view->execute_time = microtime(TRUE) - $start;
 
       // Trigger pager post_execute().
-      if ($this->pager) {
-        $this->pager->post_execute($view->result);
-      }
+      $this->pager->post_execute($view->result);
     }
     catch (Exception $e) {
       $this->errors[] = $e->getMessage();

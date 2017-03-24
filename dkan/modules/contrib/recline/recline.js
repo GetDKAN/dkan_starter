@@ -18,7 +18,6 @@
       attach: function (context) {
         $explorer = $('.data-explorer');
         // Local scoped variables.
-        Drupal.settings.recline = Drupal.settings.recline || {};
         fileSize = Drupal.settings.recline.fileSize;
         fileType = Drupal.settings.recline.fileType;
         maxSizePreview = Drupal.settings.recline.maxSizePreview;
@@ -153,8 +152,7 @@
         case 'csv':
           datasetOptions = {
             backend: 'csv',
-            url: file,
-            delimiter: delimiter
+            url: file
           };
           break;
         case 'ckan':
@@ -162,12 +160,6 @@
             endpoint: 'api',
             id: uuid,
             backend: 'ckan'
-          };
-          break;
-        case 'xls':
-          datasetOptions = {
-            backend: 'xls',
-            url: file
           };
           break;
         case 'dataproxy':
@@ -180,7 +172,6 @@
           showError('File type ' + fileType + ' not supported for preview.');
           break;
       }
-
       return datasetOptions;
     }
 
@@ -207,19 +198,12 @@
 
     // Retrieve a backend given a file type and and a datastore status.
     function getBackend (datastoreStatus, fileType) {
-
-      // If it's inside the datastore then we use the dkan API
       if (datastoreStatus) return 'ckan';
       var formats = {
         'csv': ['text/csv', 'csv'],
-        'xls': ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+        'dataproxy': ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
       };
-      var backend = _.findKey(formats, function(format) { return _.include(format, fileType) });
-
-      // If the backend is an xls but the browser version is prior 9 then
-      // we need to fallback to dataproxy
-      if (backend === 'xls' && document.documentMode < 9) return 'dataproxy';
-      return backend;
+      return _.findKey(formats, function(format) { return _.include(format, fileType) });
     }
 
     // Displays an error retrieved from the response object.

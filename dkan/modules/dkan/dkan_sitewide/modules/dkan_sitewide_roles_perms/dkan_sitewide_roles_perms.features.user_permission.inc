@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_sitewide_roles_perms.features.user_permission.inc
@@ -112,6 +111,15 @@ function dkan_sitewide_roles_perms_user_default_permissions() {
       'editor' => 'editor',
     ),
     'module' => 'user',
+  );
+
+  // Exported permission: 'administer RDF field mappings'.
+  $permissions['administer RDF field mappings'] = array(
+    'name' => 'administer RDF field mappings',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'rdfui',
   );
 
   // Exported permission: 'administer actions'.
@@ -368,6 +376,15 @@ function dkan_sitewide_roles_perms_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'user',
+  );
+
+  // Exported permission: 'administer rdf'.
+  $permissions['administer rdf'] = array(
+    'name' => 'administer rdf',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'rdfx',
   );
 
   // Exported permission: 'administer rules'.

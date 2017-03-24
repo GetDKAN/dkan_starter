@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_sitewide_context.context.inc

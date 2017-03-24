@@ -1,35 +1,42 @@
-# time:0m11.86s
 Feature: Homepage
   In order to know the website is running
   As a website user
   I need to be able to view the site title and login
-
-  Background:
-    Given pages:
-      | name             | url                        |
-      | Add dataset      | /node/add/dataset          |
-
+  
   @customizable
   Scenario: Viewing the site title
     Given I am on the homepage
-    Then I should see "Welcome to DKAN"
+    Then I should see "Welcome to the DKAN Demo"
+
+  @customizable
+  Scenario: Viewing default content
+    Given I am on the homepage
+    Then I should see "Geospatial Data Explorer Examples"
 
   @customizable
   Scenario: Viewing top menu
     Given I am on the homepage
     Then I should see "Datasets"
-    And I should see "Groups"
-    And I should see "About"
-    And I should see "Topics"
-    And I should see "Stories"
-    And I should see "Dashboards"
+    Then I should see "Groups"
+    Then I should see "About"
+    Then I should see "Topics"
 
   @customizable
-  Scenario: Viewing sections
+  Scenario: Viewing footer
     Given I am on the homepage
-    Then I should see "Latest Data Stories" in the "content" region
-    And I should see "Groups" in the "content" region
-    And I should see "Dashboards" in the "content" region
+    Then I should see "Powered by DKAN, a project of Granicus"
+
+  @customizable
+  Scenario: Viewing tags
+    Given I am on the homepage
+    When I click "politics"
+    Then I should see "Afghanistan Election Districts"
+
+  @customizable
+  Scenario: Viewing topics
+    Given I am on the homepage
+    When I click "Public Safety"
+    Then I should see "Wisconsin Polling Places"
 
   @api @javascript @customizable
   Scenario: See "Add Dataset"
@@ -39,8 +46,11 @@ Feature: Homepage
     Then I hover over the admin menu item "Add content"
     Then I should see the admin menu item "Dataset"
 
-  @api
+  @api @javascript
   Scenario: See "Dataset Form"
     Given I am logged in as a user with the "content creator" role
-    And I am on "Add dataset" page
+    And I am on the homepage
+    Then I hover over the admin menu item "Content"
+    Then I hover over the admin menu item "Add content"
+    Then I click "Dataset"
     Then I should see "Create Dataset"

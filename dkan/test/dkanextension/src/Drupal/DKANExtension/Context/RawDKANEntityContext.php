@@ -1,21 +1,18 @@
 <?php
 namespace Drupal\DKANExtension\Context;
 
-use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Drupal\DKANExtension\ServiceContainer\Page;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use EntityDrupalWrapper;
 use EntityMetadataWrapperException;
-use EntityFieldQuery;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 
 /**
  * Defines application features from the specific context.
  */
-class RawDKANEntityContext extends RawDKANContext implements SnippetAcceptingContext {
+class RawDKANEntityContext extends RawDKANContext {
 
   // Store entities as EntityMetadataWrappers for easy property inspection.
   //protected $entities = array();
@@ -25,27 +22,11 @@ class RawDKANEntityContext extends RawDKANContext implements SnippetAcceptingCon
   protected $bundle_key = FALSE;
   protected $field_map = array();
   protected $field_properties = array();
-  protected $field_map_custom = array();
 
-  /**
-   * @var \Drupal\DKANExtension\Context\PageContext
-   */
-  protected $pageContext;
-  /**
-   * @var \Drupal\DKANExtension\Context\SearchAPIContext
-   */
-  protected $searchContext;
-
-
-  public function __construct($entity_type, $bundle, $field_map_overrides = array('published' => 'status'), $field_map_custom = array()) {
+  public function __construct($entity_type , $bundle, $field_map_overrides = array('published' => 'status')) {
     $entity_info = entity_get_info($entity_type);
     $this->entity_type = $entity_type;
     $this->field_properties = array();
-
-    if ($field_map_overrides == NULL) {
-      $field_map_overrides = array('published' => 'status');
-    }
-    $this->field_map_custom = $field_map_custom;
 
     // Check that the bundle specified actually exists, or if none given,
     // that this is an entity with no bundles (single bundle w/ name of entity)
@@ -83,15 +64,6 @@ class RawDKANEntityContext extends RawDKANContext implements SnippetAcceptingCon
         $this->field_map[strtolower($info['label'])] = $field;
       }
     }
-  }
-
-  /**
-   * @BeforeScenario
-   */
-  public function gatherContexts(BeforeScenarioScope $scope) {
-    $environment = $scope->getEnvironment();
-    $this->pageContext = $environment->getContext('Drupal\DKANExtension\Context\PageContext');
-    $this->searchContext = $environment->getContext('Drupal\DKANExtension\Context\SearchAPIContext');
   }
 
   /**
@@ -185,9 +157,6 @@ class RawDKANEntityContext extends RawDKANContext implements SnippetAcceptingCon
    */
   public function apply_fields($wrapper, $fields) {
     foreach ($fields as $label => $value ) {
-      if (in_array($label, $this->field_map_custom)) {
-        continue;
-      }
       if(isset($this->field_map[$label]) && $this->field_map[$label] === 'status'){
         $value = $this->convertStringToBool($value);
       }
@@ -309,14 +278,10 @@ class RawDKANEntityContext extends RawDKANContext implements SnippetAcceptingCon
               throw new \Exception("Named Node '$name' not found, was it created during the test?");
             }
           }
+          $wrapper->$property->set($nids);
+          break;
 
-          if ($field_type == "node") {
-            // If the field type is node only one nid is expected.
-            // Default to the first element.
-            $wrapper->$property->set(reset($nids));
-          } else {
-            $wrapper->$property->set($nids);
-          }
+
           break;
         // Not sure (something more complex)
         case 'struct':
@@ -325,18 +290,6 @@ class RawDKANEntityContext extends RawDKANContext implements SnippetAcceptingCon
           // Links
         case 'field_item_link':
           $wrapper->$property->set(array("url" => $value));
-          break;
-        // Files
-        case 'field_item_file':
-          $file = (object) array(
-            'uri' => $value,
-            'status' => FILE_STATUS_PERMANENT,
-            'filename' => basename($value),
-            'filemime' => file_get_mimetype($value),
-            'timestamp' => time(),
-          );
-          file_save($file);
-          $wrapper->$property->file->set($file);
           break;
         case 'token':
           // References to nodes
@@ -394,6 +347,7 @@ class RawDKANEntityContext extends RawDKANContext implements SnippetAcceptingCon
     * @param $fields
     */
   public function pre_save($wrapper, $fields) {
+
     // Update the changed date after the entity has been saved.
     if (isset($fields['date changed'])) {
       unset($fields['date changed']);
@@ -426,12 +380,6 @@ class RawDKANEntityContext extends RawDKANContext implements SnippetAcceptingCon
 
     if (isset($fields['date changed'])) {
       $this->setChangedDate($wrapper, $fields['date changed']);
-    }
-
-    if (isset($fields["dataset"])) {
-      if($fields["dataset"]) {
-        node_save($wrapper->value());
-      }
     }
 
     // Process any outstanding search items.
@@ -515,8 +463,7 @@ class RawDKANEntityContext extends RawDKANContext implements SnippetAcceptingCon
         ->execute();
     }
   }
-
-  /**
+  /*
    * Fire off a DKAN hook.
    *
    * Based on RawDrupalContext::dispatchHooks().

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Dkan_datastore_api.services.inc.
@@ -45,9 +44,6 @@ function dkan_datastore_api_default_services_endpoint() {
       'alias' => 'search',
       'operations' => array(
         'index' => array(
-          'enabled' => '1',
-        ),
-        'create' => array(
           'enabled' => '1',
         ),
       ),

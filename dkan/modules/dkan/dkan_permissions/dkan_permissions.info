@@ -1,5 +1,4 @@
-name = DKAN Permissions
-description = Export of roles and permissions for core DKAN roles.
+name = Dkan Permissions
 core = 7.x
 package = DKAN
 dependencies[] = features_roles_permissions
