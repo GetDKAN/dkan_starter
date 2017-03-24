@@ -70,3 +70,8 @@ Thumbs.db
 dkan/.ahoy/site/vendor/*
 dkan/.ahoy/site/vendor/composer.lock
 
+# Sanitized files #
+###################
+
+*.prod.files
+*.prod.files/*

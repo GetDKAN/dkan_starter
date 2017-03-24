@@ -76,6 +76,11 @@ commands:
   custom-libs:
     usage: Downloads 3rd party libraries
     cmd: |
+      if [ ! -d docroot/sites/all/libraries ]; then
+         echo 'Creating docroot/sites/all/libraries'
+         mkdir docroot/sites/all/libraries
+      fi
+
       # Make writable so that error not thrown on second attempt.
       mkdir -p contrib/libraries && chmod 777 contrib/libraries
 
@@ -135,14 +140,16 @@ commands:
       find dkan -type d -name .git -exec rm -rf {} \;
       find docroot/sites/all -type f -name .gitignore -exec rm -rf {} \;
       find docroot/sites/all -type d -name .git -exec rm -rf {} \;
-      # Clean out any CHANGELOG.txt files.
-      find . -type f -name CHANGELOG.txt -exec rm -rf {} \;
       # Setup custom modules folder outside of the drupal root.
       rm -rf docroot/sites/all/modules/custom
       rm -rf docroot/sites/all/modules/data_config
       ln -s ../../../../assets/modules/data_config docroot/sites/all/modules/data_config
       ln -s ../../../../config/modules/custom docroot/sites/all/modules/custom
       ln -s ../../../../config/themes/custom docroot/sites/all/themes/custom
+      # Remove README/INSTALL files for security reasons CIVIC-3122
+      find ./docroot -type f -name "README*" -exec rm -f {} \;
+      find ./docroot -type f -name "INSTALL*" -exec rm -f {} \;
+      find ./docroot -type f -name "CHANGELOG*" -exec rm -rf {} \;
       if [ "$(ahoy custom | grep post-build)" != '' ]
       then
         ahoy custom post-build
@@ -152,8 +159,8 @@ commands:
     usage: ahoy build config - Applies site specific changes stored in config.yml
     cmd: |
       # render custom .htaccess
-      ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb > config/.htaccess
-      ahoy cmd-proxy ruby .ahoy/site/.scripts/circle.rb > circle.yml
+      ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb
+      ahoy cmd-proxy ruby .ahoy/site/.scripts/circle.rb
 
       # Transpose config.yml to php
       cd .ahoy/site
@@ -238,9 +245,9 @@ commands:
       fi
       git add . -A
       git commit -m "Updates build-dkan.make from $tag_old $version_old to $tag_new $version_new"
-      command -v hub >/dev/null 2>&1 || { echo >&2 "Hub not installed, please push code and create PR manually."; exit 1; }
-      git push -f origin "$pr_branch";
-      hub pull-request -m "Updates DKAN from $tag_old $version_old to $tag_new $version_new" >/dev/null 2>&1
+      #command -v hub >/dev/null 2>&1 || { echo >&2 "Hub not installed, please push code and create PR manually."; exit 1; }
+      #git push -f origin "$pr_branch";
+      #hub pull-request -m "Updates DKAN from $tag_old $version_old to $tag_new $version_new" >/dev/null 2>&1
 
   update-dkan-starter:
     usage: Updates data starter.
@@ -270,6 +277,7 @@ commands:
       rm -rf * .ahoy .ahoy.yml .github .probo.public.yml .probo.yml
       # You can rsync now
       rsync -av --exclude=.git --exclude=.dkan_starter .dkan_starter/ ./
+      cp config/config.yml .config/example.config.yml
       rm -rf config
       mv .config config
       rm -rf .dkan_starter

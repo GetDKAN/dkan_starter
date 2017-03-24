@@ -11,7 +11,7 @@ By custom configuration we mean:
 Whatever's you need to customise the project, you should set the feature export
 to somewhere inside the **docroot/sites/all/modules/custom** folder. That way,
 your module will **persist** when the site gets **remade** (Read Add a custom
-module if you don't understand what this means).
+module if you don't understand what this means). Please note your changes shouldn't be added directly to docroot/sites/all/modules/custom but to **config/modules/custom**, otherwise, your changes will be lost on the next DKAN Starter upgrade.
 
 However, there's a few caveats:
 

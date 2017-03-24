@@ -27,7 +27,7 @@ Overrides are applied in the build process when running
 
   ahoy build update VERSION 
   
-See Updating Data Starter to Latest Version of DKAN
+See `Updating DKAN Starter to Latest Version of DKAN <update-to-latest-dkan.html>`_
 
 Here is a step by step process:
 

@@ -25,6 +25,8 @@ default:
   https_securepages: FALSE              [Whether to use securepages module for mixed https. Not recommended.]
   clamav:     
     enable: FALSE                       [Whether to enable clamav module. Requires clamav support from host.]
+  dkan_workflow:
+    enable: FALSE                       [Whether to enable dkan_workflow.module.]
   stage_file_proxy_origin: changeme     [Whether to use state file proxy module for files. Recommended as set to staging or production environment.]
   fast_file:      
     enable: TRUE                        [Whether to use DKAN's fast file import for the Datastore.]
@@ -35,12 +37,23 @@ private:
     scrubbed_data_url: CHANGE ME        [Private S3 bucket for backups.]
   probo:
     password: CHANGE ME                 [Password for user 1 on ProboCI sites. This is changed from production for security reasons.]
+gaClientTrackingCode: UA-XXXXX-Y        [Google Analytics tracking code for the site.]
+circle:
+  test_dirs:                            [List of directories with features tests that needs to be run on CircleCI. Default to tests/features, dkan/tests/features and config/tests/features.]
+    - tests/features
+    - dkan/test/features
+    - config/tests/features
+  skip_tags:                            [List of tags that will be skipped when running tests. Defaults to customizable, fixme and testBug.]
+    - customizable
+    - fixme
+    - testBug
+  memory_limit: 256M                    [Memory limit for CircleCI.]
 ```
 ## Deciding Which Modules are Enabled
 
 Only modules that are part of the list at ``assets/modules/data_config/data_config.module:data_config_enabled_modules()`` or added to ``config/modules/custom/custom_config/custom_config.features.features_master.inc:custom_config_features_master_defaults()`` will be enabled any time you switch environments.
 
-If you want to add modules add them to the list here in the ``custom_config_features_master_defaults()`` function.
+If you want to add modules, add them to the list here in the ``custom_config_features_master_defaults()`` function.
 
 There are also modules that are enabled or disabled on certain environments. These are defined in ``assets/sites/default/settings.php`` in the
 
@@ -61,7 +74,7 @@ $conf['features_master_temp_enabled_modules'] = array(
 );
 ```
 
-We've added the ``features_master_temp_enabled_modules`` feature so that some modules can be turned on locally or on test environments. The ``maillog`` module keeps emails from being sent to clients or users.
+We've added the ``features_master_temp_enabled_modules`` feature so that some modules can be turned on locally or on test environments. The ``maillog`` module keeps emails from being sent to clients or users. Anyways, remember that if you want to add a new module to that list, you should be doing it in settings.custom.php.
 
 ## Adding Custom and Contributed Modules, Libraries and Themes
 

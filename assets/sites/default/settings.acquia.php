@@ -9,6 +9,23 @@ if (isset($conf['memcache_servers'])) {
   $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
 }
 
+// Adds support for fast file if enabled in config.yml.
+if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
+  $conf['dkan_datastore_fast_import_selection'] = 2;
+  $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
+  $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
+  $conf['queue_filesize_threshold'] = $conf['default']['fast_file']['queue'];
+  $conf['dkan_datastore_class'] = 'DkanDatastoreFastImport';
+
+  $databases['default']['default']['pdo'] = array(
+    PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
+    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
+  );
+}
+else {
+  $conf['dkan_datastore_fast_import_selection'] = 0;
+}
+
 if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   $env = getenv('AH_SITE_ENVIRONMENT');
   $sitegroup = getenv('AH_SITE_GROUP');
@@ -35,6 +52,8 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
 
   if ($conf['default']['https_everywhere']) {
     $base_url = $base_url_https;
+    $conf['acquia_purge_https'] = TRUE;
+    $conf['acquia_purge_http'] = FALSE;
 
     // Disable securepages when https everywhere is enabled.
     $conf['features_master_temp_disabled_modules'][] = 'securepages';
@@ -48,5 +67,26 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
       'derived_key' => $conf['acquia'][$env]['derived_key'],
     );
   }
+
+  // {{{1 Conditionally manage memory.
+  if (isset($conf['default']['odfe']) && $conf['default']['odfe']['enabled']) {
+    $high_memory_paths = array(
+      'admin',
+      'node/add',
+      'node/%node/edit',
+      'node/%node/moderation',
+      'file/ajax',
+      'api/action/datastore/search.json'
+    );
+
+    // Standarize node edit paths for validation.
+    $current_path = preg_replace("/\d+/", '%node', $_GET['q']);
+    foreach ($high_memory_paths as $high_memory_path) {
+      if ((strpos($current_path, $high_memory_path) === 0)) {
+        ini_set('memory_limit', '512M');
+      }
+    }
+  }
+
   acquia_hosting_db_choose_active();
 }

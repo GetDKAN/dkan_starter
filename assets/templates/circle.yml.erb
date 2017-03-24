@@ -7,16 +7,23 @@ machine:
   environment:
     PATH: $PATH:$HOME/.config/composer/vendor/bin
     DATABASE_URL: mysql://ubuntu:@127.0.0.1:3306/circle_test
-    # Timeouts issues happen when selenium tries to spawn a new chrome 
-    # instance. I've nail that down to this selenium issue 
+    # Timeouts issues happen when selenium tries to spawn a new chrome instance.
+    # I've nail that down to this selenium issue
     # https://github.com/SeleniumHQ/docker-selenium/issues/87
     DBUS_SESSION_BUS_ADDRESS: /dev/null
 ## Customize checkout
 ## Note: Only post is supported.
 checkout:
   post:
-    # Remove the extra composer stuff that circleci loads and that is causing conflicts with drush.
+    # Remove the extra composer stuff that circleci loads and that is causing
+    # conflicts with drush.
     - rm -rf ~/.composer
+
+## Unset secure_file_priv on mysql.
+database:
+  pre:
+    - echo -e 'secure_file_priv = ""' | sudo sh -c "cat >> /etc/mysql/my.cnf"
+    - sudo /usr/sbin/service mysql restart
 
 ## Customize dependencies
 dependencies:
@@ -34,6 +41,7 @@ dependencies:
     - mkdir $CIRCLE_ARTIFACTS/junit
     - cd tests; composer install; cd ..
     - bash dkan/dkan-init.sh dkan --deps-only
+    - drush dl -n registry_rebuild-7.x
     - ahoy site up --db-user=ubuntu --db-pass='' --db-host=127.0.0.1 --db-port=3306 --db-name=circle_test
     - ahoy utils fail-when-bad-disable
     # Run a webserver using drush.
@@ -50,7 +58,7 @@ dependencies:
 ## Customize test commands
 test:
   override:
-    - BEHAT_FOLDER=$HOME/$CIRCLE_PROJECT_REPONAME/tests ruby dkan/.ahoy/.scripts/circle-behat.rb <%= @test_dirs.join(" ") %> --tags='~@customizable&&~@fixme&&~@testBug':
+    - BEHAT_FOLDER=$HOME/$CIRCLE_PROJECT_REPONAME/tests ruby dkan/.ahoy/.scripts/circle-behat.rb <%= @test_dirs.join(" ") %> --tags='<%= @skip_tags.join("&&") %>':
         timeout: 1200
         parallel: true
   post:

@@ -17,6 +17,7 @@ Prerequisites
 ^^^^^^^^^^^^^
 
 Please review the following pieces of Documentation if you haven't done so yet:
+
 * :doc:`../modules/features-master`
 * :doc:`../modules/custom-config`
 * :doc:`../modules/data-config`
@@ -34,12 +35,13 @@ Those predefined conditions are:
 * There are complementary modules that could be enabled (for specific or all environments) setting up values for the **features_master_temp_enabled_modules** variable in settings.php file.
 * There are complementary modules that could be disabled (for specific or all environments) setting up values for the **features_master_temp_disabled_modules** variable in settings.php file.
 * Any enabled module that's not cover by the above three statements will be disabled.
-* There are configuration items (variables) set up (for specific or all) environments.
+* There are configuration items (variables) set up for specific (or all) environments.
 
 Hooks
 ^^^^^
 
-For NuCivic Data Projects we are implementing deployment hooks for:
+For Granicus Data Projects we are implementing deployment hooks for:
+
 * **post-code-deploy**: This runs when code is deployed from one environment from another (i.e elevating code from dev to test, test to prod)
 * **post-code-update**: This runs when code is push to the acquia's master branch. This only runs if the dev environment is running the master branch
 * **post-db-copy**: This runs when a database is deployed from on environment to another (i.e moving prod db to test and dev)
@@ -76,7 +78,7 @@ The command that actually does it all is:
 
    drush @$drush_alias env-switch $target_env --force
 
-Let's examine what happends when the environment switching occur following data_starter settings.php file.
+Let's examine what happens when the environment switching occur following dkan_starter settings.php file.
 
 1. Drupal is bootstrapped
 
@@ -94,7 +96,7 @@ Let's examine what happends when the environment switching occur following data_
       );
       devinci_set_env($env_map);
    
-   2. A set of global (not environment specific) configuration is set bellow the environment mapping. Things like error reporting, the default mail_system, default caching options, zip compression, fast_404, and many settings more.
+   2. A set of global (not environment specific) configuration is set below the environment mapping. Things like error reporting, the default mail_system, default caching options, zip compression, fast_404, and many settings more.
 
    3. Environment specific happens after b) enclosed in a switch statement that analyses the ``ENVIRONMENT`` constant:
 
@@ -142,11 +144,11 @@ Let's examine what happends when the environment switching occur following data_
    * **Local** and **Dev** are treated as development environments, so we turn on development modules on those.
    * **Test** mimics the Prod environment in everything BUT email backend configuration. We simply don't want Test to send emails.
    * **Test** and **Prod** are treated as production environments, which means performance is key. We set up caching and do things like adding memcache (if available).
-   * **Dev**, **Tes*t**, and **Prod** are set to turn on every acquia module we need to make use of search and performance tuning.
+   * **Dev**, **Test**, and **Prod** are set to turn on every acquia module we need to make use of search and performance tuning.
 
 2. Env switching happens
 
-   The definition for what happens on environment switching lives in devinci_custom_environment_switch implementation of hook_custom_environment_switch. For data_starter we add it at the bottom of settings.php and it looks like something like this:
+   The definition for what happens on environment switching lives in devinci_custom_environment_switch implementation of hook_custom_environment_switch. For dkan_starter we add it at the bottom of settings.php and it looks like something like this:
 
    .. code-block:: php
 
