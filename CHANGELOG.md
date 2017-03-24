@@ -1,4 +1,7 @@
 # Change log
+## [1.12.14.0]
+- Update dkan to 1.12.14 
+
 ## [1.12.13.2]
 - Fix broken template #69
 
