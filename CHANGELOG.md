@@ -1,7 +1,6 @@
 # Change log
 
-## [1.12.14.0]
-- Update dkan to version 1.12.14
+## [1.12.14.1]
 - Update dkan acquia cache settings #118
 - Fix `ahoy drush custom-libs` #102
 - Fix backup database reuse #98
@@ -15,6 +14,9 @@
 - Fix extra spaces in `ahoy dkan uli` output #86
 - Fix circle.rb script - #74
 - Add sql-drop step before database import #72
+
+## [1.12.14.0]
+- Update dkan to 1.12.14 
 
 ## [1.12.13.2]
 - Fix broken template #69
