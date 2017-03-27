@@ -60,7 +60,7 @@ class DrupalRemoteStreamWrapper implements DrupalStreamWrapperInterface {
   /**
    * Performs a GET request without transfer the content.
    */
-  public static function getHeaders($uri) {
+  function getHeaders() {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 
@@ -70,7 +70,7 @@ class DrupalRemoteStreamWrapper implements DrupalStreamWrapperInterface {
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET' );
     curl_setopt($ch, CURLOPT_HEADER, TRUE);
     curl_setopt($ch, CURLOPT_NOBODY, TRUE);
-    curl_setopt($ch, CURLOPT_URL, $uri);
+    curl_setopt($ch, CURLOPT_URL, $this->getUri());
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     $response = curl_exec($ch);
 
@@ -132,7 +132,7 @@ class DrupalRemoteStreamWrapper implements DrupalStreamWrapperInterface {
     }
 
     // Fallback to the 'Content-Type' header.
-    $headers = DrupalRemoteStreamWrapper::getHeaders($uri);
+    $headers = $this->getHeaders();
     if (!empty($headers) && !empty($headers['content-type'])) {
       return $headers['content-type'];
     }
@@ -314,7 +314,7 @@ class DrupalRemoteStreamWrapper implements DrupalStreamWrapperInterface {
    */
   public function stream_stat() {
     $stat = array();
-    $headers = DrupalRemoteStreamWrapper::getHeaders($this->getUri());
+    $headers = $this->getHeaders();
     if (!empty($headers)) {
       if (isset($headers['content-length'])) {
         $stat['size'] = $headers['content-length'];

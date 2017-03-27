@@ -12,7 +12,7 @@
     random
     average
 
-    rgb hex hsl hsv num hcg
+    rgb hex hsl hsv num
     css named
     lch lab
     cmyk
@@ -23,7 +23,7 @@
 
     get set
 
-    alpha darken saturate premultiply blend    
+    darken saturate premultiply blend    
 
     scale
     limits

@@ -23,7 +23,8 @@ interpolate = (col1, col2, f=0.5, m='rgb') ->
     throw "color mode "+m+" is not supported" if not res?
 
     # interpolate alpha at last
-    return res.alpha col1.alpha() + f * (col2.alpha() - col1.alpha())
+    res.alpha col1.alpha() + f * (col2.alpha() - col1.alpha())
+    res
 
 chroma.interpolate = interpolate
 

@@ -1,4 +1,4 @@
-# @requires interpolate hsl hsv hsi lch hcg
+# @requires interpolate hsl hsv hsi lch
 
 interpolate_hsx = (col1, col2, f, m) ->
     if m == 'hsl'
@@ -7,9 +7,6 @@ interpolate_hsx = (col1, col2, f, m) ->
     else if m == 'hsv'
         xyz0 = col1.hsv()
         xyz1 = col2.hsv()
-    else if m == 'hcg'
-        xyz0 = col1.hcg()
-        xyz1 = col2.hcg()
     else if m == 'hsi'
         xyz0 = col1.hsi()
         xyz1 = col2.hsi()
@@ -44,4 +41,4 @@ interpolate_hsx = (col1, col2, f, m) ->
     res = chroma[m](hue, sat, lbv)
 
     
-_interpolators = _interpolators.concat ([m, interpolate_hsx] for m in ['hsv','hsl','hsi','hcl','lch','hcg'])
+_interpolators = _interpolators.concat ([m, interpolate_hsx] for m in ['hsv','hsl','hsi','hcl','lch'])
