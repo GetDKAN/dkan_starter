@@ -68,12 +68,6 @@ function radix_theme(&$existing, $type, $theme, $path) {
       ),
       'function' => 'theme_radix_icon',
     ),
-    'radix_input_group_addon' => array(
-      'variables' => array(
-        'content' => NULL,
-      ),
-      'function' => 'theme_radix_input_group_addon',
-    )
   );
 }
 
@@ -388,11 +382,4 @@ function theme_radix_icon($variables) {
   }
 
   return $html;
-}
-
-/**
- * Implements theme_input_group_addon().
- */
-function theme_radix_input_group_addon($variables) {
-  return '<span class="input-group-addon">' . $variables['content'] . '</span>';
 }

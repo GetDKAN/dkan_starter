@@ -450,12 +450,12 @@ class SearchApiHighlight extends SearchApiAbstractProcessor {
    * @param array $array
    *   The array to flatten.
    * @param string $glue
-   *   (optional) The separator to insert between individual array items.
+   *   The separator to insert between individual array items.
    *
    * @return string
    *   The glued string.
    */
-  protected function flattenArrayValues(array $array, $glue = " \n\n ") {
+  protected function flattenArrayValues(array $array, $glue = "\n\n") {
     $ret = array();
     foreach ($array as $item) {
       if (is_array($item)) {

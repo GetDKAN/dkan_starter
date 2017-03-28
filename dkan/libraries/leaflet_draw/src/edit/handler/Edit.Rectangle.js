@@ -1,9 +1,5 @@
 L.Edit = L.Edit || {};
-/**
- * @class L.Edit.Rectangle
- * @aka Edit.Rectangle
- * @inherits L.Edit.SimpleShape
- */
+
 L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 	_createMoveMarker: function () {
 		var bounds = this._shape.getBounds(),
@@ -57,7 +53,7 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 	},
 
 	_move: function (newCenter) {
-		var latlngs = this._shape._defaultShape ? this._shape._defaultShape() : this._shape.getLatLngs(),
+		var latlngs = this._shape.getLatLngs(),
 			bounds = this._shape.getBounds(),
 			center = bounds.getCenter(),
 			offset, newLatLngs = [];
@@ -72,8 +68,6 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 
 		// Reposition the resize markers
 		this._repositionCornerMarkers();
-
-		this._map.fire(L.Draw.Event.EDITMOVE, { layer: this._shape });
 	},
 
 	_resize: function (latlng) {
@@ -85,8 +79,6 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 		// Reposition the move marker
 		bounds = this._shape.getBounds();
 		this._moveMarker.setLatLng(bounds.getCenter());
-
-		this._map.fire(L.Draw.Event.EDITRESIZE, { layer: this._shape });
 	},
 
 	_getCorners: function () {

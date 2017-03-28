@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_data_story.features.field_instance.inc
@@ -96,7 +95,7 @@ function dkan_data_story_field_default_field_instances() {
     'label' => 'Image',
     'required' => 0,
     'settings' => array(
-      'alt_field' => 1,
+      'alt_field' => 0,
       'default_image' => 0,
       'file_directory' => 'story',
       'file_extensions' => 'png gif jpg jpeg',

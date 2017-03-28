@@ -1,6 +1,0 @@
-DKAN 1.13.3 (future release)
-============================
-
-Placeholder for good things to come.
-
-
