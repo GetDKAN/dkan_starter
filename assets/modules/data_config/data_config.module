@@ -43,6 +43,7 @@ function data_config_enabled_modules() {
     'date' => 'date',
     'date_api' => 'date_api',
     'date_popup' => 'date_popup',
+    'date_views' => 'date_views',
     'defaultconfig' => 'defaultconfig',
     'devinci' => 'devinci',
     'diff' => 'diff',
