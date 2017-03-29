@@ -7,6 +7,7 @@
 
 /**
  * Load a local settings.php file if one exists.
+ *
  *  - It should declare the ENVIRONMENT constant to be 'local' by using:
  *    define('ENVIRONMENT', 'local');
  *  - It should also set the $database settings for your local environment.
@@ -35,7 +36,6 @@ if (file_exists($config_file)) {
 
 /**
  * Validation function to check if variable is available.
- * TODO: make more robust.
  */
 function _data_starter_validates($variable = '') {
   global $conf;
@@ -120,8 +120,8 @@ ini_set('session.cookie_lifetime', 2000000);
 
 // Disable cron. We run this from Jenkins.
 // Except for CircleCI or test purpose.
-$CI = getenv('CI');
-if (!$CI) {
+define(CI, getenv('CI'));
+if (CI) {
   $conf['cron_safe_threshold'] = 0;
 }
 
@@ -172,38 +172,20 @@ else {
 /******************************************************
  * OPTIONAL: Override default settings per environment.
  ******************************************************/
+
+/**
+ * Settings that are shared between environments.
+ */
 switch (ENVIRONMENT) {
-
-  /**
-   * Local Environment.
-   */
   case 'local':
-    // Features Master module supoorts temporarily enabling modules.
-    // This will add modules in the local environment, but EXCLUDE them
-    // from being exported using features_master.
-    $conf['features_master_temp_enabled_modules'] = array_merge(
-      $conf['features_master_temp_enabled_modules'],
-      array(
-        'dblog',
-        'devel',
-      // This is temporary, there's a recline dependency on field_ui that
-      // needs to be removed. See https://github.com/NuCivic/recline/pull/34
-      // When the above is merged, unconment the following line and update
-      // the custom_config feature master list.
-      // 'field_ui',.
-        'maillog',
-        'views_ui',
-      // Add clamav to local environment so that tests will continue to pass.
-      // TODO: change clamav feature tests so that they enable clamav.
-        'clamav',
-      ));
-
     if (_data_starter_validates('stage_file_proxy_origin')) {
-      $conf['features_master_temp_disabled_modules'] = array_merge(
-        $conf['features_master_temp_disabled_modules'],
-        array(
-          'stage_file_proxy',
-        ));
+      if ($conf['default']['stage_file_proxy']) {
+        $conf['features_master_temp_enabled_modules'] = array_merge(
+          $conf['features_master_temp_enabled_modules'],
+          array(
+            'stage_file_proxy',
+          ));
+      }
     }
 
     // Features Master also supports temporarily disabling modules.
@@ -213,7 +195,6 @@ switch (ENVIRONMENT) {
       $conf['features_master_temp_disabled_modules'],
       array(
         'acquia_agent',
-        'acquia_spi',
         'acquia_purge',
         'expire_panels',
         'dkan_acquia_expire',
@@ -226,95 +207,37 @@ switch (ENVIRONMENT) {
         'shield',
       ));
 
-    // Disable dkan_worflow modules so that dkan tests pass
-    // See: https://jira.govdelivery.com/browse/CIVIC-5128
-    if (getenv('CI') == "true") {
-      $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow';
-      $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow_permissions';
-      $conf['features_master_temp_disabled_modules'][] = 'link_badges';
-      $conf['features_master_temp_disabled_modules'][] = 'menu_badges';
-      $conf['features_master_temp_disabled_modules'][] = 'views_dkan_workflow_tree';
-      $conf['features_master_temp_disabled_modules'][] = 'workbench';
-      $conf['features_master_temp_disabled_modules'][] = 'workbench_email';
-      $conf['features_master_temp_disabled_modules'][] = 'workbench_moderation';
-      $conf['features_master_temp_disabled_modules'][] = 'drafty';
-    }
-
-    // Show ALL errors when working locally.
     $conf['error_level'] = ERROR_REPORTING_DISPLAY_ALL;
     ini_set("display_errors", 1);
 
-    // Enable environment indicator to show current git branch.
-    // Note: git must be available, which it's not on acquia.
-    $conf['environment_indicator_git_support'] = TRUE;
-    break;
-
-  /**
-   * Development Environment.
-   */
   case 'development':
     $conf['features_master_temp_enabled_modules'] = array_merge(
         $conf['features_master_temp_enabled_modules'],
         array(
-
           'dblog',
           'devel',
           'field_ui',
-          'maillog',
           'views_ui',
-          // Only send Acquia Insite scores from prod.
-          'acquia_spi',
         ));
-    // Enable git support for the environment indicator to show current branch.
-    $conf['environment_indicator_git_support'] = TRUE;
-    break;
 
-  /**
-   * Test Environment.
-   */
   case 'test':
     $conf['features_master_temp_enabled_modules'] = array_merge(
         $conf['features_master_temp_enabled_modules'],
         array(
-          // Only send Acquia Insite scores from prod.
-          'acquia_spi',
+          'maillog',
         ));
 
     $conf['features_master_temp_disabled_modules'] = array_merge(
         $conf['features_master_temp_disabled_modules'],
         array(
-          'maillog',
+          // Only send Acquia Insite scores from prod.
+          'acquia_spi',
         ));
 
-    $conf['error_level'] = ERROR_REPORTING_HIDE;
-
-    // Enable caching like in production.
-    $conf['page_cache_maximum_age'] = 21600;
-    $conf['ape_alternative_lifetime'] = 300;
-    $conf['ape_alternatives'] = <<<EOT
-search
-search*
-search/*
-search/type/*
-EOT;
-
-    $conf['page_compression'] = 1;
-    $conf['cache'] = 1;
-    $conf['preprocess_js'] = 1;
-    $conf['preprocess_css'] = 1;
     // Enable git support for the environment indicator to show current branch.
     $conf['environment_indicator_git_support'] = TRUE;
-    break;
 
-  /**
-   * Production Environment.
-   */
   case 'production':
-    // Enable the ability to send emails - via core mail in this case,
-    // but it coulbe be update to use SMTP or mail API.
-    $conf['mail_system'] = array(
-      'default-system' => 'DefaultMailSystem',
-    );
     // Enable caching for production.
     // 6 hours cache time.
     $conf['page_cache_maximum_age'] = 21600;
@@ -334,20 +257,30 @@ search*";
     exit();
 }
 
-// Fake the 'derived_key' used to connect to Solr, if we can't find the
-// Acquia-set "AH_PRODUCTION" environment variable.
-// This will cause all requests to Acquia Search instances respond with 403.
-if (!isset($_ENV["AH_SITE_ENVIRONMENT"])) {
-
-  // EDIT THE NEXT LINE TO MATCH your Search API "server" machinename.
-  $search_api_server_machine_name = 'dkan_acquia_solr';
-
-  $conf['search_api_acquia_overrides'][$search_api_server_machine_name] = array(
-      // 'path' => '/solr/[core_ID]',
-      // 'host' => '[hostname].acquia-search.com',.
-    'derived_key' => 'FAKE',
+/**
+ * Settings that are individual to environments.
+ */
+if (ENVIRONMENT == "production") {
+  // Enable the ability to send emails - via core mail in this case,
+  // but it coulbe be update to use SMTP or mail API.
+  $conf['mail_system'] = array(
+    'default-system' => 'DefaultMailSystem',
   );
 }
+// Disable dkan_worflow modules so that dkan tests pass
+// See: https://jira.govdelivery.com/browse/CIVIC-5128
+if (getenv('CI') == "true") {
+  $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow';
+  $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow_permissions';
+  $conf['features_master_temp_disabled_modules'][] = 'link_badges';
+  $conf['features_master_temp_disabled_modules'][] = 'menu_badges';
+  $conf['features_master_temp_disabled_modules'][] = 'views_dkan_workflow_tree';
+  $conf['features_master_temp_disabled_modules'][] = 'workbench';
+  $conf['features_master_temp_disabled_modules'][] = 'workbench_email';
+  $conf['features_master_temp_disabled_modules'][] = 'workbench_moderation';
+  $conf['features_master_temp_disabled_modules'][] = 'drafty';
+}
+
 
 /****************************
  * OPTIONAL: Acquia Settings.
