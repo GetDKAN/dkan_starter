@@ -12,23 +12,6 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
     $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
   }
 
-  // Adds support for fast file if enabled in config.yml.
-  if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
-    $conf['dkan_datastore_fast_import_selection'] = 2;
-    $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
-    $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
-    $conf['queue_filesize_threshold'] = $conf['default']['fast_file']['queue'];
-    $conf['dkan_datastore_class'] = 'DkanDatastoreFastImport';
-
-    $databases['default']['default']['pdo'] = array(
-      PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
-      PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
-    );
-  }
-  else {
-    $conf['dkan_datastore_fast_import_selection'] = 0;
-  }
-
   $env = getenv('AH_SITE_ENVIRONMENT');
   $sitegroup = getenv('AH_SITE_GROUP');
 

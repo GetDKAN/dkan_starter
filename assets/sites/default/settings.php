@@ -78,6 +78,22 @@ $conf['features_master_temp_disabled_modules'] = array();
 // some problems)
 $conf['clamav_mode'] = 1;
 
+// Adds support for fast file if enabled in config.yml.
+if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
+  $conf['dkan_datastore_fast_import_selection'] = 2;
+  $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
+  $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
+  $conf['queue_filesize_threshold'] = $conf['default']['fast_file']['queue'];
+  $conf['dkan_datastore_class'] = 'DkanDatastoreFastImport';
+
+  $databases['default']['default']['pdo'] = array(
+    PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
+    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
+  );
+}
+else {
+  $conf['dkan_datastore_fast_import_selection'] = 0;
+}
 
 // Don't show any errors.
 $conf['error_level'] = ERROR_REPORTING_HIDE;
@@ -142,33 +158,6 @@ $conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
 // Never disallow cli access via shield config.
 $conf['shield_allow_cli'] = 1;
 
-// Only enable GA codes in production. This was not put in the switch statement
-// below as it is production only setting.
-if (ENVIRONMENT == 'production') {
-  // Add tracking codes for Google Analytics.
-  if (isset($conf['gaClientTrackingCode']) && $conf['gaClientTrackingCode'] != 'UA-XXXXX-Y') {
-    $conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
-  }
-  elseif (isset($conf['gaNuCivicTrackingCode']) && $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
-    $conf['googleanalytics_account'] = $conf['gaNuCivicTrackingCode'];
-  }
-
-  if (isset($conf['gaNuCivicTrackingCode']) &&
-    $conf['googleanalytics_account'] != $conf['gaNuCivicTrackingCode'] &&
-    $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
-    $conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'auto', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
-  }
-}
-else {
-  // Make sure GA is not enabled on non production envs.
-  $conf['features_master_temp_disabled_modules'] = array_merge(
-    $conf['features_master_temp_disabled_modules'],
-    array(
-      'googleanalytics',
-      'google_tag',
-    ));
-}
-
 /******************************************************
  * OPTIONAL: Override default settings per environment.
  ******************************************************/
@@ -232,6 +221,8 @@ switch (ENVIRONMENT) {
         array(
           // Only send Acquia Insite scores from prod.
           'acquia_spi',
+          'googleanalytics',
+          'google_tag',
         ));
 
     // Enable git support for the environment indicator to show current branch.
@@ -266,6 +257,20 @@ if (ENVIRONMENT == "production") {
   $conf['mail_system'] = array(
     'default-system' => 'DefaultMailSystem',
   );
+
+  // Add tracking codes for Google Analytics.
+  if (isset($conf['gaClientTrackingCode']) && $conf['gaClientTrackingCode'] != 'UA-XXXXX-Y') {
+    $conf['googleanalytics_account'] = $conf['gaClientTrackingCode'];
+  }
+  elseif (isset($conf['gaNuCivicTrackingCode']) && $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
+    $conf['googleanalytics_account'] = $conf['gaNuCivicTrackingCode'];
+  }
+
+  if (isset($conf['gaNuCivicTrackingCode']) &&
+    $conf['googleanalytics_account'] != $conf['gaNuCivicTrackingCode'] &&
+    $conf['gaNuCivicTrackingCode'] != 'UA-XXXXX-Z') {
+    $conf['googleanalytics_codesnippet_after'] = "ga('create', '" . $conf['gaNuCivicTrackingCode'] . "', 'auto', 'nucivicTracker');ga('nucivicTracker.send', 'pageview');";
+  }
 }
 // Disable dkan_worflow modules so that dkan tests pass
 // See: https://jira.govdelivery.com/browse/CIVIC-5128
