@@ -229,16 +229,21 @@ switch (ENVIRONMENT) {
     $conf['environment_indicator_git_support'] = TRUE;
 
   case 'production':
-    // Enable caching for production.
-    // 6 hours cache time.
-    $conf['page_cache_maximum_age'] = 21600;
+    if (ENVIRONMENT == "test" || ENVIRONMENT == "production") {
+      // Enable caching for test and production.
+      // 6 hours cache time.
+      $conf['page_cache_maximum_age'] = 21600;
+      $conf['page_compression'] = 1;
+      $conf['cache'] = 1;
+      $conf['preprocess_js'] = 1;
+      $conf['preprocess_css'] = 1;
+    }
+
     $conf['ape_alternative_lifetime'] = 300;
-    $conf['ape_alternatives'] = "search
-search*";
-    $conf['page_compression'] = 1;
-    $conf['cache'] = 1;
-    $conf['preprocess_js'] = 1;
-    $conf['preprocess_css'] = 1;
+    $conf['ape_alternatives'] = <<<EOT
+search
+search*
+EOT;
     $conf['pathauto_update_action'] = 1;
     break;
 
