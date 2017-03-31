@@ -1,32 +1,17 @@
 <?php
+
 /**
+ * @file
  * Acquia Settings.
  */
 
-if (isset($conf['memcache_servers'])) {
-  $conf['cache_backends'][] = './sites/all/modules/contrib/memcache/memcache.inc';
-  $conf['cache_default_class'] = 'MemCacheDrupal';
-  $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
-}
-
-// Adds support for fast file if enabled in config.yml.
-if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
-  $conf['dkan_datastore_fast_import_selection'] = 2;
-  $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
-  $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
-  $conf['queue_filesize_threshold'] = $conf['default']['fast_file']['queue'];
-  $conf['dkan_datastore_class'] = 'DkanDatastoreFastImport';
-
-  $databases['default']['default']['pdo'] = array(
-    PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
-    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
-  );
-}
-else {
-  $conf['dkan_datastore_fast_import_selection'] = 0;
-}
-
 if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
+  if (isset($conf['memcache_servers'])) {
+    $conf['cache_backends'][] = './sites/all/modules/contrib/memcache/memcache.inc';
+    $conf['cache_default_class'] = 'MemCacheDrupal';
+    $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
+  }
+
   $env = getenv('AH_SITE_ENVIRONMENT');
   $sitegroup = getenv('AH_SITE_GROUP');
 
@@ -39,7 +24,7 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
     $conf['securepages_enable'] = 1;
     $conf['securepages_forms'] = "user_login\r\nuser_login_block";
     $conf['securepages_ignore'] = "";
-    $conf['securepages_pages'] =  "node/add*\r\nnode/*/edit\r\nnode/*/delete\r\nuser\r\nuser/*\r\nadmin\r\nadmin/*\r\npanels\r\npanels*";
+    $conf['securepages_pages'] = "node/add*\r\nnode/*/edit\r\nnode/*/delete\r\nuser\r\nuser/*\r\nadmin\r\nadmin/*\r\npanels\r\npanels*";
     $conf['securepages_secure'] = "1";
     $conf['securepages_switch'] = "0";
     $conf['securepages_debug'] = "0";
@@ -76,7 +61,7 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
       'node/%node/edit',
       'node/%node/moderation',
       'file/ajax',
-      'api/action/datastore/search.json'
+      'api/action/datastore/search.json',
     );
 
     // Standarize node edit paths for validation.
@@ -89,4 +74,26 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   }
 
   acquia_hosting_db_choose_active();
+}
+else {
+  // Fake the 'derived_key' used to connect to Solr, if we can't find the
+  // Acquia-set "AH_PRODUCTION" environment variable.
+  // This will cause all requests to Acquia Search instances respond with 403.
+  if (
+    isset($conf['acquia']) &&
+    isset($conf['acquia']['search']) &&
+    isset($conf['acquia']['search']['id'])
+  ) {
+
+    $search_api_server_machine_name = $conf['acquia']['search']['id'];
+  }
+  else {
+    $search_api_server_machine_name = 'dkan_acquia_solr';
+  }
+
+  $conf['search_api_acquia_overrides'][$search_api_server_machine_name] = array(
+    // 'path' => '/solr/[core_ID]',
+    // 'host' => '[hostname].acquia-search.com',.
+    'derived_key' => 'FAKE',
+  );
 }
