@@ -161,6 +161,7 @@ commands:
       # render custom .htaccess
       ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb
       ahoy cmd-proxy ruby .ahoy/site/.scripts/circle.rb
+      ahoy cmd-proxy PROCESS_CONFIG=true ruby .ahoy/site/.scripts/config.rb
 
       # Transpose config.yml to php
       cd .ahoy/site
