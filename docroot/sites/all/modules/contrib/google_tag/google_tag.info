@@ -5,9 +5,9 @@ core = 7.x
 
 configure = admin/config/system/google_tag
 
-; Information added by Drupal.org packaging script on 2017-01-09
-version = "7.x-1.1"
+; Information added by Drupal.org packaging script on 2017-04-05
+version = "7.x-1.2"
 core = "7.x"
 project = "google_tag"
-datestamp = "1483993444"
+datestamp = "1491356302"
 

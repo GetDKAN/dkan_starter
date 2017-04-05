@@ -28,6 +28,21 @@ function hook_google_tag_insert_alter(&$satisfied) {
 }
 
 /**
+ * Alter the realm values for the current page response.
+ *
+ * This hook allows other modules to alter the realm values that affect the
+ * snippets to be inserted.
+ *
+ * @param array $realm
+ *   Associative array of realm values keyed by name and key.
+ */
+function hook_google_tag_realm_alter(&$realm) {
+  // Do something to the realm values.
+  $realm['name'] = 'my_realm';
+  $realm['key'] = 'my_key';
+}
+
+/**
  * Alter the snippets to be inserted on a page response.
  *
  * This hook allows other modules to alter the snippets to be inserted based on

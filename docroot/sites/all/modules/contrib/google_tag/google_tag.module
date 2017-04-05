@@ -81,11 +81,62 @@ function google_tag_variable_info($options) {
 }
 
 /**
- * Element validation handler for google_tag_container_id.
+ * Implements hook_form_FORM_ID_alter() for variable_edit_form().
+ *
+ * This applies to:
+ * - individual variables with a path like:
+ * admin/config/system/variable/edit/google_tag_role_toggle
+ *
+ * - all variables by group with a path like:
+ * admin/config/system/variable/group/google_tag
+ *
+ * - all variables by module with a path like:
+ * admin/config/system/variable/module/google_tag
+ *
+ * on the latter two forms:
+ * - comment says 'These are global default variables.'
+ * - regardless the highlighted value in realm switcher
+ * - realm name:key = global:default
+ * - $form[#variable_options][realm]->realm and key
+ *
+ * all of these forms have
+ * - element parents are none
+ * - $form[#variable_edit_form] contains list of variables on the form
+ * - with first form need to check the variable being in this module
+ *
+ * on all pages:
+ * - variable_realm_key_[realm] may be a query argument in the url
  */
-function google_tag_validate_container_id($variable, $options, $element, $form, &$form_state) {
-  module_load_include('inc', 'google_tag', 'includes/variable');
-  return _google_tag_validate_container_id($variable, $options, $element, $form, $form_state);
+function google_tag_form_variable_edit_form_alter(&$form, &$form_state, $form_id) {
+  // Also include these on group and module pages for element validation.
+  form_load_include($form_state, 'inc', 'google_tag', 'includes/admin');
+  form_load_include($form_state, 'inc', 'google_tag', 'includes/variable');
+  if (strpos($_GET['q'], 'admin/config/system/variable/edit/') === 0) {
+    if (strpos($form['#variable_edit_form'][0], 'google_tag_') === 0) {
+      $form['#submit'][] = 'google_tag_settings_form_submit';
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for variable_realm_edit_variables_form().
+ *
+ * This applies to:
+ * - selected variables by realm with a path like:
+ * admin/config/system/variable/realm/language/edit
+ * - $form[#variable_options][realm]->realm and key
+ * - $form_state[build_info][args] = [ [0] => realm_name, [1] => realm_key ]
+ * - element parents are [variables][google_tag]
+ * - and tree is true on variables key
+ * - $form[#variable_edit_form] contains list of variables on the form
+ * - which includes variables from other modules
+ */
+function google_tag_form_variable_realm_edit_variables_form_alter(&$form, &$form_state, $form_id) {
+  // @todo Why does variable_realm not set this item on this particular form?
+  $form['#realm_keys'][$form['#variable_options']['realm']->realm] = $form['#variable_options']['realm']->key;
+  $form['#submit'][] = 'google_tag_settings_form_submit';
+  form_load_include($form_state, 'inc', 'google_tag', 'includes/admin');
+  form_load_include($form_state, 'inc', 'google_tag', 'includes/variable');
 }
 
 /**
@@ -112,22 +163,37 @@ function google_tag_page_build(&$page) {
   //   - callbacks in $elements['#post_render']
   //     - google_tag_page_process(): callback set here
 
-  $wrapper = file_stream_wrapper_get_instance_by_uri('public://');
+  $base_path = 'public:/';
+  $include_classes = variable_get('google_tag_include_classes', 0);
+
+  list($realm_name, $realm_key) = google_tag_realm_values();
+  $types = $include_classes ? array('data_layer', 'script') : array('script');
+
+  $data_layer = variable_get('google_tag_data_layer', 'dataLayer');
+  if ($include_classes && module_exists('datalayer') && $data_layer == 'dataLayer') {
+    $classes = variable_get('google_tag_data_layer_classes', array());
+    if ($classes) {
+      // Add data_layer using dataLayer module.
+      datalayer_add($classes);
+    }
+    $types = array('script');
+  }
 
   // Add data_layer and script snippets to head (by default).
   $include_script_as_file = variable_get('google_tag_include_file', 1);
   if ($include_script_as_file) {
-    $base_path = variable_get('file_public_path', conf_path() . '/files');
-    foreach (array('data_layer', 'script') as $type) {
-      $path = "$base_path/js/google_tag.$type.js";
+    foreach ($types as $type) {
+      // A stream wrapper may be passed as $data to drupal_add_js($data) because
+      // drupal_get_js() calls file_create_url($data). The latter will work with
+      // whichever class implements the stream, e.g. local, S3, or App Engine.
+      $path = "$base_path/google_tag/{$realm_name}google_tag.$realm_key$type.js";
       // @todo Will it matter if file is empty?
       drupal_add_js($path, array('group' => JS_LIBRARY * 2));
     }
   }
   else {
-    $base_path = $wrapper->realpath();
-    foreach (array('data_layer', 'script') as $type) {
-      $url = "$base_path/js/google_tag.$type.js";
+    foreach ($types as $type) {
+      $url = "$base_path/google_tag/{$realm_name}google_tag.$realm_key$type.js";
       $contents = @file_get_contents($url);
       // @see drupal_get_js()
       // For inline JavaScript to validate as XHTML, all JavaScript containing
@@ -139,8 +205,8 @@ function google_tag_page_build(&$page) {
   }
 
   // Add noscript snippet to page_top region.
-  $base_path = $wrapper->realpath();
-  $url = "$base_path/js/google_tag.noscript.js";
+  $type = 'noscript';
+  $url = "$base_path/google_tag/{$realm_name}google_tag.$realm_key$type.js";
   $noscript = @file_get_contents($url);
 
   if ($noscript) {
@@ -153,6 +219,49 @@ function google_tag_page_build(&$page) {
     );
   }
 
+}
+
+/**
+ * Returns applicable realm name and key for the request.
+ *
+ * @return array
+ *   The realm name and key.
+ */
+function google_tag_realm_values() {
+  $realm_name = $realm_key = '';
+
+  if (module_exists('variable_realm') && module_exists('variable_store')) {
+    // If realms exist, then the non-realm snippet files will not be loaded.
+    // These are in the 'google_tag' directory beneath the site files directory.
+    // If variable_realm module is later removed, then visit the module settings
+    // page and update the settings.
+    $realms = variable_realm_current();
+    // Remove the global realm as this is always active.
+    unset($realms['global']);
+    if (empty($realms)) {
+      $realm_name = 'global';
+      $realm_key = 'default';
+    }
+    else {
+      // The variable_realm module allows multiple realms to be 'active' on a
+      // page request which leaves us in the dark as to which one to use.
+      // The realms are weighted; use first one after 'global:default'.
+      $realm_name = key($realms);
+      $realm_key = variable_realm_status($realm_name);
+    }
+    // Allow other modules to alter the realm name and key.
+    $realm_values = array('name' => $realm_name, 'key' => $realm_key);
+    drupal_alter('google_tag_realm', $realm_values);
+    $realm_name = $realm_values['name'];
+    $realm_key = $realm_values['key'];
+
+    $debug = variable_get('google_tag_debug_output', 0);
+    $debug ? drupal_set_message(t('realm:key = @realm:@key', array('@realm' => $realm_name, '@key' => $realm_key))) : '';
+
+    $realm_name .= $realm_name ? '/' : '';
+    $realm_key .= $realm_key ? '.' : '';
+  }
+  return array($realm_name, $realm_key);
 }
 
 /**
@@ -175,6 +284,8 @@ function google_tag_insert_snippet() {
   }
   // Allow other modules to alter the insertion criteria.
   drupal_alter('google_tag_insert', $satisfied);
+  $debug = variable_get('google_tag_debug_output', 0);
+  $debug ? drupal_set_message(t('after alter @satisfied', array('@satisfied' => $satisfied))) : '';
   return $satisfied;
 }
 
@@ -188,6 +299,7 @@ function _google_tag_status_check() {
   static $satisfied;
 
   if (!isset($satisfied)) {
+    $debug = variable_get('google_tag_debug_output', 0);
     $toggle = variable_get('google_tag_status_toggle', GOOGLE_TAG_EXCLUDE_LISTED);
     $statuses = variable_get('google_tag_status_list', GOOGLE_TAG_STATUSES);
 
@@ -200,6 +312,8 @@ function _google_tag_status_check() {
       $satisfied = strpos($statuses, $status) !== FALSE;
       $satisfied = ($toggle == GOOGLE_TAG_EXCLUDE_LISTED) ? !$satisfied : $satisfied;
     }
+    $debug ? drupal_set_message(t('google_tag')) : '';
+    $debug ? drupal_set_message(t('status check @satisfied', array('@satisfied' => $satisfied))) : '';
   }
   return $satisfied;
 }
@@ -214,6 +328,7 @@ function _google_tag_path_check() {
   static $satisfied;
 
   if (!isset($satisfied)) {
+    $debug = variable_get('google_tag_debug_output', 0);
     $toggle = variable_get('google_tag_path_toggle', GOOGLE_TAG_EXCLUDE_LISTED);
     $paths = variable_get('google_tag_path_list', GOOGLE_TAG_PATHS);
 
@@ -232,6 +347,7 @@ function _google_tag_path_check() {
       }
       $satisfied = ($toggle == GOOGLE_TAG_EXCLUDE_LISTED) ? !$satisfied : $satisfied;
     }
+    $debug ? drupal_set_message(t('path check @satisfied', array('@satisfied' => $satisfied))) : '';
   }
   return $satisfied;
 }
@@ -247,6 +363,7 @@ function _google_tag_role_check() {
   static $satisfied;
 
   if (!isset($satisfied)) {
+    $debug = variable_get('google_tag_debug_output', 0);
     $toggle = variable_get('google_tag_role_toggle', GOOGLE_TAG_EXCLUDE_LISTED);
     $roles = variable_get('google_tag_role_list', array());
     $roles = array_filter($roles);
@@ -260,6 +377,7 @@ function _google_tag_role_check() {
       $satisfied = (bool) array_intersect($roles, $user->roles);
       $satisfied = ($toggle == GOOGLE_TAG_EXCLUDE_LISTED) ? !$satisfied : $satisfied;
     }
+    $debug ? drupal_set_message(t('role check @satisfied', array('@satisfied' => $satisfied))) : '';
   }
   return $satisfied;
 }

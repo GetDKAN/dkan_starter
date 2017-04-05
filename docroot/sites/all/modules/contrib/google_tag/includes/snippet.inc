@@ -33,10 +33,9 @@ function google_tag_snippets() {
  */
 function _google_tag_script_snippet() {
   // Gather data.
-  $container_id = variable_get('google_tag_container_id', '');
-  $container_id = trim(drupal_json_encode($container_id), '"');
-  $data_layer = variable_get('google_tag_data_layer', 'dataLayer');
-  $data_layer = trim(drupal_json_encode($data_layer), '"');
+  $container_id = _google_tag_variable_clean('google_tag_container_id');
+  $data_layer = _google_tag_variable_clean('google_tag_data_layer', 'dataLayer');
+  $query = _google_tag_environment_query();
   $compact = variable_get('google_tag_compact_snippet', 1);
 
   // Build script snippet.
@@ -49,7 +48,7 @@ function _google_tag_script_snippet() {
   var j=d.createElement(s);
   var dl=l!='dataLayer'?'&l='+l:'';
   j.type='text/javascript';
-  j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;
+  j.src='//www.googletagmanager.com/gtm.js?id='+i+dl+'$query';
   j.async=true;
   f.parentNode.insertBefore(j,f);
 
@@ -76,13 +75,13 @@ EOS;
  */
 function _google_tag_noscript_snippet() {
   // Gather data.
-  $container_id = variable_get('google_tag_container_id', '');
-  $container_id = trim(drupal_json_encode($container_id), '"');
+  $container_id = _google_tag_variable_clean('google_tag_container_id');
+  $query = _google_tag_environment_query();
   $compact = variable_get('google_tag_compact_snippet', 1);
 
   // Build noscript snippet.
   $noscript = <<<EOS
-<noscript><iframe src="//www.googletagmanager.com/ns.html?id=$container_id"
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=$container_id$query"
  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 EOS;
   if ($compact) {
@@ -104,7 +103,7 @@ EOS;
  * @return string|null
  *   The data layer snippet or NULL.
  */
-function _google_tag_data_layer_snippet() {
+function _google_tag_data_layer_snippet(&$classes = array()) {
   // Gather data.
   $data_layer = variable_get('google_tag_data_layer', 'dataLayer');
   $data_layer = trim(drupal_json_encode($data_layer), '"');
@@ -121,19 +120,41 @@ function _google_tag_data_layer_snippet() {
     $classes["gtm.$name"] = $$name;
   }
 
-  if ($classes) {
-    // Build data layer items.
-    if (module_exists('datalayer') && $data_layer == 'dataLayer') {
-      // Add classes to data layer.
-      // @todo How to or can we set the name of the data layer?
-      // This is an open issue on datalayer project; after it is implemented in
-      // datalayer then remove second condition on if block.
-      datalayer_add($classes);
-    }
-    else {
-      // Build data layer snippet.
-      $script = "var $data_layer = [" . drupal_json_encode($classes) . '];';
-      return $script;
-    }
+  // Build data layer snippet.
+  $script = $classes ? "var $data_layer = [" . drupal_json_encode($classes) . '];' : '';
+  return $script;
+}
+
+/**
+ * Returns a query string with the environment parameters.
+ *
+ * @return string
+ *   The query string.
+ */
+function _google_tag_environment_query() {
+  if (!variable_get('google_tag_include_environment', 0)) {
+    return '';
   }
+
+  // Gather data.
+  $environment_id = _google_tag_variable_clean('google_tag_environment_id');
+  $environment_token = _google_tag_variable_clean('google_tag_environment_token');
+
+  // Build query string.
+  return "&gtm_auth=$environment_token&gtm_preview=$environment_id&gtm_cookies_win=x";
+}
+
+/**
+ * Returns a cleansed variable.
+ *
+ * @param string $variable
+ *   The variable name.
+ * @param string $variable
+ *   The default value for the variable.
+ *
+ * @return string
+ *   The cleansed variable.
+ */
+function _google_tag_variable_clean($variable, $default = '') {
+  return trim(drupal_json_encode(variable_get($variable, $default)), '"');
 }
