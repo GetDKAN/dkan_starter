@@ -26,7 +26,7 @@ function _google_tag_variable_group_info() {
  */
 function _google_tag_variable_info($options) {
   // Gather data.
-  $groups = array('general', 'path', 'role', 'status', 'advanced');
+  $groups = array('general', 'path', 'role', 'status', 'advanced', 'internal');
   $common = array(
     'group' => 'google_tag',
     'localize' => TRUE,
@@ -52,7 +52,7 @@ function _google_tag_variable_info($options) {
 function _google_tag_variable_info_general($options) {
   // Gather data.
   $args = array('@path' => 'https://tagmanager.google.com/');
-  $description = t('The ID assigned by Google Tag Manager (GTM) for this website container. To get a container ID, <a href="@path">sign up for GTM</a> and create a container for your website.', $args);
+  $description = t('The ID assigned by Google Tag Manager (GTM) for this website container. To get a container ID, <a href="@path">sign up for GTM</a> and create a container for your website.', $args, $options);
 
   // Build variables.
   $variables['google_tag_container_id'] = array(
@@ -60,7 +60,7 @@ function _google_tag_variable_info_general($options) {
     'title' => t('Container ID', array(), $options),
     'description' => $description,
     'default' => '',
-    'validate callback' => 'google_tag_validate_container_id',
+    'validate callback' => '_google_tag_validate_container_id',
     'element' => array(
       '#attributes' => array('placeholder' => array('GTM-xxxxxx')),
       '#size' => 12,
@@ -82,7 +82,7 @@ function _google_tag_variable_info_path($options) {
     '%blog-wildcard' => 'blog/*',
     '%front' => '<front>',
   );
-  $list_description = t('Enter one relative path per line using the "*" character as a wildcard. Example paths are: "%blog" for the blog page, "%blog-wildcard" for each individual blog, and "%front" for the front page.', $args);
+  $list_description = t('Enter one relative path per line using the "*" character as a wildcard. Example paths are: "%blog" for the blog page, "%blog-wildcard" for each individual blog, and "%front" for the front page.', $args, $options);
 
   // Build variables.
   $variables['google_tag_path_toggle'] = array(
@@ -144,7 +144,7 @@ function _google_tag_variable_info_role($options) {
 function _google_tag_variable_info_status($options) {
   // Gather data.
   $args = array('@path' => 'http://en.wikipedia.org/wiki/List_of_HTTP_status_codes');
-  $list_description = t('Enter one response status per line. For more information, refer to the <a href="@path">list of HTTP status codes</a>.', $args);
+  $list_description = t('Enter one response status per line. For more information, refer to the <a href="@path">list of HTTP status codes</a>.', $args, $options);
 
   // Build variables.
   $variables['google_tag_status_toggle'] = array(
@@ -177,10 +177,13 @@ function _google_tag_variable_info_status($options) {
 function _google_tag_variable_info_advanced($options) {
   // Gather data.
   $args = array('@path' => 'https://developers.google.com/tag-manager/devguide#security');
-  $description = t('The types of tags, triggers, and variables <strong>allowed</strong> on a page. Enter one class per line. For more information, refer to the <a href="@path">developer documentation</a>.', $args);
+  $description = t('The types of tags, triggers, and variables <strong>allowed</strong> on a page. Enter one class per line. For more information, refer to the <a href="@path">developer documentation</a>.', $args, $options);
 
-  $args = array('@path2' => 'https://www.drupal.org/project/datalayer');
-  $markup = t('If the default data layer name is used, then enable the <a href="@path2">data layer</a> module to manage the insertion of tags, triggers, and variables in one place. If a different module is used for this purpose, there may be some contamination and override of values from this and the other module.', $args);
+  $args = array('@path' => 'https://www.drupal.org/project/datalayer');
+  $markup = t('If the default data layer name is used, then enable the <a href="@path">data layer</a> module to manage the insertion of tags, triggers, and variables in one place. If a different module is used for this purpose, there may be some contamination and override of values from this and the other module.', $args, $options);
+
+  $args = array('@path' => 'https://tagmanager.google.com/#/admin');
+  $description2 = t('The environment ID to use with this website container. To get an environment ID, <a href="@path">select Environments</a>, create an environment, then click the "Get Snippet" action. The environment ID and token will be in the snippet.', $args, $options);
 
   // Build variables.
   $variables['google_tag_compact_snippet'] = array(
@@ -197,19 +200,34 @@ function _google_tag_variable_info_advanced($options) {
     'default' => 1,
   );
 
+  $variables['google_tag_debug_output'] = array(
+    'type' => 'boolean',
+    'title' => t('Show debug output', array(), $options),
+    'description' => t('If checked, then the result of each snippet insertion condition will be shown in the message area. Enable <strong>only for development</strong> purposes.', array(), $options),
+    'default' => 0,
+  );
+
+  $disabled = !module_exists('datalayer');
+
   $variables['google_tag_data_layer'] = array(
     'type' => 'string',
     'title' => t('Data layer', array(), $options),
-    'description' => t('The name of the data layer. Default value is "dataLayer". In most cases, use the default.'),
+    'description' => t('The name of the data layer. Default value is "dataLayer". In most cases, use the default.', array(), $options),
     'default' => 'dataLayer',
     'validate callback' => '_google_tag_validate_data_layer',
     'element' => array(
       '#attributes' => array('placeholder' => array('dataLayer')),
       '#required' => TRUE,
+      '#prefix' => $disabled ? '<span>' . $markup . '</span>' : '',
     ),
   );
 
-  $disabled = !module_exists('datalayer');
+  $variables['google_tag_include_classes'] = array(
+    'type' => 'boolean',
+    'title' => t('Add classes to the data layer', array(), $options),
+    'description' => t('If checked, then the listed classes will be added to the data layer.', array(), $options),
+    'default' => 0,
+  );
 
   $variables['google_tag_whitelist_classes'] = array(
     'type' => 'text',
@@ -219,24 +237,96 @@ function _google_tag_variable_info_advanced($options) {
     'validate callback' => '_google_tag_validate_text',
     'element' => array(
       '#rows' => 5,
-      '#prefix' => $disabled ? '<span>' . $markup . '</span>' : '',
-//       '#disabled' => $disabled,
+      '#states' => _google_tag_variable_states('google_tag_include_classes'),
     ),
   );
 
   $variables['google_tag_blacklist_classes'] = array(
     'type' => 'text',
     'title' => t('Black-listed classes', array(), $options),
-    'description' => t('The types of tags, triggers, and variables <strong>forbidden</strong> on a page. Enter one class per line.'),
+    'description' => t('The types of tags, triggers, and variables <strong>forbidden</strong> on a page. Enter one class per line.', array(), $options),
     'default' => GOOGLE_TAG_BLACKLIST_CLASSES,
     'validate callback' => '_google_tag_validate_text',
     'element' => array(
       '#rows' => 5,
-//       '#disabled' => $disabled,
+      '#states' => _google_tag_variable_states('google_tag_include_classes'),
+    ),
+  );
+
+  $variables['google_tag_include_environment'] = array(
+    'type' => 'boolean',
+    'title' => t('Include an environment', array(), $options),
+    'description' => t('If checked, then the applicable snippets will include the environment items below. Enable <strong>only for development</strong> purposes.', array(), $options),
+    'default' => 0,
+  );
+
+  $variables['google_tag_environment_id'] = array(
+    'type' => 'string',
+    'title' => t('Environment ID', array(), $options),
+    'description' => $description2,
+    'default' => '',
+    'validate callback' => '_google_tag_validate_environment_id',
+    'element' => array(
+      '#attributes' => array('placeholder' => array('env-x')),
+      '#size' => 10,
+      '#maxlength' => 7,
+      '#states' => _google_tag_variable_states('google_tag_include_environment'),
+    ),
+  );
+
+  $variables['google_tag_environment_token'] = array(
+    'type' => 'string',
+    'title' => t('Environment token', array(), $options),
+    'description' => t('The authentication token for this environment.', array(), $options),
+    'default' => '',
+    'element' => array(
+      '#attributes' => array('placeholder' => array('xxxxxxxxxxxxxxxxxxxxxx')),
+      '#size' => 20,
+      '#maxlength' => 25,
+      '#states' => _google_tag_variable_states('google_tag_include_environment'),
     ),
   );
 
   return $variables;
+}
+
+/**
+ * Implements hook_variable_info().
+ */
+function _google_tag_variable_info_internal($options) {
+  // Gather data.
+  $args = array('@path' => 'admin/config/system/variable/realm/language/configure');
+  $markup = t('<strong>NOTE</strong>: If using the dataLayer module to insert these values and variable realms are in effect, then <a href="@path">check this item to be realm-specific</a>.', $args, $options);
+
+  // Build variables.
+  $visible = module_exists('datalayer') && module_exists('variable_realm');
+
+  $variables['google_tag_data_layer_classes'] = array(
+    'type' => 'properties',
+    'title' => t('Data layer classes', array(), $options),
+    'description' => t('The associative array of data layer classes. <strong>NOTE: If using the dataLayer module to insert these values and variable realms are in effect, then check this item.</strong>', array(), $options),
+    'default' => array(),
+    'element' => array(
+//       '#prefix' => $visible ? '<span>' . $markup . '</span>' : '',
+      '#attributes' => array('class' => array('element-invisible')),
+    ),
+  );
+
+  return $variables;
+}
+
+/**
+ * Returns states array for a form element.
+ */
+function _google_tag_variable_states($variable) {
+  return array(
+    'required' => array(
+      ':input[name="' . $variable . '"]' => array('checked' => TRUE),
+    ),
+    'invisible' => array(
+      ':input[name="' . $variable . '"]' => array('checked' => FALSE),
+    ),
+  );
 }
 
 /**
@@ -247,9 +337,6 @@ function _google_tag_variable_info_advanced($options) {
  *   form_set_error('element[name]', $message).
  */
 function _google_tag_validate_container_id($variable, $options, $element, $form, &$form_state) {
-  // Load this for other validation routines.
-  module_load_include('inc', 'google_tag', 'includes/admin');
-
   // Use this routine as the variable realm form has nested values.
   $value = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
   // Trim the text value.
@@ -264,6 +351,27 @@ function _google_tag_validate_container_id($variable, $options, $element, $form,
     // @todo Is there a way to "test the connection" to determine a valid ID for
     // a container? It may be valid but not the correct one for the website.
     return t('A valid container ID is case sensitive and formatted like GTM-xxxxxx.');
+  }
+}
+
+/**
+ * Element validation handler for google_tag_environment_id.
+ */
+function _google_tag_validate_environment_id($variable, $options, $element, $form, &$form_state) {
+  // @todo This will not prevent checking 'include_environment' on an individual
+  // variable edit form and never setting the 'environment_id'.
+  $parents = $element['#parents'];
+  array_pop($parents);
+  $parents[] = 'google_tag_include_environment';
+  $include_environment = drupal_array_get_nested_value($form_state['values'], $parents);
+
+  $value = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
+  $value = trim($value);
+  $value = str_replace(array('–', '—', '−'), '-', $value);
+  drupal_array_set_nested_value($form_state['values'], $element['#parents'], $value);
+
+  if ($include_environment && !preg_match('/^env-\d{1,}$/', $value)) {
+    return t('A valid environment ID is case sensitive and formatted like env-x.');
   }
 }
 
