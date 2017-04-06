@@ -64,7 +64,7 @@ $env_map = array(
   'prod' => 'production',
   'ra' => 'production',
 );
-define(CI, getenv('CI'));
+define('CI', getenv('CI'));
 devinci_set_env($env_map);
 
 /********************************************************
