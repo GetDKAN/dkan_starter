@@ -94,9 +94,6 @@ if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enabl
     PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
   );
 }
-else {
-  $conf['dkan_datastore_fast_import_selection'] = 0;
-}
 
 // Don't show any errors.
 $conf['error_level'] = ERROR_REPORTING_HIDE;
