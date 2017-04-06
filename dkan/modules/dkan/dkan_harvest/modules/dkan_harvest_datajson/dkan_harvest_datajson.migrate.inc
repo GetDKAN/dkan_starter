@@ -154,6 +154,16 @@ class DatajsonHarvestMigration extends HarvestMigration {
         $row->temporal_coverage_to = $date[1];
       }
     }
+
+    // field_odfe_data_quality expects "true" or "false" as input values.
+    if (isset($row->dataQuality)) {
+      if ($row->dataQuality === FALSE) {
+        $row->dataQuality = 'false';
+      }
+      elseif ($row->dataQuality === TRUE) {
+        $row->dataQuality = 'true';
+      }
+    }
   }
 
   /**
@@ -185,7 +195,13 @@ class DatajsonHarvestMigration extends HarvestMigration {
     $resources = array();
 
     foreach ($resources_row_data as $resource_row_data) {
-      $resource = $this->prepareResourceHelper($resource_row_data->downloadURL,
+      // Fallback to the accessURL if the downloadURL is not available.
+      $url = $resource_row_data->downloadURL;
+      if (empty($url)) {
+        $url = $resource_row_data->accessURL;
+      }
+
+      $resource = $this->prepareResourceHelper($url,
         $resource_row_data->format,
         $resource_row_data->title,
         NULL,
