@@ -75,7 +75,8 @@ projects[visualization_entity_tables][download][branch] = master
 ; ===========
 projects[] = expire
 projects[] = expire_panels
-projects[] = memcache
+projects[memcache] = 1.6
+projects[memcache][patch][2856140] = https://www.drupal.org/files/issues/undefined-function-dmemcache_object_cluster-2856140-8.patch
 projects[] = entitycache
 projects[] = admin_views
 projects[] = fast_404
