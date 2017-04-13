@@ -47,9 +47,19 @@ my.BaseControl = Backbone.View.extend({
                 '<label for="control-chart-label-x-rotation">X Label Rotation</label>' +
                 '<input aria-label="X label rotation" value="{{options.xAxis.rotateLabels}}" type="text" id="control-chart-label-x-rotation" class="form-control" placeholder="e.g: -45"/>' +
               '</div>' +
+              
+              /// Axis label
               '<div class="form-group">' +
-                  '<label for="control-chart-x-axis-label">X Axis Label</label>' +
-                  '<input aria-label="X axis label" class="form-control" type="text" id="control-chart-x-axis-label" value="{{options.xAxis.axisLabel}}"/>' +
+                '<div class="row">' +
+                  '<div class="col-md-9 col-sm-9">' +
+                    '<label for="control-chart-x-axis-label">X Axis Label</label>' +
+                    '<input aria-label="X axis label" class="form-control" type="text" id="control-chart-x-axis-label" value="{{options.xAxis.axisLabel}}"/>' +
+                  '</div>' +
+                  '<div class="col-md-3 col-sm-3">' +
+                    '<label for="control-chart-y-axis-label-distance">Distance</label>' +
+                    '<input aria-label="X axis label distance" class="form-control" type="number" id="control-chart-x-axis-label-distance" value="{{options.xAxis.axisLabelDistance}}"/>' +
+                  '</div>' +
+                '</div>' +
               '</div>' +
 
               /// Axis ticks
@@ -265,24 +275,7 @@ my.BaseControl = Backbone.View.extend({
                   '</div>' +
                 '</div>' +
               '</fieldset>',
-  templateGeneral:
-              //////// GENERAL
-              '<fieldset>' +
-                '<legend>General</legend>' +
-
-                /// Color
-                '<div class="form-group">' +
-                    '<label for="control-chart-color">Color</label>' +
-                    '<input aria-label="chart colors" class="form-control" type="text" id="control-chart-color" value="{{options.color}}" placeholder="e.g: #FF0000,green,blue,#00FF00"/>' +
-                '</div>' +
-
-                /// Transition time
-                '<div class="form-group">' +
-                  '<label for="control-chart-transition-time">Transition Time (milliseconds)</label>' +
-                  '<input aria-label="Transition time" value="{{transitionTime}}" type="text" id="control-chart-transition-time" class="form-control" placeholder="e.g: 2000"/>' +
-                '</div>' +
-
-                /// Goal
+  templateGoal:
                 '<div class="form-group">' +
                   '<div class="row">' +
                     '<div class="col-md-12 col-sm-12">' +
@@ -309,7 +302,26 @@ my.BaseControl = Backbone.View.extend({
                       '</div>' +
                     '</div>' +
                   '</div>' +
+                '</div>',
+  templateGeneral:
+              //////// GENERAL
+              '<fieldset>' +
+                '<legend>General</legend>' +
+
+                /// Color
+                '<div class="form-group">' +
+                    '<label for="control-chart-color">Color</label>' +
+                    '<input aria-label="chart colors" class="form-control" type="text" id="control-chart-color" value="{{options.color}}" placeholder="e.g: #FF0000,green,blue,#00FF00"/>' +
                 '</div>' +
+
+                /// Transition time
+                '<div class="form-group">' +
+                  '<label for="control-chart-transition-time">Transition Time (milliseconds)</label>' +
+                  '<input aria-label="Transition time" value="{{transitionTime}}" type="text" id="control-chart-transition-time" class="form-control" placeholder="e.g: 2000"/>' +
+                '</div>' +
+
+                /// Goal
+                '<div id="goal-controls"></div>' +
 
                 /// Data sort
                 '<div class="form-group">' +
@@ -342,6 +354,12 @@ my.BaseControl = Backbone.View.extend({
                       '<input aria-label="Margin left" id="control-chart-margin-left" type="text" class="form-control" placeholder="Left" value="{{options.margin.left}}">' +
                     '</div>' +
                   '</div>' +
+                '</div>' +
+
+                /// Custom height
+                '<div class="form-group">' +
+                  '<label for="control-chart-height">Chart height (optional)</label>' +
+                  '<input aria-label="Chart height" value="{{chartHeight}}" type="text" id="control-chart-height" class="form-control" placeholder="e.g: 480"/>' +
                 '</div>' +
 
                 /// Show title
@@ -409,7 +427,6 @@ my.BaseControl = Backbone.View.extend({
     'submit #control-chart': 'update'
   },
   render: function(){
-    var controlsRendered = false;
     var self = this;
     var sortFields = _.arrayToOptions(_.getFields(self.state.get('model')));
     var formatX, formatY;
@@ -417,9 +434,10 @@ my.BaseControl = Backbone.View.extend({
     self.state.set('sortFields', _.applyOption(sortFields, [self.state.get('sort')]));
 
     var options = self.state.get('options') || {};
-    options.margin = options.margin || {top: 15, right: 10, bottom: 50, left: 60};
+    options.margin = options.margin || {top: 30, right: 20, bottom: 50, left: 60};
     self.state.set('options', options, {silent : true});
     $('#base-controls').html(Mustache.render(self.composeTemplate(), self.state.toJSON()));
+    $('#goal-controls').html(Mustache.render(self.templateGoal, self.state.toJSON()));
 
     self.$('.chosen-select').chosen({width: '95%'});
     if(self.state.get('xFormat') && self.state.get('xFormat').format) {
@@ -469,7 +487,20 @@ my.BaseControl = Backbone.View.extend({
       if(self.$(e.target).closest('.chosen-container').length) return;
       if(e.type === 'keydown' && e.keyCode !== 13) return;
     }
-    newState = _.merge({}, self.state.toJSON(), self.getUIState());
+
+    // Get old and new settings.
+    var oldSettings = self.state.toJSON();
+    var newSettings = self.getUIState();
+    // Merge old and new settings.
+    newState = _.merge({}, oldSettings, newSettings);
+    // The merge function is recursive so all the settings that are saved as
+    // arrays are merged as well. Chart colors are saved on arrays and we need
+    // the new settings to replace the old ones so the following was added in order
+    // to fix those settings after the merge is done.
+    if (newSettings.options.color) {
+      newState.options.color = newSettings.options.color;
+    }
+
     self.state.set(newState);
   },
   getUIState: function(){
@@ -479,6 +510,7 @@ my.BaseControl = Backbone.View.extend({
     var computedState = {
       group: self.$('#control-chart-group').is(':checked'),
       transitionTime: self.$('#control-chart-transition-time').val(),
+      chartHeight: self.$('#control-chart-height').val(),
       xFormat:{
         type: self.$('#control-chart-x-format option:selected').data('type'),
         format: self.$('#control-chart-x-format option:selected').val()
@@ -528,6 +560,7 @@ my.BaseControl = Backbone.View.extend({
     computedState.options.xAxis.rotateLabels = (isNaN(rotationVal)) ? 0 : rotationVal;
     color = _.invoke(self.$('#control-chart-color').val().split(','), 'trim');
     computedState.options.xAxis.axisLabel = self.$('#control-chart-x-axis-label').val();
+    computedState.options.xAxis.axisLabelDistance = parseInt(self.$('#control-chart-x-axis-label-distance').val()) || 0;
     computedState.options.yAxis.axisLabel = self.$('#control-chart-y-axis-label').val();
     computedState.options.yAxis.axisLabelDistance = parseInt(self.$('#control-chart-y-axis-label-distance').val()) || 0;
     computedState.options.y1Axis.axisLabel = self.$('#control-chart-y1-axis-label').val();
@@ -537,9 +570,7 @@ my.BaseControl = Backbone.View.extend({
     if(self.$('#control-chart-color').val()){
       computedState.options.color = color;
     } else {
-      if(computedState.options.color){
-        delete computedState.options.color;
-      }
+      computedState.options.color = nv.utils.defaultColor();
     }
     var margin = {
       top: parseInt(self.$('#control-chart-margin-top').val()),
