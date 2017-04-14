@@ -9,7 +9,11 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
    * Chart options step
    */
   global.ChartOptionsView = Backbone.View.extend({
-    template: '<div class="col-md-12" id="chart-with-controls">' +
+    template: '<div class="data-explorer-help"><i class="fa fa-info-circle" aria-hidden="true"></i> ' +
+              '<strong>Chart Preview:</strong> Note that by default the preview only displays up to 100 records. ' +
+              'Click on the Dataset tab below to review the data in use. Adjust the start and end fields of the ' +
+              'pager to set the number of records you wish to use.</div>' +
+              '<div class="col-md-12" id="chart-with-controls">' +
                 '<div class="col-md-7">' +
                   '<ul class="nav nav-tabs" role="tablist" id="myTab">' +
                     '<li role="presentation" class="active"><a href="#chart-tab" aria-controls="home" role="tab" data-toggle="tab">Chart</a></li>' +
@@ -36,7 +40,10 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
                       '</div>' +
                     '</div>' +
                     '<div role="tabpanel" class="tab-pane" id="dataset-tab">' +
-                      '<div id="pager"></div>' +
+                      '<div class="data-details">' +
+                        '<span id="pager"></span>' +
+                        '<span class="data-results"><span class="doc-count">{{recordCount}}</span> records</span>' +
+                      '</div>' +
                       '<div id="grid"></div>' +
                     '</div>' +
                   '</div>' +
@@ -67,6 +74,7 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
       '#query-editor button': 'onEditorUpdate'
     },
     initialize: function(options){
+      console.log('initialize');
       var self = this;
       self.options = _.defaults(options || {}, self.options);
       self.state = self.options.state;
@@ -85,9 +93,9 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
     render: function(){
       var self = this;
       var graphType = self.state.get('graphType');
-
       self.listenTo(self.state.get('model').queryState, 'change', self.copyQueryState);
       self.$el.html(Mustache.render(self.template, self.state.toJSON()));
+      self.$el.find('.doc-count').text(self.state.get('model').recordCount || 'Unknown');
       self.$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         self.graph.render();
       });
@@ -253,6 +261,13 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
                     '{{/fields}}' +
                   '</select>' +
                 '</div>' +
+                '<div class="form-group relative">' +
+                  '{{#yDataTypes}}' +
+                    '<label class="radio-inline">' +
+                      '<input type="radio" name="control-chart-y-data-type" id="control-chart-y-data-type-{{value}}" value="{{value}}" {{#selected}}checked {{/selected}}> {{name}}' +
+                    '</label>' +
+                  '{{/yDataTypes}}' +
+                '</div>' +
                 '<div class="form-group">' +
                   '<label for="control-chart-xfield">X-Field</label>' +
                   '<select id="control-chart-xfield" class="form-control chosen-select">' +
@@ -289,6 +304,9 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
       self.state.set('fields', _.applyOption(
         _.arrayToOptions(_.getFields(self.state.get('model'))), self.state.get('seriesFields')
       ));
+      self.state.set('yDataTypes', _.applyOption(
+        _.arrayToOptions(dataTypes), [self.state.get('yDataType') || 'Auto']
+      ));
       self.state.set('xfields', _.applyOption(
         _.arrayToOptions(_.getFields(self.state.get('model'))), [self.state.get('xfield')]
       ));
@@ -302,6 +320,7 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
     updateState: function(state, cb){
       var self = this;
       state.set('seriesFields', self.$('#control-chart-series').val());
+      state.set('yDataType', self.$('input[name=control-chart-y-data-type]:checked').val());
       state.set('xfield', self.$('#control-chart-xfield').val());
       state.set('xDataType', self.$('input[name=control-chart-x-data-type]:checked').val());
       cb(state);
@@ -310,13 +329,18 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
 
   /**
    * Load data view
+   *
+   * Hiding Source Url field until further work can be done on it, it is useless at this point.
    */
   global.LoadDataView = Backbone.View.extend({
-    template: '<div class="form-group">' +
-                '<label for="control-chart-source">Source</label>' +
+    template: '<div class="form-group" style="display:none;">' +
+                '<label for="control-chart-source">Source Url</label>' +
+                ' <em>(Auto-populated if using DKAN.)</em>' +
                 '<input value="{{source.url}}" type="text" id="control-chart-source" class="form-control" />' +
               '</div>' +
               '<div class="form-group">' +
+                '<label for="control-chart-backend">Source Type</label>' +
+                ' <em>(Experimental : Backends other than DKAN are still a work in progress.)</em>' +
                 '<select title="Select backend source type" id="control-chart-backend" class="form-control">' +
                   '<option value="csv">CSV</option>' +
                   '<option value="gdocs">Google Spreadsheet</option>' +
@@ -350,8 +374,10 @@ this.recline.View.nvd3 = this.recline.View.nvd3 || {};
 
       state.set('source', source);
       var model = new recline.Model.Dataset(source);
-      state.set('model', model)
-      model.fetch().done(cb.bind(this, state)).fail(function (err) {
+      model.fetch().done(function(){
+        state.set('model', model);
+        cb(state);
+      }).fail(function (err) {
         console.log(err);
         alert('Failed to fetch the resource');
       });
