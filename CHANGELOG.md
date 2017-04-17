@@ -2,6 +2,7 @@
 
 ## [1.13.4.0]
 - Upgrade DKAN to version 1.13.2  PR#136
+- Add admin_views to features master in data_config
 
 ## [1.13.1.5]
 - Added patch on DKAN to include modifications made on PR#1795.
