@@ -201,9 +201,8 @@ projects:
     patch:
       2045225: http://drupal.org/files/remove-dsm-from-hook-install-2045225-1.patch
   media:
-    version: 2.0-beta13
+    version: 2.0
     patch:
-      2534724: https://www.drupal.org/files/issues/media-fix_rebuild_bug-2534724-105-d7.patch
       2272567: https://www.drupal.org/files/issues/media_dialog_appears_2272567-32.patch
   media_youtube:
     version: '3.0'
@@ -246,7 +245,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/open_data_schema_map.git
-      tag: 7.x-1.13.3-RC1
+      tag: 7.x-1.13.3
   panelizer:
     version: '3.4'
   panels:
@@ -276,7 +275,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/recline.git
-      tag: 7.x-1.13.3-RC1
+      tag: 7.x-1.13.3
   ref_field:
     download:
       type: git
@@ -300,7 +299,7 @@ projects:
       2406863: https://www.drupal.org/files/issues/rules-remove-cache-rebuild-log-2406863-21.patch
       2851567: https://www.drupal.org/files/issues/rules_init_and_cache-2851567-8.patch
   restws:
-    version: '2.6'
+    version: '2.7'
   roleassign:
     version: '1.1'
   safeword:
