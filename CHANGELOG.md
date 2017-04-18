@@ -1,6 +1,9 @@
 # Change log
 
-## [1.13.4.0]
+## [1.13.3.0]
+- Upgrade DKAN to version 1.13.3  PR#220
+
+## [1.13.2.0]
 - Upgrade DKAN to version 1.13.2  PR#136
 
 ## [1.13.1.5]
