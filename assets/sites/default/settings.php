@@ -64,7 +64,7 @@ $env_map = array(
   'prod' => 'production',
   'ra' => 'production',
 );
-define(CI, getenv('CI'));
+$ci = getenv('CI');
 devinci_set_env($env_map);
 
 /********************************************************
@@ -81,7 +81,7 @@ $conf['clamav_mode'] = 1;
 
 // Adds support for fast file if enabled in config.yml.
 if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
-  if (!CI) {
+  if (!$ci) {
     $conf['dkan_datastore_fast_import_selection'] = 2;
     $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
     $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
@@ -139,7 +139,7 @@ ini_set('session.cookie_lifetime', 2000000);
 
 // Disable cron. We run this from Jenkins.
 // Except for CircleCI or test purpose.
-if (CI) {
+if ($ci) {
   $conf['cron_safe_threshold'] = 0;
 }
 
