@@ -64,7 +64,7 @@ $env_map = array(
   'prod' => 'production',
   'ra' => 'production',
 );
-$ci = getenv('CI');
+define("CI", getenv('CI'));
 devinci_set_env($env_map);
 
 /********************************************************
@@ -81,7 +81,7 @@ $conf['clamav_mode'] = 1;
 
 // Adds support for fast file if enabled in config.yml.
 if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enable']) {
-  if (!$ci) {
+  if (!CI) {
     $conf['dkan_datastore_fast_import_selection'] = 2;
     $conf['dkan_datastore_fast_import_selection_threshold'] = $conf['default']['fast_file']['limit'];
     $conf['dkan_datastore_load_data_type'] = 'load_data_local_infile';
@@ -95,7 +95,17 @@ if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enabl
   );
 }
 else {
-  $conf['dkan_datastore_fast_import_selection'] = 0;
+  if (!CI) {
+    $conf['dkan_datastore_fast_import_selection'] = 0;
+  }
+  else {
+    // Set PDO values for CI environment and avoid setting
+    // up the fast import selection option.
+    $databases['default']['default']['pdo'] = array(
+      PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
+      PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
+    );
+  }
 }
 
 // Don't show any errors.
