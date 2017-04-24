@@ -149,7 +149,7 @@ ini_set('session.cookie_lifetime', 2000000);
 
 // Disable cron. We run this from Jenkins.
 // Except for CircleCI or test purpose.
-if ($ci) {
+if (CI) {
   $conf['cron_safe_threshold'] = 0;
 }
 
