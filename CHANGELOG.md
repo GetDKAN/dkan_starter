@@ -1,5 +1,9 @@
 # Change log
 
+## [1.13.3.1]
+- Fix fast import tests when fast import is disabled in config.yml #233
+- Fix notice about undefined constant CI. #233
+
 ## [1.13.3.0]
 - Upgrade DKAN to version 1.13.3  PR#220
 
