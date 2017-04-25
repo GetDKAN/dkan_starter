@@ -135,6 +135,10 @@ commands:
       # Replace sites/default with our own sites/default outside of the drupal root.
       rm -rf docroot/sites/default;
       ln -s ../../assets/sites/default docroot/sites/default
+      # Add .htaccess to the files directory if it does not exist.
+      if [ ! -f docroot/sites/default/files/.htaccess ]; then
+        ln -s ../../config/files/.htaccess docroot/sites/default/files/.htaccess
+      fi
       # Clean out any .gitignore files imported from other modules, libraries, and profiles.
       find dkan -type f -name .gitignore -exec rm -rf {} \;
       find dkan -type d -name .git -exec rm -rf {} \;

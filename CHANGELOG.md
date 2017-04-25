@@ -1,5 +1,8 @@
 # Change log
 
+## [1.13.3.2]
+- Support htaccess in public file directory  #232
+
 ## [1.13.3.1]
 - Fix fast import tests when fast import is disabled in config.yml #233
 - Fix notice about undefined constant CI. #233
