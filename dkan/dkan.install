@@ -255,7 +255,7 @@ function dkan_update_7013() {
 /**
 * Drop the 'field_modified_source_date' field.
 */
-function dkan_update_7014() {
+function dkan_dataset_update_7004() {
   // Mark the field for deletion.
   field_delete_field('field_modified_source_date');
   // Run the batch process to actually delete the field.
@@ -264,10 +264,20 @@ function dkan_update_7014() {
 }
 
 /**
- * Update the default jquery library to 1.10 (again).
+ * Remove old variables from dkan_dataset_api.
  */
-function dkan_update_7015() {
-  if (version_compare(variable_get('jquery_update_jquery_version'), '1.10', '<')) {
-    variable_set('jquery_update_jquery_version', '1.10');
-  }
+function dkan_dataset_update_7005() {
+  variable_del('dkan_catalog_desc');
+  variable_del('dkan_catalog_contact');
+  variable_del('dkan_catalog_mbox');
+  variable_del('dkan_dataset_api_site_read');
+  variable_del('dkan_dataset_api_data_json');
+  variable_del('dkan_dataset_api_revision_list');
+  variable_del('dkan_dataset_api_package_list');
+  variable_del('dkan_dataset_api_current_package_list_with_resources');
+  variable_del('dkan_dataset_api_package_show');
+  variable_del('dkan_dataset_api_resource_show');
+  variable_del('dkan_dataset_api_group_package_show');
+  variable_del('dkan_dataset_api_package_revision_list');
+  variable_del('dkan_dataset_api_group_list');
 }
