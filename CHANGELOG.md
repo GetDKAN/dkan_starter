@@ -1,7 +1,7 @@
 # Change log
 
 ## [1.13.3.x]
-- Added date_default_timezone setting for the test env on assets/sites/default/settings.php
+- Added date_default_timezone setting for the test env on assets/sites/default/settings.php #244
 
 ## [1.13.3.2]
 - Support htaccess in public file directory  #232
