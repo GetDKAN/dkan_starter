@@ -239,6 +239,8 @@ switch (ENVIRONMENT) {
 
     // Enable git support for the environment indicator to show current branch.
     $conf['environment_indicator_git_support'] = TRUE;
+    // Make sure the default timezone is set to UTC for testing.
+    $conf['date_default_timezone'] = 'UTC';
 
   case 'production':
     if (ENVIRONMENT == "test" || ENVIRONMENT == "production") {
