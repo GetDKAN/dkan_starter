@@ -292,9 +292,6 @@ if (ENVIRONMENT == "production") {
 // Disable dkan_worflow modules so that dkan tests pass
 // See: https://jira.govdelivery.com/browse/CIVIC-5128
 if (getenv('CI') == "true") {
-  // TODO: change clamav feature tests so that they enable clamav.
-  $conf['features_master_temp_enabled_modules'][] = 'clamav';
-
   $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow';
   $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow_permissions';
   $conf['features_master_temp_disabled_modules'][] = 'link_badges';
