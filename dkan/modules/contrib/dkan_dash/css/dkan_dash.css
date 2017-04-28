@@ -1,0 +1,17 @@
+.jsoneditor table,
+.jsoneditor tbody,
+.jsoneditor th,
+.jsoneditor table,
+.jsoneditor td,
+.jsoneditor table.group_additional tbody th,
+.jsoneditor table.group_additional td {
+  border: none;
+  line-height:normal;
+  margin: 0 0;
+}
+.form-item-field-dash-settings-und-0-value {
+  display: none;
+}
+#field-dash-settings-add-more-wrapper {
+  height: 400px;
+}
