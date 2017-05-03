@@ -3,6 +3,7 @@
 namespace Drupal\DKANExtension\Context;
 
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
+use Behat\Behat\Hook\Scope\AfterFeatureScope;
 
 /**
  * Defines application features from the specific context.
@@ -26,7 +27,7 @@ class ClamAvContext extends RawDKANContext {
   /**
    * @AfterFeature @clamav
    */
-  public static function AfterFeatureClamav(BeforeFeatureScope $scope) {
+  public static function AfterFeatureClamav(AfterFeatureScope $scope) {
     $modules_after_feature = module_list(TRUE);
 
     $modules_to_disable = array_diff_assoc(
