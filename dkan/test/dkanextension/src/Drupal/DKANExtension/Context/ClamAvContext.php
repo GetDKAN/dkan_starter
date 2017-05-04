@@ -10,13 +10,13 @@ use Behat\Behat\Hook\Scope\AfterFeatureScope;
  */
 class ClamAvContext extends RawDKANContext {
 
-  public static $modules_before_feature = array();
+  public static $modulesBeforeFeature = array();
 
   /**
    * @BeforeFeature @clamav
    */
   public static function BeforeFeatureClamav(BeforeFeatureScope $scope) {
-    self::$modules_before_feature = module_list(TRUE);
+    self::$modulesBeforeFeature = module_list(TRUE);
 
     @module_enable(array(
       'clamav',
@@ -32,7 +32,7 @@ class ClamAvContext extends RawDKANContext {
 
     $modules_to_disable = array_diff_assoc(
       $modules_after_feature,
-      self::$modules_before_feature
+      self::$modulesBeforeFeature
     );
     module_disable(array_values($modules_to_disable));
     drupal_uninstall_modules(array_values($modules_to_disable));
