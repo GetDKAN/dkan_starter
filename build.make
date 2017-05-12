@@ -89,6 +89,7 @@ projects[visualization_entity_tables][download][branch] = master
 ; Performance
 ; ===========
 projects[] = expire
+projects[] = expire_panels
 projects[] = memcache
 projects[] = entitycache
 projects[] = admin_views
