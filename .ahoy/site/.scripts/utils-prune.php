@@ -84,12 +84,14 @@ function prune_nodes($number = 25) {
     catch(Exception $e) {
       print "Skipping dataset $node->nid do to error\n";
     }
-    foreach($resources as $resource) {
-      try {
-        node_delete($resource['target_id']);
-      }
-      catch(Exception $e) {
-        print "Skipping resource $resource[target_id] do to error\n";
+    if ($resources) {
+      foreach($resources as $resource) {
+        try {
+          node_delete($resource['target_id']);
+        }
+        catch(Exception $e) {
+          print "Skipping resource $resource[target_id] do to error\n";
+        }
       }
     }
   }
