@@ -949,7 +949,7 @@ function media_update_7211() {
 
   // Clear the image cache to remove any old image styles that only exist in
   // code.
-  cache_clear_all('*', 'cache_image', TRUE);
+  cache_clear_all('image_styles', 'cache_image', TRUE);
 
   // Check if the square_thumbnail image style exists.
   // The style will only exist if the user has customized it, otherwise it would
@@ -1206,4 +1206,11 @@ function media_update_7226() {
   foreach ($roles as $rid => $role) {
     user_role_grant_permissions($rid, array('access media browser'));
   }
+}
+
+/**
+ * Make sure that the image style square_thumbnail is created.
+ */
+function media_update_7227() {
+  media_update_7211();
 }
