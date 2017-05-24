@@ -334,7 +334,7 @@ function dkan_dataset_form_alter(&$form, &$form_state, $form_id) {
 
     // Get langcode for field_link_api.
     $field_link_api_langcode = dkan_dataset_form_field_language($form, 'field_link_api');
-    $form['field_link_api'][$field_link_api_langcode][0]['#description'] = t('Link to a public API or information source.');
+    $form['field_link_api'][$field_link_api_langcode][0]['#description'] = t('Full url to a public API or information source (http://example.com).');
 
     // Get langcode for field_format.
     $field_link_api_langcode = dkan_dataset_form_field_language($form, 'field_format');
@@ -346,9 +346,23 @@ function dkan_dataset_form_alter(&$form, &$form_state, $form_id) {
     $form['field_link_api'][$field_link_api_langcode][0]['#title'] = '';
     $form['field_link_remote_file'][$field_link_remote_file_langcode][0]['#title'] = '';
 
-    // Resources inherit groups from parent dataset.
-    // Hide field so users cannot manually modify that information.
-    $form['og_group_ref']['#access'] = FALSE;
+    // Get langcode for og_group_ref.
+    $og_group_ref_langcode = dkan_dataset_form_field_language($form, 'og_group_ref');
+
+    // Modify title of Publisher field.
+    $form['og_group_ref'][$og_group_ref_langcode]['#title'] = t('Groups');
+
+    $groups = dkan_dataset_get_group_options();
+    $form['og_group_ref'][$og_group_ref_langcode]['#options'] = $groups;
+
+    // Use state to show or hide field group.
+    $form['og_group_ref']['#states'] = array(
+      'visible' => array(
+        array(':input[name="field_dataset_ref[und][]"]' => array('value' => array('_none'))),
+        '[OR/XOR]',
+        array(':input[name="field_dataset_ref[und][]"]' => array('value' => array())),
+      ),
+    );
 
     if ($query = drupal_get_query_parameters()) {
       if (isset($query['dataset'])) {
@@ -494,7 +508,7 @@ function dkan_dataset_dataset_node_form_validate($form, &$form_state) {
   $public_access_level = $form_state['values']['field_public_access_level'][$field_public_access_level_langcode][0]['value'];
   $field_rights_langcode = dkan_dataset_form_field_language($form, 'field_rights');
   $rights = $form_state['values']['field_rights'][$field_rights_langcode][0]['value'];
-  if ($public_access_level != 'public' && empty($rights)) {
+  if (isset($public_access_level) && $public_access_level != 'public' && empty($rights)) {
     form_set_error('field_rights', 'Rights field is required.');
   }
 }
@@ -558,7 +572,7 @@ function dkan_dataset_resource_node_form_validate($form, &$form_state) {
     }
   }
   // Ensure that only one type of resource is uploaded or linked to.
-  if(count(array_filter(array($link_fid,$api,$upload_fid))) != 1) {
+  if (count(array_filter(array($link_fid, $api, $upload_fid))) != 1) {
     if ($link_fid) {
       $remote_error = t('<strong>Remote file</strong> is populated - only one resource type can be used at a time.');
       form_set_error('field_link_remote_file', $remote_error);
@@ -571,6 +585,12 @@ function dkan_dataset_resource_node_form_validate($form, &$form_state) {
       $upload_error = t('<strong>Upload</strong> is populated - only one resource type can be used at a time.');
       form_set_error('field_upload', $upload_error);
     }
+  }
+  if (!empty($form_state['values']['field_link_api'][$field_link_api_langcode][0]['url']) &&
+    !valid_url($form_state['values']['field_link_api'][$field_link_api_langcode][0]['url'], TRUE)) {
+    // Require full url if using the API or Website URL option.
+    $api_url_error = t('Please enter a full url (include http:// or https://)');
+    form_set_error('field_link_api', $api_url_error);
   }
   // Autodetect file type if a new one is not provided.
   if (!$type) {
@@ -628,7 +648,6 @@ function dkan_dataset_resource_node_form_validate($form, &$form_state) {
           }
         }
       }
-
     }
   }
   $vocabs = taxonomy_vocabulary_get_names();
