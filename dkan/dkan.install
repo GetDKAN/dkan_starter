@@ -213,43 +213,29 @@ function dkan_update_7011() {
  * Deprecated modules: Conditional Fields, Entity RDF, RDF UI, RDF Extensions.
  */
 function dkan_update_7012() {
-  if (!module_exists('conditional_fields')) {
-    db_delete('system')
-      ->condition('name', 'conditional_fields')
-      ->condition('type', 'module')
-      ->execute();
-    db_drop_table('conditional_fields');
-  }
-  if (!module_exists('entity_rdf')) {
-    db_delete('system')
-      ->condition('name', 'entity_rdf')
-      ->condition('type', 'module')
-      ->execute();
-  }
-  if (!module_exists('rdfui')) {
-    db_delete('system')
-      ->condition('name', 'rdfui')
-      ->condition('type', 'module')
-      ->execute();
-  }
-  if (!module_exists('rdfx')) {
-    db_delete('system')
-      ->condition('name', 'rdfx')
-      ->condition('type', 'module')
-      ->execute();
+  $modules = array(
+    'conditional_fields',
+    'entity_rdf',
+    'rdfui',
+    'rdfx',
+  );
+  db_delete('system')
+    ->condition('name', $modules, 'IN')
+    ->condition('type', 'module')
+    ->execute();
 
-    db_drop_table('rdfx_namespaces');
-    db_drop_table('rdfx_term_details');
-    db_drop_table('rdfx_term_domains');
-    db_drop_table('rdfx_term_inverses');
-    db_drop_table('rdfx_term_ranges');
-    db_drop_table('rdfx_term_superclasses');
-    db_drop_table('rdfx_term_superproperties');
-    db_drop_table('rdfx_term_types');
-    db_drop_table('rdfx_terms');
-    db_drop_table('rdfx_vocabulary_details');
-    db_drop_table('rdfx_vocabulary_graphs');
-  }
+  db_drop_table('conditional_fields');
+  db_drop_table('rdfx_namespaces');
+  db_drop_table('rdfx_term_details');
+  db_drop_table('rdfx_term_domains');
+  db_drop_table('rdfx_term_inverses');
+  db_drop_table('rdfx_term_ranges');
+  db_drop_table('rdfx_term_superclasses');
+  db_drop_table('rdfx_term_superproperties');
+  db_drop_table('rdfx_term_types');
+  db_drop_table('rdfx_terms');
+  db_drop_table('rdfx_vocabulary_details');
+  db_drop_table('rdfx_vocabulary_graphs');
 }
 
 /**
@@ -267,21 +253,12 @@ function dkan_update_7013() {
 }
 
 /**
- * Drop the 'field_modified_source_date' field.
- */
-function dkan_update_7014() {
+* Drop the 'field_modified_source_date' field.
+*/
+function dkan_dataset_update_7004() {
   // Mark the field for deletion.
   field_delete_field('field_modified_source_date');
   // Run the batch process to actually delete the field.
   $batch_size = 1;
   field_purge_batch($batch_size);
-}
-
-/**
- * Update the default jquery library to 1.10 (again).
- */
-function dkan_update_7015() {
-  if (version_compare(variable_get('jquery_update_jquery_version'), '1.10', '<')) {
-    variable_set('jquery_update_jquery_version', '1.10');
-  }
 }
