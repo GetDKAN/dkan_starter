@@ -53,6 +53,8 @@
         "@type": "org:Organization",
         "name": "TEST - State Economic Council"
       },
+      "accrualPeriodicity": "irregular",
+      "dataQuality": true,
       "title": "TEST - State Workforce by Generation (2011-2015)"
     }
   ]

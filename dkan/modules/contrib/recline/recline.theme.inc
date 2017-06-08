@@ -24,18 +24,17 @@ define('RECLINE_REQUEST_TIMEOUT_HEAD', 2);
  */
 define('RECLINE_REQUEST_TIMEOUT_GET', 10);
 
-
 /**
  * Returns HTML for an recline field formatter.
  *
- * @param array $variables
+ * @param array $vars
  *   An associative array containing:
- *   - item: Associative array of recline field
+ *   - item: Associative array of recline field.
  *
  * @ingroup themeable
  */
 function theme_recline_default_formatter($vars) {
-  $type = null;
+  $type = NULL;
 
   // Embedded view doesn't use html.tpl.php template
   // so we need to add bootstrap by hand.
@@ -75,7 +74,7 @@ function theme_recline_default_formatter($vars) {
   $description = isset($file['description']) ? $file['description'] : '';
   $output = recline_build_icon($url, $type, $file['filename'], $file['filemime'], $file['filesize'], $description);
 
-  if(!$type) {
+  if (!$type) {
     $request = drupal_http_request($url, array('timeout' => RECLINE_REQUEST_TIMEOUT_HEAD, 'method' => 'HEAD'));
     // When request fail.
     if ($request->code != 200) {
@@ -106,13 +105,16 @@ function theme_recline_default_formatter($vars) {
     case 'json':
       $output['preview'] = recline_preview_json($url);
       break;
+
     case 'csv':
     case 'xls':
       $output['preview'] = recline_preview_multiview($vars);
       break;
+
     case 'geojson':
       $output['preview'] = recline_preview_geojson_leaflet($url);
       break;
+
     case 'zip':
       $filename = FALSE;
 
@@ -160,21 +162,26 @@ function theme_recline_default_formatter($vars) {
     case 'html':
       $output['preview'] = recline_format_link_api($url);
       break;
+
     case 'png':
     case 'gif':
     case 'jpg':
       $output['preview'] = recline_format_image($url);
       break;
+
     case 'arcgis':
       $output['preview'] = recline_preview_arcgis_feature($url);
       break;
+
     case 'rdf':
     case 'xml':
       $output['preview'] = recline_prettify_xml($url);
       break;
+
     case 'pdf':
       $output['preview'] = recline_format_link_api($url);
       break;
+
     case 'wms':
       // We can accept just the bare endpoint or the XML preview.
       $parsed = parse_url($url);
@@ -216,6 +223,7 @@ function theme_recline_default_formatter($vars) {
         $output['preview'] = recline_preview_unavailable();
       }
       break;
+
     default:
       $output[] = recline_preview_unavailable();
   }
@@ -229,7 +237,7 @@ function recline_preview_wms($url, $titles, $images, $north, $east, $south, $wes
   $items = array();
   foreach ($titles as $title) {
     if (isset($images[$title])) {
-      $title = '<img src="' . $images[$title] . '" alt="' . t("!title legend item", array("!title" => $title)) . '"/> ' . $title;
+      $title = t('<img src="@image" alt="@title legend item"/> @title', array('@title' => $title, '@image' => $images[$title]));
     }
     $items[] = array(
       'data' => $title,
@@ -248,10 +256,20 @@ function recline_preview_wms($url, $titles, $images, $north, $east, $south, $wes
           format: 'image/png',
           transparent: true,
       }).addTo(map);map.fitBounds([['" . $south . "','" . $west . "'],['" . $north . "','" . $east . "']]);";
-  drupal_add_js($output, array('type' => 'inline', 'scope' => 'footer', 'weight' => 5));
+  drupal_add_js($output, array(
+    'type' => 'inline',
+    'scope' => 'footer',
+    'weight' => 5,
+  ));
   return array(
     '#type' => 'markup',
-    '#markup' => '<div id="map" style="width: 100%; height: 500px"></div>' . theme('item_list', array('items' => $items, 'title' => t("Legend"), 'attributes' => array('class' => 'list-inline'))),
+    '#markup' => '<div id="map" style="width: 100%; height: 500px"></div>' . theme('item_list', array(
+      'items' => $items,
+      'title' => t("Legend"),
+      'attributes' => array(
+        'class' => 'list-inline',
+      ),
+    )),
   );
 }
 
@@ -311,7 +329,17 @@ function recline_preview_json($url) {
 
   // When a json is a geojson file then return a geojson preview
   // instead of a normal json preview.
-  $types = array('FeatureCollection', 'GeometryCollection', 'Feature', 'Point', 'MultiPoint', 'LineString', 'MultiLineString', 'Polygon', 'MultiPolygon');
+  $types = array(
+    'FeatureCollection',
+    'GeometryCollection',
+    'Feature',
+    'Point',
+    'MultiPoint',
+    'LineString',
+    'MultiLineString',
+    'Polygon',
+    'MultiPolygon',
+  );
   foreach ($types as $type) {
     foreach ($decoded as $key => $value) {
       if ($type === $value) {
@@ -376,7 +404,14 @@ function recline_preview_arcgis_feature($url) {
   $lat = variable_get('recline_default_lat', "38");
   $lon = variable_get('recline_default_lon', "-99");
   $module_path = drupal_get_path('module', 'recline');
-  drupal_add_js(array('recline' => array('url' => $url, 'lat' => $lat, 'lon' => $lon)), 'setting');
+  drupal_add_js(array(
+    'recline' => array(
+      'url' => $url,
+      'lat' => $lat,
+      'lon' => $lon,
+    ),
+    'setting',
+  ));
   drupal_add_js($module_path . '/restdataview.js');
   $output = array(
     'map' => array(
@@ -396,7 +431,7 @@ function recline_preview_geojson_leaflet($url) {
     $geojson = $response->data;
   }
   else {
-    return ;
+    return;
   }
   libraries_load('leaflet_markercluster');
   $leaflet_imgs = libraries_get_path('recline') . '/vendor/leaflet/1.0.2/images/';
@@ -412,15 +447,19 @@ function recline_preview_geojson_leaflet($url) {
     markers.addLayer(geojson);
     map.addLayer(markers);
     map.fitBounds(geojson.getBounds());";
-  drupal_add_js($output, array('type' => 'inline', 'scope' => 'footer', 'weight' => 5));
+  drupal_add_js($output, array(
+    'type' => 'inline',
+    'scope' => 'footer',
+    'weight' => 5,
+  ));
   return array(
     'map' => array(
       '#type' => 'markup',
       '#markup' => '<div id="map" style="height:450px; width:100%"></div>',
     ),
   );
-  return $output;
 }
+
 /**
  * Builds output render array for files if item is an archive.
  */
@@ -450,6 +489,7 @@ function recline_preview_zip($uri) {
   }
   return $output;
 }
+
 /**
  * Builds icon for resource view.
  */
@@ -473,9 +513,8 @@ function recline_build_icon($url, $format, $filename, $filemime, $filesize, $des
   );
 }
 
-
 /**
- * Builds output render array for csv files
+ * Builds output render array for csv files.
  */
 function recline_preview_multiview($variables) {
   $output = array();
@@ -483,10 +522,10 @@ function recline_preview_multiview($variables) {
   $module_path = drupal_get_path('module', 'recline');
   $item = $variables['item'];
 
-  //Check problem loading file
+  // Check problem loading file.
   if (!isset($item['uri']) && $item['fid']) {
     $file = file_load($item['fid']);
-    $file = (array)$file;
+    $file = (array) $file;
     $item = array_replace($item, $file);
   }
   $node = $item['entity'];
@@ -567,7 +606,7 @@ function recline_preview_multiview($variables) {
 
   $output['data_explorer'] = array(
     '#type' => 'markup',
-    '#markup' => '<span class="data-explorer"></span>',
+    '#markup' => '<div class="data-explorer-help"><i class="fa fa-info-circle" aria-hidden="true"></i> <strong>Data Preview:</strong> Note that by default the preview only displays up to 100 records. Use the pager to flip through more records or adjust the start and end fields to display the number of records you wish to see.</div><span class="data-explorer"></span>',
   );
   return $output;
 }
@@ -587,7 +626,7 @@ function template_preprocess_recline_embed_button(&$variables) {
  *
  * @param array $variables
  *   An associative array containing:
- *   - item: Associative array of recline field
+ *   - item: Associative array of recline field.
  *
  * @ingroup themeable
  */

@@ -144,6 +144,11 @@ commands:
       b64=`echo "payload: $input" | base64 $wrap 0`
       ahoy cmd-proxy ruby dkan/.ahoy/.scripts/dkan-test.rb "$b64"
 
+  lint:
+    usage: Run linter on code
+    hidden: true
+    cmd: ahoy cmd-proxy bash dkan/.ahoy/.scripts/dkan-lint.sh "{{args}}"
+
   create-qa-users:
     usage: Create users for each core role for QA purposes
     cmd: |
@@ -187,8 +192,7 @@ commands:
   uli:
     usage: log into the
     cmd: |
-      uli=$(ahoy drush uli {{args}} | sed 's/^http.*\/default\/\(.*$\)/\1/g')
-      url="$(ahoy docker url)/$uli"
+      url=$(ahoy drush --uri="$(ahoy docker url)" uli {{args}})
       os=$(uname)
 
       if [ "$os" = "Darwin" ]; then

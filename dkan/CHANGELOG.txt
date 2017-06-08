@@ -1,8 +1,33 @@
+7.x-1.14.x
+----------
+ - #1888 Added validation on axis tick settings on visualization_entity.
+ - #1725 Fix `ahoy dkan uli` output login link.
+ - #1881 Fix yaml syntaxt to make it standard. 
+ - #1853 Update chart documentation.
+ - #1839 Add help text and improve UI on the chart form for better clarity.
+ - #1827 Remove option to import TABed CSV files into datastore.
+ - #1807 Add admin_views module for enhanced content and file filtering.
+
+7.x-1.13.4
+----------
+ - #1846 Adds a hook_update to exclude the data dictionary field from using the markdown toolbar.
+ - #1813 Update the groups page view to sort alphabetically rather than by post date.
+ - NuCivic/recline#89 Only load previews for resources using files; API/website links should always display iframe.
+ - #1841 Fixed mis-named function on dkan_dataset_content_types.api.php
+ - #1814 Update dkan_workflow_permissions to rebuild permissions on enable/disable.
+ - #1810 Stop throwing exception on tables with only numeric columns, to prevent preview breaking.
+ - #1834 Use last day of year (December 31) for 4 digits end year during temporal POD field import.
+ - #1832 Fallback to modified date for field_harvest_source_issued if not available during POD Harvest.
+ - #1828 Field Frequency Harvest POD integration is missing support for "irregular" value.
+ - #1820 Use "accessURL" during resources harvest if "downloadURL" field is not available.
+ - #1857 Fixed publishing options not accessible when dkan_workflow is enabled.
+
 7.x-1.13.3 2017-04-18
 ---------------------
+ - #1810 Stop throwing exception on tables with only numeric columns, to prevent preview breaking.
  - #1863 Update restws module to v2.7
  - #1859 Fixed update hooks to correctly set jquery version and remove old modified source date field
- - #1864 Update media to 2.0 and remove patch 2534724. 
+ - #1864 Update media to 2.0 and remove patch 2534724.
  - #1829 Fixed missing properties on warning message during datajson harvest cache.
  - #1802 Better support for Issued and Updated dataset properties from harvested sources.
  - #1821 Remove redundant CSS load in dkan_dataset.
@@ -39,6 +64,8 @@
 
 7.x-1.13
 --------------------------
+
+ - NuCivic/recline#69 Fix warning messages when you try view changes on resource/dataset nodes
  - #1719 Added site details to settings nuboot_radix to allow change site name, slogan, e-amail address for site manager.
  - #1717 Upgrading Drupal to 7.54
  - #1705 Added css for chart visualizaitons, fixes issue in IE.

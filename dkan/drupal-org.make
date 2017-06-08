@@ -2,17 +2,21 @@
 api: '2'
 core: 7.x
 includes:
-- https://raw.githubusercontent.com/NuCivic/visualization_entity/7.x-1.1/visualization_entity.make
-- https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-1.x/open_data_schema_map.make
-- https://raw.githubusercontent.com/NuCivic/leaflet_draw_widget/cb0d2b0e8c733a5f997038bd0b444ab2b6072542/leaflet_widget.make
-- https://raw.githubusercontent.com/NuCivic/recline/7.x-1.x/recline.make
+  - "https://raw.githubusercontent.com/NuCivic/visualization_entity/6041_chart_axis_range/visualization_entity.make"
+  - "https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-1.x/open_data_schema_map.make"
+  - "https://raw.githubusercontent.com/NuCivic/leaflet_draw_widget/master/leaflet_widget.make"
+  - "https://raw.githubusercontent.com/NuCivic/recline/7.x-1.x/recline.make"
 projects:
   admin_menu:
-    version: 3.0-rc5
+    version: '3.0-rc5'
   admin_menu_source:
     version: '1.1'
     patch:
-      2441283: https://www.drupal.org/files/issues/allow_ordering_of_the-2441283-5.patch
+      2441283: 'https://www.drupal.org/files/issues/allow_ordering_of_the-2441283-5.patch'
+  admin_views:
+    version: '1.6'
+    patch:
+      1780004: 'https://www.drupal.org/files/issues/admin_views-duplicate_system_path-1780004-54.patch'
   adminrole:
     version: '1.1'
   autocomplete_deluxe:
@@ -111,8 +115,8 @@ projects:
   feeds_flatstore_processor:
     download:
       type: git
-      url: https://github.com/NuCivic/feeds_flatstore_processor.git
-      revision: 60ebdc5a688914b00f2f3ee15849a933acb5d751
+      url: 'https://github.com/NuCivic/feeds_flatstore_processor.git'
+      branch: master
   field_group:
     version: '1.5'
     patch:
@@ -182,8 +186,8 @@ projects:
   leaflet_draw_widget:
     download:
       type: git
-      url: https://github.com/NuCivic/leaflet_draw_widget.git
-      revision: cb0d2b0e8c733a5f997038bd0b444ab2b6072542
+      url: 'https://github.com/NuCivic/leaflet_draw_widget.git'
+      branch: 'master'
   libraries:
     version: '2.3'
   link:
@@ -244,8 +248,8 @@ projects:
   open_data_schema_map:
     download:
       type: git
-      url: https://github.com/NuCivic/open_data_schema_map.git
-      tag: 7.x-1.13.3
+      url: 'https://github.com/NuCivic/open_data_schema_map.git'
+      branch: 7.x-1.x
   panelizer:
     version: '3.4'
   panels:
@@ -274,8 +278,8 @@ projects:
   recline:
     download:
       type: git
-      url: https://github.com/NuCivic/recline.git
-      tag: 7.x-1.13.3
+      url: 'https://github.com/NuCivic/recline.git'
+      branch: 7.x-1.x
   ref_field:
     download:
       type: git
@@ -326,8 +330,8 @@ projects:
   taxonomy_fixtures:
     download:
       type: git
-      url: https://github.com/NuCivic/taxonomy_fixtures.git
-      revision: 485d92019d11a61de585707db8f49d0160bd03b2
+      url: 'https://github.com/NuCivic/taxonomy_fixtures.git'
+      branch: 7.x-1.x
   token:
     version: '1.6'
   uuid:
@@ -347,7 +351,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/visualization_entity.git
-      tag: 7.x-1.1
+      branch: 7.x-1.x
     type: module
   workbench:
     version: '1.2'
