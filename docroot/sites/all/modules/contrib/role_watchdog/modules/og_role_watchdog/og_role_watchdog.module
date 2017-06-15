@@ -1,0 +1,291 @@
+<?php
+
+/**
+ * @file
+ * Logs changes to user roles.
+ */
+
+define('ROLE_WATCHDOG_ROLE_REJECTED', 6);
+define('ROLE_WATCHDOG_ROLE_UNBLOCKED', 5);
+define('ROLE_WATCHDOG_ROLE_BLOCKED', 4);
+define('ROLE_WATCHDOG_ROLE_APPROVED', 3);
+define('ROLE_WATCHDOG_ROLE_REQUEST', 2);
+
+function og_role_watchdog_menu() {
+  $items = array();
+
+  $role_grants_title = 'Role grants';
+  if (module_exists('statistics')) {
+    $role_grants_title = 'Track role grants';
+    // The statistics module does not define a default local task, so we need to add one here.
+    $items['node/%node/track/statistics'] = array(
+      'title' => 'Track statistics',
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+    );
+  }
+  $items['node/%node/track/role_grants'] = array(
+    'title' => $role_grants_title,
+    'page callback' => 'og_role_watchdog_report',
+    'page arguments' => array(1),
+    'access callback' => '_og_role_watchdog_node_grants_access',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'og_role_watchdog.pages.inc',
+    'weight' => '10',
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_menu_alter
+ *
+ * Modify the menu items defined by role_watchdog to substitute our own pages
+ * for the role history, role grants and role watchdog report pages.
+ */
+function og_role_watchdog_menu_alter(&$items) {
+  if (array_key_exists('admin/reports/role_grants', $items)) {
+    $items['admin/reports/role_grants']['page callback'] = 'og_role_watchdog_report';
+    $items['admin/reports/role_grants']['file'] = 'og_role_watchdog.pages.inc';
+    $items['admin/reports/role_grants']['module'] = 'og_role_watchdog';
+  }
+  if (array_key_exists('user/%user/track/role_history', $items)) {
+    $items['user/%user/track/role_history']['page callback'] = 'og_role_watchdog_history';
+    $items['user/%user/track/role_history']['file'] = 'og_role_watchdog.pages.inc';
+    $items['user/%user/track/role_history']['module'] = 'og_role_watchdog';
+  }
+  if (array_key_exists('user/%user/track/role_grants', $items)) {
+    $items['user/%user/track/role_grants']['page callback'] = 'og_role_watchdog_grants';
+    $items['user/%user/track/role_grants']['file'] = 'og_role_watchdog.pages.inc';
+    $items['user/%user/track/role_grants']['module'] = 'og_role_watchdog';
+  }
+}
+
+/**
+ * Implementation of hook_help().
+ */
+function og_role_watchdog_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#og_role_watchdog':
+      return
+      '<p>' . t('OG Role watchdog extends the functionality of the role watchdog module so that it will also automatically record any role changes made within an Organic Group.') . '</p>';
+  }
+}
+
+/**
+ * Implementation of hook_user().
+ */
+function og_role_watchdog_user($type, &$edit, &$account, $category = NULL) {
+  switch ($type) {
+    case 'delete':
+      // Note that it is very important that our hook_user be called before role_watchdog's
+      // hook_user, because the later function will delete the information we are using in our
+      // JOIN below.  We insure that this will be the case by setting our module weight to -1
+      // in og_role_watchdog_install().
+      db_query('DELETE orw FROM {og_role_watchdog} orw INNER JOIN {role_watchdog} rw ON orw.hid=rw.hid WHERE rw.aid=:uid', array(':uid' => $account->uid));
+      db_query('DELETE orw FROM {og_role_watchdog} orw INNER JOIN {role_watchdog} rw ON orw.hid=rw.hid WHERE rw.uid=:uid', array(':uid' => $account->uid));
+      break;
+  }
+}
+
+function og_role_watchdog_og_role_grant($gid, $uid, $rid) {
+  $account = user_load($uid);
+  _og_role_watchdog_process_role_changes($account, array($rid), array(), $gid);
+}
+
+function og_role_watchdog_og_role_revoke($gid, $uid, $rid) {
+  // When a user is denied membership to a group, og_role_watchdog_og_membership_delete
+  // will be called, and then og_role_watchdog_og_role_revoke will be called with
+  // $rid == 1 (OG_ANONYMOUS_ROLE).
+  $roles = array_flip(og_get_global_roles());
+  $nonmember_rid = $roles[OG_ANONYMOUS_ROLE];
+  if ($rid != $nonmember_rid) {
+    $account = user_load($uid);
+    _og_role_watchdog_process_role_changes($account, array(), array($rid), $gid);
+  }
+}
+
+/**
+ * Implements hook_og_membership_insert().
+ */
+function og_role_watchdog_og_membership_insert($membership) {
+  if ($membership->entity_type == 'user') {
+    $account = user_load($membership->etid);
+    $roles = array_flip(og_get_global_roles());
+    // Authenticated role ID.
+    $rid = $roles[OG_AUTHENTICATED_ROLE];
+    if ($membership->state == OG_STATE_BLOCKED) {
+      // We just added a user who is not a member of the group and immediately blocked them.
+      // We will log this as "non-member blocked".
+      $rid = $roles[OG_ANONYMOUS_ROLE];
+      _og_role_watchdog_add_role($rid, $account, $membership->gid, ROLE_WATCHDOG_ROLE_BLOCKED);
+    }
+    elseif ($membership->state == OG_STATE_ACTIVE) {
+      _og_role_watchdog_add_role($rid, $account, $membership->gid, ROLE_WATCHDOG_ROLE_ADD);
+    }
+    else {
+      _og_role_watchdog_add_role($rid, $account, $membership->gid, ROLE_WATCHDOG_ROLE_REQUEST);
+    }
+  }
+}
+
+/**
+ * Implements hook_og_membership_update().
+ */
+function og_role_watchdog_og_membership_update($membership) {
+  if ($membership->entity_type == 'user') {
+    $account = user_load($membership->etid);
+    $roles = array_flip(og_get_global_roles());
+    // Authenticated role ID.
+    $rid = $roles[OG_AUTHENTICATED_ROLE];
+    if ($membership->original->state != OG_STATE_ACTIVE && $membership->state == OG_STATE_ACTIVE) {
+      // Making a user "active" is an "aproved" action unless the user is blocked, in
+      // which case it is recorded as an "unblock".
+      _og_role_watchdog_add_role($rid, $account, $membership->gid,
+        $membership->original->state == OG_STATE_BLOCKED ? ROLE_WATCHDOG_ROLE_UNBLOCKED : ROLE_WATCHDOG_ROLE_APPROVED);
+    }
+    if ($membership->original->state != OG_STATE_BLOCKED && $membership->state == OG_STATE_BLOCKED) {
+      _og_role_watchdog_remove_role($rid, $account, $membership->gid, ROLE_WATCHDOG_ROLE_BLOCKED);
+    }
+  }
+}
+
+/**
+ * Implements hook_og_membership_insert().
+ */
+function og_role_watchdog_og_membership_delete($membership) {
+  global $user;
+  $account = user_load($membership->etid);
+  $roles = array_flip(og_get_global_roles());
+  // Authenticated role ID.
+  $rid = $roles[OG_AUTHENTICATED_ROLE];
+  // If the user is "pending", and the user removing the membership
+  // is not the user being removed, then log this as "rejected".  Otherwise,
+  // log it as "removed".
+  _og_role_watchdog_remove_role($rid, $account, $membership->gid, (($membership->state == OG_STATE_PENDING) && ($user->uid != $account->uid)) ? ROLE_WATCHDOG_ROLE_REJECTED : ROLE_WATCHDOG_ROLE_REMOVE);
+}
+
+/**
+ * Internal function
+ *
+ * Handle writing role changes to the database
+ */
+function _og_role_watchdog_process_role_changes($account, $new_roles, $old_roles, $gid) {
+  $count = 0;
+
+  // Is role added?
+  foreach ($new_roles as $rid) {
+    if (!in_array($rid, $old_roles)) {
+      $record = _og_role_watchdog_add_role($rid, $account, $gid, ROLE_WATCHDOG_ROLE_ADD);
+      if (is_array($record)) {
+        $count = $count + 1;
+      }
+    }
+  }
+  // Is role removed?
+  foreach ($old_roles as $rid) {
+    if (!in_array($rid, $new_roles)) {
+      $record = _og_role_watchdog_remove_role($rid, $account, $gid);
+      if (is_array($record)) {
+        $count = $count + 1;
+      }
+    }
+  }
+
+  if ($count) {
+    drupal_set_message(format_plural($count, t('Group role change has been logged.'), t('Group role changes have been logged.')));
+  }
+}
+
+function _og_role_watchdog_add_role($rid, $account, $gid, $action = ROLE_WATCHDOG_ROLE_ADD) {
+  global $user;
+  $group = og_load($gid);
+  $group_entity = og_get_group($group->entity_type, $group->etid);
+  $query_gid = og_is_group_default_access($gid) ? 0 : $gid;
+  $roles = og_roles($query_gid);
+
+  $record = array(
+    'aid' => $account->uid,
+    'rid' => ROLE_WATCHDOG_NO_ROLE,
+    'action' => $action,
+    'uid' => $user->uid,
+    'stamp' => REQUEST_TIME,
+  );
+  if (drupal_write_record('role_watchdog', $record)) {
+    $vars = array(
+      'body' => 'Role !role in group "!group" added to !account by !user',
+      '!role' => check_plain($roles[$rid]),
+      '!group' => check_plain($group_entity->label),
+      '!user' => check_plain($user->name),
+      '!user_id' => $user->uid,
+      '!account' => check_plain($account->name),
+      '!account_id' => $account->uid,
+    );
+    _og_role_watchdog_write_group_information($record, $gid, $rid);
+    watchdog('role_watchdog', $vars['body'], $vars, WATCHDOG_NOTICE, l(t('view'), 'user/' . $account->uid . '/track/role_history'));
+    _role_watchdog_notification($rid, $vars);
+
+    return $record;
+  }
+  else {
+    watchdog('role_watchdog', 'Unable to save record in _og_role_watchdog_add_role()', array(), WATCHDOG_ERROR, l(t('view'), 'user/' . $account->uid . '/track/role_history'));
+    return ROLE_WATCHDOG_ROLE_NOCHANGE;
+  }
+}
+
+function _og_role_watchdog_remove_role($rid, $account, $gid, $action = ROLE_WATCHDOG_ROLE_REMOVE) {
+  global $user;
+  $group = og_load($gid);
+  $group_entity = og_get_group($group->entity_type, $group->etid);
+  $query_gid = og_is_group_default_access($gid) ? 0 : $gid;
+  $roles = og_roles($query_gid);
+
+  $record = array(
+    'aid' => $account->uid,
+    'rid' => ROLE_WATCHDOG_NO_ROLE,
+    'action' => $action,
+    'uid' => $user->uid,
+    'stamp' => REQUEST_TIME,
+  );
+  if (drupal_write_record('role_watchdog', $record)) {
+    $vars = array(
+      'body' => 'Role !role in group "!group" removed from !account by !user',
+      '!role' => check_plain($roles[$rid]),
+      '!group' => check_plain($group_entity->label),
+      '!user' => check_plain($user->name),
+      '!user_id' => $user->uid,
+      '!account' => check_plain($account->name),
+      '!account_id' => $account->uid,
+    );
+    _og_role_watchdog_write_group_information($record, $gid, $rid);
+    watchdog('role_watchdog', $vars['body'], $vars, WATCHDOG_NOTICE, l(t('view'), 'user/' . $account->uid . '/track/role_history'));
+    _role_watchdog_notification($rid, $vars);
+
+    return $record;
+  }
+  else {
+    watchdog('role_watchdog', 'Unable to save record in _og_role_watchdog_remove_role()', array(), WATCHDOG_ERROR, l(t('view'), 'user/' . $account->uid . '/track/role_history'));
+    return ROLE_WATCHDOG_ROLE_NOCHANGE;
+  }
+}
+
+/**
+ * Internal function
+ *
+ * Handle writing og-specific information to the auxilary og_role_watchdog table.
+ */
+function _og_role_watchdog_write_group_information($record, $gid, $rid) {
+  $og_role_watchdog_record = array(
+    'hid' => $record['hid'],
+    'gid' => $gid,
+    'rid' => $rid,
+  );
+  drupal_write_record('og_role_watchdog', $og_role_watchdog_record);
+}
+
+/**
+ * Access callback for viewing role grants page for one group.
+ */
+function _og_role_watchdog_node_grants_access($node) {
+  return (node_access('view', $node)) && (user_access('view role history'));
+}
