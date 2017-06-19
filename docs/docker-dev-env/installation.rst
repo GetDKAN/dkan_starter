@@ -3,121 +3,102 @@ Setting up Your Local Docker
 
 The steps to setup the DKAN development environment are as following:
 
-1. Run the universal Docker installer (recommended) and/or run the commands manually to make sure that the Docker Machine is properly setup.
-2. Make sure the Docker Machine is started
-3. Clone DKAN, install it in Docker Machine and start developing. Or clone a dkan_starter project, install it in Docker Machine and start developing.
-4. Universal Docker Installer
+1. Docker
+^^^^^^^^^
+Install `docker on your local environment <https://www.docker.com/community-edition>`_.
 
-1. Universal Docker Installer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Ahoy utilizes docker-compose and requires a functioning Docker installation. Verify ``docker info`` is working prior to continuing.
 
-The universal Docker installer is available in the `Universal Installer <https://github.com/NuCivic/universal-docker-installer>`_ repository.
-Check the Readme on the Github repository to setup the docker development environment.
+2. Ahoy
+~~~~~~~
+Install `ahoy on your local environment <https://www.docker.com/community-edition>`_ (Currently requires version 1.X, 2.X will not work).
 
-1.1 Setup the installer dependencies
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`https://github.com/NuCivic/universal-docker-installer#installer-dependencies <https://github.com/NuCivic/universal-docker-installer#installer-dependencies>`_
-
-1.2 Environment setup
-~~~~~~~~~~~~~~~~~~~~~
-
-`https://github.com/NuCivic/universal-docker-installer#usage <https://github.com/NuCivic/universal-docker-installer#usage>`_
-
-1.3 Troubleshooting
-~~~~~~~~~~~~~~~~~~~
-
-`https://github.com/NuCivic/universal-docker-installer#troubleshooting <https://github.com/NuCivic/universal-docker-installer#troubleshooting>`_
-
-2. Docker machine
-^^^^^^^^^^^^^^^^^
-
-Before starting to work on DKAN sites, the developer needs to make sure that the development docker machine is up and running as following: 
+For Mac OS, use:
 
 .. code-block:: bash
 
-  docker-machine status default
-  docker-machine start default
+  brew tap devinci-code/tap
+  brew install ahoy
 
-When the developer is done developing DKAN, the docker machine could be checked and stopped as following:
-
-.. code-block:: bash
-
-  docker-machine status default
-  docker-machine stop default
-
-To manage the default Virtualbox machine (the docker machine), a developer can use the following commands:
-
-1. Check the machine status: 
+For Linux, use:
 
 .. code-block:: bash
 
-  docker-machine status default
-
-2. List the existing docker machines: 
-
-.. code-block:: bash
-
-  docker-machine ls
-
-3. Start the default machine: 
-
-.. code-block:: bash
-
-  docker-machine start default
-
-4. Stop the default machine
-
-.. code-block:: bash
-
-  docker-machine stop default
-
-5. Check the default machine IP address
-
-.. code-block:: bash
-
-  docker-machine ip default
-
-6. SSH into the default machine:
-
-.. code-block:: bash
-
-  docker-machine ssh default
-
-For a detailed docker-machine command line reference check the following link: `https://docs.docker.com/machine/reference/ <https://docs.docker.com/machine/reference/>`_
+  sudo wget -q https://github.com/DevinciHQ/ahoy/releases/download/1.1.0/ahoy-`uname -s`-amd64 -O /usr/local/bin/ahoy && sudo chown $USER /usr/local/bin/ahoy && chmod +x /usr/local/bin/ahoy
 
 3. Getting started with DKAN development
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To get started with DKAN development you need to follow these steps:
+To get started with DKAN development you need to initially follow these steps:
 
-.. code-block:: bash
+.. code-block:: none
 
-  cd ~/docker
+  cd ~/workspace
   git clone git@github.com:NuCivic/dkan.git
   cd dkan
   bash dkan-init.sh dkan
-  ahoy docker up
+  ahoy docker env (Follow instructions)
   ahoy dkan drupal-rebuild mysql://drupal:123@db/drupal
   ahoy dkan remake
-  ahoy dkan reinstall
-  ahoy docker url
-  ahoy docker vnc (to get the vnc url and use it with any vncviewer. The password is secret).
+  ahoy dkan reinstall (Can take 15-30 mins)
+  ahoy uli
+
+To run Behat automated test suite:
+
+.. code-block:: bash
+
+  cd ~/workspace/dkan
   ahoy dkan test
 
-Visit the DKAN site url to be sure the site is up and reachable.
+Once project is built, to run Docker environment again later:
+
+.. code-block:: bash
+
+  cd ~/workspace/dkan
+  eval "$(ahoy docker env)"
+
+Other Available Commands:
+
+.. code-block:: bash
+
+  ahoy drush {args} - run drush command in container
+  ahoy uli - login as admin via drush uli
+  ahoy dkan - lists available dkan commands
+  ahoy docker - lists docker commands available
+
+Local Site URL: http://dkan.docker
 
 In the dkan folder you can see the following directories:
 
-1. ``dkan/``: The git repository of dkan profile
-2. ``docroot/``: The docroot with a fresh Drupal installation and a symlink from docroot/profiles/dkan to dkan (git repository)
-3. ``backups/``: Contains SQL backup/dump file (last_install.sql) for the last DKAN site reinstall.
+  - ``dkan/``: The git repository of dkan profile
+  - ``docroot/``: The docroot with a fresh Drupal installation and a symlink from docroot/profiles/dkan to dkan (git repository)
+  - ``backups/``: Contains SQL backup/dump file (last_install.sql) for the last DKAN site reinstall.
 
 Make changes to dkan, add, commit and push.
 When done developing for this project execute the following command: ``ahoy docker stop``
-When done developing with Docker Machine for any DKAN related project execute the following command: ``docker-machine stop default``
 
-4. Getting started with DKAN Starter development
+4. Troubleshooting
+^^^^^^^^^^^^^^^^^^
+
+Verify dkan docker containers are running:
+
+.. code-block:: bash
+
+  docker ps
+
+  Output should look like:
+  CONTAINER ID        IMAGE                                     COMMAND                  CREATED             STATUS              PORTS                                                              NAMES
+  f83a1eb95730        nuams/drupal-cli:2016-10-16               "/opt/startup.sh /..."   2 hours ago         Up 2 hours                                                                             dkan_cli_1
+  0ca4da28f0ae        selenium/standalone-chrome-debug:2.53.1   "/opt/bin/entry_po..."   2 hours ago         Up 2 hours          4444/tcp, 5900/tcp                                                 dkan_browser_1
+  d5f864808585        nuams/drupal-apache-php:1.0-5.6           "/bin/sh -c '/opt/..."   2 hours ago         Up 2 hours          80/tcp, 443/tcp                                                    dkan_web_1
+  4116abdb824c        blinkreaction/mysql:5.5                   "/entrypoint.sh my..."   3 days ago          Up 3 hours          0.0.0.0:32768->3306/tcp                                            dkan_db_1
+  4580f9c04f83        jwilder/nginx-proxy                       "/app/docker-entry..."   3 days ago          Up 3 hours          0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp, 0.0.0.0:5959->5900/tcp   dkan_proxy
+  242ef176e340        memcached                                 "docker-entrypoint..."   3 days ago          Up 3 hours          11211/tcp                                                          dkan_memcached_1
+  2f8106a4ce55        devinci/drupal-solr:3.x                   "/bin/sh -c /opt/s..."   3 days ago          Up 3 hours          8983/tcp                                                           dkan_solr_1
+
+
+If a container is not running, you can look at logs via ``docker logs dkan_web_1`` for example.
+
+5. Getting started with DKAN Starter development
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 See: `Setting up a project locally <../common_tasks/setting-up-local-project>`_
