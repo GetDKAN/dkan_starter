@@ -8,5 +8,5 @@ includes[core] = dkan/drupal-org-core.make
 projects[dkan][type] = profile
 projects[dkan][download][type] = git
 projects[dkan][download][url] = https://github.com/NuCivic/dkan.git
-projects[dkan][download][branch] = remove-batch-test
-;projects[dkan][patch][] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1920.diff
+projects[dkan][download][branch] = update_drupal_to_7_56
+;;projects[dkan][patch][] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1920.diff
