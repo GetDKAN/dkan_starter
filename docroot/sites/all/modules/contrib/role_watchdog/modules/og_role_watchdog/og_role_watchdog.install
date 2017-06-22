@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @file
+ * Install file for Role watchdog.
+ */
+
+/**
+ * Implementation of hook_schema().
+ */
+function og_role_watchdog_schema() {
+  $schema['og_role_watchdog'] = array(
+    'description' => t('Log of group information associated with each role change.'),
+    'fields' => array(
+      'hid' => array(
+        'description' => t('ID of the history entry.'),
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'gid' => array(
+        'description' => t('Group that Role ID changed in, if og_user_roles made the change.'),
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'rid' => array(
+        'description' => t('OG role id that changed.'),
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'indexes' => array(
+      'hid' => array('hid'),
+    ),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function og_role_watchdog_install() {
+  // Set our weight to be lower than role_watchdog so that our hook_user is called first.
+  db_update('system')
+    ->fields(array(
+      'weight' => '-1'))
+    ->condition('type', 'module')
+    ->condition('name', 'og_role_watchdog')
+    ->execute();
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function og_role_watchdog_uninstall() {
+}

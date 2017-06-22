@@ -90,6 +90,8 @@ projects[] = securepages
 projects[clamav][version] = 1.x-dev
 projects[clamav][subdir] = contrib
 
+projects[] = role_watchdog
+
 ; Other
 ; ======
 projects[] = google_analytics

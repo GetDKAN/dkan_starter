@@ -6,6 +6,9 @@
 - Patched memcache to fix call to undefined object.
 - Add role_watchdog #304
 
+## [1.13.4.0]
+- Add role_watchdog module
+
 ## [1.13.3.2]
 - Support htaccess in public file directory  #232
 
