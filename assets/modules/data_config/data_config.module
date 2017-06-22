@@ -157,6 +157,7 @@ function data_config_enabled_modules() {
     'og_context' => 'og_context',
     'og_extras' => 'og_extras',
     'og_moderation' => 'og_moderation',
+    'og_role_watchdog' => 'og_role_watchdog',
     'og_ui' => 'og_ui',
     'open_data_schema_ckan' => 'open_data_schema_ckan',
     'open_data_schema_dcat' => 'open_data_schema_dcat',
