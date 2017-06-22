@@ -1,0 +1,16 @@
+name = OG Role watchdog
+description = Logs changes to user roles made in Organic Groups.
+core = 7.x
+
+dependencies[] = role_watchdog
+dependencies[] = og
+files[] = og_role_watchdog.install
+files[] = og_role_watchdog.module
+files[] = og_role_watchdog.pages.inc
+
+; Information added by drupal.org packaging script on 2012-10-03
+version = "7.x-2.0-beta2"
+core = "7.x"
+project = "role_watchdog"
+datestamp = "1349227567"
+

@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * @file
+ * Install file for Role watchdog.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function role_watchdog_schema() {
+  $schema['role_watchdog'] = array(
+    'description' => 'Stores log of all role changes.',
+    'fields' => array(
+      'hid' => array(
+        'description' => t('ID of the history entry.'),
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'aid' => array(
+        'description' => 'User ID of account.',
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+      ),
+      'rid' => array(
+        'description' => 'Role ID changed.',
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+      ),
+      'action' => array(
+        'description' => 'Action (add or remove) performed.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+      ),
+      'uid' => array(
+        'description' => 'User ID performing action.',
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+      ),
+      'stamp' => array(
+        'description' => 'Time action performed.',
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+      ),
+    ),
+    'indexes' => array(
+      'aid' => array('aid'),
+    ),
+    'primary key' => array('hid')
+  );
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function role_watchdog_install() {
+  drupal_set_message(st('Role watchdog table installed. !config', array('!config' => l(st('Configure Role watchdog'), 'admin/config/people/role_watchdog'))));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function role_watchdog_uninstall() {
+  db_delete('variable')
+    ->condition('name', 'role_watchdog_%', 'LIKE')
+    ->execute();
+  cache_clear_all('variables', 'cache');
+
+  drupal_set_message(t('Role watchdog table and variables removed.'));
+}
+
+/**
+ * Add a history id primary key ('hid') to the role_watchdog table
+ */
+function role_watchdog_update_7101() {
+  db_add_field('role_watchdog', 'hid', array(
+    'type' => 'serial',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+  ),
+  array('primary key' => array('hid')));
+}

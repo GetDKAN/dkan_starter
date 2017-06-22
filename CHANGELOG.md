@@ -1,5 +1,8 @@
 # Change log
 
+## [1.13.4.0]
+- Add role_watchdog module
+
 ## [1.13.3.2]
 - Support htaccess in public file directory  #232
 
