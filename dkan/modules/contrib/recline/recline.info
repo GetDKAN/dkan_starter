@@ -6,3 +6,7 @@ dependencies[] = libraries
 dependencies[] = file
 scripts[] = js/jsondataview.js
 scripts[] = js/restdataview.js
+
+; Information added by DKAN release script on 6/21/2017
+version = 7.x-1.13.4-RC1
+project = dkan
