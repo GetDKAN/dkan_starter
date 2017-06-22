@@ -1,4 +1,13 @@
 # Change log
+## [1.13.4.0]
+- Update to dkan version 1.13.4 
+- Add check for resources to avoid errors when pruning #279
+- Switch to yaml format for default makefiles #258
+- Patched memcache to fix call to undefined object.
+- Add role_watchdog #304
+
+## [1.13.4.0]
+- Add role_watchdog module
 
 ## [1.13.3.2]
 - Support htaccess in public file directory  #232

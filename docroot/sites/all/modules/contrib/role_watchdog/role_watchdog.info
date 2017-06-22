@@ -1,0 +1,15 @@
+name = Role watchdog
+description = Logs changes to user roles.
+core = 7.x
+
+files[] = role_watchdog.admin.inc
+files[] = role_watchdog.install
+files[] = role_watchdog.module
+files[] = role_watchdog.pages.inc
+
+; Information added by drupal.org packaging script on 2012-10-03
+version = "7.x-2.0-beta2"
+core = "7.x"
+project = "role_watchdog"
+datestamp = "1349227567"
+
