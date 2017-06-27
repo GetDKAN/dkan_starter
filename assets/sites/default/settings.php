@@ -257,6 +257,11 @@ search
 search*
 EOT;
     $conf['pathauto_update_action'] = 1;
+    
+    // Enable HSTS on production.
+    if (isset($conf['hsts']['enable']) && $conf['hsts']['enable']) {
+      header('Strict-Transport-Security: max-age:31536000; preload');
+    }
     break;
 
   default:
