@@ -60,7 +60,7 @@ function memcache_admin_menu() {
   $memcache_servers = variable_get('memcache_servers', array('127.0.0.1:11211' => 'default'));
   $clusters = array();
   foreach ($memcache_servers as $server => $bin) {
-    if ($cluster = dmemcache_object_cluster($bin)) {
+    if (function_exists('dmemcache_object_cluster') && ($cluster = dmemcache_object_cluster($bin))) {
       $name = $cluster['cluster'];
       $clusters[$name]['servers'][] = $server;
       $clusters[$name]['bin'] = _memcache_admin_get_bin_for_cluster($cluster['cluster']);

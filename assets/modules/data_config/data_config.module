@@ -184,6 +184,7 @@ function data_config_enabled_modules() {
     'remote_stream_wrapper' => 'remote_stream_wrapper',
     'rest_server' => 'rest_server',
     'restws' => 'restws',
+    'role_watchdog' => 'role_watchdog',
     'roleassign' => 'roleassign',
     'rules' => 'rules',
     'rules_admin' => 'rules_admin',

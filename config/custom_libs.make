@@ -1,3 +1,2 @@
-api = 2
-core = 7.x
-
+core: 7.x
+api: 2
