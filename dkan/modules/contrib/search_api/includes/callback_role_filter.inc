@@ -16,9 +16,6 @@ class SearchApiAlterRoleFilter extends SearchApiAbstractAlterCallback {
    * This plugin only supports indexes containing users.
    */
   public function supportsIndex(SearchApiIndex $index) {
-    if ($this->isMultiEntityIndex($index)) {
-      return in_array('user', $index->options['datasource']['types']);
-    }
     return $index->getEntityType() == 'user';
   }
 
@@ -26,20 +23,10 @@ class SearchApiAlterRoleFilter extends SearchApiAbstractAlterCallback {
    * Implements SearchApiAlterCallbackInterface::alterItems().
    */
   public function alterItems(array &$items) {
-    $selected_roles = $this->options['roles'];
+    $roles = $this->options['roles'];
     $default = (bool) $this->options['default'];
-    $multi_types = $this->isMultiEntityIndex($this->index);
-    foreach ($items as $id => $item) {
-      if ($multi_types) {
-        if ($item->item_type !== 'user') {
-          continue;
-        }
-        $item_roles = $item->user->roles;
-      }
-      else {
-        $item_roles = $item->roles;
-      }
-      $role_match = (count(array_diff_key($item_roles, $selected_roles)) !== count($item_roles));
+    foreach ($items as $id => $account) {
+      $role_match = (count(array_diff_key($account->roles, $roles)) !== count($account->roles));
       if ($role_match === $default) {
         unset($items[$id]);
       }

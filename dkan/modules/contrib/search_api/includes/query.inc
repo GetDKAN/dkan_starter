@@ -856,31 +856,8 @@ class SearchApiQuery implements SearchApiQueryInterface {
       }
       $ret .= 'Sorting: ' . implode(', ', $sort) . "\n";
     }
-    $options = $this->sanitizeOptions($this->options);
-    $options = str_replace("\n", "\n  ", var_export($options, TRUE));
-    $ret .= 'Options: ' . $options . "\n";
+    $ret .= 'Options: ' . str_replace("\n", "\n  ", var_export($this->options, TRUE)) . "\n";
     return $ret;
-  }
-
-  /**
-   * Sanitizes an array of options in a way that plays nice with var_export().
-   *
-   * @param array $options
-   *   An array of options.
-   *
-   * @return array
-   *   The sanitized options.
-   */
-  protected function sanitizeOptions(array $options) {
-    foreach ($options as $key => $value) {
-      if (is_object($value)) {
-        $options[$key] = 'object (' . get_class($value) . ')';
-      }
-      elseif (is_array($value)) {
-        $options[$key] = $this->sanitizeOptions($value);
-      }
-    }
-    return $options;
   }
 
 }
@@ -1071,10 +1048,6 @@ class SearchApiQueryFilter implements SearchApiQueryFilterInterface {
    * {@inheritdoc}
    */
   public function &getTags() {
-    // Tags can sometimes be NULL for old serialized query filter objects.
-    if (!isset($this->tags)) {
-      $this->tags = array();
-    }
     return $this->tags;
   }
 

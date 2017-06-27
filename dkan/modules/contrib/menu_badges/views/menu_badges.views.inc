@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Menu Badges Views plugins.
- */
 
 /**
  * Implementation of hook_views_plugins

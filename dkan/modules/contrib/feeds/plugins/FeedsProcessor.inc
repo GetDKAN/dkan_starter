@@ -84,43 +84,15 @@ abstract class FeedsProcessor extends FeedsPlugin {
   }
 
   /**
-   * Provides a list of languages available on the site.
-   *
-   * @return array
-   *   A keyed array of language_key => language_name (example: 'en' => 'English').
-   */
-  public function languageOptions() {
-    $languages = array(
-      LANGUAGE_NONE => t('Language neutral'),
-    );
-    $language_list = language_list('enabled');
-    if (!empty($language_list[1])) {
-      foreach ($language_list[1] as $language) {
-        $languages[$language->language] = $language->name;
-      }
-    }
-    return $languages;
-  }
-
-  /**
    * Create a new entity.
    *
-   * @param FeedsSource $source
+   * @param $source
    *   The feeds source that spawns this entity.
    *
-   * @return object
+   * @return
    *   A new entity object.
    */
-  protected function newEntity(FeedsSource $source) {
-    $entity = new stdClass();
-
-    $info = $this->entityInfo();
-    if (!empty($info['entity keys']['language'])) {
-      $entity->{$info['entity keys']['language']} = $this->entityLanguage();
-    }
-
-    return $entity;
-  }
+  protected abstract function newEntity(FeedsSource $source);
 
   /**
    * Load an existing entity.
@@ -137,105 +109,28 @@ abstract class FeedsProcessor extends FeedsPlugin {
    *   existing ids first.
    */
   protected function entityLoad(FeedsSource $source, $entity_id) {
-    $info = $this->entityInfo();
-
     if ($this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
       $entities = entity_load($this->entityType(), array($entity_id));
-      $entity = reset($entities);
-    }
-    else {
-      $args = array(':entity_id' => $entity_id);
-      $table = db_escape_table($info['base table']);
-      $key = db_escape_field($info['entity keys']['id']);
-      $entity = db_query("SELECT * FROM {" . $table . "} WHERE $key = :entity_id", $args)->fetchObject();
+      return reset($entities);
     }
 
-    if ($entity && !empty($info['entity keys']['language'])) {
-      $entity->{$info['entity keys']['language']} = $this->entityLanguage();
-    }
-
-    return $entity;
-  }
-
-  /**
-   * Validates an entity.
-   *
-   * @throws FeedsValidationException $e
-   *   Thrown if validation fails.
-   */
-  protected function entityValidate($entity) {
     $info = $this->entityInfo();
 
-    if (!empty($info['entity keys']['language'])) {
-      // Ensure that a valid language is always set.
-      $key = $info['entity keys']['language'];
-      $languages = $this->languageOptions();
+    $args = array(':entity_id' => $entity_id);
 
-      if (empty($entity->$key) || !isset($languages[$entity->$key])) {
-        $entity->$key = $this->entityLanguage();
-      }
-    }
+    $table = db_escape_table($info['base table']);
+    $key = db_escape_field($info['entity keys']['id']);
 
-    // Perform field validation if entity is fieldable.
-    if (!empty($info['fieldable'])) {
-      try {
-        field_attach_validate($this->entityType(), $entity);
-      }
-      catch (FieldValidationException $e) {
-        $errors = array();
-
-        // Unravel the errors inside the FieldValidationException.
-        foreach ($e->errors as $field_name => $field_errors) {
-          foreach ($field_errors as $langcode => $field_item_errors) {
-            $errors = array_merge($errors, $this->unravelFieldValidationExceptionErrors($field_item_errors));
-          }
-        }
-
-        // Compose error message. If available, use the entity label to indicate
-        // which item failed. Fallback to the GUID value (if available) or else
-        // no indication.
-        $label = entity_label($this->entityType(), $entity);
-        if ($label || $label === '0' || $label === 0) {
-          $message = t("@error in item '@label':", array('@error' => $e->getMessage(), '@label' => $label));
-        }
-        elseif (!empty($entity->feeds_item->guid)) {
-          $message = t("@error in item '@guid':", array('@error' => $e->getMessage(), '@guid' => $entity->feeds_item->guid));
-        }
-        else {
-          $message = $e->getMessage();
-        }
-        // Compose the final error message and throw exception.
-        $message .= theme('item_list', array('items' => $errors));
-        throw new FeedsValidationException($message);
-      }
-    }
+    return db_query("SELECT * FROM {" . $table . "} WHERE $key = :entity_id", $args)->fetchObject();
   }
 
   /**
-   * Helper function to unravel error messages hidden in a FieldValidationException.
+   * Validate an entity.
    *
-   * @param array $field_item_errors
-   *   The errors for a single field item.
-   *
-   * @return array
-   *   The unraveled error messages.
+   * @throws FeedsValidationException $e
+   *   If validation fails.
    */
-  protected function unravelFieldValidationExceptionErrors($field_item_errors) {
-    $errors = array();
-
-    foreach ($field_item_errors as $field_item_error) {
-      if (isset($field_item_error['message'])) {
-        // Found the error message!
-        $errors[] = $field_item_error['message'];
-      }
-      elseif (is_array($field_item_error)) {
-        // Error message is hidden deeper in the tree.
-        $errors = array_merge($errors, $this->unravelFieldValidationExceptionErrors($field_item_error));
-      }
-    }
-
-    return $errors;
-  }
+  protected function entityValidate($entity) {}
 
   /**
    * Access check for saving an enity.
@@ -271,38 +166,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
    * 'label plural' ... the plural label of an entity type.
    */
   protected function entityInfo() {
-    $info = entity_get_info($this->entityType());
-
-    // Entity module has defined the plural label in "plural label" instead of
-    // "label plural". So if "plural label" is defined, this will have priority
-    // over "label plural".
-    if (isset($info['plural label'])) {
-      $info['label plural'] = $info['plural label'];
-    }
-
-    return $info;
-  }
-
-  /**
-   * Returns the current language for entities.
-   *
-   * This checks if the configuration value is valid.
-   *
-   * @return string
-   *   The current language code.
-   */
-  protected function entityLanguage() {
-    if (!module_exists('locale')) {
-      // language_list() may return languages even if the locale module is
-      // disabled. See https://www.drupal.org/node/173227 why.
-      // When the locale module is disabled, there are no selectable languages
-      // in the UI, so the content should be imported in LANGUAGE_NONE.
-      return LANGUAGE_NONE;
-    }
-
-    $languages = $this->languageOptions();
-
-    return isset($languages[$this->config['language']]) ? $this->config['language'] : LANGUAGE_NONE;
+    return entity_get_info($this->entityType());
   }
 
   /**
@@ -543,7 +407,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
    */
   protected function clean(FeedsState $state) {
     // We clean only if needed.
-    if ($this->config['update_non_existent'] != FEEDS_DELETE_NON_EXISTENT) {
+    if ($this->config['update_non_existent'] == FEEDS_SKIP_NON_EXISTENT) {
       return;
     }
 
@@ -783,8 +647,6 @@ abstract class FeedsProcessor extends FeedsPlugin {
    */
   protected function map(FeedsSource $source, FeedsParserResult $result, $target_item = NULL) {
     $targets = $this->getCachedTargets();
-    // Get fields for the entity type we are mapping to.
-    $fields = field_info_instances($this->entityType(), $this->bundle());
 
     if (empty($target_item)) {
       $target_item = array();
@@ -793,24 +655,12 @@ abstract class FeedsProcessor extends FeedsPlugin {
     // Many mappers add to existing fields rather than replacing them. Hence we
     // need to clear target elements of each item before mapping in case we are
     // mapping on a prepopulated item such as an existing node.
-    foreach ($this->getMappings() as $mapping) {
+    foreach ($this->config['mappings'] as $mapping) {
       if (isset($targets[$mapping['target']]['real_target'])) {
-        $target_name = $targets[$mapping['target']]['real_target'];
+        $target_item->{$targets[$mapping['target']]['real_target']} = NULL;
       }
       else {
-        $target_name = $mapping['target'];
-      }
-
-      // If the target is a field empty the value for the targeted language
-      // only.
-      // In all other cases, just empty the target completely.
-      if (isset($fields[$target_name])) {
-        // Empty the target for the specified language.
-        $target_item->{$target_name}[$mapping['language']] = array();
-      }
-      else {
-        // Empty the whole target.
-        $target_item->{$target_name} = NULL;
+        $target_item->{$mapping['target']} = NULL;
       }
     }
 
@@ -818,7 +668,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
     // the parser's getSourceElement() method to retrieve the value of the
     // source element and pass it to the processor's setTargetElement() to stick
     // it on the right place of the target item.
-    foreach ($this->getMappings() as $mapping) {
+    foreach ($this->config['mappings'] as $mapping) {
       $value = $this->getSourceValue($source, $result, $mapping['source']);
 
       $this->mapToTarget($source, $mapping['target'], $target_item, $value, $mapping);
@@ -865,6 +715,12 @@ abstract class FeedsProcessor extends FeedsPlugin {
   protected function mapToTarget(FeedsSource $source, $target, &$target_item, $value, array $mapping) {
     $targets = $this->getCachedTargets();
 
+    if (isset($targets[$target]['preprocess_callbacks'])) {
+      foreach ($targets[$target]['preprocess_callbacks'] as $callback) {
+        call_user_func_array($callback, array($source, $target_item, $target, &$mapping));
+      }
+    }
+
     // Map the source element's value to the target.
     // If the mapping specifies a callback method, use the callback instead of
     // setTargetElement().
@@ -908,44 +764,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
       'input_format' => NULL,
       'skip_hash_check' => FALSE,
       'bundle' => $bundle,
-      'language' => LANGUAGE_NONE,
     );
-  }
-
-  /**
-   * Validates the configuration.
-   *
-   * @return array
-   *   A list of errors.
-   */
-  public function validateConfig() {
-    $errors = parent::validateConfig();
-    $info = $this->entityInfo();
-    $config = $this->getConfig();
-
-    // Check configured bundle.
-    if (isset($config['bundle'])) {
-      $bundles = $this->bundleOptions();
-      if (!in_array($config['bundle'], array_keys($bundles))) {
-        $errors[] = t('Invalid value %value for config option %key.', array(
-          '%value' => $config['bundle'],
-          '%key' => !empty($info['bundle name']) ? $info['bundle name'] : t('Bundle'),
-        ));
-      }
-    }
-
-    // Check configured language.
-    if (module_exists('locale') && !empty($info['entity keys']['language']) && isset($config['language'])) {
-      $languages = $this->languageOptions();
-      if (!isset($languages[$config['language']])) {
-        $errors[] = t('Invalid value %value for config option %key.', array(
-          '%value' => $config['language'],
-          '%key' => t('Language'),
-        ));
-      }
-    }
-
-    return $errors;
   }
 
   /**
@@ -956,44 +775,19 @@ abstract class FeedsProcessor extends FeedsPlugin {
     $form = array();
 
     if (!empty($info['entity keys']['bundle'])) {
-      $bundle = $this->bundle();
       $form['bundle'] = array(
         '#type' => 'select',
         '#options' => $this->bundleOptions(),
         '#title' => !empty($info['bundle name']) ? $info['bundle name'] : t('Bundle'),
         '#required' => TRUE,
-        '#default_value' => $bundle,
+        '#default_value' => $this->bundle(),
       );
-
-      // Add default value as one of the options if not yet available.
-      if (!isset($form['bundle']['#options'][$bundle])) {
-        $form['bundle']['#options'][$bundle] = t('Unknown bundle: @bundle', array(
-          '@bundle' => $bundle,
-        ));
-      }
     }
     else {
       $form['bundle'] = array(
         '#type' => 'value',
         '#value' => $this->entityType(),
       );
-    }
-
-    if (module_exists('locale') && !empty($info['entity keys']['language'])) {
-      $form['language'] = array(
-        '#type' => 'select',
-        '#options' => $this->languageOptions(),
-        '#title' => t('Language'),
-        '#required' => TRUE,
-        '#default_value' => $this->config['language'],
-      );
-
-      // Add default value as one of the options if not yet available.
-      if (!isset($form['language']['#options'][$this->config['language']])) {
-        $form['language']['#options'][$this->config['language']] = t('Unknown language: @language', array(
-          '@language' => $this->config['language'],
-        ));
-      }
     }
 
     $tokens = array('@entities' => strtolower($info['label plural']));
@@ -1012,15 +806,14 @@ abstract class FeedsProcessor extends FeedsPlugin {
     $form['update_existing'] = array(
       '#type' => 'radios',
       '#title' => t('Update existing @entities', $tokens),
-      '#description' => t('Existing @entities will be determined using mappings that are a "unique target".', $tokens),
+      '#description' =>
+        t('Existing @entities will be determined using mappings that are a "unique target".', $tokens),
       '#options' => array(
         FEEDS_SKIP_EXISTING => t('Do not update existing @entities', $tokens),
         FEEDS_REPLACE_EXISTING => t('Replace existing @entities', $tokens),
         FEEDS_UPDATE_EXISTING => t('Update existing @entities', $tokens),
       ),
       '#default_value' => $this->config['update_existing'],
-      '#after_build' => array('feeds_processor_config_form_update_existing_after_build'),
-      '#tokens' => $tokens,
     );
     global $user;
     $formats = filter_formats($user);
@@ -1060,38 +853,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
    * Get mappings.
    */
   public function getMappings() {
-    $cache = &drupal_static('FeedsProcessor::getMappings', array());
-
-    if (!isset($cache[$this->id])) {
-      $mappings = $this->config['mappings'];
-      $targets = $this->getCachedTargets();
-      $languages = $this->languageOptions();
-
-      foreach ($mappings as &$mapping) {
-
-        if (isset($targets[$mapping['target']]['preprocess_callbacks'])) {
-          foreach ($targets[$mapping['target']]['preprocess_callbacks'] as $callback) {
-            call_user_func_array($callback, array($targets[$mapping['target']], &$mapping));
-          }
-        }
-
-        // Ensure there's always a language set.
-        if (empty($mapping['language'])) {
-          $mapping['language'] = LANGUAGE_NONE;
-        }
-        else {
-          // Check if the configured language is available. If not, fallback to
-          // LANGUAGE_NONE.
-          if (!isset($languages[$mapping['language']])) {
-            $mapping['language'] = LANGUAGE_NONE;
-          }
-        }
-      }
-
-      $cache[$this->id] = $mappings;
-    }
-
-    return $cache[$this->id];
+    return isset($this->config['mappings']) ? $this->config['mappings'] : array();
   }
 
   /**
@@ -1232,7 +994,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
   protected function uniqueTargets(FeedsSource $source, FeedsParserResult $result) {
     $parser = feeds_importer($this->id)->parser;
     $targets = array();
-    foreach ($this->getMappings() as $mapping) {
+    foreach ($this->config['mappings'] as $mapping) {
       if (!empty($mapping['unique'])) {
         // Invoke the parser's getSourceElement to retrieve the value for this
         // mapping's source.
@@ -1296,7 +1058,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
   protected function hash($item) {
     $sources = feeds_importer($this->id)->parser->getMappingSourceList();
     $mapped_item = array_intersect_key($item, array_flip($sources));
-    return hash('md5', serialize($mapped_item) . serialize($this->getMappings()));
+    return hash('md5', serialize($mapped_item) . serialize($this->config['mappings']));
   }
 
   /**
@@ -1393,9 +1155,6 @@ abstract class FeedsProcessor extends FeedsPlugin {
 
     foreach ($out as $key => $value) {
       if (is_string($value)) {
-        if (function_exists('mb_check_encoding') && !mb_check_encoding($value, 'UTF-8')) {
-          $value = utf8_encode($value);
-        }
         $out[$key] = truncate_utf8($value, 100, FALSE, TRUE);
       }
     }
@@ -1425,14 +1184,3 @@ abstract class FeedsProcessor extends FeedsPlugin {
 }
 
 class FeedsProcessorBundleNotDefined extends Exception {}
-
-/**
- * Form after build callback for the field "update_existing".
- *
- * Adds descriptions to options of this field.
- */
-function feeds_processor_config_form_update_existing_after_build($field) {
-  $field[FEEDS_REPLACE_EXISTING]['#description'] =  t('Loads records directly from the database, bypassing the Entity API. Faster, but use with caution.');
-  $field[FEEDS_UPDATE_EXISTING]['#description'] =  t('Loads complete @entities using the Entity API for full integration with other modules. Slower, but most reliable.', $field['#tokens']);
-  return $field;
-}

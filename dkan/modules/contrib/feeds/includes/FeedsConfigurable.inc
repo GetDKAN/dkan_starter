@@ -15,10 +15,6 @@ class FeedsNotExistingException extends Exception {
  * Base class for configurable classes. Captures configuration handling, form
  * handling and distinguishes between in-memory configuration and persistent
  * configuration.
- *
- * Due to the magic method __get(), protected properties from this class and
- * from classes that extend this class will be publicly readable (but not
- * writeable).
  */
 abstract class FeedsConfigurable {
 
@@ -90,36 +86,14 @@ abstract class FeedsConfigurable {
   }
 
   /**
-   * Determine whether this object is persistent.
-   *
-   * @return bool
-   *   True if the object is persistent.
-   *   False otherwise.
-   */
-  public function doesExist() {
-    return ($this->export_type == FEEDS_EXPORT_NONE) ? FALSE : TRUE;
-  }
-
-  /**
-   * Determine whether this object is enabled.
-   *
-   * @return bool
-   *   True if the object is enabled.
-   *   False otherwise.
-   */
-  public function isEnabled() {
-    return $this->disabled ? FALSE : TRUE;
-  }
-
-  /**
    * Determine whether this object is persistent and enabled. I. e. it is
    * defined either in code or in the database and it is enabled.
    */
   public function existing() {
-    if (!$this->doesExist()) {
+    if ($this->export_type == FEEDS_EXPORT_NONE) {
       throw new FeedsNotExistingException(t('Object is not persistent.'));
     }
-    if (!$this->isEnabled()) {
+    if ($this->disabled) {
       throw new FeedsNotExistingException(t('Object is disabled.'));
     }
     return $this;
@@ -165,13 +139,8 @@ abstract class FeedsConfigurable {
   }
 
   /**
-   * Overrides magic method __get().
-   *
-   * - Makes sure that external reads of FeedsConfigurable::config go through
-   *   ::getConfig();
-   * - Makes private and protected properties from this class and protected
-   *   properties from child classes publicly readable.
-   * - Prevents warnings when accessing non-existent properties.
+   * Override magic method __get(). Make sure that $this->config goes through
+   * getConfig().
    */
   public function __get($name) {
     if ($name == 'config') {
@@ -200,16 +169,6 @@ abstract class FeedsConfigurable {
    *   values are their default values.
    */
   public function configDefaults() {
-    return array();
-  }
-
-  /**
-   * Validates the configuration.
-   *
-   * @return array
-   *   A list of errors.
-   */
-  public function validateConfig() {
     return array();
   }
 

@@ -5,6 +5,7 @@
  * The file contains a class that assists to test Double field formatter types.
  */
 
+
 /**
  * Helper class to test Double field formatters.
  */
@@ -295,6 +296,7 @@ class DoubleFieldFormatter {
 
       case 'double_field_fieldset':
         $collapsible = $this->settings['collapsible'] ? "contains(@class,'collapsible')" : "not(contains(@class,'collapsible'))";
+        $collapsed = $this->settings['collapsed'] ? "contains(@class,'collapsed')" : "not(contains(@class,'collapsed'))";
         $prefix .= "//fieldset[$collapsible]";
         for ($delta = 0; $delta < $cardinality; $delta++) {
           $text = $this->settings['first']['prefix'] . $items[$delta]['first'] . $this->settings['first']['suffix'];
@@ -380,6 +382,7 @@ class DoubleFieldFormatter {
 
     return $validators;
   }
+
 
   /**
    * Return input array for settings form submission.

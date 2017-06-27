@@ -34,11 +34,9 @@ function number_feeds_processor_targets($entity_type, $bundle_name) {
 /**
  * Callback for mapping number fields.
  */
-function number_feeds_set_target(FeedsSource $source, $entity, $target, array $values, array $mapping) {
-  $language = $mapping['language'];
-
+function number_feeds_set_target(FeedsSource $source, $entity, $target, array $values) {
   // Iterate over all values.
-  $field = isset($entity->$target) ? $entity->$target : array($language => array());
+  $field = isset($entity->$target) ? $entity->$target : array('und' => array());
 
   foreach ($values as $value) {
 
@@ -47,7 +45,7 @@ function number_feeds_set_target(FeedsSource $source, $entity, $target, array $v
     }
 
     if (is_numeric($value)) {
-      $field[$language][] = array('value' => $value);
+      $field['und'][] = array('value' => $value);
     }
   }
 

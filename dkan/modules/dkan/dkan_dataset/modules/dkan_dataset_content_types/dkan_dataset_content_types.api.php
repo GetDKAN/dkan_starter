@@ -20,7 +20,7 @@ function hook_license_subscribe() {
 /**
  * Removes a set of license options for the dkan dataset license field.
  */
-function hook_license_unsubscribe() {
+function hook_license_subscribe() {
   return array(
     'license-key',
   );

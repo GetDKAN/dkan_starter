@@ -10,8 +10,7 @@
  *
  * @param $raw
  *   File contents.
- *
- * @return array
+ * @return
  *   An array of the parsed OPML file.
  */
 function opml_parser_parse($raw) {
