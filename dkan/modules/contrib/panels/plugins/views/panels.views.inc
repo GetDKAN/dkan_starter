@@ -1,11 +1,7 @@
 <?php
 
 /**
- * @file
- */
-
-/**
- * Implementation of hook_views_plugins.
+ * Implementation of hook_views_plugins
  */
 function panels_views_plugins() {
   $plugins = array(

@@ -33,10 +33,7 @@ class views_handler_argument_node_created_fulldate extends views_handler_argumen
    * Provide a link to the next level of the view
    */
   function title() {
-    $timestamp = strtotime($this->argument . " 00:00:00 UTC");
-    if ($timestamp !== FALSE) {
-      return format_date($timestamp, 'custom', $this->format, 'UTC');
-    }
+    return format_date(strtotime($this->argument . " 00:00:00 UTC"), 'custom', $this->format, 'UTC');
   }
 }
 
@@ -80,10 +77,7 @@ class views_handler_argument_node_created_year_month extends views_handler_argum
    * Provide a link to the next level of the view
    */
   function title() {
-    $timestamp = strtotime($this->argument . "15" . " 00:00:00 UTC");
-    if ($timestamp !== FALSE) {
-      return format_date($timestamp, 'custom', $this->format, 'UTC');
-    }
+    return format_date(strtotime($this->argument . "15" . " 00:00:00 UTC"), 'custom', $this->format, 'UTC');
   }
 }
 
@@ -114,10 +108,7 @@ class views_handler_argument_node_created_month extends views_handler_argument_d
    */
   function title() {
     $month = str_pad($this->argument, 2, '0', STR_PAD_LEFT);
-    $timestamp = strtotime("2005" . $month . "15" . " 00:00:00 UTC");
-    if ($timestamp !== FALSE) {
-      return format_date($timestamp, 'custom', $this->format, 'UTC');
-    }
+    return format_date(strtotime("2005" . $month . "15" . " 00:00:00 UTC"), 'custom', $this->format, 'UTC');
   }
 
   function summary_argument($data) {
@@ -154,10 +145,7 @@ class views_handler_argument_node_created_day extends views_handler_argument_dat
    */
   function title() {
     $day = str_pad($this->argument, 2, '0', STR_PAD_LEFT);
-    $timestamp = strtotime("2005" . "05" . $day . " 00:00:00 UTC");
-    if ($timestamp !== FALSE) {
-      return format_date($timestamp, 'custom', $this->format, 'UTC');
-    }
+    return format_date(strtotime("2005" . "05" . $day . " 00:00:00 UTC"), 'custom', $this->format, 'UTC');
   }
 
   function summary_argument($data) {

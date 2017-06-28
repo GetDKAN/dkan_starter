@@ -32,12 +32,7 @@ function panopoly_images_media_wysiwyg_wysiwyg_allowed_view_modes_alter(&$option
     );
     foreach ($labels as $name => $label) {
       if (isset($options[$name])) {
-        if (is_array($options[$name])) {
-          $options[$name]['label'] = $label;
-        }
-        else {
-          $options[$name] = $label;
-        }
+        $options[$name]['label'] = $label;
       }
     }
   }

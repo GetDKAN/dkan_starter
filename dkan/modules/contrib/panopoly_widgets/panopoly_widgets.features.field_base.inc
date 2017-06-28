@@ -10,7 +10,7 @@
 function panopoly_widgets_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_basic_file_file'.
+  // Exported field_base: 'field_basic_file_file'
   $field_bases['field_basic_file_file'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -33,7 +33,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'file',
   );
 
-  // Exported field_base: 'field_basic_file_text'.
+  // Exported field_base: 'field_basic_file_text'
   $field_bases['field_basic_file_text'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -52,7 +52,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'text_long',
   );
 
-  // Exported field_base: 'field_basic_image_caption'.
+  // Exported field_base: 'field_basic_image_caption'
   $field_bases['field_basic_image_caption'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -71,7 +71,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'text_with_summary',
   );
 
-  // Exported field_base: 'field_basic_image_image'.
+  // Exported field_base: 'field_basic_image_image'
   $field_bases['field_basic_image_image'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -93,13 +93,14 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'image',
   );
 
-  // Exported field_base: 'field_basic_image_link'.
+  // Exported field_base: 'field_basic_image_link'
   $field_bases['field_basic_image_link'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_basic_image_link',
+    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'link',
@@ -122,7 +123,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'link_field',
   );
 
-  // Exported field_base: 'field_basic_spotlight_duration'.
+  // Exported field_base: 'field_basic_spotlight_duration'
   $field_bases['field_basic_spotlight_duration'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -137,7 +138,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_basic_spotlight_items'.
+  // Exported field_base: 'field_basic_spotlight_items'
   $field_bases['field_basic_spotlight_items'] = array(
     'active' => 1,
     'cardinality' => -1,
@@ -159,7 +160,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'panopoly_spotlight',
   );
 
-  // Exported field_base: 'field_basic_spotlight_pager'.
+  // Exported field_base: 'field_basic_spotlight_pager'
   $field_bases['field_basic_spotlight_pager'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -185,7 +186,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'list_text',
   );
 
-  // Exported field_base: 'field_basic_table_table'.
+  // Exported field_base: 'field_basic_table_table'
   $field_bases['field_basic_table_table'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -203,7 +204,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'tablefield',
   );
 
-  // Exported field_base: 'field_basic_text_text'.
+  // Exported field_base: 'field_basic_text_text'
   $field_bases['field_basic_text_text'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -222,7 +223,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'text_long',
   );
 
-  // Exported field_base: 'field_map_address'.
+  // Exported field_base: 'field_map_address'
   $field_bases['field_map_address'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -243,7 +244,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_map_information'.
+  // Exported field_base: 'field_map_information'
   $field_bases['field_map_information'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -262,7 +263,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'text_long',
   );
 
-  // Exported field_base: 'field_quick_links_links'.
+  // Exported field_base: 'field_quick_links_links'
   $field_bases['field_quick_links_links'] = array(
     'active' => 1,
     'cardinality' => -1,
@@ -291,7 +292,7 @@ function panopoly_widgets_field_default_field_bases() {
     'type' => 'link_field',
   );
 
-  // Exported field_base: 'field_video_file'.
+  // Exported field_base: 'field_video_file'
   $field_bases['field_video_file'] = array(
     'active' => 1,
     'cardinality' => 1,

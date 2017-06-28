@@ -146,14 +146,14 @@ abstract class Datastore {
   /**
    * Updates the datastore with file.
    */
-  public function updateFromFileUri($uri = '', $copy_file = TRUE) {
+  public function updateByFile($uri = '', $copy_file = TRUE, $truncate = TRUE) {
 
   }
 
   /**
    * Creates a datastore with file.
    */
-  public function createFromFileUri($uri = '', $copy_file = TRUE) {
+  public function createByFile($uri = '', $copy_file = TRUE) {
 
   }
 

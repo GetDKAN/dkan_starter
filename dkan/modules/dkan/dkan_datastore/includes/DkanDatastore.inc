@@ -36,20 +36,15 @@ class DkanDatastore extends Datastore implements DatastoreFormInterface {
 
   /**
    * Revrieves source from $node if it exists.
-   *
-   * @return FeedsSource
-   *   Instance of FeedsSource class fetched. Or FALSE if failed.
    */
   public function source() {
-    $source = FALSE;
-
     if ($this->importerId) {
       $source = feeds_source($this->importerId, $this->node->nid);
+      if ($source) {
+        return $source;
+      }
     }
-
-    return $source instanceof FeedsSource ?
-      $source :
-      FALSE;
+    return FALSE;
   }
 
   /**
@@ -182,6 +177,11 @@ class DkanDatastore extends Datastore implements DatastoreFormInterface {
         $form[$importer_id]['source_status']['#weight'] = '-9';
         if (isset($form[$importer_id]['settings']['FeedsCSVParser']['help'])) {
           unset($form[$importer_id]['settings']['FeedsCSVParser']['help']);
+        }
+        // For now, removing the TAB option. It is not working and tab-separated
+        // values aren't well supported elsewhere in DKAN.
+        if (isset($form[$importer_id]['settings']['FeedsCSVParser']['delimiter']['#options']['TAB'])) {
+          unset($form[$importer_id]['settings']['FeedsCSVParser']['delimiter']['#options']['TAB']);
         }
         $form['importer_id'] = array(
           '#type' => 'value',
@@ -417,39 +417,15 @@ class DkanDatastore extends Datastore implements DatastoreFormInterface {
     $feed = isset($this->feed) ? $this->feed : $this->feed($this->node);
     $feed['source']->startImport();
   }
-
   /**
    * Starts import without invoking batch UI process.
-   *
-   * @return bool
-   *   Status of the import operation. TRUE if successful, FALSE if failed.
    */
-  public function importByCli() {
-    $source = $this->source();
-
-    // Prepare for background process.
-    $source_prepared = $this->setupSourceBackground($source);
-
-    // Check we got the source up and ready.
-    if (!$source_prepared) {
-      watchdog('dkan_datastore', "Failed to load or prepare the source.",
-        array(), WATCHDOG_ERROR);
-      return FALSE;
-    }
-
+  public function importByCLI() {
+    $source = $this->setUpSource();
     // Import new items.
-    try {
-      while (FEEDS_BATCH_COMPLETE != $source->import()) {
-        continue;
-      };
-    }
-    catch (Exception $exception) {
-      watchdog('dkan_datastore', "Source import crashed with exception: \"@exception_message\".",
-        array('@exception_message' => $exception->getMessage()), WATCHDOG_ERROR);
-      return FALSE;
-    }
-
-    return TRUE;
+    while (FEEDS_BATCH_COMPLETE != $source->import()) {
+      continue;
+    };
   }
 
   /**
@@ -461,44 +437,36 @@ class DkanDatastore extends Datastore implements DatastoreFormInterface {
    *   A boolean indicating whether to copy the file locally.
    *   If set to TRUE the file is copied locally.
    */
-  public function updateFromFileUri($uri = '', $copy_file = TRUE) {
-    $file = FALSE;
-
-    // Sanity check: make sure the file exits.
-    if (!file_exists($uri)) {
-      return FALSE;
-    }
+  public function updateFileByURI($uri, $copy_file = TRUE) {
 
     if ($copy_file) {
-      // Generate destination based on the URI.
-      $destination = 'public://' . drupal_basename($uri);
-
-      $data = file_get_contents($uri);
-      // Using the same name can break the update process when the current file
-      // is cleaned.
-      $file = file_save_data($data, $destination, FILE_EXISTS_RENAME);
+      $file = array();
+      $file = file_get_contents($uri);
+      $file = file_save_data($new_file, 'public://' . drupal_basename($uri));
     }
     else {
-      $file = file_uri_to_object($uri);
+      // The file exists.
+      $fid = db_query('SELECT fid FROM {file_managed} WHERE uri = :uri', array(':uri' => $uri))->fetchField();;
+      $file = file_load($fid);
     }
 
-    // At this point we should have a valid file object.
-    if (!$file) {
+    if ($fid) {
+      $this->updateFile($file);
+    }
+    else {
       return FALSE;
     }
 
-    return $this->updateFromFile($file);
   }
 
   /**
    * Update resource with file.
    *
-   * @param object $file
-   *   Drupal file object.
    * @param bool $use_current_setttings
-   *   If set to TRUE use the current file visibility settings.
+   *  If set to TRUE use the current file visibility settings.
+   *
    */
-  public function updateFromFile($file, $use_current_setttings = TRUE) {
+  public function updateFile($file, $use_current_setttings = TRUE) {
     // Get current file.
     $current_file = $this->file();
 
@@ -513,21 +481,16 @@ class DkanDatastore extends Datastore implements DatastoreFormInterface {
       if (isset($current_file->graph)) {
         $file->graph = $current_file->graph;
       }
-
       // Delete current file.
       $this->deleteFile();
     }
 
-    // Save the file if new.
-    if (empty($file->fid)) {
-      file_save($file);
-    }
+    // Save new file.
+    file_save($file);
 
     $file_field = dkan_datastore_file_upload_field();
     $this->node->{$file_field} = array(LANGUAGE_NONE => array((array) $file));
     node_save($this->node);
-
-    return TRUE;
   }
 
   /**
@@ -553,10 +516,10 @@ class DkanDatastore extends Datastore implements DatastoreFormInterface {
   /**
    * Delete file from datastore.
    */
-  public function createFromFileUri($uri = '', $copy_file = TRUE) {
+  public function createByFile($uri = '', $copy_file = TRUE) {
 
     if ($uri) {
-      return $this->updateFromFileUri($uri, $copy_file);
+      return $this->updateByFile($uri, $copy_file);
     }
     else {
       return FALSE;
@@ -565,77 +528,40 @@ class DkanDatastore extends Datastore implements DatastoreFormInterface {
 
   /**
    * Set up of source and importer for background operations.
-   *
-   * @param FeedsSource $source
-   *   The FeedsSource object to work on.
-   *
-   * @return bool
-   *   TRUE if the new configuration is applyed to the source. FALSE if not.
    */
-  protected function setupSourceBackground(FeedsSource &$source) {
-    if ($source instanceof FeedsSource) {
-      // IMPROVEMENT: Allow configuration of parser.
-      // IMPROVEMENT: Allow configuration of processor.
-      // Code added to fix this issue: https://www.drupal.org/node/2087091
-      // The feeds source does not get cleaned up properly.
-      // Ask it for its states so they are all present.
-      $source->state(FEEDS_FETCH);
-      $source->state(FEEDS_PROCESS);
-      $source->state(FEEDS_PROCESS_CLEAR);
+  protected function setUpSource() {
+    // IMPROVEMENT: Allow configuration of parser.
+    // IMPROVEMENT: Allow configuration of processor.
+    $source = feeds_source($this->importerId, $this->node->nid);
+    // Code added to fix this issue: https://www.drupal.org/node/2087091
+    // The feeds source does not get cleaned up properly.
+    // Ask it for its states so they are all present.
+    $source->state(FEEDS_FETCH);
+    $source->state(FEEDS_PROCESS);
+    $source->state(FEEDS_PROCESS_CLEAR);
+    $config = array(
+      'process_in_background' => TRUE,
+    );
+    $source->importer->addConfig($config);
+    $this->save();
+    $feed = isset($this->feed) ? $this->feed : $this->feed($this->node);
 
-      $config = array(
-        'process_in_background' => TRUE,
-      );
-      $source->importer->addConfig($config);
-
-      $source->save();
-      return TRUE;
-    }
-
-    // Something wrong happened. Fail.
-    watchdog('dkan_datastore',
-      "Failed to setup the source for background operations.",
-      array(), WATCHDOG_ERROR);
-    return FALSE;
+    return $feed['source'];
   }
 
   /**
    * Delete items in datastore.
-   *
-   * @return bool
-   *   Status of the operation. TRUE if successful, FALSE if failed.
    */
   protected function deleteItems() {
     // If the datastore has items, delete them.
     if ($this->status() == DKAN_DATASTORE_EXISTS) {
       // Set up source and importer.
-      $source = $this->source();
-      $source_ready = $this->setupSourceBackground($source);
-
-      if (!$source_ready) {
-        watchdog('dkan_datastore',
-          "Delete failed. Cannot instantiate the source or source not ready.",
-          array(), WATCHDOG_ERROR);
-        return FALSE;
-      }
-
+      $source = $this->setUpSource();
       // Delete items.
-      try {
-        while (FEEDS_BATCH_COMPLETE != $source->clear()) {
-          continue;
-        };
-      }
-      catch (Exception $exception) {
-        // Log error and fail.
-        watchdog('dkan_datastore',
-          "Delete failed. Operation crashed with exception: \"@exception_message\".",
-          array('@exception_message' => $exception->getMessage()),
-          WATCHDOG_ERROR);
-        return FALSE;
-      }
+      while (FEEDS_BATCH_COMPLETE != $source->clear()) {
+        continue;
+      };
     }
-
-    return TRUE;
   }
 
   /**
@@ -647,7 +573,7 @@ class DkanDatastore extends Datastore implements DatastoreFormInterface {
    * @return string
    *   Autoincrement id number for row if successful.
    */
-  public function addRow(array $row = array()) {
+  public function addRow($row = array()) {
     if (is_array($row) && $row) {
       $defaults = array(
         'timestamp' => time(),
