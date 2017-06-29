@@ -29,10 +29,8 @@ class SearchApiViewsHandlerFilterUser extends SearchApiViewsHandlerFilterEntity 
   protected function ids_to_strings(array $ids) {
     $names = array();
     $args[':uids'] = array_filter($ids);
-    if ($args[':uids']) {
-      $result = db_query('SELECT uid, name FROM {users} u WHERE uid IN (:uids)', $args);
-      $result = $result->fetchAllKeyed();
-    }
+    $result = db_query("SELECT uid, name FROM {users} u WHERE uid IN (:uids)", $args);
+    $result = $result->fetchAllKeyed();
     foreach ($ids as $uid) {
       if (!$uid) {
         $names[] = variable_get('anonymous', t('Anonymous'));
