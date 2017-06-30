@@ -6,6 +6,7 @@
  * need to be broken out into a .inc file, it's convenient that we do so
  * that we don't load code unnecessarily. Plus it demonstrates plugins
  * in modules other than Panels itself.
+ *
  */
 
 /**
@@ -104,7 +105,7 @@ function panels_mini_panels_mini_content_type_render($subtype, $conf, $panel_arg
   $mini->display->args = $panel_args;
   $mini->display->css_id = panels_mini_get_id($subtype);
   $mini->display->owner = $mini;
-  // Unique ID of this mini.
+  // unique ID of this mini.
   $mini->display->owner->id = $mini->name;
 
   $block = new stdClass();

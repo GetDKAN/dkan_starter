@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * dkan_sitewide_panels.pages_default.inc
@@ -304,7 +303,7 @@ function dkan_sitewide_panels_default_page_manager_handlers() {
   $pane->shown = TRUE;
   $pane->access = array();
   $pane->configuration = array(
-    'label' => 'hidden',
+    'label' => 'above',
     'formatter' => 'text_default',
     'delta_limit' => 0,
     'delta_offset' => '0',

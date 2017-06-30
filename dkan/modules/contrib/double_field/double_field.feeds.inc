@@ -18,9 +18,7 @@ function double_field_feeds_processor_targets_alter(&$targets, $entity_type, $bu
         $targets["$name:$subfield"] = array(
           'name' => $instance['label'] . ':' . $subfield,
           'callback' => 'double_field_feeds_set_target',
-          // @codingStandardsIgnoreStart
           'description' => t(ucfirst($subfield) . ' subfield of the @name field.', array('@name' => $instance['label'])),
-          // @codingStandardsIgnoreEnd
           'real_target' => $name,
         );
       }
@@ -31,16 +29,18 @@ function double_field_feeds_processor_targets_alter(&$targets, $entity_type, $bu
 /**
  * Callback for mapping.
  */
-function double_field_feeds_set_target(FeedsSource $source, $entity, $target, array $values, array $mapping) {
-  $language = $mapping['language'];
-
-  list($field_name, $subfield) = explode(':', $target . ':value');
-
+function double_field_feeds_set_target($source, $entity, $target, $value) {
+  if (empty($value)) {
+    return;
+  }
+  // Handle non-multiple value fields.
+  $value = is_array($value) ? $value : array($value);
+  list($field_name, $subfield) = explode(':', $target);
+  $info = field_info_field($field_name);
   // Iterate over all values.
-  foreach ($values as $delta => $item) {
+  foreach ($value as $delta => $item) {
     if (!is_array($item) && !is_object($item)) {
-      $entity->{$field_name}[$language][$delta][$subfield] = $item;
+      $entity->{$field_name}[LANGUAGE_NONE][$delta][$subfield] = $item;
     }
   }
-
 }

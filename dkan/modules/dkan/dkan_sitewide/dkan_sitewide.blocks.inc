@@ -159,12 +159,20 @@ function dkan_sitewide_data_extent_block() {
   if ($node && isset($node->type) && $node->type == 'dataset') {
     $wrapper = entity_metadata_wrapper('node', $node);
     $spatial = $wrapper->field_spatial->value();
-    if ($spatial) {
-      drupal_add_library('leaflet_widget', 'leaflet');
-      $features = array();
-      foreach ($spatial as $spatial_val) {
-        $features[] = leaflet_widget_geojson_feature($spatial_val['wkt']);
+
+    // Allow for multiple layers.
+    if ($spatial && is_array($spatial[0]) && isset($spatial[0]['wkt'])) {
+      $spatial['wkt'] = array();
+      foreach ($spatial as $layer) {
+        if (isset($layer['wkt'])) {
+          array_push($spatial['wkt'], $layer['wkt']);
+        }
       }
+    }
+
+    if ($spatial && $spatial['wkt']) {
+      drupal_add_library('leaflet_widget', 'leaflet');
+      $features = array(leaflet_widget_geojson_feature($spatial['wkt']));
       $geojson = drupal_json_encode(leaflet_widget_geojson_feature_collection($features));
       $output = "var dataExtent = " . $geojson;
       $output .= "; var map = L.map('map');

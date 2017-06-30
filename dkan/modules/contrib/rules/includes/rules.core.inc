@@ -1805,22 +1805,16 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   protected function getFileName($function, $includes) {
-    static $filenames;
-    if (!isset($filenames) || !array_key_exists($function, $filenames)) {
-      $filenames[$function] = NULL;
-      $reflector = new ReflectionFunction($function);
-      // On windows the path contains backslashes instead of slashes, fix that.
-      $file = str_replace('\\', '/', $reflector->getFileName());
-      foreach ($includes as $include) {
-        $pos = strpos($file, $include . '.inc');
-        // Test whether the file ends with the given filename.inc.
-        if ($pos !== FALSE && strlen($file) - $pos == strlen($include) + 4) {
-          $filenames[$function] = $include;
-          return $include;
-        }
+    $reflector = new ReflectionFunction($function);
+    // On windows the path contains backslashes instead of slashes, fix that.
+    $file = str_replace('\\', '/', $reflector->getFileName());
+    foreach ($includes as $include) {
+      $pos = strpos($file, $include . '.inc');
+      // Test whether the file ends with the given filename.inc.
+      if ($pos !== FALSE && strlen($file) - $pos == strlen($include) + 4) {
+        return $include;
       }
     }
-    return $filenames[$function];
   }
 }
 

@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the double field module.
  */
 
+
 /**
  * Implements hook_field_schema().
  *

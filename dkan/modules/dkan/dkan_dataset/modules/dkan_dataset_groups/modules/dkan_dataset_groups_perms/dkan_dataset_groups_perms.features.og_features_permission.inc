@@ -16,6 +16,7 @@ function dkan_dataset_groups_perms_og_features_default_permissions() {
   $permissions['node:group:access authoring options of dataset content'] = array(
     'roles' => array(
       'administrator member' => 'administrator member',
+      'member' => 'member',
     ),
   );
 
@@ -23,6 +24,7 @@ function dkan_dataset_groups_perms_og_features_default_permissions() {
   $permissions['node:group:access authoring options of resource content'] = array(
     'roles' => array(
       'administrator member' => 'administrator member',
+      'member' => 'member',
     ),
   );
 
@@ -31,7 +33,6 @@ function dkan_dataset_groups_perms_og_features_default_permissions() {
     'roles' => array(
       'administrator member' => 'administrator member',
       'member' => 'member',
-      'non-member' => 'non-member',
     ),
   );
 
@@ -40,7 +41,6 @@ function dkan_dataset_groups_perms_og_features_default_permissions() {
     'roles' => array(
       'administrator member' => 'administrator member',
       'member' => 'member',
-      'non-member' => 'non-member',
     ),
   );
 

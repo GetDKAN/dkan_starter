@@ -24,9 +24,9 @@ class DoubleFieldWidget {
 
     $this->fieldSettings = $field_settings;
 
-    $subwidgets = explode('_&_', $widget_type);
-    $this->subwidgets['first'] = $subwidgets[0];
-    $this->subwidgets['second'] = $subwidgets[1];
+    // The order of the elements compared in
+    // which order they were written in the list().
+    list($this->subwidgets['second'], $this->subwidgets['first']) = array_reverse(explode('_&_', $widget_type));
 
     // Generate widget settings.
     $this->settings['inline'] = (bool) mt_rand(0, 1);
@@ -52,7 +52,7 @@ class DoubleFieldWidget {
           break;
 
         case 'select':
-          $this->settings[$index][$subwidget_type] = array();
+          $this->settings[$index][$subwidget_type]  = array();
           for ($i = 0, $cnt = mt_rand(5, 10); $i < $cnt; $i++) {
             // These values should match global field settings.
             $value = DoubleFieldField::generateValue($this->fieldSettings[$index]);
@@ -103,6 +103,7 @@ class DoubleFieldWidget {
   public function setSettings($settings) {
     $this->settings = $settings;
   }
+
 
   /**
    * Value getter.
@@ -183,7 +184,7 @@ class DoubleFieldWidget {
   }
 
   /**
-   * Create widget form validators.
+   * Create widget fornm validators.
    */
   public function getFormValidators($field_name) {
     $prefix = "//div[@id='edit-$field_name']";
@@ -200,7 +201,7 @@ class DoubleFieldWidget {
     $prefix .= "//div[@class='$class']";
 
     foreach ($this->subwidgets as $index => $subwidget) {
-      $name = $field_name . '[' . LANGUAGE_NONE . '][0][' . $index . ']';
+      $name = $field_name . '[' . LANGUAGE_NONE . '][0][' .  $index . ']';
 
       $value = $this->value[0][$index];
 
@@ -281,7 +282,7 @@ class DoubleFieldWidget {
   }
 
   /**
-   * Get all supported widget types.
+   * Get all suported widget types.
    */
   public static function getAllWidgetTypes() {
     $subwidgets = array(
@@ -300,5 +301,4 @@ class DoubleFieldWidget {
     }
     return $widgets;
   }
-
 }
