@@ -26,6 +26,7 @@ circle:
   - customizable
   - fixme
   - testBug
+  skip_features: []
   test_dirs:
   - tests/features
   - dkan/test/features
