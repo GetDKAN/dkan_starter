@@ -18,4 +18,4 @@ if [ "$target_env" == 'local' ]; then
   drush @$drush_alias dis memcache memcache_admin -y
 fi
 
-target_env=$target_env drush_alias=$drush_alias bash .ahoy/site/.scripts/deploy.sh
+target_env=$target_env drush_alias=$drush_alias ruby .ahoy/site/.scripts/deploy.rb
