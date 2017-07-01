@@ -2,7 +2,7 @@ require "./dkan/.ahoy/.scripts/config.rb"
 
 puts "Running drush rr --no-cache-clear"
 drush_alias = ENV['drush_alias']
-target_env = ENV['targe_env']
+target_env = ENV['target_env']
 
 `drush @#{drush_alias} rr --no-cache-clear`
 
