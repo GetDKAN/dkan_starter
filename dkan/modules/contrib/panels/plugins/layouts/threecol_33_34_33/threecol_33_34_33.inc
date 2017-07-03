@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @file
- * Plugin definition.
- */
+// Plugin definition
 $plugin = array(
   'title' => t('Three column 33/34/33'),
   'category' => t('Columns: 3'),
@@ -13,6 +10,6 @@ $plugin = array(
   'regions' => array(
     'left' => t('Left side'),
     'middle' => t('Middle column'),
-    'right' => t('Right side'),
-  ),
+    'right' => t('Right side')
+   ),
 );

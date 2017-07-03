@@ -60,10 +60,10 @@ function radix_container($variables) {
 function radix_element_info_alter(&$elements) {
   foreach ($elements as &$element) {
     // Process all elements.
-    $element['#pre_render'][] = '_radix_pre_render_element';
+    $element['#process'][] = '_radix_process_element';
     // Process input elements.
     if (!empty($element['#input'])) {
-      $element['#pre_render'][] = '_radix_pre_render_input';
+      $element['#process'][] = '_radix_process_input';
     }
     // Process text format elements.
     if (!empty($element['#type']) && $element['#type'] == 'text_format') {
@@ -73,9 +73,9 @@ function radix_element_info_alter(&$elements) {
 }
 
 /**
- * Pre render callback for all elements.
+ * Process all elements.
  */
-function _radix_pre_render_element(&$element) {
+function _radix_process_element(&$element, &$form_state) {
   // Add form-inline or form-group classes.
   if (!empty($element['#attributes']['class']) && is_array($element['#attributes']['class'])) {
     if (in_array('container-inline', $element['#attributes']['class'])) {
@@ -89,9 +89,9 @@ function _radix_pre_render_element(&$element) {
 }
 
 /**
- * Pre render callback for input elements.
+ * Process input elements.
  */
-function _radix_pre_render_input(&$element) {
+function _radix_process_input(&$element, &$form_state) {
   // Add form-control class.
   $types = array(
     'textfield',

@@ -39,12 +39,10 @@ function link_feeds_processor_targets($entity_type, $bundle_name) {
 /**
  * Callback for mapping link fields.
  */
-function link_feeds_set_target(FeedsSource $source, $entity, $target, array $values, array $mapping) {
-  $language = $mapping['language'];
-
+function link_feeds_set_target(FeedsSource $source, $entity, $target, array $values) {
   list($field_name, $column) = explode(':', $target);
 
-  $field = isset($entity->$field_name) ? $entity->$field_name : array($language => array());
+  $field = isset($entity->$field_name) ? $entity->$field_name : array('und' => array());
   $delta = 0;
 
   foreach ($values as $value) {
@@ -53,7 +51,7 @@ function link_feeds_set_target(FeedsSource $source, $entity, $target, array $val
     }
 
     if (is_scalar($value)) {
-      $field[$language][$delta][$column] = (string) $value;
+      $field['und'][$delta][$column] = (string) $value;
     }
     $delta++;
   }

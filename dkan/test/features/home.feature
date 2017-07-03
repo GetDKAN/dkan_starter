@@ -7,17 +7,8 @@ Feature: Homepage
 
   Background:
     Given pages:
-      | name             | url                           |
-      | Add dataset      | /node/add/dataset             |
-      | Rebuild perms    | /admin/reports/status/rebuild |
-
-  @api @javascript
-  Scenario: Rebuild Permissions
-    Given I am logged in as a user with the "administrator" role 
-    Given I am on the "Rebuild perms" page
-    And I press "Rebuild permissions"
-    And I wait for "Status report"
-    Then I should see "The content access permissions have been rebuilt."
+      | name             | url                        |
+      | Add dataset      | /node/add/dataset          |
 
   @customizable
   Scenario: Viewing the site title

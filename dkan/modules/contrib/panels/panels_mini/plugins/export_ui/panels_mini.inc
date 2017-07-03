@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file
- */
-
 $plugin = array(
   'schema' => 'panels_mini',
   'access' => 'administer mini panels',
@@ -42,3 +38,4 @@ $plugin = array(
   ),
 
 );
+

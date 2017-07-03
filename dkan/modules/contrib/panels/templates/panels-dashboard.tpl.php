@@ -1,8 +1,4 @@
 <?php
-
-/**
- * @file
- */
 ?>
 <div class="panels-dashboard clearfix">
   <div class="dashboard-left clearfix">

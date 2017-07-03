@@ -1,7 +1,7 @@
 <?php
 /**
- * @file Panels-pane.tpl.php
- * Main panel pane template.
+ * @file panels-pane.tpl.php
+ * Main panel pane template
  *
  * Variables available:
  * - $pane->type: the content type inside this pane

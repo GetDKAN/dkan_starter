@@ -63,10 +63,7 @@ function _roleassign_form_alter(array &$form, array &$form_state, $form_id) {
   $assignable_roles = _roleassign_assignable_roles($roles);
 
   // Get roles already assigned to the account.
-  $account = NULL;
-  if ($form_id == 'user_profile_form' && !empty($form_state['user'])) {
-    $account = $form_state['user'];
-  }
+  $account = menu_get_object('user');
   $assigned_roles = (isset($account->roles) ? $account->roles : array());
 
   // An account might already have a role that isn't available for assignment

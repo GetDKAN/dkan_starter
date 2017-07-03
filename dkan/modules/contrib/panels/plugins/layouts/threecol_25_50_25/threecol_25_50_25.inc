@@ -1,10 +1,9 @@
 <?php
 
 /**
- * @file
- * Implementation of hook_panels_layouts.
+ * implementation of hook_panels_layouts
  */
-// Plugin definition.
+// Plugin definition
 $plugin = array(
   'title' => t('Three column 25/50/25'),
   'category' => t('Columns: 3'),
@@ -15,6 +14,7 @@ $plugin = array(
   'regions' => array(
     'left' => t('Left side'),
     'middle' => t('Middle column'),
-    'right' => t('Right side'),
+    'right' => t('Right side')
   ),
 );
+
