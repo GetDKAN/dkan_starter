@@ -4,27 +4,7 @@ commands:
   setup:
     usage: switchs between ci setups
     cmd: |
-      eval $(ahoy parse config/config.yml)
-      name=$(ahoy utils name)
-
-      if [ "$name" = 'datastarter' ]; then
-        echo "Site name datastarter. Going with DKAN base install"
-        ahoy site reinstall
-      else
-        echo "Site name set. Pulling database from s3 bucket"
-        ahoy utils s3-setup
-        # Configure https settings.
-        if [ "$default_stage_file_proxy_origin" != "" ] && [ "$default_stage_file_proxy_origin" != "changeme" ]; then
-          ahoy utils asset-download-db
-        else
-          ahoy utils asset-download
-          ahoy utils files-link
-        fi
-        ahoy utils files-fix-permissions
-
-        # Old database should've been cleaned in the ahoy site reinstall step.
-        ahoy drush sql-cli < backups/sanitized.sql
-      fi
+      ruby .ahoy/site/.scripts/ci-setup.rb
 
   deploy:
     usage: deploys within a ci setup
