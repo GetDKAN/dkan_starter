@@ -116,8 +116,7 @@ function job_scheduler_rebuild_all() {
 /**
  * Rebuild a single scheduler
  */
-function job_scheduler_rebuild_scheduler($name, $info = NULL) {
-  $info = $info ? $info : job_scheduler_info($name);
+function job_scheduler_rebuild_scheduler($name, $info) {
   if (!empty($info['jobs'])) {
     $scheduler = JobScheduler::get($name);
     foreach ($info['jobs'] as $job) {
