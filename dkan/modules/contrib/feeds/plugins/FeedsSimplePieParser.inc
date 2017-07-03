@@ -216,15 +216,6 @@ class FeedsSimplePieParser extends FeedsParser {
   }
 
   /**
-   * Overrides FeedsParser::providesSourceTitle().
-   *
-   * This parser supports retrieving a title from the source.
-   */
-  public function providesSourceTitle() {
-    return TRUE;
-  }
-
-  /**
    * Returns cache directory. Creates it if it doesn't exist.
    */
   protected function cacheDirectory() {

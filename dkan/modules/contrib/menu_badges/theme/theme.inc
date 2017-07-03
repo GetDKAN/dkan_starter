@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Menu Badges themes.
- */
 
 /**
  * Preprocess the menu badge views display.
