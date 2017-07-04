@@ -246,17 +246,17 @@ function data_config_enabled_modules() {
   }
 
   if (isset($data_config['odfe']) && $data_config['odfe']['enable']) {
-    $features_master['module']['open_data_federal_extras'] = 'open_data_federal_extras';
-    $features_master['module']['autocomplete_deluxe'] = 'autocomplete_deluxe';
-    $features_master['module']['ctools'] = 'ctools';
-    $features_master['module']['dkan_dataset_content_types'] = 'dkan_dataset_content_types';
-    $features_master['module']['features'] = 'features';
-    $features_master['module']['field_group'] = 'field_group';
-    $features_master['module']['link'] = 'link';
-    $features_master['module']['list'] = 'list';
-    $features_master['module']['options'] = 'options';
-    $features_master['module']['strongarm'] = 'strongarm';
-    $features_master['module']['text'] = 'text';
+    $features_master['modules']['open_data_federal_extras'] = 'open_data_federal_extras';
+    $features_master['modules']['autocomplete_deluxe'] = 'autocomplete_deluxe';
+    $features_master['modules']['ctools'] = 'ctools';
+    $features_master['modules']['dkan_dataset_content_types'] = 'dkan_dataset_content_types';
+    $features_master['modules']['features'] = 'features';
+    $features_master['modules']['field_group'] = 'field_group';
+    $features_master['modules']['link'] = 'link';
+    $features_master['modules']['list'] = 'list';
+    $features_master['modules']['options'] = 'options';
+    $features_master['modules']['strongarm'] = 'strongarm';
+    $features_master['modules']['text'] = 'text';
   }
   return $features_master;
 
