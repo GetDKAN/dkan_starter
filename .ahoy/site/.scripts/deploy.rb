@@ -50,6 +50,6 @@ if target_env  =~ /local/
     password = "admin"
   end
 
-  `drush --root=docroot user-password 1 --password="#{password}`
-  `drush --root=docroot user-password admin --password="#{password}`
+  `drush --root=docroot user-password 1 --password="#{password}"`
+  `drush --root=docroot user-password admin --password="#{password}"`
 end
