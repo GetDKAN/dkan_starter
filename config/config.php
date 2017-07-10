@@ -41,6 +41,9 @@ $conf = array (
   'circle' => 
   array (
     'memory_limit' => '256M',
+    'skip_features' => 
+    array (
+    ),
     'skip_tags' => 
     array (
       0 => 'customizable',
