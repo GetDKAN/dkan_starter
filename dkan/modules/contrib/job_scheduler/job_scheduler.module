@@ -2,16 +2,17 @@
 
 /**
  * @file
- * job scheduler module.
+ * Main file for the Job Scheduler.
  */
 
 /**
  * Collects and returns scheduler info.
  *
+ * @param string $name
+ *   Name of the schedule.
+ *
  * @see hook_cron_job_scheduler_info()
  *
- * @param $name
- *   Name of the schedule
  * @return array
  *   Information for the schedule if $name, all the information if not
  */
@@ -57,12 +58,12 @@ function job_scheduler_cron() {
   $total =
   $failed = 0;
   $jobs = db_select('job_schedule', NULL, array('fetch' => PDO::FETCH_ASSOC))
-            ->fields('job_schedule')
-            ->condition('scheduled', 0)
-            ->condition('next', REQUEST_TIME, '<=')
-            ->orderBy('next', 'ASC')
-            ->range(0, 200)
-            ->execute();
+    ->fields('job_schedule')
+    ->condition('scheduled', 0)
+    ->condition('next', REQUEST_TIME, '<=')
+    ->orderBy('next', 'ASC')
+    ->range(0, 200)
+    ->execute();
   foreach ($jobs as $job) {
     $job['data'] = unserialize($job['data']);
     try {
@@ -71,7 +72,7 @@ function job_scheduler_cron() {
     catch (Exception $e) {
       watchdog('job_scheduler', $e->getMessage(), array(), WATCHDOG_ERROR);
       $failed++;
-      // Drop jobs that have caused exceptions
+      // Drop jobs that have caused exceptions.
       JobScheduler::get($job['name'])->remove($job);
     }
     $total++;
@@ -105,7 +106,7 @@ function job_scheduler_modules_disabled($modules) {
 }
 
 /**
- * Rebuild scheduled information after enable/disable modules
+ * Rebuild scheduled information after enable/disable modules.
  *
  * @todo What should we do about missing ones when disabling their module?
  */
@@ -114,10 +115,9 @@ function job_scheduler_rebuild_all() {
 }
 
 /**
- * Rebuild a single scheduler
+ * Rebuild a single scheduler.
  */
-function job_scheduler_rebuild_scheduler($name, $info = NULL) {
-  $info = $info ? $info : job_scheduler_info($name);
+function job_scheduler_rebuild_scheduler($name, $info) {
   if (!empty($info['jobs'])) {
     $scheduler = JobScheduler::get($name);
     foreach ($info['jobs'] as $job) {
@@ -136,11 +136,12 @@ function job_scheduler_rebuild_scheduler($name, $info = NULL) {
  */
 function job_scheduler_cron_queue_info() {
   $queue = array();
-  foreach (job_scheduler_info() as $name => $info) {
+  foreach (job_scheduler_info() as $info) {
     if (!empty($info['jobs']) && !empty($info['queue name'])) {
       $queue[$info['queue name']] = array(
         'worker callback' => 'job_scheduler_cron_queue_worker',
-        'time' => 60, // Some reasonable default as we don't know
+      // Some reasonable default as we don't know.
+        'time' => 60,
       );
     }
   }
@@ -148,10 +149,12 @@ function job_scheduler_cron_queue_info() {
 }
 
 /**
- * Execute job worker from queue
+ * Execute job worker from queue.
  *
- * Providing our own worker has the advantage that we can reschedule the job or take care of cleanup
- * Note that as we run the execute() action, the job won't be queued again this time.
+ * Providing our own worker has the advantage that we can reschedule the job or
+ * take care of cleanup
+ * Note that as we run the execute() action, the job won't be queued again this
+ * time.
  */
 function job_scheduler_cron_queue_worker($job) {
   try {
@@ -159,7 +162,7 @@ function job_scheduler_cron_queue_worker($job) {
   }
   catch (Exception $e) {
     watchdog('job_scheduler', $e->getMessage(), array(), WATCHDOG_ERROR);
-    // Drop jobs that have caused exceptions
+    // Drop jobs that have caused exceptions.
     JobScheduler::get($job['name'])->remove($job);
   }
 }
