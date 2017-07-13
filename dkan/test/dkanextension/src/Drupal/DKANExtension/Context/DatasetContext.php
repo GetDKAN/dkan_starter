@@ -14,7 +14,7 @@ class DatasetContext extends RawDKANEntityContext {
   use ModeratorTrait;
 
   /**
-   *
+   * Constructor.
    */
   public function __construct() {
     parent::__construct(
@@ -38,13 +38,15 @@ class DatasetContext extends RawDKANEntityContext {
         'license' => 'field_license',
       ),
       array(
-        'moderation',
+        'moderation', 
         'moderation_date',
       )
     );
   }
 
   /**
+   * Gather all needed contexts.
+   *
    * @BeforeScenario
    */
   public function gatherContexts(BeforeScenarioScope $scope) {
@@ -71,7 +73,7 @@ class DatasetContext extends RawDKANEntityContext {
    * @throws \Exception
    *   If region or text within it cannot be found.
    */
-  public function iShouldSeeADatasetCalled($text) {
+  public function iShouldSeeDatasetCalled($text) {
     $session = $this->getSession();
     $page = $session->getPage();
     $search_region = $page->find('css', '.view-dkan-datasets');
@@ -89,6 +91,8 @@ class DatasetContext extends RawDKANEntityContext {
   }
 
   /**
+   * Confirm that a dataset is on the specified moderation state.
+   *
    * @Then The dataset :title is in :state moderation state
    */
   public function theDatasetIsInModerationState($title, $state) {
@@ -100,22 +104,24 @@ class DatasetContext extends RawDKANEntityContext {
   }
 
   /**
-   *
+   * Function executed before the node is saved.
    */
-  public function pre_save($wrapper, $fields) {
+  public function preSave($wrapper, $fields) {
     $this->preSaveModerate($wrapper, $fields);
-    parent::pre_save($wrapper, $fields);
+    parent::preSave($wrapper, $fields);
   }
 
   /**
-   *
+   * Function executed after the node is saved.
    */
-  public function post_save($wrapper, $fields) {
-    parent::post_save($wrapper, $fields);
+  public function postSave($wrapper, $fields) {
+    parent::postSave($wrapper, $fields);
     $this->moderate($wrapper, $fields);
   }
 
   /**
+   * Confirm that the local preview link is visible.
+   *
    * @Then I should see the local preview link
    */
   public function iShouldSeeTheLocalPreviewLink() {
@@ -123,6 +129,8 @@ class DatasetContext extends RawDKANEntityContext {
   }
 
   /**
+   * Confirm that the first number of datasets is on the specified order.
+   *
    * @Given I should see the first :number dataset items in :orderby :sortdirection order.
    */
   public function iShouldSeeTheFirstDatasetListInOrder($number, $orderby, $sortdirection) {
@@ -169,24 +177,28 @@ class DatasetContext extends RawDKANEntityContext {
     foreach ($results['results'] as $nid => $result) {
       $dataset = node_load($nid);
       $found_title = array_shift($dataset_list);
-      if ($found_title !== $dataset->title) {
+      // Drupal removes extra spacing on titles somehow so reproducing here.
+      $title = preg_replace('/\s+/', ' ', $dataset->title);
+      if ($found_title !== $title) {
         throw new \Exception("Does not match order of list, $found_title was next on page but expected $dataset->title");
       }
     }
   }
 
   /**
+   * Add a dataset filtered list panel.
+   *
    * @Given /^I add a Dataset Filtered List$/
    */
-  public function iAddADatasetFilteredList() {
+  public function iAddDatasetFilteredList() {
     $add_button = $this->getXPathElement("//fieldset[@class='widget-preview panel panel-default'][3]//a");
     $add_button->click();
   }
 
   /**
-   * @When I empty the resources field :locator
-   *
    * Empty the 'Resources' autocomplete field on a Dataset form.
+   *
+   * @When I empty the resources field :locator
    */
   public function iEmptyTheResourcesField($locator) {
     $session = $this->getSession();
@@ -207,41 +219,8 @@ class DatasetContext extends RawDKANEntityContext {
   }
 
   /**
-   * @Given /^I fill in the resources field "([^"]*)" with "([^"]*)"$/
+   * Confirm that all published datasets are visible.
    *
-   * Fill in the 'Resources' field on a Dataset form.
-   */
-  public function iFillInTheResourcesFieldWith($field, $value) {
-    $session = $this->getSession();
-    $page = $session->getPage();
-
-    $element = $page->findField($field);
-    if (!$element) {
-      throw new ElementNotFoundException($session, NULL, 'named', $field);
-    }
-    $page->fillField($field, $value);
-
-    // Trigger all needed key events in order for the autocomplete to be triggered.
-    // Just filling the field with a value is not enough.
-    // TODO: Is there a better way to do this?
-    $chars = str_split($value);
-    $last_char = array_pop($chars);
-    // Delete last char.
-    $session->getDriver()->keyDown($element->getXpath(), 8);
-    $session->getDriver()->keyUp($element->getXpath(), 8);
-    // Re-add last char.
-    $session->getDriver()->keyDown($element->getXpath(), $last_char);
-    $session->getDriver()->keyUp($element->getXpath(), $last_char);
-    $this->dkanContext->iWaitForSeconds(5);
-
-    $title = $page->find(
-      'xpath',
-      $session->getSelectorsHandler()->selectorToXpath('xpath', '//li[.="' . $value . '"]')
-    );
-    $title->click();
-  }
-
-  /**
    * @Then I should see all published datasets
    */
   public function iShouldSeeAllPublishedDatasets() {
@@ -269,6 +248,8 @@ class DatasetContext extends RawDKANEntityContext {
   }
 
   /**
+   * Confirm that all dataset form fields are visible.
+   *
    * @Then I should see all the dataset fields in the form
    */
   public function iShouldSeeAllTheDatasetFieldsInTheForm() {
@@ -346,6 +327,8 @@ class DatasetContext extends RawDKANEntityContext {
   }
 
   /**
+   * Choose an option on DKAN dataset forms section.
+   *
    * @Given I :operation the :option on DKAN Dataset Forms
    */
   public function iTheOnDkanDatasetForms($operation, $option) {
@@ -369,20 +352,24 @@ class DatasetContext extends RawDKANEntityContext {
   }
 
   /**
+   * Confirm that a group option is visible.
+   *
    * @Then I should see the :option groups option
    */
   public function iShouldSeeTheGroupsOption($option) {
-    $element = $this->find_select_option('og_group_ref[und][]', $option);
+    $element = $this->findSelectOption('og_group_ref[und][]', $option);
     if (!$element) {
       throw new \Exception(sprintf('The %s option could not be found.', $option));
     }
   }
 
   /**
+   * Confirm that a group option is not visible.
+   *
    * @Then I should not see the :option groups option
    */
   public function iShouldNotSeeTheGroupsOption($option) {
-    $element = $this->find_select_option('og_group_ref[und][]', $option);
+    $element = $this->findSelectOption('og_group_ref[und][]', $option);
     if ($element) {
       throw new \Exception(sprintf('The %s option was found.', $option));
     }
@@ -391,7 +378,7 @@ class DatasetContext extends RawDKANEntityContext {
   /**
    * Helper function to search for an option element inside a select element.
    */
-  private function find_select_option($select_name, $option) {
+  private function findSelectOption($select_name, $option) {
     $session = $this->getSession();
     $xpath = "//select[@name='" . $select_name . "']//option[text()='" . $option . "']";
     return $session->getPage()->find('xpath', $session->getSelectorsHandler()->selectorToXpath('xpath', $xpath));
