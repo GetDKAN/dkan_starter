@@ -22,11 +22,11 @@ acquia:
     derived_key: changeme
 circle:
   memory_limit: 256M
+  skip_features: []
   skip_tags:
   - customizable
   - fixme
   - testBug
-  skip_features: []
   test_dirs:
   - tests/features
   - dkan/test/features
