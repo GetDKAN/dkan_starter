@@ -180,13 +180,11 @@ $conf['shield_allow_cli'] = 1;
 switch (ENVIRONMENT) {
   case 'local':
     if (_data_starter_validates('stage_file_proxy_origin')) {
-      if ($conf['default']['stage_file_proxy']) {
-        $conf['features_master_temp_enabled_modules'] = array_merge(
-          $conf['features_master_temp_enabled_modules'],
-          array(
-            'stage_file_proxy',
-          ));
-      }
+      $conf['features_master_temp_enabled_modules'] = array_merge(
+        $conf['features_master_temp_enabled_modules'],
+        array(
+          'stage_file_proxy',
+        ));
     }
 
     // Features Master also supports temporarily disabling modules.
