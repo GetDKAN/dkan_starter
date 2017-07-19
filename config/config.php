@@ -80,6 +80,9 @@ $conf = array (
     array (
       'enable' => false,
     ),
+    'stage_file_proxy_files' => 
+    array (
+    ),
     'stage_file_proxy_origin' => 'changeme',
   ),
   'gaClientTrackingCode' => 'UA-XXXXX-Y',
