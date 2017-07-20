@@ -45,6 +45,7 @@ default:
   https_securepages: false
   odfe:
     enable: false
+  stage_file_proxy_files: []
   stage_file_proxy_origin: changeme
 gaClientTrackingCode: UA-XXXXX-Y
 gaNuCivicTrackingCode: UA-XXXXX-Z
