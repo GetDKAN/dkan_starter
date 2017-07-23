@@ -45,8 +45,8 @@ end
 
 if ENV['PROCESS_CONFIG']
   {
-    #'dkan' => 'dkan/test/behat.yml',
-    #'dkan_stater' => 'tests/behat.dkan_starter.yml',
+    'dkan' => 'dkan/test/behat.yml',
+    'dkan_starter' => 'tests/behat.dkan_starter.yml',
     'custom' => 'config/tests/behat.custom.yml'
   }.each {|suite, config_path|
      config = BehatConfig.new suite, config_path
