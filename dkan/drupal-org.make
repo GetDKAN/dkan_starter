@@ -2,13 +2,13 @@
 api: '2'
 core: 7.x
 includes:
-- https://raw.githubusercontent.com/NuCivic/visualization_entity/7.x-1.2/visualization_entity.make
-- https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-1.13.5/open_data_schema_map.make
-- https://raw.githubusercontent.com/NuCivic/leaflet_draw_widget/5a5f8faf664aeca02371f6692307580d9fab9116/leaflet_widget.make
-- https://raw.githubusercontent.com/NuCivic/recline/7.x-1.13.5/recline.make
+  - "https://raw.githubusercontent.com/NuCivic/visualization_entity/7.x-1.2/visualization_entity.make"
+  - "https://raw.githubusercontent.com/NuCivic/open_data_schema_map/1.13.5/open_data_schema_map.make"
+  - "https://raw.githubusercontent.com/NuCivic/leaflet_draw_widget/master/leaflet_widget.make"
+  - "https://raw.githubusercontent.com/NuCivic/recline/1.13.5/recline.make"
 projects:
   admin_menu:
-    version: 3.0-rc5
+    version: '3.0-rc5'
   admin_menu_source:
     version: '1.1'
     patch:
@@ -112,8 +112,8 @@ projects:
   feeds_flatstore_processor:
     download:
       type: git
-      url: https://github.com/NuCivic/feeds_flatstore_processor.git
-      revision: 82b2a05bd133dbf870bdf09f1c0a45711f1432e3
+      url: 'https://github.com/NuCivic/feeds_flatstore_processor.git'
+      branch: master
   field_group:
     version: '1.5'
     patch:
@@ -135,7 +135,7 @@ projects:
       2826182: https://www.drupal.org/files/issues/fieldable_panels_panes-title-shown-when-set-to-hidden-2826182-3.patch
       2826205: https://www.drupal.org/files/issues/fieldable_panels_panes-n2826205-32.patch
   file_entity:
-    version: 2.2
+    version: 2.3
   file_resup:
     download:
       type: git
@@ -183,8 +183,8 @@ projects:
   leaflet_draw_widget:
     download:
       type: git
-      url: https://github.com/NuCivic/leaflet_draw_widget.git
-      revision: 5a5f8faf664aeca02371f6692307580d9fab9116
+      url: 'https://github.com/NuCivic/leaflet_draw_widget.git'
+      branch: 'master'
   libraries:
     version: '2.3'
   link:
@@ -202,7 +202,7 @@ projects:
     patch:
       2045225: http://drupal.org/files/remove-dsm-from-hook-install-2045225-1.patch
   media:
-    version: 2.8
+    version: 2.9
     patch:
       2272567: https://www.drupal.org/files/issues/media_dialog_appears_2272567-32.patch
   media_youtube:
@@ -246,7 +246,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/open_data_schema_map.git
-      tag: 7.x-1.13.5
+      branch: 1.13.5
   panelizer:
     version: '3.4'
   panels:
@@ -275,8 +275,8 @@ projects:
   recline:
     download:
       type: git
-      url: https://github.com/NuCivic/recline.git
-      tag: 7.x-1.13.5
+      url: 'https://github.com/NuCivic/recline.git'
+      branch: 1.13.5
   ref_field:
     download:
       type: git
@@ -292,7 +292,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/remote_stream_wrapper.git
-      revision: 20311eee8f0ba87cbb7e48788b176c34e0313a78
+      branch: 7.x-1.x
   role_export:
     version: '1.0'
   rules:
@@ -310,7 +310,7 @@ projects:
     version: '1.2'
     revision: 08b02458694d186f8ab3bd0b24fbc738f9271108
   search_api:
-    version: '1.21'
+    version: '1.22'
   search_api_db:
     version: '1.6'
   select_or_other:
@@ -328,8 +328,8 @@ projects:
   taxonomy_fixtures:
     download:
       type: git
-      url: https://github.com/NuCivic/taxonomy_fixtures.git
-      revision: 485d92019d11a61de585707db8f49d0160bd03b2
+      url: 'https://github.com/NuCivic/taxonomy_fixtures.git'
+      branch: 7.x-1.x
   token:
     version: '1.7'
   uuid:
