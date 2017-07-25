@@ -1,5 +1,6 @@
 require './dkan/.ahoy/.scripts/config.rb'
 require 'yaml'
+YAML::ENGINE.yamler = 'syck'
 
 class BehatConfig
   def initialize suite = 'dkan', config_path = 'dkan/test/behat.yml'
@@ -54,5 +55,3 @@ if ENV['PROCESS_CONFIG']
      config.dump
    }
 end
-
-
