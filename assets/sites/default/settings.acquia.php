@@ -69,6 +69,7 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   
   // ODSM edit forms.
   $high_memory_paths[] = 'admin/config/services/odsm/edit';
+
   // Standarize node edit paths for validation.
   $current_path = preg_replace("/\/\d+/", '/%node', $_GET['q']);
   foreach ($high_memory_paths as $high_memory_path) {
