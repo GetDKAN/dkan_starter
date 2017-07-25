@@ -62,6 +62,7 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
       'node/%node/moderation',
       'file/ajax',
       'api/action/datastore/search.json',
+      'admin/config/services/odsm/edit',
     );
 
     // Standarize node edit paths for validation.
