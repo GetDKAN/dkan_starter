@@ -35,6 +35,8 @@ dependencies:
     - echo "always_populate_raw_post_data = -1" > $PHPENV_ROOT/versions/$(phpenv global)/etc/conf.d/deprecated.ini
     - sudo apt-get update -y && sudo apt-get install -y x11vnc clamav clamav-freshclam
     - yes | sudo perl -MCPAN -e "install Digest::HMAC_SHA1;"
+    - ahoy dkan server:
+      background: true
 
   override:
     - printenv
