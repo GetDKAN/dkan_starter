@@ -123,8 +123,10 @@ default:
       tags: ~@fixme
   extensions: 
     Behat\MinkExtension: 
-      goutte: 
-      selenium2: 
+      goutte: []
+
+      selenium2: []
+
       default_session: goutte
       javascript_session: selenium2
       browser_name: chrome
