@@ -123,65 +123,65 @@ default:
       tags: ~@fixme
   extensions: 
     Behat\MinkExtension: 
-      goutte: 
-      selenium2: 
+      goutte: "~"
+      selenium2: "~"
       default_session: goutte
       javascript_session: selenium2
       browser_name: chrome
       files_path: "%paths.base%/files"
     Drupal\DrupalExtension: 
-      blackbox: 
+      blackbox: "~"
       drupal: 
         drupal_root: "%paths.base%/../../docroot"
       api_driver: drupal
       region_map: 
-        content: .view-content
-        toolbar: .tabs--primary
-        footer: "#footer"
-        header: "#header"
-        modal: "#modalContent"
-        left header: "#header-left"
-        right header: "#header-right"
-        right sidebar: "#column-right"
-        dashboards: .view-data-dashboards table tbody
-        navigation: .navigation-wrapper
+        admin menu: "#admin-menu"
         breadcrumb: .breadcrumb
-        left_sidebar: .panel-col-first
-        dataset title: .pane-node .pane-title
-        dataset resource list: "#data-and-resources"
+        comment: .comment-main
+        content search: .form-item-query
+        content: .region-content
+        dashboards: .view-data-dashboards table tbody
         dataset body: .field-name-body
         dataset edit body: "#edit-body"
+        dataset resource list: "#data-and-resources"
         dataset spatial: "#edit-field-spatial"
-        resource title: .pane-node .pane-title
-        resource groups: "#edit-groups"
-        search_area: .panel-col-last
+        dataset title: .pane-node .pane-title
+        datasets: .view-dkan-datasets
         dropdown_links: .comment-main .links.inline.dropdown-menu
-        comment: .comment-main
-        primary tabs: .tabs--primary
-        group subscribe: .group-subscribe-message
+        facet container: .radix-layouts-sidebar
+        filter by author: .facetapi-facet-author
+        filter by date changed: .facetapi-facet-changed
+        filter by resource format: .facetapi-facet-field-resourcesfield-format
+        filter by tag: .facetapi-facet-field-tags
+        filter by topics: .facetapi-facet-field-topic
+        footer: "#footer"
         group block: .pane-views-group-block-block
         group members: .view-id-dkan_og_extras_group_members
-        facet container: .radix-layouts-sidebar
-        filter by resource format: .facetapi-facet-field-resourcesfield-format
-        filter by author: .facetapi-facet-author
-        filter by topics: .facetapi-facet-field-topic
-        filter by tag: .facetapi-facet-field-tags
-        filter by date changed: .facetapi-facet-changed
-        social: .pane-dkan-sitewide-dkan-sitewide-social
-        other access: .pane-dkan-sitewide-dkan-sitewide-other-access
-        datasets: .view-dkan-datasets
-        user profile: .pane-dkan-sitewide-panels-dkan-user-summary
-        results: .view-header
-        user page: .main
-        user command center: .pane-dkan-sitewide-profile-page-dkan-user-summary
-        tabs: .field-group-htabs-wrapper
+        group subscribe: .group-subscribe-message
         groups: .view-content
-        search content results: .content
-        user content: .view-user-profile-search
-        content search: .form-item-query
-        user block: .pane-views-user-profile-fields-block
-        admin menu: "#admin-menu"
         harvest datasets: .view-dkan-harvest-datasets
+        header: "#header"
+        left header: "#header-left"
+        left_sidebar: .panel-col-first
+        modal: "#modalContent"
+        navigation: .navigation-wrapper
+        other access: .pane-dkan-sitewide-dkan-sitewide-other-access
+        primary tabs: .tabs--primary
+        resource groups: "#edit-groups"
+        resource title: .pane-node .pane-title
+        results: .view-header
+        right header: "#header-right"
+        right sidebar: "#column-right"
+        search content results: .content
+        search_area: .panel-col-last
+        social: .pane-dkan-sitewide-dkan-sitewide-social
+        tabs: .field-group-htabs-wrapper
+        toolbar: .tabs--primary
+        user block: .pane-views-user-profile-fields-block
+        user command center: .pane-dkan-sitewide-profile-page-dkan-user-summary
+        user content: .view-user-profile-search
+        user page: .main
+        user profile: .pane-dkan-sitewide-panels-dkan-user-summary
       text: 
         log_out: Log out
         log_in: Log in
