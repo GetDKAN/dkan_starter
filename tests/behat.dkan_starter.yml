@@ -37,7 +37,6 @@ default:
             license: field_license
             doi: field_doi
             citation: field_citation
-            corn: stop
         - labels: 
             title: Title
             body: Description
