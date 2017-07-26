@@ -123,14 +123,14 @@ default:
       tags: ~@fixme
   extensions: 
     Behat\MinkExtension: 
-      goutte: "~"
-      selenium2: "~"
+      goutte: 
+      selenium2: 
       default_session: goutte
       javascript_session: selenium2
       browser_name: chrome
       files_path: "%paths.base%/files"
     Drupal\DrupalExtension: 
-      blackbox: "~"
+      blackbox: 
       drupal: 
         drupal_root: "%paths.base%/../../docroot"
       api_driver: drupal
