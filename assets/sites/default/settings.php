@@ -304,6 +304,11 @@ if (getenv('CI') == "true") {
   $conf['features_master_temp_disabled_modules'][] = 'drafty';
 }
 
+// Conditionally manage memory.
+$high_memory_paths = array();
+// ODSM edit forms.
+$high_memory_paths[] = 'admin/config/services/odsm/edit';
+
 
 /****************************
  * OPTIONAL: Acquia Settings.
@@ -318,3 +323,11 @@ include "settings.acquia.php";
 /* This are custom site settings
  */
 include "settings.custom.php";
+
+// Standarize node edit paths for validation and apply memory settings.
+$current_path = preg_replace("/\/\d+/", '/%node', $_GET['q']);
+foreach ($high_memory_paths as $high_memory_path) {
+  if ((strpos($current_path, $high_memory_path) === 0)) {
+    ini_set('memory_limit', '512M');
+  }
+}
