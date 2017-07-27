@@ -31,6 +31,7 @@ circle:
   - tests/features
   - dkan/test/features
   - config/tests/features
+dkan_dash: []
 default:
   clamav:
     enable: false
