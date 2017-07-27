@@ -1,5 +1,5 @@
 require "minitest/autorun"
-require "./.scripts/config.rb"
+require "./.ahoy/site/.scripts/config.rb"
 
 
 class TestConfig < MiniTest::Unit::TestCase
