@@ -38,6 +38,33 @@ $conf = array (
       'derived_key' => 'changeme',
     ),
   ),
+  'behat' => 
+  array (
+    'contexts' => 
+    array (
+      'datasets' => 
+      array (
+        'defaults' => 
+        array (
+        ),
+        'fields' => 
+        array (
+        ),
+        'labels' => 
+        array (
+        ),
+        'sets' => 
+        array (
+        ),
+      ),
+      'services' => 
+      array (
+        'request_fields_map' => 
+        array (
+        ),
+      ),
+    ),
+  ),
   'circle' => 
   array (
     'memory_limit' => '256M',

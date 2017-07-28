@@ -20,6 +20,15 @@ acquia:
     base_url: http://testurl
     core_id: changeme
     derived_key: changeme
+behat:
+  contexts:
+    datasets:
+      defaults: {}
+      fields: {}
+      labels: {}
+      sets: {}
+    services:
+      request_fields_map: {}
 circle:
   memory_limit: 256M
   skip_features: []
@@ -31,6 +40,7 @@ circle:
   - tests/features
   - dkan/test/features
   - config/tests/features
+dkan_dash: []
 default:
   clamav:
     enable: false

@@ -166,11 +166,13 @@ commands:
       ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb
       ahoy cmd-proxy ruby .ahoy/site/.scripts/circle.rb
       ahoy cmd-proxy PROCESS_CONFIG=true ruby .ahoy/site/.scripts/config.rb
+      ahoy cmd-proxy PROCESS_CONFIG=true ruby .ahoy/site/.scripts/config-behat.rb
 
       # Transpose config.yml to php
       cd .ahoy/site
       composer install
-      php .scripts/config.php
+      cd -
+      ahoy cmd-proxy php .ahoy/site/.scripts/config.php
 
   new:
     usage: Sets new client site from dkan-starter
@@ -290,3 +292,8 @@ commands:
     upgrade-sites:
       usage: ahoy build upgrade-sites $tag
       cmd: ahoy cmd-proxy bash .ahoy/site/.scripts/upgrade-sites.sh
+
+  test:
+    usage: Run some build command tests 
+    cmd: ahoy cmd-proxy ruby .ahoy/site/.scripts/build-test.rb
+    
