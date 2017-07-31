@@ -121,11 +121,6 @@ class SearchApiViewsHandlerFilterFulltext extends SearchApiViewsHandlerFilterTex
     $words = preg_split('/\s+/', $input);
     $quoted = FALSE;
     foreach ($words as $i => $word) {
-      $word_length = drupal_strlen($word);
-      if (!$word_length) {
-        unset($words[$i]);
-        continue;
-      }
       // Protect quoted strings.
       if ($quoted && $word[strlen($word) - 1] === '"') {
         $quoted = FALSE;
@@ -135,7 +130,7 @@ class SearchApiViewsHandlerFilterFulltext extends SearchApiViewsHandlerFilterTex
         $quoted = TRUE;
         continue;
       }
-      if ($word_length < $this->options['min_length']) {
+      if (drupal_strlen($word) < $this->options['min_length']) {
         unset($words[$i]);
       }
     }
