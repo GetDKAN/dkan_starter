@@ -16,15 +16,27 @@ class DatasetContext extends RawDKANEntityContext {
   /**
    *
    */
-  public function __construct($fields, $labels = array(), $sets = array(), $defaults = array()) {
-    $this->datasetFieldLabels = $labels['labels'];
-    $this->datasetFieldSets = $sets['sets'];
-    $this->datasetFieldDefaults = $defaults['defaults'];
-
+  public function __construct() {
     parent::__construct(
       'node',
       'dataset',
-      $fields['fields'],
+      // ToDo: load this from custom context.https://github.com/NuCivic/dkan_starter/issues/332.
+      array(
+        'title' => 'title',
+        'description' => 'body',
+        'published' => 'status',
+        'resource' => 'field_resources',
+        'access level' => 'field_public_access_level',
+        'contact name' => 'field_contact_name',
+        'contact email' => 'field_contact_email',
+        'attest name' => 'field_hhs_attestation_name',
+        'attest date' => 'field_hhs_attestation_date',
+        'verification status' => 'field_hhs_attestation_negative',
+        'attest privacy' => 'field_hhs_attestation_privacy',
+        'attest quality' => 'field_hhs_attestation_quality',
+        'bureau code' => 'field_odfe_bureau_code',
+        'license' => 'field_license',
+      ),
       array(
         'moderation',
         'moderation_date',
@@ -157,7 +169,9 @@ class DatasetContext extends RawDKANEntityContext {
     foreach ($results['results'] as $nid => $result) {
       $dataset = node_load($nid);
       $found_title = array_shift($dataset_list);
-      if ($found_title !== $dataset->title) {
+      // Drupal removes extra spacing on titles somehow so reproducing here.
+      $title = preg_replace('/\s+/', ' ', $dataset->title);
+      if ($found_title !== $title) {
         throw new \Exception("Does not match order of list, $found_title was next on page but expected $dataset->title");
       }
     }
@@ -195,6 +209,41 @@ class DatasetContext extends RawDKANEntityContext {
   }
 
   /**
+   * @Given /^I fill in the resources field "([^"]*)" with "([^"]*)"$/
+   *
+   * Fill in the 'Resources' field on a Dataset form.
+   */
+  public function iFillInTheResourcesFieldWith($field, $value) {
+    $session = $this->getSession();
+    $page = $session->getPage();
+
+    $element = $page->findField($field);
+    if (!$element) {
+      throw new ElementNotFoundException($session, NULL, 'named', $field);
+    }
+    $page->fillField($field, $value);
+
+    // Trigger all needed key events in order for the autocomplete to be triggered.
+    // Just filling the field with a value is not enough.
+    // TODO: Is there a better way to do this?
+    $chars = str_split($value);
+    $last_char = array_pop($chars);
+    // Delete last char.
+    $session->getDriver()->keyDown($element->getXpath(), 8);
+    $session->getDriver()->keyUp($element->getXpath(), 8);
+    // Re-add last char.
+    $session->getDriver()->keyDown($element->getXpath(), $last_char);
+    $session->getDriver()->keyUp($element->getXpath(), $last_char);
+    $this->dkanContext->iWaitForSeconds(5);
+
+    $title = $page->find(
+      'xpath',
+      $session->getSelectorsHandler()->selectorToXpath('xpath', '//li[.="' . $value . '"]')
+    );
+    $title->click();
+  }
+
+  /**
    * @Then I should see all published datasets
    */
   public function iShouldSeeAllPublishedDatasets() {
@@ -229,8 +278,35 @@ class DatasetContext extends RawDKANEntityContext {
 
     // We could use field_info_instances() to get the list of fields for the 'dataset' content
     // type but that would not cover the case where a field is removed accidentally.
-    $dataset_fields = $this->datasetFieldLabels;
-    $dataset_fieldsets = $this->datasetFieldSets;
+    $dataset_fields = array(
+      'title' => 'Title',
+      'body' => 'Description',
+      'field_tags' => 'Tags',
+      'field_topics' => 'Topics',
+      'field_license' => 'License',
+      'field_author' => 'Author',
+      'field_spatial_geographical_cover' => 'Spatial / Geographical Coverage Location',
+      'field_frequency' => 'Frequency',
+      'field_granularity' => 'Granularity',
+      'field_data_dictionary_type' => 'Data Dictionary Type',
+      'field_data_dictionary' => 'Data Dictionary',
+      'field_contact_name' => 'Contact Name',
+      'field_contact_email' => 'Contact Email',
+      'field_public_access_level' => 'Public Access Level',
+      'field_additional_info' => 'Additional Info',
+      'field_resources' => 'Resources',
+      'field_related_content' => 'Related Content',
+      'field_landing_page' => 'Homepage URL',
+      'field_conforms_to' => 'Data Standard',
+      'field_language' => 'Language',
+      'og_group_ref' => 'Groups',
+    );
+
+    $dataset_fieldsets = array(
+      'field_spatial' => 'Spatial / Geographical Coverage Area',
+      'field_temporal_coverage' => 'Temporal Coverage',
+    );
+
     // Get all available form fields.
     // Searching by the Label as a text on the page is not enough since a text like 'Resources'
     // could appear because other reasons.
