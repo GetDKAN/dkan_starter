@@ -85,6 +85,9 @@ $conf = array (
     ),
     'stage_file_proxy_origin' => 'changeme',
   ),
+  'dkan_dash' => 
+  array (
+  ),
   'gaClientTrackingCode' => 'UA-XXXXX-Y',
   'gaNuCivicTrackingCode' => 'UA-XXXXX-Z',
   'private' => 

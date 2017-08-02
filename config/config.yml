@@ -31,7 +31,6 @@ circle:
   - tests/features
   - dkan/test/features
   - config/tests/features
-dkan_dash: []
 default:
   clamav:
     enable: false
@@ -48,6 +47,7 @@ default:
     enable: false
   stage_file_proxy_files: []
   stage_file_proxy_origin: changeme
+dkan_dash: []
 gaClientTrackingCode: UA-XXXXX-Y
 gaNuCivicTrackingCode: UA-XXXXX-Z
 private:
