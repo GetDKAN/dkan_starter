@@ -54,6 +54,11 @@ default:
   https_securepages: false
   odfe:
     enable: false
+  seckit:
+    enable: false
+    hsts: 1
+    hsts_max_age: '1000'
+    hsts_subdomains: 0
   stage_file_proxy_files: []
   stage_file_proxy_origin: changeme
 dkan_dash: []
