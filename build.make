@@ -91,6 +91,7 @@ projects[clamav][version] = 1.x-dev
 projects[clamav][subdir] = contrib
 
 projects[] = role_watchdog
+projects[seckit] = 1.9
 
 ; Other
 ; ======
