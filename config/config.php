@@ -107,6 +107,13 @@ $conf = array (
     array (
       'enable' => false,
     ),
+    'seckit' => 
+    array (
+      'enable' => false,
+      'hsts' => 1,
+      'hsts_max_age' => '1000',
+      'hsts_subdomains' => 0,
+    ),
     'stage_file_proxy_files' => 
     array (
     ),

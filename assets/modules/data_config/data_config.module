@@ -258,6 +258,10 @@ function data_config_enabled_modules() {
     $features_master['modules']['strongarm'] = 'strongarm';
     $features_master['modules']['text'] = 'text';
   }
+
+  if (isset($data_config['seckit']) && $data_config['seckit']['enable']) {
+    $features_master['modules']['seckit'] = 'seckit';
+  }
   return $features_master;
 
 }

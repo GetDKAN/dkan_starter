@@ -164,6 +164,18 @@ if (_data_starter_validates('stage_file_proxy_origin')) {
   $conf['stage_file_proxy_origin'] = $conf['default']['stage_file_proxy_origin'];
 }
 
+// Configure Security Kit If Enabled.
+$data_config = variable_get('default');
+if (isset($data_config['seckit']) && $data_config['seckit']['enable']) {
+  $seckit_ssl = array(
+    'hsts' => $conf['default']['seckit']['hsts'],
+    'hsts_max_age' => $conf['default']['seckit']['hsts_max_age'],
+    'hsts_sudomains' => $conf['default']['seckit']['hsts_subdomains'],
+  );
+
+  $conf['seckit_ssl'] = $seckit_ssl;
+}
+
 // KEY for dkan health status.
 $conf['dkan_health_status_health_api_access_key'] = 'DKAN_HEALTH';
 
