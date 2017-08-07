@@ -19,11 +19,32 @@ class ServicesContext extends RawDKANContext {
   /**
    * TODO: Move to configuration passed in to constructor.
    */
-  private $request_fields_map;
-
-  public function __construct($request_fields_map = array()) {
-    $this->request_fields_map = $request_fields_map['request_fields_map'];
-  }
+  private $request_fields_map = array(
+    'resource' => array(
+      'type' => 'type',
+      'title' => 'title',
+      'body' => 'body[und][0][value]',
+      'status' => 'status',
+    ),
+    'dataset' => array(
+      'type' => 'type',
+      'title' => 'title',
+      'status' => 'status',
+      'published' => 'status',
+      'body' => 'body[und][0][value]',
+      'resource' => 'field_resources[und][0][target_id]',
+      'access level' => 'field_public_access_level[und]',
+      'contact name' => 'field_contact_name[und][0][value]',
+      'contact email' => 'field_contact_email[und][0][value]',
+      'attest name' => 'field_hhs_attestation_name[und][0][value]',
+      'attest date' => 'field_hhs_attestation_date[und][0][value][date]',
+      'verification status' => 'field_hhs_attestation_negative[und]',
+      'attest privacy' => 'field_hhs_attestation_privacy[und]',
+      'attest quality' => 'field_hhs_attestation_quality[und]',
+      'bureau code' => 'field_odfe_bureau_code[und]',
+      'license' => 'field_license[und][select]',
+    )
+  );
 
   /**
    * @BeforeScenario
@@ -32,7 +53,6 @@ class ServicesContext extends RawDKANContext {
     parent::gatherContexts($scope);
     $environment = $scope->getEnvironment();
     $this->dkanContext = $environment->getContext('Drupal\DKANExtension\Context\DKANContext');
-    $this->datasetContext = $environment->getContext('Drupal\DKANExtension\Context\DatasetContext');
   }
 
   /**
@@ -381,7 +401,8 @@ class ServicesContext extends RawDKANContext {
     $rest_api_fields = $this->request_fields_map[$node_type];
 
     if ($node_type == "dataset") {
-      $this->datasetContext->applyMissingRequiredFields($data);
+      $rawDkanEntityContext = new DatasetContext();
+      $rawDkanEntityContext->applyMissingRequiredFields($data);
     }
 
     foreach ($data as $field => $field_value) {
