@@ -12,6 +12,12 @@ CHANGELOG
  * added an optional `array $context = array()` to `Serializer::supportsNormalization`, `Serializer::supportsDenormalization`,
    `Serializer::supportsEncoding` and `Serializer::supportsDecoding`
 
+3.4.0
+-----
+
+ * added `AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT` context option
+   to disable throwing an `UnexpectedValueException` on a type mismatch
+
 3.3.0
 -----
 
@@ -50,6 +56,8 @@ CHANGELOG
  * [DEPRECATION] the `Exception` interface has been renamed to `ExceptionInterface`
  * added `ObjectNormalizer` leveraging the `PropertyAccess` component to normalize
    objects containing both properties and getters / setters / issers / hassers methods.
+ * added `xml_type_cast_attributes` context option for allowing users to opt-out of typecasting
+   xml attributes.
 
 2.6.0
 -----

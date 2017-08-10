@@ -44,10 +44,8 @@ dependencies:
     - drush dl -n registry_rebuild-7.x
     - ahoy site up --db-user=ubuntu --db-pass='' --db-host=127.0.0.1 --db-port=3306 --db-name=circle_test
     - ahoy utils fail-when-bad-disable
-    # Run a webserver using drush.
-    - 'ahoy drush --yes runserver :8888':
+    - 'PATH=/home/ubuntu/.config/composer/vendor/bin:$PATH ahoy dkan server':
         background: true
-
     - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
     - java -jar selenium-server-standalone-2.53.1.jar -p 4444 :
         background: true
@@ -61,6 +59,8 @@ test:
     - BEHAT_FOLDER=$HOME/$CIRCLE_PROJECT_REPONAME/tests ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug':
         timeout: 1200
         parallel: true
+    - ahoy build test:
+        parallel: false
   post:
     - echo $CIRCLE_ARTIFACTS; cp -av tests/assets $CIRCLE_ARTIFACTS:
         parallel: true

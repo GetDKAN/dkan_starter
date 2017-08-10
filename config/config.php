@@ -38,9 +38,39 @@ $conf = array (
       'derived_key' => 'changeme',
     ),
   ),
+  'behat' => 
+  array (
+    'contexts' => 
+    array (
+      'datasets' => 
+      array (
+        'defaults' => 
+        array (
+        ),
+        'fields' => 
+        array (
+        ),
+        'labels' => 
+        array (
+        ),
+        'sets' => 
+        array (
+        ),
+      ),
+      'services' => 
+      array (
+        'request_fields_map' => 
+        array (
+        ),
+      ),
+    ),
+  ),
   'circle' => 
   array (
     'memory_limit' => '256M',
+    'skip_features' => 
+    array (
+    ),
     'skip_tags' => 
     array (
       0 => 'customizable',
@@ -77,7 +107,20 @@ $conf = array (
     array (
       'enable' => false,
     ),
+    'seckit' => 
+    array (
+      'enable' => false,
+      'hsts' => 1,
+      'hsts_max_age' => '1000',
+      'hsts_subdomains' => 0,
+    ),
+    'stage_file_proxy_files' => 
+    array (
+    ),
     'stage_file_proxy_origin' => 'changeme',
+  ),
+  'dkan_dash' => 
+  array (
   ),
   'gaClientTrackingCode' => 'UA-XXXXX-Y',
   'gaNuCivicTrackingCode' => 'UA-XXXXX-Z',

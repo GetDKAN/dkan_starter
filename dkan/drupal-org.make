@@ -3,9 +3,9 @@ api: '2'
 core: 7.x
 includes:
 - https://raw.githubusercontent.com/NuCivic/visualization_entity/7.x-1.2/visualization_entity.make
-- https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-1.13.4-RC1/open_data_schema_map.make
+- https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-1.13.6/open_data_schema_map.make
 - https://raw.githubusercontent.com/NuCivic/leaflet_draw_widget/5a5f8faf664aeca02371f6692307580d9fab9116/leaflet_widget.make
-- https://raw.githubusercontent.com/NuCivic/recline/7.x-1.13.4-RC1/recline.make
+- https://raw.githubusercontent.com/NuCivic/recline/7.x-1.13.6/recline.make
 projects:
   admin_menu:
     version: 3.0-rc5
@@ -58,6 +58,8 @@ projects:
     version: '2.10'
   defaultconfig:
     version: 1.0-alpha11
+  devel:
+    version: '1.5'
   diff:
     version: '3.3'
   double_field:
@@ -111,7 +113,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/feeds_flatstore_processor.git
-      revision: 3be870461b80a9709cd30d6ab44578515f97cf4e
+      revision: 82b2a05bd133dbf870bdf09f1c0a45711f1432e3
   field_group:
     version: '1.5'
     patch:
@@ -133,7 +135,7 @@ projects:
       2826182: https://www.drupal.org/files/issues/fieldable_panels_panes-title-shown-when-set-to-hidden-2826182-3.patch
       2826205: https://www.drupal.org/files/issues/fieldable_panels_panes-n2826205-32.patch
   file_entity:
-    version: 2.2
+    version: 2.3
   file_resup:
     download:
       type: git
@@ -200,7 +202,7 @@ projects:
     patch:
       2045225: http://drupal.org/files/remove-dsm-from-hook-install-2045225-1.patch
   media:
-    version: 2.8
+    version: 2.9
     patch:
       2272567: https://www.drupal.org/files/issues/media_dialog_appears_2272567-32.patch
   media_youtube:
@@ -244,7 +246,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/open_data_schema_map.git
-      tag: 7.x-1.13.4-RC1
+      tag: 7.x-1.13.6
   panelizer:
     version: '3.4'
   panels:
@@ -274,7 +276,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/recline.git
-      tag: 7.x-1.13.4-RC1
+      tag: 7.x-1.13.6
   ref_field:
     download:
       type: git
@@ -308,13 +310,13 @@ projects:
     version: '1.2'
     revision: 08b02458694d186f8ab3bd0b24fbc738f9271108
   search_api:
-    version: '1.21'
+    version: '1.22'
   search_api_db:
     version: '1.6'
   select_or_other:
     version: '2.22'
   services:
-    version: '3.19'
+    version: '3.20'
   simple_gmap:
     version: '1.4'
   strongarm:
