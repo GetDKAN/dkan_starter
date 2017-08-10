@@ -3,6 +3,7 @@
 /docroot/sites/*/private
 /files/*
 /cache
+/ahoy/site/.cache/*
 
 # ** Only works in OSs that support newer versions of fnmatch (Bash 4+)
 /docroot/sites/default/**/files
