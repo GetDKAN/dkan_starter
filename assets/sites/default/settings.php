@@ -148,10 +148,7 @@ ini_set('session.gc_maxlifetime', 200000);
 ini_set('session.cookie_lifetime', 2000000);
 
 // Disable cron. We run this from Jenkins.
-// Except for CircleCI or test purpose.
-if (CI) {
-  $conf['cron_safe_threshold'] = 0;
-}
+$conf['cron_safe_threshold'] = 0;
 
 // Disable git support for the environment indicator by default.
 $conf['environment_indicator_git_support'] = FALSE;
@@ -302,9 +299,6 @@ if (ENVIRONMENT == "production") {
 // Disable dkan_worflow modules so that dkan tests pass
 // See: https://jira.govdelivery.com/browse/CIVIC-5128
 if (getenv('CI') == "true") {
-  // TODO: change clamav feature tests so that they enable clamav.
-  $conf['features_master_temp_enabled_modules'][] = 'clamav';
-
   $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow';
   $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow_permissions';
   $conf['features_master_temp_disabled_modules'][] = 'link_badges';

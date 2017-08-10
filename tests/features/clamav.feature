@@ -1,4 +1,6 @@
-Feature: Resources
+@clamav
+Feature: ClamAV
+  Tests for ClamAv Support.
 
   Background:
     Given users:

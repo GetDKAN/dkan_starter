@@ -17,6 +17,7 @@ default:
       - Drupal\DKANExtension\Context\DKANContext
       - Drupal\DKANExtension\Context\MailContext
       - Drupal\DKANExtension\Context\PageContext
+      - Drupal\DKANExtension\Context\ClamAvContext
       - Drupal\DKANExtension\Context\GroupContext
       - Drupal\DKANExtension\Context\WorkflowContext
       - Drupal\DKANExtension\Context\DatasetContext: 
