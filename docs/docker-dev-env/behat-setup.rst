@@ -110,7 +110,7 @@ How to reconfigure Behat Context attributes:
 ~~~~~~~~~~~~~~~
 So, we know that via behat context attributes we are provided with a way to update site changes to avoid test failures.  But how can we do this in a way that does not get lost and is easy to maintain?
 
-We now have updated the `ahoy build config` command to apply any changes made to the following config.yml attributes to the behat.yml, behat.dkan_starter.yml, and behat.custom.yml files:
+We now have updated the ``ahoy build config`` command to apply any changes made to the following config.yml attributes to the behat.yml, behat.dkan_starter.yml, and behat.custom.yml files:
 
 .. code-block:: yaml
 
@@ -124,7 +124,7 @@ We now have updated the `ahoy build config` command to apply any changes made to
       services:
         request_fields_map: {}
 
-So for example let's say that instead of "Groups" we decide to call them "Agencies" then we would make the following change and apply it by runn `ahoy buld config`:
+So for example let's say that instead of "Groups" we decide to call them "Agencies" then we would make the following change and apply it by runn ``ahoy buld config``:
 
 .. code-block:: yaml
 
@@ -140,5 +140,7 @@ So for example let's say that instead of "Groups" we decide to call them "Agenci
         request_fields_map: {}
 
 Caveats:
-~~~
-This process can add or update values in the behat.yml files but it will not remove values.  If a site requires custom field (adding a value) that later needs to be removed `ahoy build confi` will not remove that for you even if you remove it from the config.yml file.  You will need to manually remove that item. 
+~~~~~~~~
+This process can add or update values in the behat.yml files but it will not remove values.  If a site requires custom field (adding a value) that later needs to be removed. ``ahoy build config`` will not remove that value for you even if you remove it from the config.yml file.  You will need to manually remove that item. 
+
+If you update a field value but later want to reset to default the only way to this is to either update the ``cofig.yml`` with the correct value, or update the file manually.Just removing the value from ``config.yml`` will not update ``behat.yml```.
