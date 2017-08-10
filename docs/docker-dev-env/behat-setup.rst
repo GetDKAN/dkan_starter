@@ -36,7 +36,7 @@ Profile level control is over arching and at this level behat allows users to im
 
 In the above configuration we see contents of the ``tests/behat.docker.yml`` file.  Note the imports: field.  When we invoke behat using the following command:
 
-  .. cone-block::bash
+.. code-block:: bash
 
 	behat --config=behat.docker.yml
 
