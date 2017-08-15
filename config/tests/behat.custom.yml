@@ -1,10 +1,10 @@
---- 
-default: 
-  suites: 
-    custom: 
-      paths: 
+---
+default:
+  suites:
+    custom:
+      paths:
       - "%paths.base%/../config/tests/features"
-      contexts: 
+      contexts:
       - CustomContext
       - FeatureContext
       - Drupal\DrupalExtension\Context\MinkContext
