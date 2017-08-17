@@ -13,7 +13,7 @@
           opacity: 0.5,
           useCors: false
         }).addTo(map);
-        var query = L.esri.Tasks.query({
+        var query = L.esri.query({
           url: Drupal.settings.recline.url + '/0'
         });
         query.bounds(function(error, latLngBounds, response){

@@ -44,6 +44,10 @@ else
   bash /tmp/dkan-init.sh $DKAN_MODULE $@ --skip-reinstall --branch=$DKAN_VERSION
 fi
 
+chmod +w docroot/sites/default/settings.php
+echo '$conf["x_frame_options"] = "";' >> docroot/sites/default/settings.php
+chmod -w docroot/sites/default/settings.php
+
 ahoy dkan module-link $DKAN_MODULE
 ahoy dkan module-make $DKAN_MODULE
 
