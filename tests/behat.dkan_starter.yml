@@ -1,14 +1,14 @@
---- 
-default: 
-  autoload: 
+---
+default:
+  autoload:
   - "%paths.base%/features/bootstrap/custom"
   - "%paths.base%/features/bootstrap/dkan"
   - "%paths.base%/features/bootstrap"
-  suites: 
-    dkan_starter: 
-      paths: 
+  suites:
+    dkan_starter:
+      paths:
       - "%paths.base%/features"
-      contexts: 
+      contexts:
       - FeatureContext
       - Drupal\DrupalExtension\Context\MinkContext
       - Drupal\DrupalExtension\Context\DrupalContext
@@ -20,8 +20,8 @@ default:
       - Drupal\DKANExtension\Context\ClamAvContext
       - Drupal\DKANExtension\Context\GroupContext
       - Drupal\DKANExtension\Context\WorkflowContext
-      - Drupal\DKANExtension\Context\DatasetContext: 
-        - fields: 
+      - Drupal\DKANExtension\Context\DatasetContext:
+        - fields:
             title: title
             description: body
             published: status
@@ -38,7 +38,7 @@ default:
             license: field_license
             doi: field_doi
             citation: field_citation
-        - labels: 
+        - labels:
             title: Title
             body: Description
             field_tags: Tags
@@ -60,10 +60,10 @@ default:
             field_conforms_to: Data Standard
             field_language: Language
             og_group_ref: Groups
-        - sets: 
+        - sets:
             field_spatial: Spatial / Geographical Coverage Area
             field_temporal_coverage: Temporal Coverage
-        - defaults: 
+        - defaults:
             field_public_access_level: public
             field_hhs_attestation_negative: 1
             field_license: odc-by
@@ -71,15 +71,15 @@ default:
       - Drupal\DKANExtension\Context\ResourceContext
       - Drupal\DKANExtension\Context\DatastoreContext
       - Drupal\DKANExtension\Context\SearchAPIContext: 
-        search_forms: 
-          default: 
+        search_forms:
+          default:
             form_css: "#dkan-sitewide-dataset-search-form"
             form_field: edit-search
             form_button: edit-submit
-            results_css: .view-dkan-datasets
-            result_item_css: .views-row
-      - Devinci\DevinciExtension\Context\JavascriptContext: 
+            results_css: ".view-dkan-datasets"
+            result_item_css: ".views-row"
+      - Devinci\DevinciExtension\Context\JavascriptContext:
           maximum_wait: 30
-    dkan: 
-      paths: 
+    dkan:
+      paths:
       - "%paths.base%/../dkan/test/features"
