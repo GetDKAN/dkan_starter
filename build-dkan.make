@@ -8,5 +8,5 @@ includes[core] = dkan/drupal-org-core.make
 projects[dkan][type] = profile
 projects[dkan][download][type] = git
 projects[dkan][download][url] = https://github.com/NuCivic/dkan.git
-projects[dkan][download][tag] = 7.x-1.13.6
+projects[dkan][download][branch] = entityreference-1.5
 
