@@ -1,4 +1,11 @@
 # Change log
+## [1.13.7.0]
+- Update to dkan version 1.13.7
+- Fix ODSM Memory Error #402
+- Add documentation for behat context parameters #425
+- Cleanup settings.php #247
+- Add seckit module to dkan_starter #413
+
 ## [1.13.4.0]
 - Update to dkan version 1.13.4 
 - Add check for resources to avoid errors when pruning #279
