@@ -19,7 +19,7 @@ function prune_terms($number = 50) {
   $format_vid = 1;
   $terms = db_query("SELECT DISTINCT tid FROM {taxonomy_term_data} WHERE vid != $format_vid")->fetchAll();
 
-  if ($number = 0)
+  if ($number == 0)
   {
     $terms_to_save = array();
   }
