@@ -244,7 +244,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/open_data_schema_map.git
-      tag: 7.x-1.13.7-RC1
+      tag: 7.x-1.13.7
   panelizer:
     version: '3.4'
   panels:
@@ -274,7 +274,7 @@ projects:
     download:
       type: git
       url: https://github.com/NuCivic/recline.git
-      tag: 7.x-1.13.7-RC1
+      tag: 7.x-1.13.7
   ref_field:
     download:
       type: git
