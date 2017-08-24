@@ -14,8 +14,9 @@ if you haven't already
 4. Setup S3 backup access
   1. Get S3 credentials
   2. Create aws credentials file
-      1. ``vim ~/.s3-curl``
-      2. Add: 
+      1. ``vim ~/.s3curl``
+      2. ``chmod 600 ~/.s3curl`` # make file so only owner can read and write
+      3. Add: 
       
       .. code-block:: bash
       
