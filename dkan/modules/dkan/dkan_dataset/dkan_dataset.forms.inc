@@ -342,9 +342,28 @@ function dkan_dataset_form_alter(&$form, &$form_state, $form_id) {
     $form['field_link_api'][$field_link_api_langcode][0]['#title'] = '';
     $form['field_link_remote_file'][$field_link_remote_file_langcode][0]['#title'] = '';
 
-    // Resources inherit groups from parent dataset.
-    // Hide field so users cannot manually modify that information.
-    $form['og_group_ref']['#access'] = FALSE;
+    $groups = dkan_dataset_get_group_options();
+
+    if (count($groups)) {
+      // Get langcode for og_group_ref.
+      $og_group_ref_langcode = dkan_dataset_form_field_language($form, 'og_group_ref');
+      // Set up group options.
+      $form['og_group_ref'][$og_group_ref_langcode]['#options'] = $groups;
+      // Modify title of Publisher field.
+      $form['og_group_ref'][$og_group_ref_langcode]['#title'] = t('Groups');
+      // Use #states to show or hide field group on standalone resources.
+      $form['og_group_ref']['#states'] = array(
+        'visible' => array(
+          array(':input[name="field_dataset_ref[und][]"]' => array('value' => array('_none'))),
+          '[OR/XOR]',
+          array(':input[name="field_dataset_ref[und][]"]' => array('value' => array())),
+        ),
+      );
+    }
+    else {
+      // If the user is not assigned to any groups then hide the fields.
+      $form['og_group_ref']['#access'] = FALSE;
+    }
 
     if ($query = drupal_get_query_parameters()) {
       if (isset($query['dataset'])) {
@@ -593,6 +612,11 @@ function dkan_dataset_resource_node_form_validate($form, &$form_state) {
       if ($upload_fid) {
         $file = file_load($upload_fid);
         $type = isset($file->filemime) ? dkan_dataset_discovery_extension($file->filemime) : '';
+
+        $ext = pathinfo($file->uri, PATHINFO_EXTENSION);
+        if ($ext == 'tab' || $ext == 'tsv') {
+          $type = 'tsv';
+        }
       }
       elseif ($link_fid) {
         $file = file_load($link_fid);
