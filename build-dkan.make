@@ -8,6 +8,6 @@ includes[core] = dkan/drupal-org-core.make
 projects[dkan][type] = profile
 projects[dkan][download][type] = git
 projects[dkan][download][url] = https://github.com/NuCivic/dkan.git
-projects[dkan][download][tag] = 7.x-1.13.7
+projects[dkan][download][branch] = civic-6683-legend-height
 
-projects[dkan][patch][] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1976.diff
+;projects[dkan][patch][] = https://patch-diff.githubusercontent.com/raw/NuCivic/dkan/pull/1976.diff
