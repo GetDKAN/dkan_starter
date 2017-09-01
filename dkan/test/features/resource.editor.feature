@@ -46,7 +46,7 @@ Feature: Resource
       | Resource 05 | Group 02  | csv    | Dataset 02 | Celeste  | Yes       | Yes         |
 
   # TODO: Change to use Workbench instead of /content
-  @resource_editor_1 @noworkflow
+  @noworkflow
   Scenario: Edit resources associated with groups that I am a member of
     Given I am logged in as "Gabriel"
     And I am on "Resource 01" page
@@ -57,13 +57,13 @@ Feature: Resource
     When I am on "Dataset 01" page
     Then I should see "Resource 01 edited"
 
-  @resource_editor_2 @noworkflow
+  @noworkflow
   Scenario: I should not be able to edit resources of groups that I am not a member of
     Given I am logged in as "Gabriel"
     And I am on "Resource 05" page
     Then I should not see "Edit"
 
-  @resource_editor_3 @fixme @dkanBug @noworkflow
+  @fixme @dkanBug @noworkflow
     # TODO: Permissions are not set so that a group member can publish any resources of their group,
     #       this test will need to wait until that is set
   Scenario: Publish resources associated with groups that I am a member of
@@ -76,7 +76,7 @@ Feature: Resource
     And I press "Save"
     Then I should see "Resource Resource 04 edited has been updated"
 
-  @resource_editor_4 @noworkflow
+  @noworkflow
   Scenario: Delete resources associated with groups that I am a member of
     Given I am logged in as "Gabriel"
     And I am on "Resource 01" page
@@ -85,20 +85,20 @@ Feature: Resource
     And I press "Delete"
     Then I should see "Resource Resource 01 has been deleted"
 
-  @resource_editor_5 @noworkflow
+  @noworkflow
   Scenario: Manage datastore of resources associated with groups that I am a member of
     Given I am logged in as "Celeste"
     And I am on "Resource 01" page
     When I click "Manage Datastore"
     Then I should see "There is nothing to manage! You need to upload or link to a file in order to use the datastore."
 
-  @resource_editor_6 @noworkflow @javascript
+  @noworkflow @javascript
   Scenario: Import items on datastore of resources associated with groups that I am a member of
     Given I am logged in as "John"
     And I am on "Resource 01" page
     And I click "Edit"
     And I click "Remote file"
-    And I fill in "edit-field-link-remote-file-und-0-filefield-dkan-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/datastore-simple.csv"
+    And I fill in "edit-field-link-remote-file-und-0-filefield-dkan-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
     And I press "Save"
     Given I am logged in as "Celeste"
     And I am on "Resource 01" page
@@ -109,13 +109,13 @@ Feature: Resource
     Then I should see "Last import"
     And I should see "imported items total"
 
-  @resource_editor_7 @db @noworkflow @javascript
+  @noworkflow @javascript
   Scenario: Delete items on datastore of resources associated with groups that I am a member of
     Given I am logged in as "John"
     And I am on "Resource 01" page
     And I click "Edit"
     And I click "Remote file"
-    And I fill in "edit-field-link-remote-file-und-0-filefield-dkan-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/datastore-simple.csv"
+    And I fill in "edit-field-link-remote-file-und-0-filefield-dkan-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
     And I press "Save"
     Given I am logged in as "Celeste"
     When I am on "Resource 01" page
@@ -129,13 +129,13 @@ Feature: Resource
     When I click "Manage Datastore"
     And I wait for "No imported items."
 
-  @resource_editor_8 @noworkflow @javascript
+  @noworkflow @javascript
   Scenario: Drop datastore of resources associated with groups that I am a member of
     Given I am logged in as "John"
     And I am on "Resource 01" page
     And I click "Edit"
     And I click "Remote file"
-    And I fill in "edit-field-link-remote-file-und-0-filefield-dkan-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/datastore-simple.csv"
+    And I fill in "edit-field-link-remote-file-und-0-filefield-dkan-remotefile-url" with "https://s3.amazonaws.com/dkan-default-content-files/files/district_centerpoints_0.csv"
     And I press "Save"
     Given I am logged in as "Celeste"
     And I am on "Resource 01" page
@@ -149,7 +149,7 @@ Feature: Resource
     When I click "Manage Datastore"
     Then I should see "No imported items."
 
-  @resource_editor_9 @noworkflow
+  @noworkflow
   Scenario: Add revision to resources associated with groups that I am a member of
     Given I am logged in as "Gabriel"
     And I am on "Resource 01" page
@@ -161,7 +161,7 @@ Feature: Resource
     And I press "Compare"
     Then I should see "Resource 01 edited"
 
-  @resource_editor_10 @fixme @dkanBug @noworkflow
+  @fixme @dkanBug @noworkflow
     #TODO: Currently content creators do not have access to revert any resource
     #       That they are a group member for. Does this need to be tested then?
   Scenario: Revert resource revision of any resource associated with groups that I am a member of
