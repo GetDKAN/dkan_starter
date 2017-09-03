@@ -23,6 +23,8 @@ checkout:
 database:
   pre:
     - echo -e 'secure_file_priv = ""' | sudo sh -c "cat >> /etc/mysql/my.cnf"
+    - echo -e 'max_allowed_packet = 128M' | sudo sh -c "cat >> /etc/mysql/my.cnf"
+    - echo -e 'innodb_buffer_pool_size=256M ' | sudo sh -c "cat >> /etc/mysql/my.cnf"
     - sudo /usr/sbin/service mysql restart
 
 ## Customize dependencies
@@ -44,10 +46,8 @@ dependencies:
     - drush dl -n registry_rebuild-7.x
     - ahoy site up --db-user=ubuntu --db-pass='' --db-host=127.0.0.1 --db-port=3306 --db-name=circle_test
     - ahoy utils fail-when-bad-disable
-    # Run a webserver using drush.
-    - 'ahoy drush --yes runserver :8888':
+    - 'PATH=/home/ubuntu/.config/composer/vendor/bin:$PATH ahoy dkan server':
         background: true
-
     - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
     - java -jar selenium-server-standalone-2.53.1.jar -p 4444 :
         background: true
@@ -61,6 +61,8 @@ test:
     - BEHAT_FOLDER=$HOME/$CIRCLE_PROJECT_REPONAME/tests ruby dkan/.ahoy/.scripts/circle-behat.rb <%= @test_dirs.join(" ") %> --tags='<%= @skip_tags.join("&&") %>':
         timeout: 1200
         parallel: true
+    - ahoy build test:
+        parallel: false
   post:
     - echo $CIRCLE_ARTIFACTS; cp -av tests/assets $CIRCLE_ARTIFACTS:
         parallel: true

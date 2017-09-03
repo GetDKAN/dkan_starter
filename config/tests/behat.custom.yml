@@ -1,12 +1,12 @@
-# behat.yml
+---
 default:
   suites:
     custom:
       paths:
-        - %paths.base%/../config/tests/features
+      - "%paths.base%/../config/tests/features"
       contexts:
-        - CustomContext
-        - FeatureContext #Temporary overrides only!
-        - Drupal\DrupalExtension\Context\MinkContext
-        - Drupal\DrupalExtension\Context\DrupalContext
-        - Drupal\DrupalExtension\Context\MessageContext
+      - CustomContext
+      - FeatureContext
+      - Drupal\DrupalExtension\Context\MinkContext
+      - Drupal\DrupalExtension\Context\DrupalContext
+      - Drupal\DrupalExtension\Context\MessageContext

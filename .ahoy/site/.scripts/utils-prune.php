@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Prunes taxonomy terms saving a default of 5 from each vocabulary.
+ * Prunes taxonomy terms saving a default of 50 from each vocabulary.
  */
-function prune_terms($number = 5) {
+function prune_terms($number = 50) {
   $terms_to_save = array();
   // Ensures we save terms that are being used.
   $topics = db_query("SELECT DISTINCT field_topic_tid as tid FROM {field_data_field_topic} LIMIT $number")->fetchAll();
@@ -19,7 +19,7 @@ function prune_terms($number = 5) {
   $format_vid = 1;
   $terms = db_query("SELECT DISTINCT tid FROM {taxonomy_term_data} WHERE vid != $format_vid")->fetchAll();
 
-  if ($number = 0)
+  if ($number == 0)
   {
     $terms_to_save = array();
   }
@@ -37,7 +37,7 @@ function prune_terms($number = 5) {
 /**
  * Prunes nodes.
  */
-function prune_nodes($number = 25) {
+function prune_nodes($number = 100) {
   if ($number == 0) {
     db_delete('node')
       ->condition('type', array(
@@ -84,12 +84,14 @@ function prune_nodes($number = 25) {
     catch(Exception $e) {
       print "Skipping dataset $node->nid do to error\n";
     }
-    foreach($resources as $resource) {
-      try {
-        node_delete($resource['target_id']);
-      }
-      catch(Exception $e) {
-        print "Skipping resource $resource[target_id] do to error\n";
+    if ($resources) {
+      foreach($resources as $resource) {
+        try {
+          node_delete($resource['target_id']);
+        }
+        catch(Exception $e) {
+          print "Skipping resource $resource[target_id] do to error\n";
+        }
       }
     }
   }

@@ -3,11 +3,23 @@ echo "Target environment is $target_env"
 echo "Drush alias is $drush_alias"
 
 upgrade_version=upgrade_1_13
-upgrade_status=`drush @$drush_alias vget $upgrade_version --pipe`
+upgrade_status=`drush @$drush_alias vget $upgrade_version --exact |tr -d '\n'`
+
+echo "The upgrade status is $upgrade_status"
+
+if [ -z "$upgrade_status" ]; then
+  upgrade_status='never upgraded';
+fi
+
 
 if [ "$upgrade_status" != 'upgraded' ]; then
+  echo "The site was not upgraded. Running $upgrade_version.sh"
   target_env=$target_env drush_alias=$drush_alias bash .ahoy/site/.scripts/upgrades/$upgrade_version.sh
   drush @$drush_alias vset $upgrade_version upgraded
 fi
 
-target_env=$target_env drush_alias=$drush_alias bash .ahoy/site/.scripts/deploy.sh
+if [ "$target_env" == 'local' ]; then
+  drush @$drush_alias dis memcache memcache_admin -y
+fi
+
+target_env=$target_env drush_alias=$drush_alias ruby .ahoy/site/.scripts/deploy.rb

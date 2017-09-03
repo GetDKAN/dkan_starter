@@ -1,8 +1,36 @@
 # Change log
+
 ## [1.14.0.0]
 - Add admin_views to features master in data_config
 
+## [1.13.7.0]
+- Update to dkan version 1.13.7
+- Fix ODSM Memory Error #402
+- Add documentation for behat context parameters #425
+- Cleanup settings.php #247
+- Add seckit module to dkan_starter #413
+
 ## [1.13.4.0]
+- Update to dkan version 1.13.4 
+- Add check for resources to avoid errors when pruning #279
+- Switch to yaml format for default makefiles #258
+- Patched memcache to fix call to undefined object.
+- Add role_watchdog #304
+
+## [1.13.4.0]
+- Add role_watchdog module
+
+## [1.13.3.2]
+- Support htaccess in public file directory  #232
+
+## [1.13.3.1]
+- Fix fast import tests when fast import is disabled in config.yml #233
+- Fix notice about undefined constant CI. #233
+
+## [1.13.3.0]
+- Upgrade DKAN to version 1.13.3  PR#220
+
+## [1.13.2.0]
 - Upgrade DKAN to version 1.13.2  PR#136
 
 ## [1.13.1.5]

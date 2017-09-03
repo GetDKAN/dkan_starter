@@ -509,6 +509,11 @@ class ObjectNormalizerTest extends TestCase
         $this->assertEquals(array('foo' => 'K'), $this->normalizer->normalize(new ObjectWithStaticPropertiesAndMethods()));
     }
 
+    public function testNormalizeUpperCaseAttributes()
+    {
+        $this->assertEquals(array('Foo' => 'Foo', 'Bar' => 'BarBar'), $this->normalizer->normalize(new ObjectWithUpperCaseAttributeNames()));
+    }
+
     public function testNormalizeNotSerializableContext()
     {
         $objectDummy = new ObjectDummy();
@@ -621,6 +626,16 @@ class ObjectNormalizerTest extends TestCase
         $serializer = new Serializer(array(new ArrayDenormalizer(), new DateTimeNormalizer(), $normalizer));
 
         $serializer->denormalize(array('inners' => array('a' => array('foo' => 1))), ObjectOuter::class);
+    }
+
+    public function testDoNotRejectInvalidTypeOnDisableTypeEnforcementContextOption()
+    {
+        $extractor = new PropertyInfoExtractor(array(), array(new PhpDocExtractor()));
+        $normalizer = new ObjectNormalizer(null, null, null, $extractor);
+        $serializer = new Serializer(array($normalizer));
+        $context = array(ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true);
+
+        $this->assertSame('foo', $serializer->denormalize(array('number' => 'foo'), JsonNumber::class, null, $context)->number);
     }
 
     public function testExtractAttributesRespectsFormat()
@@ -997,5 +1012,16 @@ class DummyWithConstructorObjectAndDefaultValue
     public function getInner()
     {
         return $this->inner;
+    }
+}
+
+class ObjectWithUpperCaseAttributeNames
+{
+    private $Foo = 'Foo';
+    public $Bar = 'BarBar';
+
+    public function getFoo()
+    {
+        return $this->Foo;
     }
 }

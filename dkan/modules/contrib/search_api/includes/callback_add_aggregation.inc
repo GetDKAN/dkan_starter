@@ -20,11 +20,23 @@ class SearchApiAlterAddAggregation extends SearchApiAbstractAlterCallback {
    */
   protected $reductionType;
 
+  /**
+   * A separator to use when the aggregation type is 'fulltext'.
+   *
+   * Used to temporarily store a string separator when the aggregation type is
+   * "fulltext", for use in SearchApiAlterAddAggregation::reduce() with
+   * array_reduce().
+   *
+   * @var string
+   */
+  protected $fulltextReductionSeparator;
+
   public function configurationForm() {
     $form['#attached']['css'][] = drupal_get_path('module', 'search_api') . '/search_api.admin.css';
 
     $fields = $this->index->getFields(FALSE);
     $field_options = array();
+    $field_properties = array();
     foreach ($fields as $name => $field) {
       $field_options[$name] = check_plain($field['name']);
       $field_properties[$name] = array(
@@ -79,9 +91,23 @@ class SearchApiAlterAddAggregation extends SearchApiAbstractAlterCallback {
         '#required' => TRUE,
       );
       $form['fields'][$name]['type_descriptions'] = $type_descriptions;
+      $type_selector = ':input[name="callbacks[search_api_alter_add_aggregation][settings][fields][' . $name . '][type]"]';
       foreach (array_keys($types) as $type) {
-        $form['fields'][$name]['type_descriptions'][$type]['#states']['visible'][':input[name="callbacks[search_api_alter_add_aggregation][settings][fields][' . $name . '][type]"]']['value'] = $type;
+        $form['fields'][$name]['type_descriptions'][$type]['#states']['visible'][$type_selector]['value'] = $type;
       }
+      $form['fields'][$name]['separator'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Fulltext separator'),
+        '#description' => t('For aggregation type "Fulltext", set the text that should be used to separate the aggregated field values. Use "\t" for tabs and "\n" for newline characters.'),
+        '#default_value' => addcslashes(isset($field['separator']) ? $field['separator'] : "\n\n", "\0..\37\\"),
+        '#states' => array(
+          'visible' => array(
+            $type_selector => array(
+              'value' => 'fulltext',
+            ),
+          ),
+        ),
+      );
       $form['fields'][$name]['fields'] = array_merge($field_properties, array(
         '#type' => 'checkboxes',
         '#title' => t('Contained fields'),
@@ -125,11 +151,12 @@ class SearchApiAlterAddAggregation extends SearchApiAbstractAlterCallback {
       return;
     }
     foreach ($values['fields'] as $name => $field) {
-      $fields = $values['fields'][$name]['fields'] = array_values(array_filter($field['fields']));
       unset($values['fields'][$name]['actions']);
+      $fields = $values['fields'][$name]['fields'] = array_values(array_filter($field['fields']));
       if ($field['name'] && !$fields) {
         form_error($form['fields'][$name]['fields'], t('You have to select at least one field to aggregate. If you want to remove an aggregated field, please delete its name.'));
       }
+      $values['fields'][$name]['separator'] = stripcslashes($field['separator']);
     }
   }
 
@@ -176,6 +203,7 @@ class SearchApiAlterAddAggregation extends SearchApiAbstractAlterCallback {
             $values = $this->flattenArray($values);
 
             $this->reductionType = $field['type'];
+            $this->fulltextReductionSeparator = isset($field['separator']) ? $field['separator'] : "\n\n";
             $item->$name = array_reduce($values, array($this, 'reduce'), NULL);
             if ($field['type'] == 'count' && !$item->$name) {
               $item->$name = 0;
@@ -192,7 +220,7 @@ class SearchApiAlterAddAggregation extends SearchApiAbstractAlterCallback {
   public function reduce($a, $b) {
     switch ($this->reductionType) {
       case 'fulltext':
-        return isset($a) ? $a . "\n\n" . $b : $b;
+        return isset($a) ? $a . $this->fulltextReductionSeparator . $b : $b;
       case 'sum':
         return $a + $b;
       case 'count':
@@ -209,6 +237,8 @@ class SearchApiAlterAddAggregation extends SearchApiAbstractAlterCallback {
           return $a;
         }
         return drupal_substr($b, 0, 1);
+      case 'last':
+        return isset($b) ? $b : $a;
       case 'list':
         if (!isset($a)) {
           $a = array();
@@ -288,6 +318,7 @@ class SearchApiAlterAddAggregation extends SearchApiAbstractAlterCallback {
           'min' => t('Minimum'),
           'first' => t('First'),
           'first_char' => t('First letter'),
+          'last' => t('Last'),
           'list' => t('List'),
         );
       case 'type':
@@ -299,6 +330,7 @@ class SearchApiAlterAddAggregation extends SearchApiAbstractAlterCallback {
           'min' => 'integer',
           'first' => 'string',
           'first_char' => 'string',
+          'last' => 'string',
           'list' => 'list<string>',
         );
       case 'description':
@@ -310,6 +342,7 @@ class SearchApiAlterAddAggregation extends SearchApiAbstractAlterCallback {
           'min' => t('The Minimum aggregation computes the numerically smallest contained field value.'),
           'first' => t('The First aggregation will simply keep the first encountered field value. This is helpful foremost when you know that a list field will only have a single value.'),
           'first_char' => t('The "First letter" aggregation uses just the first letter of the first encountered field value as the aggregated value. This can, for example, be used to build a Glossary view.'),
+          'last' => t('The Last aggregation will simply keep the last encountered field value.'),
           'list' => t('The List aggregation collects all field values into a multi-valued field containing all values.'),
         );
     }

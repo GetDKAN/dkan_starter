@@ -64,7 +64,7 @@ $env_map = array(
   'prod' => 'production',
   'ra' => 'production',
 );
-define(CI, getenv('CI'));
+define("CI", getenv('CI'));
 devinci_set_env($env_map);
 
 /********************************************************
@@ -95,7 +95,17 @@ if (isset($conf['default']['fast_file']) && $conf['default']['fast_file']['enabl
   );
 }
 else {
-  $conf['dkan_datastore_fast_import_selection'] = 0;
+  if (!CI) {
+    $conf['dkan_datastore_fast_import_selection'] = 0;
+  }
+  else {
+    // Set PDO values for CI environment and avoid setting
+    // up the fast import selection option.
+    $databases['default']['default']['pdo'] = array(
+      PDO::MYSQL_ATTR_LOCAL_INFILE => 1,
+      PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => 1,
+    );
+  }
 }
 
 // Don't show any errors.
@@ -138,10 +148,7 @@ ini_set('session.gc_maxlifetime', 200000);
 ini_set('session.cookie_lifetime', 2000000);
 
 // Disable cron. We run this from Jenkins.
-// Except for CircleCI or test purpose.
-if (CI) {
-  $conf['cron_safe_threshold'] = 0;
-}
+$conf['cron_safe_threshold'] = 0;
 
 // Disable git support for the environment indicator by default.
 $conf['environment_indicator_git_support'] = FALSE;
@@ -152,6 +159,18 @@ $conf['install_profile'] = 'dkan';
 // This should be updated to the actual live site url if using stage_file_proxy.
 if (_data_starter_validates('stage_file_proxy_origin')) {
   $conf['stage_file_proxy_origin'] = $conf['default']['stage_file_proxy_origin'];
+}
+
+// Configure Security Kit If Enabled.
+$data_config = variable_get('default');
+if (isset($data_config['seckit']) && $data_config['seckit']['enable']) {
+  $seckit_ssl = array(
+    'hsts' => $conf['default']['seckit']['hsts'],
+    'hsts_max_age' => $conf['default']['seckit']['hsts_max_age'],
+    'hsts_sudomains' => $conf['default']['seckit']['hsts_subdomains'],
+  );
+
+  $conf['seckit_ssl'] = $seckit_ssl;
 }
 
 // KEY for dkan health status.
@@ -170,13 +189,11 @@ $conf['shield_allow_cli'] = 1;
 switch (ENVIRONMENT) {
   case 'local':
     if (_data_starter_validates('stage_file_proxy_origin')) {
-      if ($conf['default']['stage_file_proxy']) {
-        $conf['features_master_temp_enabled_modules'] = array_merge(
-          $conf['features_master_temp_enabled_modules'],
-          array(
-            'stage_file_proxy',
-          ));
-      }
+      $conf['features_master_temp_enabled_modules'] = array_merge(
+        $conf['features_master_temp_enabled_modules'],
+        array(
+          'stage_file_proxy',
+        ));
     }
 
     // Features Master also supports temporarily disabling modules.
@@ -282,9 +299,6 @@ if (ENVIRONMENT == "production") {
 // Disable dkan_worflow modules so that dkan tests pass
 // See: https://jira.govdelivery.com/browse/CIVIC-5128
 if (getenv('CI') == "true") {
-  // TODO: change clamav feature tests so that they enable clamav.
-  $conf['features_master_temp_enabled_modules'][] = 'clamav';
-
   $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow';
   $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow_permissions';
   $conf['features_master_temp_disabled_modules'][] = 'link_badges';
