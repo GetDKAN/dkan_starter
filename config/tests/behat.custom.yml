@@ -3,7 +3,7 @@ default:
   suites:
     custom:
       paths:
-      - "%paths.base%/../config/tests/features"
+      - '%paths.base%/../config/tests/features'
       contexts:
       - CustomContext
       - FeatureContext
