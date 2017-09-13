@@ -5,7 +5,3 @@ core = 7.x
 version = 7.x-1.x-dev
 
 dependencies[] = visualization_entity
-
-; Information added by DKAN release script on 6/21/2017
-version = 7.x-1.2
-project = dkan
