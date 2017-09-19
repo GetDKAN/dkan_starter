@@ -70,14 +70,14 @@ default:
       - Drupal\DKANExtension\Context\SearchAPIContext:
           search_forms:
             default:
-              form_css: "#dkan-sitewide-dataset-search-form"
+              form_css: '#dkan-sitewide-dataset-search-form'
               form_field: edit-search
               form_button: edit-submit
-              results_css: ".view-dkan-datasets"
-              result_item_css: ".views-row"
+              results_css: .view-dkan-datasets
+              result_item_css: .views-row
             harvest_source:
-              results_css: ".view-dkan-harvest-source-search"
-              result_item_css: ".views-row"
+              results_css: .view-dkan-harvest-source-search
+              result_item_css: .views-row
       - Drupal\DKANExtension\Context\ResourceContext
       - Drupal\DKANExtension\Context\ServicesContext:
         - request_fields_map:
@@ -115,7 +115,7 @@ default:
       - Drupal\DKANExtension\Context\TimezoneContext
       - Drupal\DrupalExtension\Context\DrushContext
       - Devinci\DevinciExtension\Context\DebugContext:
-          asset_dump_path: "%paths.base%/assets"
+          asset_dump_path: '%paths.base%/assets'
       - Devinci\DevinciExtension\Context\JavascriptContext:
           maximum_wait: 30
   formatters:
@@ -127,7 +127,7 @@ default:
         - [conceal]
   gherkin:
     filters:
-      tags: "~@fixme"
+      tags: ~@fixme
   extensions:
     Behat\MinkExtension:
       goutte: []
@@ -135,11 +135,11 @@ default:
       default_session: goutte
       javascript_session: selenium2
       browser_name: chrome
-      files_path: "%paths.base%/files"
+      files_path: '%paths.base%/files'
     Drupal\DrupalExtension:
       blackbox: 
       drupal:
-        drupal_root: "%paths.base%/../../docroot"
+        drupal_root: '%paths.base%/../../docroot'
       api_driver: drupal
       region_map:
         admin menu: "#admin-menu"
@@ -194,8 +194,8 @@ default:
         log_out: Log out
         log_in: Log in
       selectors:
-        message_selector: ".alert"
-        error_message_selector: ".alert.alert-error"
-        success_message_selector: ".alert.alert-success"
+        message_selector: .alert
+        error_message_selector: .alert.alert-error
+        success_message_selector: .alert.alert-success
     Drupal\DKANExtension:
       some_param: test
