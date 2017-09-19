@@ -1,4 +1,8 @@
 # Change log
+
+## [1.14.0.0]
+- Add admin_views to features master in data_config
+
 ## [1.13.7.0]
 - Update to dkan version 1.13.7
 - Fix ODSM Memory Error #402
