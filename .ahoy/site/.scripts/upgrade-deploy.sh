@@ -2,7 +2,7 @@
 echo "Target environment is $target_env"
 echo "Drush alias is $drush_alias"
 
-upgrade_version=upgrade_1_13
+upgrade_version=upgrade_1_14
 upgrade_status=`drush @$drush_alias vget $upgrade_version --exact |tr -d '\n'`
 
 echo "The upgrade status is $upgrade_status"
