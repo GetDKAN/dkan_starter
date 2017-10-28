@@ -8,7 +8,7 @@
 # cd into your site's docroot and:
 mkdir -p sites/all/modules/nucivic/
 cd sites/all/modules/nucivic
-wget https://github.com/NuCivic/visualization_entity/archive/master.zip
+wget https:///visualization_entity/archive/master.zip
 unzip master.zip
 mv visualization_entity-master visualization_entity
 cd ../../../../
