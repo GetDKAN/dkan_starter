@@ -4,7 +4,7 @@ api = 2
 # RECLINE
 libraries[recline][type] = libraries
 libraries[recline][download][type] = git
-libraries[recline][download][url] = "https://github.com/NuCivic/recline.js.git"
+libraries[recline][download][url] = "https://github.com/GetDKAN/recline.js.git"
 libraries[recline][download][branch] = "master"
 
 # LODASH
@@ -46,7 +46,7 @@ libraries[moment][download][revision] = "78a53b8cb53e967c6dac2e7325e18da2a472fc2
 # LEAFLET
 libraries[leaflet][type] = libraries
 libraries[leaflet][download][type] = git
-libraries[leaflet][download][url] = "https://github.com/NuCivic/Leaflet.git"
+libraries[leaflet][download][url] = "https://github.com/GetDKAN/Leaflet.git"
 libraries[leaflet][download][tag] = "v1.0.2-alt-marker-shadow-5258"
 
 # FLOT
@@ -65,7 +65,7 @@ libraries[deep_diff][download][revision] = "07e91c624e5016be5c5c6560a9eabe49ef3b
 # DEEPLINK
 libraries[recline_deeplink][type] = libraries
 libraries[recline_deeplink][download][type] = git
-libraries[recline_deeplink][download][url] = "https://github.com/NuCivic/recline-deeplink.git"
+libraries[recline_deeplink][download][url] = "https://github.com/GetDKAN/recline-deeplink.git"
 libraries[recline_deeplink][directory_name] = recline_deeplink
 libraries[recline_deeplink][download][revision] = "c1695d669f8314ed8b66e5907eb4f1bc4a8a9495"
 
@@ -79,7 +79,7 @@ libraries[leaflet_markercluster][download][revision] = "eb922a3646d2e1ef9ed9de99
 # XLS BACKEND
 libraries[xls][type] = libraries
 libraries[xls][download][type] = git
-libraries[xls][download][url] = "https://github.com/NuCivic/recline.backend.xlsx"
+libraries[xls][download][url] = "https://github.com/GetDKAN/recline.backend.xlsx"
 libraries[xls][directory_name] = xls
 libraries[xls][download][revision] = "a5d49f7305895f147c3e9a12115c2456a897f941"
 
