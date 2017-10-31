@@ -47,7 +47,7 @@ function search_api_acquia_get_core_service() {
   global $conf;
 
   $acquia_identifier = acquia_agent_settings('acquia_identifier');
-  $ah_env = isset($_SERVER['AH_SITE_ENVIRONMENT']) ? $_SERVER['AH_SITE_ENVIRONMENT'] : '';
+  $ah_env = isset($_ENV['AH_SITE_ENVIRONMENT']) ? $_ENV['AH_SITE_ENVIRONMENT'] : '';
   $sites_foldername = substr(conf_path(), strrpos(conf_path(), '/') + 1);
   $ah_db_name = isset($conf['acquia_hosting_site_info']['db']['name']) ? $conf['acquia_hosting_site_info']['db']['name'] : '';
 
@@ -149,6 +149,13 @@ function search_api_acquia_search_api_index_load($indexes) {
   if (!$auto_switch_disabled && !$read_only_switch_disabled && $sub_active && !module_exists('acquia_search_multi_subs')) {
     if (!search_api_acquia_get_core_service()->isPreferredCoreAvailable()) {
       foreach ($indexes as &$index) {
+        if (empty($index->server)) {
+          // This covers circumstances where the Acquia Search service hasn't
+          // been completely set up. Preventing an empty server machine name
+          // from loading prevents array_flip errors in entity_load that are
+          // otherwise hard to debug.
+          continue;
+        }
         $server = search_api_server_load($index->server);
         if ($server && $server->class == 'acquia_search_service') {
           $index->read_only = '1';
@@ -223,6 +230,9 @@ function search_api_acquia_block_view_system_main_alter(&$data, $block) {
   if (isset($data['content']['view'])) {
     $section = $data['content']['view'];
     // #theme tells us what we're rendering right now.
+    if (!isset($section['#theme'])) {
+      return;
+    }
     if ($section['#theme'] == 'search_api_server') {
       $server = search_api_server_load($section['#machine_name']);
     }
@@ -323,9 +333,9 @@ function search_api_acquia_add_form_status_message(&$form, &$form_state, $server
 function search_api_acquia_get_read_only_mode_warning($server, $t = 't') {
   global $conf;
 
-  $msg = $t('To protect your data, the Search API Acquia module is enforcing 
-    read-only mode on the Search API indexes, because it could not figure out what Acquia-hosted Solr 
-    index to connect to. This helps you avoid writing to a production index 
+  $msg = $t('To protect your data, the Search API Acquia module is enforcing
+    read-only mode on the Search API indexes, because it could not figure out what Acquia-hosted Solr
+    index to connect to. This helps you avoid writing to a production index
     if you copy your site to a development or other environment(s).');
 
   if (!empty($conf['search_api_acquia_overrides'][$server->machine_name]['acquia_search_possible_cores'])) {
@@ -335,7 +345,7 @@ function search_api_acquia_get_read_only_mode_warning($server, $t = 't') {
     ));
 
     $msg .= '<p>';
-    $msg .= $t('These index IDs would have worked, but could not be found on 
+    $msg .= $t('These index IDs would have worked, but could not be found on
       your Acquia subscription: !list', array('!list' => $list));
     $msg .= '</p>';
 
@@ -356,8 +366,14 @@ function search_api_acquia_get_read_only_mode_warning($server, $t = 't') {
  * @return string
  */
 function search_api_acquia_get_search_status_message($server) {
+  global $conf;
 
-  $url = $server->options['scheme'] . '://' . $server->options['host'] . ':' . $server->options['port'] . $server->options['path'];
+  $options = $server->options;
+  // Apply overrides if they exist.
+  if (isset($conf['search_api_acquia_overrides'][$server->machine_name])) {
+    $options = array_merge($options, $conf['search_api_acquia_overrides'][$server->machine_name]);
+  }
+  $url = $options['scheme'] . '://' . $options['host'] . ':' . $options['port'] . $options['path'];
   $items = array(
     t('search_api_solr.module server ID: @env', array('@env' => $server->machine_name)),
     t('URL: @url', array('@url' => $url)),
@@ -401,6 +417,56 @@ function search_api_acquia_enable() {
  */
 function search_api_acquia_cron() {
   search_api_acquia_set_version();
+  search_api_acquia_cron_optimize();
+}
+
+/**
+ * Runs optimize during cron runs.
+ *
+ * @see search_api_solr_cron()
+ */
+function search_api_acquia_cron_optimize() {
+  $action = variable_get('search_api_acquia_cron_action', 'spellcheck');
+  // We treat all unknown action settings as "none". However, we turn a blind
+  // eye for Britons and other people who can spell.
+  if (!in_array($action, array('spellcheck', 'optimize', 'optimise'))) {
+    return;
+  }
+  // 86400 seconds is one day. We use slightly less here to allow for some
+  // variation in the request time of the cron run, so that the time of day will
+  // (more or less) stay the same.
+  if (REQUEST_TIME - variable_get('search_api_acquia_last_optimize', 0) > 86340) {
+    variable_set('search_api_acquia_last_optimize', REQUEST_TIME);
+    $conditions = array('class' => 'acquia_search_service', 'enabled' => TRUE);
+    $count = 0;
+    foreach (search_api_server_load_multiple(FALSE, $conditions) as $server) {
+      try {
+        $solr = $server->getSolrConnection();
+        if ($action != 'spellcheck') {
+          $solr->optimize(FALSE);
+        }
+        else {
+          $params['rows'] = 0;
+          $params['spellcheck'] = 'true';
+          $params['spellcheck.build'] = 'true';
+          $solr->search(NULL, $params);
+        }
+        ++$count;
+      }
+      catch(SearchApiException $e) {
+        watchdog_exception('search_api_acquia', $e, '%type while optimizing Solr server @server: !message in %function (line %line of %file).', array('@server' => $server->name));
+      }
+    }
+    if ($count) {
+      $vars['@count'] = $count;
+      if ($action != 'spellcheck') {
+        watchdog('search_api_acquia', 'Optimized @count Solr server(s).', $vars, WATCHDOG_INFO);
+      }
+      else {
+        watchdog('search_api_acquia', 'Rebuilt spellcheck dictionary on @count Solr server(s).', $vars, WATCHDOG_INFO);
+      }
+    }
+  }
 }
 
 /**
@@ -412,7 +478,7 @@ function search_api_acquia_cron() {
  */
 function search_api_acquia_set_version() {
   // Cache the version in a variable so we can send it at no extra cost.
-  $version = variable_get('search_api_acquia', '7.x');
+  $version = variable_get('search_api_acquia_version', '7.x');
   $info = system_get_info('module', 'search_api_acquia');
   // Send the version, or at least the core compatibility as a fallback.
   $new_version = isset($info['version']) ? (string) $info['version'] : (string) $info['core'];

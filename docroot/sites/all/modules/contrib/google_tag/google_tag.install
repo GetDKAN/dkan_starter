@@ -11,7 +11,7 @@
  * Implements hook_enable().
  */
 function google_tag_enable() {
-  _google_tag_assets_create($count);
+  google_tag_assets_create($count);
 }
 
 /**
@@ -67,7 +67,7 @@ function google_tag_requirements($phase) {
       );
     }
   }
-  if ($phase == 'runtime' || $phase == 'install') {
+  if ($phase == 'runtime' || $phase == 'update' || $phase == 'install') {
     // Adapted from system_requirements().
     $directory = 'public://google_tag';
     if (!is_dir($directory) || !is_writable($directory)) {
@@ -80,8 +80,15 @@ function google_tag_requirements($phase) {
 
       // If applicable, get the directory path of stream wrapper.
       $wrapper = file_stream_wrapper_get_instance_by_uri($directory);
-      $path = $wrapper->getDirectoryPath();
-      $path = $path ? $path . '/google_tag' : $directory;
+      if (method_exists($wrapper, 'getDirectoryPath') && ($path = $wrapper->getDirectoryPath())) {
+        // getDirectoryPath() is not defined in StreamWrapperInterface; it
+        // exists in LocalStream and the local storage replacement classes in
+        // google_appengine; s3fs returns an empty string.
+        $path .= '/google_tag';
+      }
+      elseif (!($path = $wrapper->getExternalUrl())) {
+        $path = $directory;
+      }
 
       if (!$is_directory) {
         $error = $t('The directory %directory does not exist.', array('%directory' => $path));
@@ -241,37 +248,8 @@ function google_tag_update_7105(&$sandbox) {
   // (Given the scope of the setting changes, it is arguable whether manual
   // intervention to update the settings should be required; and hence why this
   // was omitted in the first place.)
-  _google_tag_assets_create($count);
+  google_tag_assets_create($count);
   return t('Created @count snippet files based on configuration', array('@count' => 3 * $count));
-}
-
-/**
- * Saves snippet files and data layer classes based on current settings.
- */
-function _google_tag_assets_create(&$count) {
-  module_load_include('inc', 'google_tag', 'includes/admin');
-  $count = 0;
-
-  if (module_exists('variable_realm') && module_exists('variable_store')) {
-    // i18n_variable module depends on variable_realm, variable_store
-    $realms = variable_realm_list();
-    foreach ($realms as $realm_name => $realm_title) {
-      $keys = variable_realm_keys($realm_name);
-      foreach ($keys as $key_name => $key_title) {
-        drupal_set_message(t('realm:key = @realm:@key', array('@realm' => $realm_name, '@key' => $key_name)));
-        variable_realm_switch($realm_name, $key_name);
-        _google_tag_prepare_directory($realm_name);
-        _google_tag_snippets_save($realm_name, $key_name);
-        _google_tag_classes_save($realm_name, $key_name);
-        $count++;
-      }
-    }
-  }
-  else {
-    _google_tag_snippets_save();
-    _google_tag_classes_save();
-    $count++;
-  }
 }
 
 /**

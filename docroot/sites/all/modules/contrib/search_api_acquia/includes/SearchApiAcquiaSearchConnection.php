@@ -74,18 +74,6 @@ class SearchApiAcquiaSearchConnection extends SearchApiSolrConnection {
   }
 
   /**
-   * Send an optimize command.
-   *
-   * We want to control the schedule of optimize commands ourselves,
-   * so do a method override to make ->optimize() a no-op.
-   *
-   * @see SearchApiSolrConnection::optimize()
-   */
-  public function optimize($waitFlush = true, $waitSearcher = true, $timeout = 3600) {
-    return TRUE;
-  }
-
-  /**
    * Modify the url and add headers appropriate to authenticate to Acquia Search.
    *
    * @return

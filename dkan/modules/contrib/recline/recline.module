@@ -377,8 +377,8 @@ function recline_libraries_info() {
 
   $libraries['recline_deeplink'] = array(
     'name' => 'Recline DeepLink',
-    'vendor url' => 'https://github.com/NuCivic/recline-deeplink',
-    'download url' => 'https://github.com/NuCivic/recline-deeplink',
+    'vendor url' => 'https://github.com/GetDKAN/recline-deeplink',
+    'download url' => 'https://github.com/GetDKAN/recline-deeplink',
     'path' => '',
     'version' => array(
       'file' => 'bower.js',
@@ -435,7 +435,7 @@ function recline_libraries_info() {
 
   $libraries['xls'] = array(
     'name' => 'xls',
-    'vendor url' => 'https://github.com/NuCivic/recline.backend.xlsx',
+    'vendor url' => 'https://github.com/GetDKAN/recline.backend.xlsx',
     'version' => '0.0.1',
     'files' => array(
       'js' => array(
