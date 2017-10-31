@@ -87,8 +87,8 @@ function visualization_entity_choropleth_bundle_libraries_info() {
   );
   $libraries['recline_choropleth'] = array(
     'name' => 'Recline Choropleth View',
-    'vendor url' => 'https://github.com/NuCivic/recline.view.choroplethmap.js',
-    'download url' => 'https://github.com/NuCivic/recline.view.choroplethmap.js/archive/master.zip',
+    'vendor url' => 'https:///recline.view.choroplethmap.js',
+    'download url' => 'https:///recline.view.choroplethmap.js/archive/master.zip',
     'path' => '',
     'version arguments' => array(
       'file' => 'CHANGELOG.txt',
@@ -106,8 +106,8 @@ function visualization_entity_choropleth_bundle_libraries_info() {
   );
   $libraries['leaflet_zoomtogeometries'] = array(
     'name' => 'Leaflet Map zoomToGeometries',
-    'vendor url' => 'http://github.com/NuCivic/',
-    'download url' => 'https://github.com/NuCivic/leaflet.map.zoomToGeometries.js/archive/master.zip',
+    'vendor url' => 'http:///',
+    'download url' => 'https:///leaflet.map.zoomToGeometries.js/archive/master.zip',
     'path' => '',
     'version arguments' => array(
       'file' => 'bower.json',

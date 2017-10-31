@@ -142,8 +142,8 @@ function visualization_entity_charts_libraries_info() {
 
   $libraries['reclineViewNvd3'] = array(
     'name' => 'recline.view.nvd3.js',
-    'vendor url' => 'https://github.com/NuCivic/recline.view.nvd3.js',
-    'download url' => 'https://github.com/NuCivic/recline.view.nvd3.js/archive/master.zip',
+    'vendor url' => 'https:///recline.view.nvd3.js',
+    'download url' => 'https:///recline.view.nvd3.js/archive/master.zip',
     'version arguments' => array(
       'file' => 'package.json',
       'pattern' => '/"version": "(\d+\.\d+\.\d+)"/',
@@ -161,8 +161,8 @@ function visualization_entity_charts_libraries_info() {
 
   $libraries['lodash_data'] = array(
     'name' => 'lodashdata',
-    'vendor url' => 'https://github.com/NuCivic/lodash.data',
-    'download url' => 'https://github.com/NuCivic/lodash.data/archive/master.zip',
+    'vendor url' => 'https:///lodash.data',
+    'download url' => 'https:///lodash.data/archive/master.zip',
     'version arguments' => array(
       'file' => 'package.json',
       'pattern' => '/"version": "(\d+\.\d+\.\d+)"/',

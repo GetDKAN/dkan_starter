@@ -167,8 +167,15 @@ function google_tag_settings_form_validate($form, &$form_state) {
   if ($values['google_tag_include_environment'] && !preg_match('/^env-\d{1,}$/', $values['google_tag_environment_id'])) {
     form_set_error('google_tag_environment_id', t('A valid environment ID is case sensitive and formatted like env-x.'));
   }
-  if ($message = _google_tag_verify_data_layer($values['google_tag_data_layer'])) {
+  if ($message = _google_tag_data_layer_verify($values['google_tag_data_layer'])) {
     form_set_error('google_tag_data_layer', $message);
+  }
+  if ($values['google_tag_include_classes']) {
+    if (empty($values['google_tag_whitelist_classes']) && empty($values['google_tag_blacklist_classes'])) {
+      form_set_error('google_tag_include_classes', t('Enter listed classes in at least one field, or uncheck the box.'));
+      form_set_error('google_tag_whitelist_classes', '');
+      form_set_error('google_tag_blacklist_classes', '');
+    }
   }
 }
 
@@ -176,32 +183,107 @@ function google_tag_settings_form_validate($form, &$form_state) {
  * Form submission handler for google_tag_settings_form().
  */
 function google_tag_settings_form_submit($form, &$form_state) {
-  $realm_name = $realm_key = '';
-  if (!empty($form['#realm_keys'])) {
-    $realm_name = key($form['#realm_keys']);
-    $realm_key = current($form['#realm_keys']);
-    _google_tag_prepare_directory($realm_name);
+  if (module_exists('variable_realm') && module_exists('variable_store')) {
+    // When this handler runs, $GLOBALS['conf'] will have been updated by the
+    // form submitted values (this includes realm and non-realm specific
+    // variables). However, the variable stores maintained by variable_realm
+    // will not reflect these changes. To counteract this behaviour refresh the
+    // internal variable stores.
+    //
+    // Example: Assume a language realm with 'en' (default) and 'fr' keys.
+    //
+    // Because of how variable_realm_switch() works, the values for one or more
+    // realm:key pairs will include the OLD global (i.e. not realm-specific)
+    // values in effect at form build not the NEW values included with the form
+    // submission. Whether one or more is stale depends on the realm of the URL:
+    //
+    //   default: /admin/config/system/google_tag
+    //   realm: /fr/admin/config/system/google_tag
+    //
+    // The result does not depend on whether any google_tag variables are
+    // configured to be realm-specific.
+    //
+    // The global:default snippet files always reflect the NEW global values
+    // plus the realm-specific values for the realm of the URL. If the form is
+    // submitted from the 'en' (or default) URL, then these files have the 'en'
+    // values.
+    //
+    // The language:en snippet files have OLD global values if the realm URL is
+    // language:fr (indicated by 'fr' prefix), NEW values otherwise. Any realm-
+    // specific values are from language:en.
+    //
+    // The language:fr snippet files always have OLD global values. Any realm-
+    // specific values are from language:fr.
+
+    // Load variables from cache or database.
+    // Merge with current global to get values from settings.php.
+    $variables = variable_initialize();
+    $variables = array_merge($GLOBALS['conf'], $variables); // recursive?
+
+    // Reset internal store with updated variables.
+    $global = variable_realm_controller('global');
+    $global->addStore('default', $variables);
   }
 
-  _google_tag_snippets_save($realm_name, $realm_key);
-  _google_tag_classes_save($realm_name, $realm_key);
+  _google_tag_assets_create($count);
 }
 
 /**
- * Prepares directory for realm specific snippet files.
+ * Saves snippet files and data layer classes based on current settings.
+ *
+ * Use case: variable_realm is not enabled
+ * - one set of snippet files stored in public://google_tag
+ *
+ * Use case: variable_realm is enabled
+ * - multiple sets of snippet files stored in public://google_tag/{realm}
+ * - sub case: no google_tag variables are realm-specific
+ *   update all snippet files based on global default variables
+ * - sub case: some google_tag variables are realm-specific
+ *   update all snippet files based on global and realm-specific variables
  */
-function _google_tag_prepare_directory($realm_name = '') {
+function _google_tag_assets_create(&$count) {
+  $count = 0;
+
+  if (module_exists('variable_realm') && module_exists('variable_store')) {
+    // i18n_variable module depends on variable_realm, variable_store
+    $realms = variable_realm_list();
+    foreach ($realms as $realm_name => $realm_title) {
+      $keys = variable_realm_keys($realm_name);
+      foreach ($keys as $key_name => $key_title) {
+        drupal_set_message(t('realm:key = @realm:@key', array('@realm' => $realm_name, '@key' => $key_name)));
+        variable_realm_switch($realm_name, $key_name);
+        _google_tag_directory_prepare($realm_name);
+        _google_tag_snippets_save($realm_name, $key_name);
+        _google_tag_classes_save($realm_name, $key_name);
+        $count++;
+      }
+    }
+  }
+  else {
+    _google_tag_directory_prepare();
+    _google_tag_snippets_save();
+    _google_tag_classes_save();
+    $count++;
+  }
+
+  _drupal_flush_css_js();
+  drupal_clear_js_cache();
+}
+
+/**
+ * Prepares directory for base or realm specific snippet files.
+ */
+function _google_tag_directory_prepare($realm_name = '') {
   // From google_tag_requirements(); this should be a helper function (in core).
-  if (!empty($realm_name)) {
-    $directory = "public://google_tag/$realm_name";
-    if (!is_dir($directory) || !is_writable($directory)) {
-      file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
-    }
-    $is_writable = is_writable($directory);
-    $is_directory = is_dir($directory);
-    if (!$is_writable || !$is_directory) {
-      // @todo Do something.
-    }
+  $directory = 'public://google_tag';
+  $directory .= $realm_name ? "/$realm_name" : '';
+  if (!is_dir($directory) || !is_writable($directory)) {
+    file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
+  }
+  $is_writable = is_writable($directory);
+  $is_directory = is_dir($directory);
+  if (!$is_writable || !$is_directory) {
+    // @todo Do something.
   }
 }
 
@@ -227,8 +309,6 @@ function _google_tag_snippets_save($realm_name = '', $realm_key = '') {
   }
   else {
     drupal_set_message(t('Created three snippet files based on configuration.'));
-    _drupal_flush_css_js();
-    drupal_clear_js_cache();
   }
 }
 
@@ -236,6 +316,7 @@ function _google_tag_snippets_save($realm_name = '', $realm_key = '') {
  * Stores data layer classes based on current settings.
  */
 function _google_tag_classes_save($realm_name = '', $realm_key = '') {
+  $data_layer = variable_get('google_tag_data_layer', 'dataLayer');
   if (module_exists('datalayer') && $data_layer == 'dataLayer') {
     // Save classes for data layer.
     // @todo How to or can we set the name of the data layer?
@@ -274,7 +355,7 @@ function google_tag_text_clean(&$text, $format = 'string') {
  * @return bool|null
  *   Whether data layer name is incompatible with dataLayer module, if present.
  */
-function _google_tag_verify_data_layer($value) {
+function _google_tag_data_layer_verify($value) {
   if (module_exists('datalayer') && $value != 'dataLayer') {
     // @todo Setting form error does not allow user to save a different name,
     // i.e. to do what message text says.
