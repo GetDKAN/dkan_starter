@@ -28,6 +28,7 @@ use Symfony\Component\Serializer\SerializerAwareTrait;
  */
 abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
 {
+    use ObjectToPopulateTrait;
     use SerializerAwareTrait;
 
     const CIRCULAR_REFERENCE_LIMIT = 'circular_reference_limit';
@@ -72,9 +73,6 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
 
     /**
      * Sets the {@link ClassMetadataFactoryInterface} to use.
-     *
-     * @param ClassMetadataFactoryInterface|null $classMetadataFactory
-     * @param NameConverterInterface|null        $nameConverter
      */
     public function __construct(ClassMetadataFactoryInterface $classMetadataFactory = null, NameConverterInterface $nameConverter = null)
     {
@@ -136,8 +134,6 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
 
     /**
      * Set ignored attributes for normalization and denormalization.
-     *
-     * @param array $ignoredAttributes
      *
      * @return self
      */
@@ -307,12 +303,7 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
      */
     protected function instantiateObject(array &$data, $class, array &$context, \ReflectionClass $reflectionClass, $allowedAttributes, string $format = null)
     {
-        if (
-            isset($context[static::OBJECT_TO_POPULATE]) &&
-            is_object($context[static::OBJECT_TO_POPULATE]) &&
-            $context[static::OBJECT_TO_POPULATE] instanceof $class
-        ) {
-            $object = $context[static::OBJECT_TO_POPULATE];
+        if (null !== $object = $this->extractObjectToPopulate($class, $context, static::OBJECT_TO_POPULATE)) {
             unset($context[static::OBJECT_TO_POPULATE]);
 
             return $object;
