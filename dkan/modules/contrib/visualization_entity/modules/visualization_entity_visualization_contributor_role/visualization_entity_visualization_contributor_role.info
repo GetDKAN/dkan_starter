@@ -1,7 +1,6 @@
 name = Visualization Entity Visualization Contributor Role
 core = 7.x
 package = Data Visualization
-version = 7.x-1.x-dev
 
 dependencies[] = entity
 dependencies[] = features
@@ -15,3 +14,7 @@ features[rules_config][] = rules_nucivic_data_portal_administrator_gets_the_visu
 features[user_role][] = visualization contributor
 features_exclude[dependencies][role_export] = role_export
 project path = sites/all/modules/nucivic/visualization_entity/modules
+
+; Information added by DKAN release script on 11/2/2017
+version = 7.x-1.14-RC3
+project = dkan

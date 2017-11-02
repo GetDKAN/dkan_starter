@@ -2,10 +2,14 @@ name = Visualization Entity
 description = Base module to create visualizations
 core = 7.x
 package = Data Visualization
-version = 7.x-1.x-dev
+
 dependencies[] = eck
 dependencies[] = features
 features[eck_entity_type][] = visualization
 features[features_api][] = api:2
 mtime = 1421114365
 project path = sites/all/modules/nucivic
+
+; Information added by DKAN release script on 11/2/2017
+version = 7.x-1.14-RC3
+project = dkan
