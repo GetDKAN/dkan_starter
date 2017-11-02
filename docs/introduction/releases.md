@@ -1,7 +1,7 @@
 Releases
 ==========
 
-Releases for DKAN Starter are posted on the [Github release page](https://github.com/NuCivic/dkan_starter/releases)
+Releases for DKAN Starter are posted on the [Github release page](https://github.com/GetDKAN/dkan_starter/releases)
 
 Please read DKAN Starter changelog for keeping up to date as well as the release notes.
 
