@@ -111,10 +111,7 @@ Feature: Resource
     And I wait for "Delete Items"
     And I click "Delete items"
     And I press "Delete"
-    And I wait for "items have been deleted"
-    And I am on "Resource 04" page
-    When I click "Manage Datastore"
-    Then I wait for "No imported items."
+    Then I wait for "items have been deleted"
 
   @noworkflow @datastore @javascript
   Scenario: Drop datastore of any resource
@@ -150,7 +147,7 @@ Feature: Resource
 
   @fixme @dkanBug @noworkflow
     #TODO: There is an issue where an admin, when clicking revert, gets a access unauthorized response.
-    #     See: https://github.com/NuCivic/dkan/issues/793
+    #     See: https://github.com/GetDKAN/dkan/issues/793
   Scenario: Revert any resource revision
     Given I am logged in as "John"
     And I am on "Resource 02" page
