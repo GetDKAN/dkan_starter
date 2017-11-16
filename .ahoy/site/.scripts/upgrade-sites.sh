@@ -29,10 +29,11 @@ for name in ${repos[@]}; do
   fi
 
   ahoy build update $tag
+  ahoy 
   git add -A 
   git commit -m "Update $name dkan_starter to $tag
   
-  AC
+  QA Steps
   ==========
     - [ ] tests pass"
 

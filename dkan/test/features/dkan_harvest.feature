@@ -331,13 +331,19 @@ Feature: Dkan Harvest
     Given users:
       | name              | mail                     | status | roles             |
       | Site manager      | admin@fakeemail.com      | 1      | site manager      |
+      
+    And "dkan_topics" terms:
+      | name         | field_icon_type  | field_topic_icon   |
+      | Topic1       | font             | xe904              |
+      | Topic2       | font             | xe97b              |
+      
     And harvest sources:
       | title         | machine name  | source uri                                                                 | type               | author       | published | topics                 |
-      | Topics source | topics_source | http://s3.amazonaws.com/dkan-default-content-files/files/data_harvest.json | datajson_v1_1_json | Site manager | Yes       | Health Care, Education |
+      | Topics source | topics_source | http://s3.amazonaws.com/dkan-default-content-files/files/data_harvest.json | datajson_v1_1_json | Site manager | Yes       | Topic1, Topic2 |
 
     And The "topics_source" source is harvested
     And I am logged in as "Site manager"
     Given I am on the "Topics source" page
     And I click "Edit"
-    Then the "Health Care" option from "Topics" should be selected
-    And the "Education" option from "Topics" should be selected
+    Then the "Topic1" option from "Topics" should be selected
+    And the "Topic2" option from "Topics" should be selected
