@@ -339,5 +339,5 @@ Feature: Dkan Harvest
     And I am logged in as "Site manager"
     Given I am on the "Topics source" page
     And I click "Edit"
-    Then the "Health Care" option from "Topics" should be selected
-    And the "Education" option from "Topics" should be selected
+    Then the "Topic1" option from "Topics" should be selected
+    And the "Topic2" option from "Topics" should be selected
