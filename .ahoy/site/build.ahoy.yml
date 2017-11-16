@@ -86,7 +86,7 @@ commands:
 
       if [ -f config/custom_libs.make ] && [ `cat config/custom_libs.make | sed '/^\s*$/d' | wc -l` -gt 2 ]; then
         ahoy drush -y make --no-core --contrib-destination=contrib config/custom_libs.make --no-recursion --no-cache --verbose
-      
+
         # Remove old stuff first
         dirs=( $(find ./contrib/libraries -type d  -maxdepth 1 | sed 's/\.\/contrib\/libraries\///g') )
         for dir in "${dirs[@]}";
@@ -101,7 +101,7 @@ commands:
         done
 
         rm -fR contrib
-  
+
       fi
 
   overrides:
@@ -289,11 +289,6 @@ commands:
       mv .config config
       rm -rf .dkan_starter
 
-    upgrade-sites:
-      usage: ahoy build upgrade-sites $tag
-      cmd: ahoy cmd-proxy bash .ahoy/site/.scripts/upgrade-sites.sh
-
   test:
-    usage: Run some build command tests 
+    usage: Run some build command tests
     cmd: ahoy cmd-proxy ruby .ahoy/site/.scripts/build-test.rb
-    
