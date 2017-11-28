@@ -32,7 +32,7 @@ Check the Readme on the Github repository to setup the docker development enviro
 2. Docker machine
 ^^^^^^^^^^^^^^^^^
 
-Before starting to work on DKAN sites, the developer needs to make sure that the development docker machine is up and running as following: 
+Before starting to work on DKAN sites, the developer needs to make sure that the development docker machine is up and running as following:
 
 .. code-block:: bash
 
@@ -48,19 +48,19 @@ When the developer is done developing DKAN, the docker machine could be checked 
 
 To manage the default Virtualbox machine (the docker machine), a developer can use the following commands:
 
-1. Check the machine status: 
+1. Check the machine status:
 
 .. code-block:: bash
 
   docker-machine status default
 
-2. List the existing docker machines: 
+2. List the existing docker machines:
 
 .. code-block:: bash
 
   docker-machine ls
 
-3. Start the default machine: 
+3. Start the default machine:
 
 .. code-block:: bash
 
@@ -94,7 +94,7 @@ To get started with DKAN development you need to follow these steps:
 .. code-block:: bash
 
   cd ~/docker
-  git clone git@github.com:NuCivic/dkan.git
+  git clone git@github.com:GetDKAN/dkan.git
   cd dkan
   bash dkan-init.sh dkan
   ahoy docker up

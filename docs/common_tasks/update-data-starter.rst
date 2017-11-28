@@ -1,21 +1,16 @@
 Update DKAN Starter
 -------------------
 
-There is a new command 
+When a new version of DKAN is released, the core dkan_starter repo needs to be updated. The following instructions are primarily for the core DKAN team that maintains the [dkan_starter repo](https://github.com/GetDKAN/dkan_starter), but if you maintain a fork of dkan_starter as an "upstream" to build your own organization's sites from, you may need to do this as well. 
 
-.. code-block:: bash
-  
-  ahoy build update VERSION
+1. `git checkout master`
+2. `git checkout -b [branch-name]`
+3. If upgrading DKAN, update line 11 in **build-dkan.make** with the latest tag from `DKAN <https://github.com/GetDKAN/dkan/releases>`_
+4. `ahoy build remake`
+5. Commit your changes
+6. `git push origin [branch-name]` and create the PR
+7. Merge if all tests pass
+8. Create new tag for data_starter
 
-**VERSION** is the latest dkan_starter release here: `https://github.com/NuCivic/dkan_starter/releases <https://github.com/NuCivic/dkan_starter/releases>`_.
-
-This performs the following:
-
-* **ahoy build update-dkan-starter VERSION**  downloads dkan_starter and updates everything outside of the 'config' folder.
-* **ahoy build custom updates** the custom modules in custom.make
-* **ahoy build overrides** patches dkan with items from overrides.make
-* **ahoy build config** adds config in config.yml to various items
-
-This removes everything outside of the config/ folder with the dkan_starter updates and then applies the local overrides and settings that are contained in the config folder.
-
-If a module is removed from sites/all/modules/contrib after running ``ahoy build update VERSION`` then it was not defined in ``custom.make``.
+### Reminders
+- Adding or removing a module? Make sure to update the $features_master list in `assest/modules/data_config/data_config.module`

@@ -29,7 +29,7 @@ features[features_overrides][] = field_base.field_frequency.settings|allowed_val
 features[features_overrides][] = field_base.field_frequency.settings|allowed_values|10
 features[features_overrides][] = field_base.field_frequency.settings|allowed_values|11
 features[features_overrides][] = field_base.field_frequency.settings|allowed_values|12
-``` 
+```
 
 This is how it looks in the `*.features.features_overrides.inc` file:
 
@@ -75,7 +75,7 @@ function eic_custom_fields_field_default_field_bases_alter(&$data) {
 
 Each of the values in the list is an individual item to override. It's nuts and something that will potentially drive people mad every time they need to solve a merge conflict. **Don't do it.**
 
-Suscribe the list of values in a `hook_form_alter` implementation. If you need an example, look at how the list of allowed values for `field_license` is implemented. [link here](https://github.com/NuCivic/dkan/blob/0eb104d1b011b3411ab538ddb4735793d7893b7b/modules/dkan/dkan_dataset/modules/dkan_dataset_content_types/dkan_dataset_content_types.module#L17)
+Suscribe the list of values in a `hook_form_alter` implementation. If you need an example, look at how the list of allowed values for `field_license` is implemented. [link here](https://github.com/GetDKAN/dkan/blob/0eb104d1b011b3411ab538ddb4735793d7893b7b/modules/dkan/dkan_dataset/modules/dkan_dataset_content_types/dkan_dataset_content_types.module#L17)
 
 ## Future enhacements
 

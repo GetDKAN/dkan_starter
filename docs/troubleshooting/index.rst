@@ -3,7 +3,7 @@ Troubleshooting FAQ
 
 These are FAQ issues that DKAN Starter or DKAN users may run into while using the docker and ahoy tools.
 
-Please submit tickets to the `DKAN Issue Queue <http://github.com/nucivic/dkan/issues>`_.
+Please submit tickets to the `DKAN Issue Queue <http://github.com/GetDKAN/dkan/issues>`_.
 
 Frequently Asked Questions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +35,7 @@ If you get an error when running ``ahoy diagnose all`` like:
 
 then you can try:
 
-1. Restart the containers ``ahoy docker stop; ahoy docker up`` 
+1. Restart the containers ``ahoy docker stop; ahoy docker up``
 2. Destroy the containers (WARNING: YOU WILL LOSE DATA) ``ahoy docker destroy; ahoy site up``
 3. Restart the docker maching ``docker-machine stop default; docker-machine start default; eval "$(docker-machine env default)"; ahoy site up``
 
