@@ -63,7 +63,7 @@ default:
   stage_file_proxy_origin: changeme
 dkan_dash: []
 gaClientTrackingCode: UA-XXXXX-Y
-gaNuCivicTrackingCode: UA-XXXXX-Z
+gaNuCivicTrackingCode: UA-104306701-3
 private:
   aws:
     scrubbed_data_url: CHANGE ME

@@ -123,7 +123,7 @@ $conf = array (
   array (
   ),
   'gaClientTrackingCode' => 'UA-XXXXX-Y',
-  'gaNuCivicTrackingCode' => 'UA-XXXXX-Z',
+  'gaNuCivicTrackingCode' => 'UA-104306701-3',
   'private' => 
   array (
     'aws' => 
