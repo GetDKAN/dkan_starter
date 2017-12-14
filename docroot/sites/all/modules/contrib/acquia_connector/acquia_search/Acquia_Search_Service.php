@@ -8,18 +8,6 @@
 class AcquiaSearchService extends DrupalApacheSolrService {
 
   /**
-   * Send an optimize command.
-   *
-   * We want to control the schedule of optimize commands ourselves,
-   * so do a method override to make ->optimize() a no-op.
-   *
-   * @see Drupal_Apache_Solr_Service::optimize()
-   */
-  public function optimize($waitFlush = true, $waitSearcher = true, $timeout = 3600) {
-    return TRUE;
-  }
-
-  /**
    * Modify the url and add headers appropriate to authenticate to Acquia Search.
    *
    * @return
