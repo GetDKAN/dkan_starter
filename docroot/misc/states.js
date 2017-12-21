@@ -542,6 +542,8 @@ function invert (a, invert) {
 
 // Compares two values while ignoring undefined values.
 function compare (a, b) {
+  a = (typeof a == 'object') ? a.toString() : a;
+  b = (typeof b == 'object') ? b.toString() : b;
   return (a === b) ? (typeof a === 'undefined' ? a : true) : (typeof a === 'undefined' || typeof b === 'undefined');
 }
 

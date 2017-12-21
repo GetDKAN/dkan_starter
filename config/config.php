@@ -79,9 +79,9 @@ $conf = array (
     ),
     'test_dirs' => 
     array (
-      0 => 'tests/features',
+      0 => 'config/tests/features',
       1 => 'dkan/test/features',
-      2 => 'config/tests/features',
+      2 => 'tests/features',
     ),
   ),
   'default' => 

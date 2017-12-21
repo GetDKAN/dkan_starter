@@ -1,0 +1,7 @@
+name = DKAN Dataset Paragraphs
+description = Extended Metadata Paragraphs for Datasets
+core = 7.x
+package = DKAN
+dependencies[] = paragraphs
+dependencies[] = paragraphs_defaults
+dependencies[] = dkan_dataset_content_types

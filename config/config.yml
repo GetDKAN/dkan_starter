@@ -37,9 +37,9 @@ circle:
   - fixme
   - testBug
   test_dirs:
-  - tests/features
-  - dkan/test/features
   - config/tests/features
+  - dkan/test/features
+  - tests/features
 default:
   clamav:
     enable: false

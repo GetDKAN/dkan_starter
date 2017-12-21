@@ -1,0 +1,42 @@
+<?php
+  
+  
+/**
+ * Implements hook_schema().
+ */
+function paragraphs_defaults_schema() {
+  $schema['paragraphs_defaults'] = array(
+    'description' => 'Stores serialized paragraph defaults.',
+    'fields' => array(
+      'item_id' => array(
+        'description' => 'Primary Key: Unique paragraph item ID.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'entity_type' => array(
+        'description' => 'The target entity type',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'field_name' => array(
+        'description' => 'The connected field name',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),      
+      'bundle' => array(
+        'description' => 'The connected bundle name',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),  
+    ),
+    'primary key' => array('item_id'),
+  );
+  return $schema;
+}

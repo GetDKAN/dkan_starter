@@ -1,0 +1,16 @@
+name = Paragraphs defaults
+description = Allows a default paragraphs config to be available on entity creation.
+core = 7.x
+
+dependencies[] = entity
+dependencies[] = paragraphs
+dependencies[] = paragraphs
+dependencies[] = replicate
+dependencies[] = replicate_paragraphs
+
+; Information added by Drupal.org packaging script on 2015-12-03
+version = "7.x-1.0"
+core = "7.x"
+project = "paragraphs_defaults"
+datestamp = "1449105540"
+

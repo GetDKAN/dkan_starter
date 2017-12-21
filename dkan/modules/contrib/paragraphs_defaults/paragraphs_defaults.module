@@ -1,0 +1,140 @@
+<?php
+  
+
+/**
+ * Implements hook_menu().
+ */
+function paragraphs_defaults_menu() {
+  $items['admin/structure/paragraphs/defaults'] = array(
+    'title' => 'Defaults',
+    'description' => 'Manage Paragraph defaults',
+    'page callback' => 'paragraphs_defaults_page',
+    'access arguments' => array('administer paragraphs bundles'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'paragraphs_defaults.admin.inc', 
+  );
+  
+  $items['admin/structure/paragraphs/defaults/manage/%/%/%'] = array(
+    'title' => 'Defaults',
+    'description' => 'Manage Paragraph defaults',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('paragraphs_defaults_edit_form', 5, 6, 7),
+    'access arguments' => array('administer paragraphs bundles'),
+    'type' => MENU_CALLBACK,
+    'file' => 'paragraphs_defaults.admin.inc', 
+  );
+  
+  $items['admin/structure/paragraphs/defaults/batch/%/%/%'] = array(
+    'title' => 'Defaults Batch process',
+    'description' => 'Batch process Paragraph defaults',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('paragraphs_defaults_batch_form', 5, 6, 7),
+    'access arguments' => array('administer paragraphs bundles'),
+    'type' => MENU_CALLBACK,
+    'file' => 'paragraphs_defaults.batch.inc', 
+  );
+  
+  return $items;
+}
+
+/**
+ * Saves the default setting.
+ */ 
+function paragraphs_defaults_save_defaults($entity_type, $field_name, $bundle_name, $value) {
+  if (isset($value[LANGUAGE_NONE]) && !empty($value[LANGUAGE_NONE])) {
+    foreach ($value[LANGUAGE_NONE] as $key => &$item) {
+      if (isset($item['entity'])) {
+        if ($entity = paragraphs_field_get_entity($item)) {
+          if (isset($entity->removed) && $entity->removed) {
+            db_delete('paragraphs_defaults')
+              ->condition('item_id', $entity->item_id)
+              ->execute();
+            $entity->delete();
+          }
+          else {
+            // Save, but don't set the host entity.
+            $entity->save(TRUE);
+            // Keep track of the entity_id's in our own table.
+            db_merge('paragraphs_defaults')
+              ->insertFields(array(
+                'entity_type' => $entity_type,
+                'field_name' => $field_name,
+                'bundle' => $bundle_name, 
+                'item_id' => $entity->item_id,
+              ))
+              ->updateFields(array(
+                'item_id' => $entity->item_id,
+              ))
+              ->key(array(
+                'item_id' => $entity->item_id,
+              ))
+              ->execute();
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Retrieves the default setting.
+ */
+function paragraphs_defaults_load_defaults($entity_type, $field_name, $bundle_name) {
+  $value = db_select('paragraphs_defaults', 'p')
+    ->fields('p', array('item_id'))
+    ->condition('entity_type', $entity_type)
+    ->condition('field_name', $field_name)
+    ->condition('bundle', $bundle_name)
+    ->execute()
+    ->fetchCol();
+  return $value;
+}
+
+/**
+ * Implements hook_form_alter().
+ * This approach is not ideal, and possibly not universal. Only tested with nodes.
+ */
+function paragraphs_defaults_form_alter(&$form, &$form_state, $form_id) {
+  // We don't want to alter the form after an ajax call.
+  if (empty($form_state['input'])) {
+    // There's also no use if the form doesn't have these properties.
+    if (isset($form['#entity']) && isset($form['#entity_type'])) {
+
+      $entity = $form['#entity'];
+      $entity_type = $form['#entity_type'];
+      list($id, , $bundle_name) = entity_extract_ids($entity_type, $entity);
+    
+      if (!isset($id)) {
+        $paragraphs_fields = field_read_fields(array(
+          'type' => 'paragraphs',
+          'entity_type' => $entity_type,
+          'bundle' => $bundle_name,
+        ));
+  
+        foreach ($paragraphs_fields as $paragraphs_field) {
+          $field_name = $paragraphs_field['field_name'];
+          if (isset($form[$field_name]) && $form[$field_name]['#access']) {
+            // Add the paragraphs field defaults.
+            $field = field_info_field($field_name);
+            $instance = field_info_instance($entity_type, $field_name, $bundle_name);
+            $defaults = paragraphs_defaults_load_defaults($entity_type, $field_name, $bundle_name);
+            $paragraphs = paragraphs_item_load_multiple($defaults);
+    
+            // Unset the paragraph field.
+            unset($form[$field_name]);
+            unset($form_state['field'][$field_name]);
+            
+            // Order any existing paragraphs in a form we can use to set the default value.
+            $items = array();
+            foreach ($paragraphs as $paragraphs_item) {
+              //$items[]['entity'] = $paragraphs_item;
+              $items[]['entity'] = replicate_clone_entity('paragraphs_item', $paragraphs_item);
+            }
+            $paragraphs_field = field_default_form($entity_type, $entity, $field, $instance, LANGUAGE_NONE, $items, $form, $form_state);
+            $form += (array) $paragraphs_field;
+          } 
+        }
+      }
+    }    
+  }
+}

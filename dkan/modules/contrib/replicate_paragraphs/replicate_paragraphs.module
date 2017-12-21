@@ -1,0 +1,75 @@
+<?php
+/**
+ * @file
+ * Main methods of Replicate paragraphs module.
+ */
+
+/**
+ * Implements hook_replicate_entity_ENTITY_TYPE().
+ */
+function replicate_paragraphs_replicate_entity_paragraphs_item(&$entity) {
+  $entity->item_id = NULL;
+}
+
+/**
+ * Implements hook_replicate_field_FIELD_TYPE().
+ */
+function replicate_paragraphs_replicate_field_paragraphs(&$entity, $entity_type, $field_name) {
+  foreach ($entity->$field_name as $language => $values) {
+    replicate_paragraphs_clone_items($entity, $entity_type, $field_name, $language);
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function replicate_paragraphs_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#replicate_paragraphs_item':
+      // Return a line-break version of the module README.txt.
+      return check_markup(file_get_contents(dirname(__FILE__) . "/README.txt"));
+  }
+}
+
+/**
+ * Replicate a paragraphs field.
+ *
+ * @param object $entity
+ *   Entity to be modified.
+ * @param string $entity_type
+ *   Entity type.
+ * @param string $field_name
+ *   Name of the field.
+ * @param string $language
+ *   Language of the field.
+ */
+function replicate_paragraphs_clone_items(&$entity, $entity_type, $field_name, $language = LANGUAGE_NONE) {
+  // Reset the field_language static.
+  // If we don't, the language returned by field_language()
+  // is FALSE, resulting in de metadata-wrapper (or field_get_items())
+  // to get a FALSE / an empty array,
+  // which means that the fields in it won't be cloned.
+  drupal_static_reset('field_language');
+
+  $entity_wrapper = entity_metadata_wrapper($entity_type, $entity);
+  $old_items = $entity_wrapper->{$field_name}->value();
+  if (is_null($old_items)) {
+    $old_items = array();
+  }
+  elseif (!is_array($old_items)) {
+    $old_items = array($old_items);
+  }
+
+  // Clean the previous entities from the field, so the new
+  // can be saved instead.
+  unset($entity->{$field_name}[$language]);
+
+  foreach ($old_items as $old_item) {
+    if (!empty($old_item)) {
+      $new_item = replicate_clone_entity('paragraphs_item', $old_item);
+      $new_item->setHostEntity($entity_type, $entity);
+      // Don't save the new paragraphs,
+      // it will be saved along with the host entity.
+    }
+  }
+}

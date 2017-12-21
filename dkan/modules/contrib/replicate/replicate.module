@@ -1,0 +1,178 @@
+<?php
+/**
+ * @file
+ * Main methods of Replicate module.
+ */
+
+/**
+ * Replicate the entity corresponding to the type and id passed in argument and save it.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param int $id
+ *   The unique entity identifier.
+ *
+ * @return mixed
+ *   The newly created entity id if the clone has been created and saved,
+ *   else FALSE.
+ *
+ * @see replicate_entity()
+ */
+function replicate_entity_by_id($entity_type, $id) {
+  if (($original = entity_load_single($entity_type, $id)) !== FALSE) {
+    return replicate_entity($entity_type, $original);
+  }
+
+  return FALSE;
+}
+
+/**
+ * Replicate the entity passed in argument and save it.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param object $entity
+ *   The entity to replicate.
+ *
+ * @return mixed
+ *   The newly created entity id if the clone has been created and saved,
+ *   else FALSE.
+ */
+function replicate_entity($entity_type, $entity) {
+  $clone = replicate_clone_entity($entity_type, $entity);
+  if ($clone) {
+    entity_save($entity_type, $clone);
+    list($entity_id) = entity_extract_ids($entity_type, $clone);
+
+    if (isset($entity_id)) {
+      module_invoke_all('replicate_entity_after_save', $clone, $entity_type, $entity);
+
+      return $entity_id;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Replicate the entity corresponding to the type and id passed in argument.
+ *
+ * Do not save the replicated entity.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param int $id
+ *   The unique entity identifier.
+ *
+ * @return object
+ *   A new replicated entity.
+ *
+ * @see replicate_clone_entity()
+ */
+function replicate_clone_entity_by_id($entity_type, $id) {
+  if (($original = entity_load_single($entity_type, $id)) !== FALSE) {
+    return replicate_clone_entity($entity_type, $original);
+  }
+
+  return FALSE;
+}
+
+/**
+ * Replicate the entity passed in argument.
+ *
+ * This function do not save the replicated entity.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param object $entity
+ *   The entity to replicate.
+ *
+ * @return object
+ *   A new replicated entity.
+ */
+function replicate_clone_entity($entity_type, $entity) {
+  $clone = clone $entity;
+
+  if ($clone) {
+    // Let other modules manage the cleaning of the entity.
+    foreach (module_implements('replicate_entity_' . $entity_type) as $module) {
+      $function = $module . '_replicate_entity_' . $entity_type;
+      $function($clone);
+    }
+
+    // Set the entity as new entity.
+    $clone->is_new = TRUE;
+
+    // Reset entity id.
+    $entity_info = entity_get_info($entity_type);
+    $clone->{$entity_info['entity keys']['id']} = NULL;
+
+    // Reset UUID.
+    if (isset($entity_info['uuid']) && $entity_info['uuid'] == TRUE && !empty($entity_info['entity keys']['uuid'])) {
+      $clone->{$entity_info['entity keys']['uuid']} = NULL;
+      if (!empty($entity_info['entity keys']['revision uuid'])) {
+        $clone->{$entity_info['entity keys']['revision uuid']} = NULL;
+      }
+    }
+
+    // Let other modules do special actions on each field.
+    replicate_clone_fields($clone, $entity_type);
+
+    // Let other modules do special actions on the global entity.
+    drupal_alter('replicate_entity', $clone, $entity_type, $entity);
+  }
+
+  return $clone;
+}
+
+/**
+ * Replicate the fields of an entity.
+ *
+ * @param object $entity
+ *   The entity for which to clone the fields.
+ * @param string $entity_type
+ *   The entity type.
+ */
+function replicate_clone_fields(&$entity, $entity_type) {
+  foreach (field_info_fields() as $field_name => $field) {
+    if (isset($entity->$field_name)) {
+      // Here call hook functions. Doesn't use module_invoke because we
+      // want to pass the clone by reference.
+      foreach (module_implements('replicate_field_' . $field['type']) as $module) {
+        $function = $module . '_replicate_field_' . $field['type'];
+        $function($entity, $entity_type, $field_name);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function replicate_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#replicate':
+      // Return a line-break version of the module README.txt.
+      return check_markup(file_get_contents(dirname(__FILE__) . "/README.txt"));
+  }
+}
+
+/**
+ * Implements hook_replicate_entity_ENTITY_TYPE().
+ */
+function replicate_replicate_entity_node(&$entity) {
+  $entity->tnid = NULL;
+  $entity->vid = NULL;
+  $entity->created = NULL;
+  $entity->changed = NULL;
+  $entity->path = NULL;
+  $entity->revision_timestamp = NULL;
+}
+
+/**
+ * Implements hook_replicate_entity_ENTITY_TYPE().
+ */
+function replicate_replicate_entity_comment(&$entity) {
+  $entity->created = NULL;
+  $entity->changed = NULL;
+}

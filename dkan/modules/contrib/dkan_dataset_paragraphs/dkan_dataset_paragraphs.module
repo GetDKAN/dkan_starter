@@ -1,0 +1,19 @@
+<?php
+/**
+ * @file
+ * Drupal needs this blank file.
+ */
+
+/**
+ * Implements hook_form_alter().
+ */
+function dkan_dataset_paragraphs_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'dataset_node_form') {
+    if (isset($form['field_metadata_extended'][LANGUAGE_NONE]['add_more']['add_more']['#markup'])) {
+      // Remove Extended Metadata field if no bundles are avilable.
+      if (stripos($form['field_metadata_extended'][LANGUAGE_NONE]['add_more']['add_more']['#markup'], 'no bundles available') !== FALSE) {
+        unset($form['field_metadata_extended']);
+      }
+    }
+  }
+}
