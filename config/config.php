@@ -67,7 +67,8 @@ $conf = array (
   ),
   'circle' => 
   array (
-    'memory_limit' => '256M',
+    'memory_limit' => '512M',
+    'parallelism' => 5,
     'skip_features' => 
     array (
     ),

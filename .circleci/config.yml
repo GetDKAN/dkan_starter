@@ -12,7 +12,10 @@ jobs:
         environment:
           MYSQL_HOST: "127.0.0.1"
           DATABASE_URL: "mysql://drupal:123@127.0.0.1:3306/drupal"
-      - image: circleci/mysql:5.5.58-ram
+          MYSQL_USER: "drupal"
+          MYSQL_PASSWORD: "123"
+          MYSQL_DATABASE: "drupal"
+      - image: circleci/mariadb:10.3.3-ram
         command: --secure-file-priv='' --max-allowed-packet=128M --innodb-buffer-pool-size=256M
         environment:
           - MYSQL_ROOT_PASSWORD=
@@ -69,9 +72,24 @@ jobs:
             sudo chmod 777 /usr/local/etc/php/conf.d
             echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/memory.ini
             echo "always_populate_raw_post_data = -1" > /usr/local/etc/php/conf.d/deprecated.ini
-
       - checkout
       - run: php -i
+
+#################################
+#DKAN Starter Modifications BEGIN
+#################################
+      - run:
+          name: DKAN Starter Configuration
+          command: |
+            #Create "db" hosts since all in one container
+            sudo sh -c "echo 'db 127.0.0.1' >> /etc/hosts"
+            sudo apt-get install -y clamav clamav-freshclam
+            sudo wget -O - https://install.perlbrew.pl | bash
+            ~/perl5/perlbrew/bin/perlbrew install-cpanm
+            sudo ~/perl5/perlbrew/bin/cpanm install Digest::HMAC_SHA1
+###############################
+#DKAN Starter Modifications END
+###############################
       - run:
           name: Setup Apache
           command : |
@@ -89,12 +107,20 @@ jobs:
             sudo chmod +x /usr/local/bin/ahoy
 
       ### Setup DKAN
+#################################
+#DKAN Starter Modifications BEGIN
+#################################
       - run:
           name: DKAN Initialization
           command: |
-            bash dkan-init.sh dkan --deps --build=$DATABASE_URL
-            ahoy drush --yes en dkan_harvest dkan_harvest_datajson dkan_harvest_dashboard
-            ahoy drush cc all
+            #bash dkan-init.sh dkan --deps --build=$DATABASE_URL
+            bash dkan/dkan-init.sh dkan --deps-only
+            drush dl -n registry_rebuild-7.x
+            #ahoy drush --yes en dkan_harvest dkan_harvest_datajson dkan_harvest_dashboard
+            #ahoy drush cc all
+###############################
+#DKAN Starter Modifications END
+###############################
       - run:
           name: Server Router Background Server Task
           command: ahoy dkan server
@@ -104,11 +130,22 @@ jobs:
           command: x11vnc -forever -nopw
           background: true
 
+#################################
+#DKAN Starter Modifications BEGIN
+#################################
+#      - run:
+#          name: Enable dkan_harvest_test and reinstall
+#          command: |
+#            ahoy drush en --yes dkan_harvest_test
+#            ahoy dkan reinstall --yes
       - run:
-          name: Enable dkan_harvest_test and reinstall
+          name: DKAN Starter Site Up
           command: |
-            ahoy drush en --yes dkan_harvest_test
-            ahoy dkan reinstall --yes
+            ahoy site up --db-user=drupal --db-pass=123 --db-host=127.0.0.1 --db-name=drupal
+            ahoy utils fail-when-bad-disable
+###############################
+#DKAN Starter Modifications END
+###############################
       - save_cache:
           key: v1-dkan-{{ .Branch }}
           paths:
@@ -118,10 +155,17 @@ jobs:
           key: v1-dkan-test-vendor
           paths:
             - dkan/test/vendor
+#################################
+#DKAN Starter Modifications BEGIN
+#################################
       - run:
           name: Run Parallel Behat Tests
-          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
+#          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
+          command:  ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug'
       # Lint only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
+###############################
+#DKAN Starter Modifications END
+###############################
       - run:
           name: Run Lint
           command: |
@@ -147,7 +191,10 @@ jobs:
         environment:
           MYSQL_HOST: "127.0.0.1"
           DATABASE_URL: "mysql://drupal:123@127.0.0.1:3306/drupal"
-      - image: circleci/mysql:5.5.58-ram
+          MYSQL_USER: "drupal"
+          MYSQL_PASSWORD: "123"
+          MYSQL_DATABASE: "drupal"
+      - image: circleci/mariadb:10.3.3-ram
         command: --secure-file-priv='' --max-allowed-packet=128M --innodb-buffer-pool-size=256M
         environment:
           - MYSQL_ROOT_PASSWORD=
@@ -167,6 +214,19 @@ jobs:
           command: |
             sudo selenium-standalone start
           background: true
+#################################
+#DKAN Starter Modifications BEGIN
+#################################
+      - run:
+          name: DKAN Starter Configuration
+          command: |
+            sudo sh -c "echo 'db 127.0.0.1' >> /etc/hosts"
+            sudo wget -O - https://install.perlbrew.pl | bash
+            ~/perl5/perlbrew/bin/perlbrew install-cpanm
+            sudo ~/perl5/perlbrew/bin/cpanm install Digest::HMAC_SHA1
+###############################
+#DKAN Starter Modifications END
+###############################
       - checkout
       - run: php -i
       - run:
@@ -186,12 +246,20 @@ jobs:
             sudo chmod +x /usr/local/bin/ahoy
 
       ### Setup DKAN
+#################################
+#DKAN Starter Modifications BEGIN
+#################################
       - run:
           name: DKAN Initialization
           command: |
-            bash dkan-init.sh dkan --deps --build=$DATABASE_URL
-            ahoy drush --yes en dkan_harvest dkan_harvest_datajson dkan_harvest_dashboard
-            ahoy drush cc all
+            #bash dkan-init.sh dkan --deps --build=$DATABASE_URL
+            bash dkan/dkan-init.sh dkan --deps-only
+            drush dl -n registry_rebuild-7.x
+            #ahoy drush --yes en dkan_harvest dkan_harvest_datajson dkan_harvest_dashboard
+            #ahoy drush cc all
+###############################
+#DKAN Starter Modifications END
+###############################
       - run:
           name: Server Router Background Server Task
           command: ahoy dkan server
@@ -201,11 +269,22 @@ jobs:
           command: x11vnc -forever -nopw
           background: true
 
+#################################
+#DKAN Starter Modifications BEGIN
+#################################
+#      - run:
+#          name: Enable dkan_harvest_test and reinstall
+#          command: |
+#            ahoy drush en --yes dkan_harvest_test
+#            ahoy dkan reinstall --yes
       - run:
-          name: Enable dkan_harvest_test and reinstall
+          name: DKAN Starter Site Up
           command: |
-            ahoy drush en --yes dkan_harvest_test
-            ahoy dkan reinstall --yes
+            ahoy site up --db-user=drupal --db-pass=123 --db-host=127.0.0.1 --db-name=drupal
+            ahoy utils fail-when-bad-disable
+###############################
+#DKAN Starter Modifications END
+###############################
       - save_cache:
           key: v1-dkan-{{ .Branch }}
           paths:
@@ -219,9 +298,15 @@ jobs:
           key: v1-dkan-test-vendor
           paths:
             - dkan/test/vendor
+# Uncomment for local testing to sleep before testing.
+#      - run:
+#          command: sleep 1d
+#          no_output_timeout: 1h
+
       - run:
           name: Run Parallel Behat Tests
-          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
+          command: BEHAT_FOLDER=/home/circleci/site_build/tests ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features tests/features dkan/test/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug'
+
       # Lint only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
       - run:
           name: Run Lint

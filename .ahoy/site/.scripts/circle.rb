@@ -6,6 +6,7 @@ template = File.open("assets/templates/circle.yml.erb", "r").read
 class CircleCIConfig
   attr_accessor :temp_dirs
   attr_accessor :memory_limit
+  attr_accessor :parallelism
 
   def initialize config
     default_test_dirs = ["tests/features", "dkan/test/features", "config/tests/features"]
@@ -17,9 +18,15 @@ class CircleCIConfig
     end
 
     if !config["circle"] || !config["circle"]["memory_limit"]
-      @memory_limit = "256M"
+      @memory_limit = "512M"
     else
       @memory_limit = config["circle"]["memory_limit"]
+    end
+
+    if !config["circle"] || !config["circle"]["parallelism"]
+      @parallelism = "5"
+    else
+      @parallelism = config["circle"]["parallelism"]
     end
 
     default_skip_tags = [ "customizable", "fixme", "testBug"]
@@ -43,4 +50,4 @@ end
 
 config = YAML.load_file("config/config.yml")
 circle_ci_config = CircleCIConfig.new(config)
-File.write('circle.yml', circle_ci_config.render(template))
+File.write('.circleci/config.yml', circle_ci_config.render(template))

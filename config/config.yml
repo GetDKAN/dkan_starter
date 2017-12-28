@@ -30,7 +30,8 @@ behat:
     services:
       request_fields_map: {}
 circle:
-  memory_limit: 256M
+  memory_limit: 512M
+  parallelism: 5
   skip_features: []
   skip_tags:
   - customizable
