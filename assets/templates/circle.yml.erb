@@ -161,10 +161,10 @@ jobs:
 #################################
       - run:
           name: Run Parallel Behat Tests
-#          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
-           command: |
-             mkdir -p $CIRCLE_ARTIFACTS/junit
-             BEHAT_FOLDER=/home/circleci/site_build/tests ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features <%= @test_dirs.join(" ") %> --tags='<%= @skip_tags.join("&&") %>'
+#         command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
+          command: |
+            mkdir -p $CIRCLE_ARTIFACTS/junit
+            BEHAT_FOLDER=/home/circleci/site_build/tests ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features <%= @test_dirs.join(" ") %> --tags='<%= @skip_tags.join("&&") %>'
 ###############################
 #DKAN Starter Modifications END
 ###############################
