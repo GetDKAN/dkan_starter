@@ -6,6 +6,7 @@ jobs:
     working_directory: ~/site_build
     environment:
       TZ: "/usr/share/zoneinfo/America/New_York"
+      CIRCLE_ARTIFACTS: "/home/circleci/site_build/assets/tests"
     parallelism: 5
     docker:
       - image: circleci/php:5.6.31-apache-node-browsers
@@ -118,7 +119,6 @@ jobs:
             drush dl -n registry_rebuild-7.x
             #ahoy drush --yes en dkan_harvest dkan_harvest_datajson dkan_harvest_dashboard
             #ahoy drush cc all
-            mkdir /home/circleci/site_build/dkan/test/assets/junit
 ###############################
 #DKAN Starter Modifications END
 ###############################
@@ -162,11 +162,13 @@ jobs:
       - run:
           name: Run Parallel Behat Tests
 #          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
-          command:  ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug'
-      # Lint only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
+           command: |
+             mkdir -p $CIRCLE_ARTIFACTS/junit
+             BEHAT_FOLDER=/home/circleci/site_build/tests ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features tests/features dkan/test/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug'
 ###############################
 #DKAN Starter Modifications END
 ###############################
+      # Lint only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
       - run:
           name: Run Lint
           command: |
@@ -186,6 +188,7 @@ jobs:
     working_directory: ~/site_build
     environment:
       TZ: "/usr/share/zoneinfo/America/New_York"
+      CIRCLE_ARTIFACTS: "/home/circleci/site_build/assets/tests"
     parallelism: 5
     docker:
       - image: pythagory/dkan-web:7-latest
@@ -258,7 +261,6 @@ jobs:
             drush dl -n registry_rebuild-7.x
             #ahoy drush --yes en dkan_harvest dkan_harvest_datajson dkan_harvest_dashboard
             #ahoy drush cc all
-            mkdir /home/circleci/site_build/dkan/test/assets/junit
 ###############################
 #DKAN Starter Modifications END
 ###############################
@@ -307,7 +309,9 @@ jobs:
 
       - run:
           name: Run Parallel Behat Tests
-          command: BEHAT_FOLDER=/home/circleci/site_build/tests ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features tests/features dkan/test/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug'
+          command: |
+            mkdir -p $CIRCLE_ARTIFACTS/junit
+            BEHAT_FOLDER=/home/circleci/site_build/tests ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features tests/features dkan/test/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug'
 
       # Lint only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
       - run:
