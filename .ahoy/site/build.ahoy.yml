@@ -173,6 +173,7 @@ commands:
       composer install
       cd -
       ahoy cmd-proxy php .ahoy/site/.scripts/config.php
+      ahoy cmd-proxy php .ahoy/site/.scripts/docker.php
 
   new:
     usage: Sets new client site from dkan-starter
