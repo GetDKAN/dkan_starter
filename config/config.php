@@ -122,6 +122,16 @@ $conf = array (
   'dkan_dash' => 
   array (
   ),
+  'docker' => 
+  array (
+    'mysql_cnf' => 
+    array (
+      'mysqld' => 
+      array (
+        0 => 'local_infile=1',
+      ),
+    ),
+  ),
   'gaClientTrackingCode' => 'UA-XXXXX-Y',
   'gaNuCivicTrackingCode' => 'UA-XXXXX-Z',
   'private' => 

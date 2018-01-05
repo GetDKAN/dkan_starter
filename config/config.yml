@@ -62,6 +62,10 @@ default:
   stage_file_proxy_files: []
   stage_file_proxy_origin: changeme
 dkan_dash: []
+docker:
+  mysql_cnf:
+    mysqld:
+    - local_infile=1
 gaClientTrackingCode: UA-XXXXX-Y
 gaNuCivicTrackingCode: UA-XXXXX-Z
 private:
