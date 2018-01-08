@@ -12,7 +12,7 @@ function acquia_spi_environment_change_form($form, &$form_state) {
   $form               = array();
   $blocked            = variable_get('acquia_spi_blocked', FALSE);
   $acquia_hosted      = acquia_spi_check_acquia_hosted();
-  $env_changes        = variable_get('acquia_spi_environment_changes');
+  $env_changes        = variable_get('acquia_spi_environment_changes', array());
   $env_changes_list   = theme('item_list', array('items' => $env_changes));
   $off_acquia_hosting = array_key_exists('acquia_hosted', $env_changes) && !acquia_spi_check_acquia_hosted();
 
@@ -23,9 +23,9 @@ function acquia_spi_environment_change_form($form, &$form_state) {
   elseif ($blocked) {
     $form['env_change_action'] = array(
       '#type' => 'checkboxes',
-      '#title' => t('The Acquia Connector is blocked and is not sending site profile data to Acquia Cloud for evaluation.'),
+      '#title' => t('The Acquia Connector is disabled and is not sending site profile data to Acquia Cloud for evaluation.'),
       '#options' => array(
-        'unblock' => t('Unblock this site and send data to Acquia Cloud.'),
+        'unblock' => t('Enable this site and send data to Acquia Cloud.'),
       ),
       '#required' => TRUE,
     );
@@ -41,7 +41,7 @@ function acquia_spi_environment_change_form($form, &$form_state) {
       '#type' => 'radios',
       '#title' => t('How would you like to proceed?'),
       '#options' => array(
-        'block' => t('Block this site from sending profile data to Acquia Insight.'),
+        'block' => t('Disable this site from sending profile data to Acquia Insight.'),
         'update' => t('Update existing site with these changes.'),
         'create' => t('Track this as a new site on Acquia Insight.'),
       ),
@@ -92,8 +92,8 @@ function acquia_spi_environment_change_form($form, &$form_state) {
     );
 
     if ($acquia_hosted) {
-      $form['identification']['site']['name']['#disabled'] = TRUE;
       $form['identification']['site']['machine_name']['#disabled'] = TRUE;
+      $form['identification']['site']['machine_name']['#default_value'] = acquia_spi_get_acquia_hosted_machine_name();
     }
     elseif ($off_acquia_hosting) {
       unset($form['env_change_action']['#options']['block']);
