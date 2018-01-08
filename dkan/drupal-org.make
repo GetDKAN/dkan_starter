@@ -2,10 +2,10 @@
 api: '2'
 core: 7.x
 includes:
-- https://raw.githubusercontent.com/NuCivic/visualization_entity/7.x-1.14/visualization_entity.make
-- https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-1.14/open_data_schema_map.make
+- https://raw.githubusercontent.com/NuCivic/visualization_entity/7.x-1.14.1/visualization_entity.make
+- https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-1.14.1/open_data_schema_map.make
 - https://raw.githubusercontent.com/NuCivic/leaflet_draw_widget/5a5f8faf664aeca02371f6692307580d9fab9116/leaflet_widget.make
-- https://raw.githubusercontent.com/NuCivic/recline/7.x-1.14/recline.make
+- https://raw.githubusercontent.com/NuCivic/recline/7.x-1.14.1/recline.make
 projects:
   admin_menu:
     version: 3.0-rc5
@@ -246,7 +246,7 @@ projects:
     download:
       type: git
       url: https://github.com/GetDKAN/open_data_schema_map.git
-      tag: 7.x-1.14
+      tag: 7.x-1.14.1
   panelizer:
     version: '3.4'
   panels:
@@ -276,7 +276,7 @@ projects:
     download:
       type: git
       url: https://github.com/GetDKAN/recline.git
-      tag: 7.x-1.14
+      tag: 7.x-1.14.1
   ref_field:
     download:
       type: git
@@ -327,9 +327,11 @@ projects:
     download:
       type: git
       url: https://github.com/GetDKAN/taxonomy_fixtures.git
-      revision: b2f092c963f4a24afe1e6443eb9ff01c959079ed
+      revision: efabb2362509f80c40084109456c7483b5452b0a
   token:
     version: '1.7'
+  token_tweaks:
+    version: 1.x-dev
   uuid:
     version: '1.0'
   views:
@@ -347,7 +349,7 @@ projects:
     download:
       type: git
       url: https://github.com/GetDKAN/visualization_entity.git
-      tag: 7.x-1.14
+      tag: 7.x-1.14.1
     type: module
   workbench:
     version: '1.2'
