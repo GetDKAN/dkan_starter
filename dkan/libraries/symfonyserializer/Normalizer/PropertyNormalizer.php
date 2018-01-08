@@ -50,17 +50,23 @@ class PropertyNormalizer extends AbstractObjectNormalizer
 
     /**
      * Checks if the given class has any non-static property.
+     *
+     * @param string $class
+     *
+     * @return bool
      */
-    private function supports(string $class): bool
+    private function supports($class)
     {
         $class = new \ReflectionClass($class);
 
         // We look for at least one non-static property
-        foreach ($class->getProperties() as $property) {
-            if (!$property->isStatic()) {
-                return true;
+        do {
+            foreach ($class->getProperties() as $property) {
+                if (!$property->isStatic()) {
+                    return true;
+                }
             }
-        }
+        } while ($class = $class->getParentClass());
 
         return false;
     }
@@ -151,10 +157,13 @@ class PropertyNormalizer extends AbstractObjectNormalizer
 
     /**
      * @param string|object $classOrObject
+     * @param string        $attribute
+     *
+     * @return \ReflectionProperty
      *
      * @throws \ReflectionException
      */
-    private function getReflectionProperty($classOrObject, string $attribute): \ReflectionProperty
+    private function getReflectionProperty($classOrObject, $attribute)
     {
         $reflectionClass = new \ReflectionClass($classOrObject);
         while (true) {

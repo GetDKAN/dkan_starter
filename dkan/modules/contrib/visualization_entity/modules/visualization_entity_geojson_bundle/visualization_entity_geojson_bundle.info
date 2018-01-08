@@ -12,6 +12,6 @@ features[features_api][] = api:2
 features[field_instance][] = visualization-geojson_visualization-field_uuid_resource
 project path = sites/all/modules/nucivic/visualization_entity/modules
 
-; Information added by DKAN release script on 11/14/2017
-version = 7.x-1.14
+; Information added by DKAN release script on 1/8/2018
+version = 7.x-1.14.1
 project = dkan
