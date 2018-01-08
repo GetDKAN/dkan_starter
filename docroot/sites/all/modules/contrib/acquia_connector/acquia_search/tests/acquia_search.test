@@ -29,6 +29,10 @@ class AcquiaSearchUnitTestCase extends DrupalUnitTestCase {
   public function setUp() {
     parent::setUp();
     require_once dirname(dirname(__FILE__)) . '/acquia_search.module';
+    require_once dirname(dirname(__FILE__)) . '/src/PreferredSearchCoreService.php';
+    if (!function_exists('acquia_agent_settings')) {
+      module_load_include('module', 'acquia_agent');
+    }
 
     // Generate and store a random set of credentials.
     // Make them as close to the production values as possible

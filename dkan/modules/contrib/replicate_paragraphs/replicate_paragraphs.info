@@ -1,0 +1,15 @@
+core = "7.x"
+description = "Extends Replicate module to manage the replication of paragraph_item fields."
+name = "Replicate Paragraphs"
+package = "Entity"
+
+dependencies[] = replicate
+dependencies[] = paragraphs
+dependencies[] = entity
+
+; Information added by Drupal.org packaging script on 2015-06-19
+version = "7.x-1.2"
+core = "7.x"
+project = "replicate_paragraphs"
+datestamp = "1434713581"
+

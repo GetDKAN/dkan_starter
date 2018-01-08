@@ -6,7 +6,7 @@
  */
 
 // Version of SPI data format.
-define('ACQUIA_SPI_DATA_VERSION', 3.0);
+define('ACQUIA_SPI_DATA_VERSION', 3.1);
 
 /**
  * Identifiers for the method of sending SPI data.
@@ -280,14 +280,10 @@ function acquia_spi_form_acquia_agent_settings_form_alter(&$form) {
     '#title' => t('Name'),
     '#maxlength' => 255,
     '#required' => TRUE,
+    '#default_value' => variable_get('acquia_spi_site_name') ?: acquia_spi_get_acquia_hosted_name(),
   );
   if ($acquia_hosted) {
-    $form['identification']['#description'] = t('Acquia hosted sites are automatically provided with a name and machine name.');
-    $form['identification']['site']['name']['#default_value'] = acquia_spi_get_acquia_hosted_name();
-    $form['identification']['site']['name']['#disabled'] = TRUE;
-  }
-  else {
-    $form['identification']['site']['name']['#default_value'] = variable_get('acquia_spi_site_name');
+    $form['identification']['#description'] = t('Acquia hosted sites are automatically provided with a machine name.');
   }
   $form['identification']['site']['machine_name'] = array(
     '#type' => 'machine_name',
@@ -300,7 +296,7 @@ function acquia_spi_form_acquia_agent_settings_form_alter(&$form) {
     ),
   );
   if ($acquia_hosted) {
-    $form['identification']['site']['machine_name']['#default_value'] = acquia_spi_get_acquia_hosted_machine_name();
+    $form['identification']['site']['machine_name']['#default_value'] = variable_get('acquia_spi_site_machine_name') ?: acquia_spi_get_acquia_hosted_machine_name();
     $form['identification']['site']['machine_name']['#disabled'] = TRUE;
   }
   else {
@@ -512,7 +508,7 @@ function acquia_spi_handle_server_response($spi_response) {
   variable_set('acquia_spi_environment_changed_action', '');
   $site_uuid = variable_get('acquia_spi_site_uuid', NULL);
   $spi_environment_changes = isset($spi_response['spi_environment_changes']) ? drupal_json_decode($spi_response['spi_environment_changes']) : array();
-  $site_blocked = array_key_exists('blocked', $spi_environment_changes);
+  $site_blocked = array_key_exists('blocked', $spi_environment_changes) || !empty($spi_response['site_revoked']);
 
   // Set site_uuid if it changed or if it hasn't been previously captured.
   if (isset($spi_response['site_uuid']) && (is_null($site_uuid) || $spi_response['site_uuid'] != $site_uuid)) {
@@ -538,7 +534,7 @@ function acquia_spi_handle_server_response($spi_response) {
 
     // If there were no errors, clear any pending actions.
     if (empty($spi_response['spi_error'])) {
-      variable_set('acquia_spi_environment_changes', '');
+      variable_set('acquia_spi_environment_changes', array());
     }
   }
 
@@ -609,10 +605,6 @@ function acquia_spi_send_data($spi) {
  *   An associative array keyed by types of information.
  */
 function acquia_spi_get() {
-  // Get file hashes and compute serialized version.
-  list($hashes, $fileinfo) = acquia_spi_file_hashes();
-  $hashes_string = serialize($hashes);
-
   // Get the Drupal version
   $drupal_version = acquia_spi_get_version_info();
 
@@ -625,19 +617,28 @@ function acquia_spi_get() {
   }
 
   $acquia_hosted = acquia_spi_check_acquia_hosted();
+  $environment = variable_get('acquia_spi_site_environment');
+  $env_detection_enabled = variable_get('acquia_spi_env_detection_enabled');
+  $server = acquia_agent_get_server_superglobal();
+
   if ($acquia_hosted) {
-    $name = acquia_spi_get_acquia_hosted_name();
-    if ($name != variable_get('acquia_spi_site_name')) {
-      variable_set('acquia_spi_site_name', $name);
-    }
-    $machine_name = acquia_spi_get_acquia_hosted_machine_name();
-    if ($machine_name != variable_get('acquia_spi_site_machine_name')) {
-      variable_set('acquia_spi_site_machine_name', $machine_name);
+    if ($environment != $server['AH_SITE_ENVIRONMENT']) {
+      variable_set('acquia_spi_site_environment', $server['AH_SITE_ENVIRONMENT']);
+      $environment = $server['AH_SITE_ENVIRONMENT'];
+      if ($env_detection_enabled) {
+        variable_set('acquia_spi_site_machine_name', acquia_spi_get_acquia_hosted_machine_name());
+      }
     }
   }
   else {
-    $name = variable_get('acquia_spi_site_name');
-    $machine_name = variable_get('acquia_spi_site_machine_name');
+    if ($environment) {
+      variable_set('acquia_spi_site_environment', NULL);
+    }
+    $environment = NULL;
+  }
+
+  if ($env_detection_enabled === NULL) {
+    variable_set('acquia_spi_env_detection_enabled', TRUE);
   }
 
   $spi = array(
@@ -646,8 +647,9 @@ function acquia_spi_get() {
     'site_uuid'          => variable_get('acquia_spi_site_uuid'),
     'env_changed_action' => variable_get('acquia_spi_environment_changed_action'),
     'acquia_hosted'      => $acquia_hosted,
-    'name'               => $name,
-    'machine_name'       => $machine_name,
+    'name'               => variable_get('acquia_spi_site_name'),
+    'machine_name'       => variable_get('acquia_spi_site_machine_name'),
+    'environment'        => $environment,
     'modules'            => acquia_spi_get_modules(),
     'platform'           => $platform,
     'quantum'            => acquia_spi_get_quantum(),
@@ -660,10 +662,6 @@ function acquia_spi_get() {
     'last_users'         => variable_get('acquia_spi_send_node_user', 1) ? acquia_spi_get_last_users() : array(),
     'extra_files'        => acquia_spi_check_files_present(),
     'ssl_login'          => acquia_spi_check_login(),
-    'file_hashes'        => $hashes,
-    'hashes_md5'         => md5($hashes_string),
-    'hashes_sha1'        => sha1($hashes_string),
-    'fileinfo'           => $fileinfo,
     'distribution'       => isset($drupal_version['distribution']) ? $drupal_version['distribution'] : '',
     'base_version'       => $drupal_version['base_version'],
     'build_data'         => $drupal_version,
@@ -1075,8 +1073,7 @@ function acquia_spi_test_validate($collection) {
  *    An array containing some detail about the version
  */
 function acquia_spi_get_version_info() {
-  $store = acquia_spi_data_store_get(array('platform'));
-  $server = (!empty($store) && isset($store['platform'])) ? $store['platform']['php_quantum']['SERVER'] : $_SERVER;
+  $server = $_SERVER;
   $ver = array();
 
   $ver['base_version'] = VERSION;
@@ -1200,10 +1197,8 @@ function acquia_spi_get_settings_permissions() {
  *   True if they are removed, false if they aren't
  */
 function acquia_spi_check_files_present() {
-  $store = acquia_spi_data_store_get(array('platform'));
-  $server = (!empty($store) && isset($store['platform'])) ? $store['platform']['php_quantum']['SERVER'] : $_SERVER;
+  $server = $_SERVER;
   $files_exist = FALSE;
-  $url = url(NULL, array('absolute' => TRUE));
   $files_to_remove = array('CHANGELOG.txt', 'COPYRIGHT.txt', 'INSTALL.mysql.txt', 'INSTALL.pgsql.txt', 'INSTALL.txt', 'LICENSE.txt',
     'MAINTAINERS.txt', 'README.txt', 'UPGRADE.txt', 'PRESSFLOW.txt', 'install.php');
 
@@ -1491,10 +1486,6 @@ function acquia_spi_get_platform() {
 
   if (isset($webserver[1]) && stristr($webserver[1], 'Apache') && function_exists('apache_get_version')) {
     $webserver[2] = apache_get_version();
-    $apache_modules = apache_get_modules();
-  }
-  else {
-    $apache_modules = '';
   }
 
   // Get some basic PHP vars
@@ -1511,7 +1502,6 @@ function acquia_spi_get_platform() {
     'session.cookie_domain'   => ini_get('session.cookie_domain'),
     'session.cookie_lifetime' => ini_get('session.cookie_lifetime'),
     'newrelic.appname'        => ini_get('newrelic.appname'),
-    'SERVER'                  => $server,
     'sapi'                    => php_sapi_name(),
   );
 
@@ -1519,7 +1509,6 @@ function acquia_spi_get_platform() {
     'php'               => PHP_VERSION,
     'webserver_type'    => isset($webserver[1]) ? $webserver[1] : '',
     'webserver_version' => isset($webserver[2]) ? $webserver[2] : '',
-    'apache_modules'    => $apache_modules,
     'php_extensions'    => get_loaded_extensions(),
     'php_quantum'       => $php_quantum,
     'database_type'     => $db_tasks->name(),
@@ -1527,7 +1516,6 @@ function acquia_spi_get_platform() {
     'system_type'       => php_uname('s'),
     // php_uname() only accepts one character, so we need to concatenate ourselves.
     'system_version'    => php_uname('r') . ' ' . php_uname('v') . ' ' . php_uname('m') . ' ' . php_uname('n'),
-    'mysql'             => (Database::getConnection()->driver() == 'mysql') ? acquia_spi_get_platform_mysql_data() : array(),
   );
 
   // Never send NULL (or FALSE?) - that causes hmac errors.
@@ -1537,79 +1525,6 @@ function acquia_spi_get_platform() {
     }
   }
   return $platform;
-}
-
-function acquia_spi_get_platform_mysql_data() {
-  $connection = Database::getConnection('default');
-  // Backup and restore PDO::ATTR_CASE. Prior to Drupal 7.14 this is
-  // PDO::CASE_LOWER. Afterwards it is PDO::CASE_NATURAL.
-  $orig = $connection->getAttribute(PDO::ATTR_CASE);
-  $connection->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
-  $result = $connection->query("SHOW GLOBAL STATUS", array(), array());
-  // Restore the attribute.
-  $connection->setAttribute(PDO::ATTR_CASE, $orig);
-
-  $ret = array();
-  if (empty($result)) {
-    return $ret;
-  }
-  foreach ($result as $record) {
-    if (!isset($record->variable_name)) {
-      continue;
-    }
-    switch ($record->variable_name) {
-      case 'Table_locks_waited':
-        $ret['Table_locks_waited'] = $record->value;
-        break;
-      case 'Slow_queries':
-        $ret['Slow_queries'] = $record->value;
-        break;
-      case 'Qcache_hits':
-        $ret['Qcache_hits'] = $record->value;
-        break;
-      case 'Qcache_inserts':
-        $ret['Qcache_inserts'] = $record->value;
-        break;
-      case 'Qcache_queries_in_cache':
-        $ret['Qcache_queries_in_cache'] = $record->value;
-        break;
-      case 'Qcache_lowmem_prunes':
-        $ret['Qcache_lowmem_prunes'] = $record->value;
-        break;
-      case 'Open_tables':
-        $ret['Open_tables'] = $record->value;
-        break;
-      case 'Opened_tables':
-        $ret['Opened_tables'] = $record->value;
-        break;
-      case 'Select_scan':
-        $ret['Select_scan'] = $record->value;
-        break;
-      case 'Select_full_join':
-        $ret['Select_full_join'] = $record->value;
-        break;
-      case 'Select_range_check':
-        $ret['Select_range_check'] = $record->value;
-        break;
-      case 'Created_tmp_disk_tables':
-        $ret['Created_tmp_disk_tables'] = $record->value;
-        break;
-      case 'Created_tmp_tables':
-        $ret['Created_tmp_tables'] = $record->value;
-        break;
-      case 'Handler_read_rnd_next':
-        $ret['Handler_read_rnd_next'] = $record->value;
-        break;
-      case 'Sort_merge_passes':
-        $ret['Sort_merge_passes'] = $record->value;
-        break;
-      case 'Qcache_not_cached':
-        $ret['Qcache_not_cached'] = $record->value;
-        break;
-
-    }
-  }
-  return $ret;
 }
 
 /**
@@ -1725,28 +1640,6 @@ function acquia_spi_get_modules() {
     }
     $info['filename'] = $file->filename;
 
-    // Determine which files belong to this module and hash them
-    $module_path = explode('/', $file->filename);
-    array_pop($module_path);
-
-    // We really only care about this module if it is in 'sites' folder.
-    // Otherwise it is covered by the hash of the distro's modules
-    if ($module_path[0]=='sites') {
-      $contrib_path = implode('/', $module_path);
-
-      // Get a hash for this module's files. If we nest into another module, we'll return
-      // and that other module will be covered by it's entry in the system table.
-      //
-      // !! At present we aren't going to do a per module hash, but rather a per-project hash. The reason being that it is
-      // too hard to tell an individual module appart from a project
-      //$info['module_data'] = _acquia_nspi_generate_hashes($contrib_path,array(),array(),TRUE,$contrib_path);
-      list($info['module_data']['hashes'], $info['module_data']['fileinfo']) = _acquia_spi_generate_hashes($contrib_path);
-    }
-    else {
-      $info['module_data']['hashes'] = array();
-      $info['module_data']['fileinfo'] = array();
-    }
-
     $result[] = $info;
   }
   return $result;
@@ -1781,82 +1674,6 @@ function acquia_spi_get_quantum() {
 function acquia_spi_uid_0_present() {
   $count = db_query("SELECT uid FROM {users} WHERE uid = 0")->rowCount();
   return $count == 1 ? TRUE : FALSE;
-}
-
-/**
- * Gather hashes of all important files, ignoring line ending and CVS Ids
- *
- * @param $excuded_dirs
- *   Optional array of directory paths to be excluded.
- *
- * @return
- *   An associative array keyed by filename of hashes.
- */
-function acquia_spi_file_hashes($exclude_dirs = array()) {
-  // The list of directories for the third parameter are the only ones that
-  // will be recursed into.  Thus, we avoid sending hashes for any others.
-  list($hashes, $fileinfo) = _acquia_spi_generate_hashes('.', $exclude_dirs, array('modules', 'profiles', 'themes', 'includes', 'misc', 'scripts'));
-  ksort($hashes);
-  // Add .htaccess file.
-  $htaccess = DRUPAL_ROOT . DIRECTORY_SEPARATOR . '.htaccess';
-  if (is_file($htaccess)) {
-    $owner = fileowner($htaccess);
-    if (function_exists('posix_getpwuid')) {
-      $userinfo = posix_getpwuid($owner);
-      $owner = $userinfo['name'];
-    }
-    $fileinfo['.htaccess'] = 'mt:' . filemtime($htaccess) . '$p:' . substr(sprintf('%o', fileperms($htaccess)), -4) . '$o:' . $owner . '$s:' . filesize($htaccess);
-  }
-  return array($hashes, $fileinfo);
-}
-
-/**
- * Recursive helper function for acquia_spi_file_hashes().
- */
-function _acquia_spi_generate_hashes($dir, $exclude_dirs = array(), $limit_dirs = array(), $module_break = FALSE, $orig_dir=NULL) {
-  $hashes = array();
-  $fileinfo = array();
-
-  // Ensure that we have not nested into another module's dir
-  if ($dir != $orig_dir && $module_break) {
-    if (is_dir($dir) && $handle = opendir($dir)) {
-      while ($file = readdir($handle)) {
-        if (stristr($file, '.module')) {
-          return;
-        }
-      }
-    }
-  }
-  if (isset($handle)) {
-    closedir($handle);
-  }
-
-  // Standard nesting function
-  if (is_dir($dir) && $handle = opendir($dir)) {
-    while ($file = readdir($handle)) {
-      if (!in_array($file, array('.', '..', 'CVS', '.svn'))) {
-        $path = $dir == '.' ? $file : "{$dir}/{$file}";
-        if (is_dir($path) && !in_array($path, $exclude_dirs) && (empty($limit_dirs) || in_array($path, $limit_dirs)) && ($file != 'translations')) {
-          list($sub_hashes, $sub_fileinfo) =  _acquia_spi_generate_hashes($path, $exclude_dirs);
-          $hashes = array_merge($sub_hashes, $hashes);
-          $fileinfo = array_merge($sub_fileinfo, $fileinfo);
-          $hashes[$path] = acquia_spi_hash_path($path);
-        }
-        elseif (acquia_spi_is_manifest_type($file)) {
-          $hashes[$path] = acquia_spi_hash_path($path);
-          $owner = fileowner($path);
-          if (function_exists('posix_getpwuid')) {
-            $userinfo = posix_getpwuid($owner);
-            $owner = $userinfo['name'];
-          }
-          $fileinfo[$path] = 'mt:' . filemtime($path) . '$p:' . substr(sprintf('%o', fileperms($path)), -4) . '$o:' . $owner . '$s:' . filesize($path);
-        }
-      }
-    }
-    closedir($handle);
-  }
-
-  return array($hashes, $fileinfo);
 }
 
 /**
@@ -1966,7 +1783,8 @@ function acquia_spi_approved_set_variables() {
  *   The suggested Acquia Hosted name.
  */
 function acquia_spi_get_acquia_hosted_name() {
-  return acquia_agent_settings('acquia_subscription_name') . ': ' . $_SERVER['AH_SITE_ENVIRONMENT'];
+  $server = acquia_agent_get_server_superglobal();
+  return acquia_agent_settings('acquia_subscription_name') . ': ' . $server['AH_SITE_ENVIRONMENT'];
 }
 
 /**
@@ -1976,9 +1794,10 @@ function acquia_spi_get_acquia_hosted_name() {
  *   The suggested Acquia Hosted machine name.
  */
 function acquia_spi_get_acquia_hosted_machine_name() {
+  $server = acquia_agent_get_server_superglobal();
   $sub_data = acquia_agent_settings('acquia_subscription_data');
   $sub_uuid = str_replace('-', '_', _acquia_agent_get_id_from_sub($sub_data));
-  return $sub_uuid . '__' . $_SERVER['AH_SITE_NAME'];
+  return $sub_uuid . '__' . $server['AH_SITE_NAME'] . '__' . uniqid();
 }
 
 /**

@@ -32,6 +32,7 @@ function acquia_agent_uninstall() {
   variable_del('acquia_agent_verify_peer');
   variable_del('acquia_dynamic_banner');
   variable_del('acquia_migrate_files');
+  variable_del('acquia_migrate_max_time');
   variable_del('acquia_banner_service');
   variable_del('acquia_agent_hide_signup_messages');
 }
@@ -165,4 +166,14 @@ function acquia_agent_requirements($phase) {
   }
 
   return $requirements;
+}
+
+/**
+ * Remove migrate variables.
+ */
+function acquia_agent_update_7001() {
+
+  variable_del('acquia_migrate_files');
+  variable_del('acquia_migrate_max_time');
+  variable_del('acquia_agent_cloud_migration');
 }

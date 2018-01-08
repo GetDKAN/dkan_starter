@@ -1,0 +1,120 @@
+<?php
+
+/**
+ * @file
+ * Install, update, uninstall functions for the dkan_dataset_paragraphs module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function dkan_dataset_paragraphs_install() {
+  $base_info = field_info_field('field_metadata_extended');
+  if (!$base_info) {
+    field_create_field(_get_metadata_extended_field_base());
+    watchdog('dkan_dataset_paragraphs', 'Created field_metadata_extended Field Base');
+  }
+
+  // Create field_metadata_extended field instance.
+  $instance_info = field_info_instance('node', 'field_metadata_extended', 'dataset');
+  if (!$instance_info) {
+    field_create_instance(_get_metadata_extended_field_instance());
+    watchdog('dkan_dataset_paragraphs', 'Created field_metadata_extended Field Instance');
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function dkan_dataset_paragraphs_uninstall() {
+  // Remove field_metadata_extended field instance.
+  $info = field_info_instance('node', 'field_metadata_extended', 'dataset');
+  if ($info) {
+    field_delete_instance(_get_metadata_extended_field_instance(), FALSE);
+    watchdog('dkan_dataset_paragraphs', 'Deleted field_metadata_extended Field Instance');
+  }
+
+  // Remove field_metadata_extended field base.
+  field_delete_field('field_metadata_extended');
+  watchdog('dkan_dataset_paragraphs', 'Deleted field_metadata_extended Field Base');
+}
+
+/**
+ * Get field_metadata_extended base array.
+ *
+ * @return array
+ *   Field base array.
+ */
+function _get_metadata_extended_field_base() {
+  $field_base = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_metadata_extended',
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'paragraphs',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'paragraphs',
+  );
+  return $field_base;
+}
+
+/**
+ * Get field_metadata_extended instance array.
+ *
+ * @return array
+ *   Field instance array.
+ */
+function _get_metadata_extended_field_instance() {
+  $field_instance = array(
+    'bundle' => 'dataset',
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'paragraphs',
+        'settings' => array(
+          'view_mode' => 'full',
+        ),
+        'type' => 'paragraphs_view',
+        'weight' => 27,
+      ),
+      'search_result' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_metadata_extended',
+    'label' => 'Extended Metadata',
+    'required' => FALSE,
+    'settings' => array(
+      'allowed_bundles' => array(),
+      'bundle_weights' => array(),
+      'title' => 'Extended Metadata',
+      'title_multiple' => 'Extended Metadata',
+      'user_register_form' => FALSE,
+      'default_edit_mode' => 'open',
+      'add_mode' => 'button',
+    ),
+    'widget' => array(
+      'module' => 'paragraphs',
+      'settings' => array(),
+      'type' => 'paragraphs_embed',
+      'weight' => 32,
+    ),
+  );
+  return $field_instance;
+}

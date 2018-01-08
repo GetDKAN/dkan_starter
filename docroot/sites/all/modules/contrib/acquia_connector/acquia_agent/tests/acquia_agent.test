@@ -13,7 +13,6 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
   protected $cloud_free_url;
   protected $acquia_test_id;
   protected $acquia_test_key;
-  protected $migrate_path;
   protected $status_report_url;
 
   public static function getInfo() {
@@ -47,7 +46,6 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
     $this->help_path = 'admin/help/acquia_agent';
     $this->cloud_free_url = 'https://www.acquia.com/acquia-cloud-free';
     $this->status_report_url = 'admin/reports/status';
-    $this->migrate_path = 'admin/config/system/acquia-agent/migrate';
     variable_set('acquia_network_address', $base_url);
     variable_set('acquia_spi_server', $base_url);
     variable_set('acquia_spi_ssl_override', TRUE);
@@ -84,14 +82,6 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
         return 'The Acquia configuration options have been saved.';
       case 'subscription':
         return 'Subscription: ' . ACQTEST_ID; // Assumes subscription name is same as id.
-      case 'migrate':
-        return 'Transfer a fully-functional copy of your site to Acquia Cloud.';
-      case 'migrate-hosting-404':
-        return 'Error: Hosting not available under your subscription. Upgrade your subscription to continue with import.';
-      case 'migrate-select-environments':
-        return 'Select environment for migration';
-      case 'migrate-files-label':
-        return 'Migrate files directory';
       case 'menu-active':
         return 'Subscription active (expires 2023/10/8)';
       case 'menu-inactive':
@@ -145,7 +135,6 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
     $this->drupalGet($this->settings_path);
     $this->assertText($this->acquiaAgentStrings('subscription'), 'Subscription connected with key and identifier');
     $this->assertLinkByHref($this->setup_path, 0, 'Link to change subscription exists');
-    $this->assertText($this->acquiaAgentStrings('migrate'), 'Acquia Cloud Migrate description exists');
     // Connect via automatic setup.
     variable_del('acquia_identifier');
     variable_del('acquia_key');
@@ -273,57 +262,6 @@ class AcquiaAgentTestCase extends DrupalWebTestCase {
     $this->assertTrue(is_array($subscription), 'Storing subscription array data.');
     $this->assertIdentical($stored, $subscription, 'Subscription data is the same.');
     $this->assertIdentical(variable_get('acquia_connector_test-requests', 0), 4, 'Have made 4 HTTP requests so far.');
-  }
-
-  public function testAcquiaAgentCloudMigrate() {
-    // Connect site on pair that will trigger an error for migration.
-    $edit_fields = array(
-      'acquia_identifier' => ACQTEST_ERROR_ID,
-      'acquia_key' => ACQTEST_ERROR_KEY,
-    );
-    $submit_button = 'Connect';
-    $this->drupalPost($this->credentials_path, $edit_fields, $submit_button);
-    $this->drupalGet($this->migrate_path);
-    $this->assertText($this->acquiaAgentStrings('migrate-hosting-404'), 'Cannot migrate when hosting not enabled on subscription.');
-    // Connect with correct pair.
-    $edit_fields = array(
-      'acquia_identifier' => ACQTEST_ID,
-      'acquia_key' => ACQTEST_KEY,
-    );
-    $this->drupalPost($this->credentials_path, $edit_fields, $submit_button);
-    $this->drupalGet($this->migrate_path);
-    $this->assertNoText($this->acquiaAgentStrings('migrate-hosting-404'), 'Did not get "cannot migrate" text.');
-    $this->assertText($this->acquiaAgentStrings('migrate-select-environments'), 'Environment selection label appears.');
-    $this->assertText($this->acquiaAgentStrings('migrate-files-label'), 'The files label controls do appear.');
-    variable_set('acquia_agent_cloud_migration', 'test');
-    $this->drupalGet($this->migrate_path);
-    $this->assertText($this->acquiaAgentStrings('migrate-files-label'), 'The files label controls do appear after setting the migration variable.');
-    $edit_fields = array(
-      'environment' => 'dev',
-      'migrate_files' => FALSE,
-    );
-    $submit_button = 'Migrate';
-    $this->drupalPost($this->migrate_path, $edit_fields, $submit_button);
-    $this->drupalGet($this->migrate_path);
-    $this->assertNoFieldChecked('edit-migrate-files', "The migrate files checkbox is not checked.");
-
-    // Test migration setup and destination.
-    variable_set('drupal_http_request_function', 'acquia_connector_test_upload');
-    variable_set('acquia_connector_test_upload_server_to_fail', TRUE);
-
-    $edit_fields = array(
-      'environment' => 'dev',
-      'migrate_files' => TRUE,
-      'reduce_db_size' => TRUE,
-    );
-
-    $this->drupalPost($this->migrate_path, $edit_fields, 'Migrate');
-    $this->assertText('Unable to connect to migration destination site (unexpected response code: 500)');
-
-    variable_del('acquia_connector_test_upload_server_to_fail');
-    $this->drupalPost($this->migrate_path, $edit_fields, 'Migrate');
-    $this->assertNoText('Unable to connect to migration destination site (unexpected response code: 500)');
-    variable_del('drupal_http_request_function');
   }
 
   /**
