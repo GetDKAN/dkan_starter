@@ -114,7 +114,7 @@ jobs:
       - run:
           name: DKAN Initialization
           command: |
-            #bash dkan-init.sh dkan --deps --build=$DATABASE_URL
+            # bash dkan-init.sh dkan --deps --build=$DATABASE_URL
             bash dkan/dkan-init.sh dkan --deps-only
             drush dl -n registry_rebuild-7.x
             #ahoy drush --yes en dkan_harvest dkan_harvest_datajson dkan_harvest_dashboard
