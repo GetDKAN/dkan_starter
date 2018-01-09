@@ -17,14 +17,6 @@
  *    to configure more complex environment setups, or with custom hosting
  *    companies beside acquia and pantheon.
  */
-$settings_local = DRUPAL_ROOT . '/' . conf_path() . '/settings.local.php';
-$settings_docker = DRUPAL_ROOT . '/' . conf_path() . '/settings.docker.php';
-if (file_exists($settings_local)) {
-  include $settings_local;
-}
-elseif (file_exists($settings_docker)) {
-  include $settings_docker;
-}
 
 /**
  * Include config file from config folder.
@@ -32,6 +24,15 @@ elseif (file_exists($settings_docker)) {
 $config_file = DRUPAL_ROOT . '/../config/config.php';
 if (file_exists($config_file)) {
   include $config_file;
+}
+
+$settings_local = DRUPAL_ROOT . '/' . conf_path() . '/settings.local.php';
+$settings_docker = DRUPAL_ROOT . '/' . conf_path() . '/settings.docker.php';
+if (file_exists($settings_local)) {
+  include $settings_local;
+}
+elseif (file_exists($settings_docker)) {
+  include $settings_docker;
 }
 
 /**
