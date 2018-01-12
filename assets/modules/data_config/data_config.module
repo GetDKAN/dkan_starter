@@ -35,6 +35,7 @@ function data_config_enabled_modules() {
     'chosen' => 'chosen',
     'color_field' => 'color_field',
     'colorizer' => 'colorizer',
+    'composer_manager' => 'composer_manager',
     'conditional_styles' => 'conditional_styles',
     'contextual' => 'contextual',
     'ctools' => 'ctools',
