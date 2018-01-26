@@ -22,7 +22,6 @@ if [[ "$drupal" =~ "Successful" ]]; then
     echo "SOLR Search, avoiding indexing data"
   else
     echo "DB Search, indexing data"
-    drush @$drush_alias search-api-index datasets
     drush @$drush_alias search-api-index groups_di
     drush @$drush_alias search-api-index stories_index
   fi
