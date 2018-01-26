@@ -32,7 +32,6 @@ if  drupal =~ /Successful/
     puts "SOLR Search, avoiding indexing data"
   else
     puts "DB Search, indexing data"
-    `drush @#{drush_alias} search-api-index datasets`
     `drush @#{drush_alias} search-api-index groups_di`
     `drush @#{drush_alias} search-api-index stories_index`
   end
