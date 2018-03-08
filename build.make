@@ -12,6 +12,7 @@ projects:
   # Reset download dir for DKAN
   dkan:
     subdir: ''
+    patch: https://patch-diff.githubusercontent.com/raw/GetDKAN/dkan/pull/2419.patch
   devinci:
     version: ''
   environment:
