@@ -369,7 +369,12 @@ function clamav_get_version($settings) {
  * @return String
  */
 function _clamav_get_version_via_exec($executable_path) {
-  return exec(escapeshellcmd($executable_path) . ' -V');
+  if (is_file($executable_path)) {
+    return exec(escapeshellcmd($executable_path) . ' -V');
+  }
+  else {
+    return NULL;
+  }
 }
 
 /**
