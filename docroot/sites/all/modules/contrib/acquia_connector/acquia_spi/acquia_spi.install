@@ -31,6 +31,8 @@ function acquia_spi_uninstall() {
   variable_del('acquia_spi_blocked');
   variable_del('acquia_spi_environment_changed_action');
   variable_del('acquia_spi_environment_changes');
+  variable_del('acquia_spi_site_environment');
+  variable_del('acquia_spi_env_detection_enabled');
   variable_del('acquia_spi_site_machine_name');
   variable_del('acquia_spi_site_name');
   variable_del('acquia_spi_site_uuid');
@@ -64,7 +66,7 @@ function acquia_spi_requirements($phase) {
         if ($blocked) {
           $severity    = REQUIREMENT_WARNING;
           $config_url  = url('admin/config/system/acquia-agent/environment-change');
-          $description = t('This site has been blocked from sending profile data to Acquia Cloud. <a href="!config-page">Unblock this site</a>.', array('!config-page' => $config_url));
+          $description = t('This site has been disabled from sending profile data to Acquia Cloud. <a href="!config-page">Enable this site</a>.', array('!config-page' => $config_url));
         }
         elseif ($off_acquia_hosting) {
           $severity    = REQUIREMENT_ERROR;

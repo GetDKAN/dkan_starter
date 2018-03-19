@@ -28,6 +28,8 @@ define('ACQTEST_ERROR_ID', 'TEST_AcquiaConnectorTestIDErr');
 define('ACQTEST_ERROR_KEY', 'TEST_AcquiaConnectorTestKeyErr');
 define('ACQTEST_EXPIRED_ID', 'TEST_AcquiaConnectorTestIDExp');
 define('ACQTEST_EXPIRED_KEY', 'TEST_AcquiaConnectorTestKeyExp');
+define('ACQTEST_REVOKED_ID', 'TEST_AcquiaConnectorTestIDRevoked');
+define('ACQTEST_REVOKED_KEY', 'TEST_AcquiaConnectorTestKeyRevoked');
 define('ACQTEST_503_ID', 'TEST_AcquiaConnectorTestID503');
 define('ACQTEST_503_KEY', 'TEST_AcquiaConnectorTestKey503');
 define('ACQTEST_site_uuid', 'TEST_cdbd59f5-ca7e-4652-989b-f9e46d309613');
@@ -73,16 +75,6 @@ function acquia_connector_test_xmlrpc() {
       'acquia_connector_test_subscription_name',
       array('struct', 'array'),
       t('Test returns subscription name for an indentifer.')),
-    array(
-      'acquia.agent.cloud.migration.environments',
-      'acquia_connector_test_cloud_migration_environments',
-      array('struct', 'array'),
-      t('Test returns environments available for site import.')),
-    array(
-      'acquia.agent.cloud.migration.complete',
-      'acquia_connector_test_migration_complete',
-      array('struct', 'array'),
-      t('Test complete final migration')),
     array(
       'acquia.nspi.update',
       'acquia_connector_test_nspi_update',
@@ -253,45 +245,6 @@ function acquia_connector_test_subscription_name($data) {
   }
 }
 
-function acquia_connector_test_cloud_migration_environments($data) {
-  $fields = array(
-    'time' => 'is_numeric',
-    'nonce' => 'is_string',
-    'hash' => 'is_string',
-  );
-  $result = acquia_connector_test_basic_authenticator($fields, $data);
-  if (!empty($result->is_error)) {
-    return $result;
-  }
-  if (!empty($data['body']['identifier'])) {
-    if (strpos($data['body']['identifier'], 'TEST_') !== 0) {
-      return xmlrpc_error(ACQTEST_SUBSCRIPTION_VALIDATION_ERROR, t('Subscription not found'));
-    }
-  }
-  else {
-    return xmlrpc_error(ACQTEST_SUBSCRIPTION_VALIDATION_ERROR, t('Invalid arguments'));
-  }
-  if ($data['body']['identifier'] == ACQTEST_ERROR_ID) {
-    return xmlrpc_error(ACQTEST_SUBSCRIPTION_SITE_NOT_FOUND, t("Hosting not available under your subscription. Upgrade your subscription to continue with import."));
-  }
-  $result = array();
-  $result['is_error'] = FALSE;
-  foreach (array('dev' => 'Development', 'test' => 'Stage', 'prod' => 'Production') as $key => $name) {
-    $result['body']['environments'][$key] = array(
-      'url' => url('system/acquia-connector-test-upload/AH_UPLOAD', array('absolute' => TRUE)),
-      'stage' => $key,
-      'nonce' => 'nonce',
-      'secret' => 'secret',
-      'site_name' => $name,
-    );
-  }
-  return $result;
-}
-
-function acquia_connector_test_migration_complete($data) {
-  // return array
-}
-
 function acquia_connector_test_nspi_update($data) {
   $fields = array(
     'time' => 'is_numeric',
@@ -303,7 +256,7 @@ function acquia_connector_test_nspi_update($data) {
     return $result;
   }
   if (!empty($data['authenticator']['identifier'])) {
-    if ($data['authenticator']['identifier'] != ACQTEST_ID && $data['authenticator']['identifier'] != ACQTEST_ERROR_ID) {
+    if (!in_array($data['authenticator']['identifier'], [ACQTEST_ID, ACQTEST_ERROR_ID, ACQTEST_REVOKED_ID])) {
       return xmlrpc_error(ACQTEST_SUBSCRIPTION_VALIDATION_ERROR, t('Subscription not found'));
     }
     if ($data['authenticator']['identifier'] == ACQTEST_ERROR_ID) {
@@ -311,8 +264,12 @@ function acquia_connector_test_nspi_update($data) {
     }
     else {
       $result = acquia_connector_test_validate_authenticator($data);
+
       $spi_data = $data['body'];
-      $result->body = array('spi_data_received' => TRUE);
+      $result->body = array(
+        'spi_data_received' => TRUE,
+        'site_revoked' => $data['authenticator']['identifier'] == ACQTEST_REVOKED_ID,
+      );
       if (isset($spi_data['spi_def_update'])) {
         $result->body['update_spi_definition'] = TRUE;
       }
@@ -421,6 +378,9 @@ function acquia_connector_test_validate_authenticator($data) {
     case ACQTEST_503_ID:
       $key = ACQTEST_503_KEY;
       break;
+    case ACQTEST_REVOKED_ID:
+      $key = ACQTEST_REVOKED_KEY;
+      break;
     default:
       $key = ACQTEST_ERROR_KEY;
       break;
@@ -507,14 +467,6 @@ function acquia_connector_test_xmlrpc_server_emulator($method, $data){
 
     case 'acquia.agent.subscription':
       $result = acquia_connector_test_subscription($data);
-      break;
-
-    case 'acquia.agent.cloud.migration.environments':
-      $result = acquia_connector_test_cloud_migration_environments($data);
-      break;
-
-    case 'acquia.agent.cloud.migration.complete':
-      $result = acquia_connector_test_migration_complete($data);
       break;
 
     case 'acquia.nspi.update':
