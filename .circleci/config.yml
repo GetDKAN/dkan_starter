@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Run Selenium
           command: |
-            sudo selenium-standalone start
+            sudo selenium-standalone start --version=3.9.1
           background: true
       - run:
           name: Update Packages
