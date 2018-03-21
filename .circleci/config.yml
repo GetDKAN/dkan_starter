@@ -43,7 +43,7 @@ jobs:
           command: |
             sudo npm install selenium-standalone@latest -g
             #npm install geckodriver
-            sudo selenium-standalone install
+            sudo selenium-standalone install --drivers.chrome.version=2.37 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
 
       - run:
           name: Run Selenium
