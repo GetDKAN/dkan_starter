@@ -24,8 +24,8 @@ jobs:
     steps:
       - restore_cache:
           keys:
-            - v1-dkan-{{ .Branch }}
-            - v1-dkan-test-vendor
+            - v1-dkan-just-start-over-{{ .Branch }}
+            - v1-dkan-new-cache-please-test-vendor
       - run:
           name: Install Selenium
           command: |
