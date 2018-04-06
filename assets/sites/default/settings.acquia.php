@@ -10,6 +10,10 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
     $conf['cache_backends'][] = './sites/all/modules/contrib/memcache/memcache.inc';
     $conf['cache_default_class'] = 'MemCacheDrupal';
     $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
+
+    # hotfixed for Acquia ticket 679235
+    # # Move semaphore out of the database and into memory for performance purposes
+    $conf['lock_inc'] = './sites/all/modules/contrib/memcache/memcache-lock.inc';
   }
 
   $env = getenv('AH_SITE_ENVIRONMENT');
@@ -66,7 +70,7 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
       'api/action/datastore/search.json',
     );
   }
-  
+
   // ODSM edit forms.
   $high_memory_paths[] = 'admin/config/services/odsm/edit';
 
