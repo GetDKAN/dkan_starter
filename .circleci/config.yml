@@ -9,22 +9,122 @@ jobs:
       CIRCLE_ARTIFACTS: "/home/circleci/site_build/assets/tests"
     parallelism: 5
     docker:
-      - image: circleci/php:5.6.31-apache-node-browsers
+      - image: nuams/drupal-apache-php:1.0-5.6
+        hostname: web
+        ports:
+          - "80"
+          - "443"
+          - "8888"
+        links:
+          - db
+          # Uncomment this and the memcached service definition below to start using memcached.
+          - memcached
+          - solr
+        volumes:
+          # PHP configuration overrides
+          - "./.docker/etc/php5/php.ini:/etc/php5/fpm/conf.d/z_php.ini"
+          - "./.docker/etc/php5/xdebug-linux.ini:/etc/php5/xdebug-linux.ini"
+          - "./.docker/etc/php5/xdebug-macos.ini:/etc/php5/xdebug-macos.ini"
+        network_mode: bridge
+        labels:
+          - "traefik.frontend.rule=Host:${SLUG}.${PROXY_DOMAIN}"
+          - "traefik.frontend.passHostHeader=true"
         environment:
-          MYSQL_HOST: "127.0.0.1"
-          DATABASE_URL: "mysql://drupal:123@127.0.0.1:3306/drupal"
-          MYSQL_USER: "drupal"
-          MYSQL_PASSWORD: "123"
-          MYSQL_DATABASE: "drupal"
-      - image: circleci/mariadb:10.3.3-ram
-        command: --secure-file-priv='' --max-allowed-packet=128M --innodb-buffer-pool-size=256M
+          # no_proxy="" required for default Docker For Mac system proxy that contains a space and prevents Selenium from loading.
+          # Linked containers to browser will also need this setting.
+          - no_proxy=""
+      - image: wodby/mariadb:latest
+        hostname: db
+        ports:
+          - "3306"
+        # MYSQL Credentials in mysql.env
+        env_file:
+          - mysql.env
+        volumes:
+           # MySQL configuration overrides
+           - "./.docker/etc/mysql/my.cnf:/etc/mysql/conf.d/z_my.cnf"
+           # Permanent DB data storage
+           - /var/lib/mysql
+        labels:
+          - traefik.enable=false
+        network_mode: bridge
+      - image: nuams/drupal-cli:2016-10-16
+        hostname: cli
         environment:
-          - MYSQL_ROOT_PASSWORD=
-          - MYSQL_USER=drupal
-          - MYSQL_PASSWORD=123
-          - MYSQL_DATABASE=drupal
-      # Selenium image won't start, running via npm install
-      #- image: selenium/standalone-chrome-debug:2.53.1
+          - XDEBUG_CONFIG=idekey=PHPSTORM
+        env_file:
+          - mysql.env
+        links:
+          - db
+          - web
+          # Uncomment this and the browser service definition below to start using selenium2.
+          - browser
+          - memcached
+          - solr
+        ports:
+          - "8888"
+        volumes:
+          # PHP configuration overrides
+          - "./.docker/etc/php5/php-cli.ini:/etc/php5/cli/conf.d/z_php.ini"
+          - "./.docker/etc/php5/xdebug-linux.ini:/etc/php5/xdebug-linux.ini"
+          - "./.docker/etc/php5/xdebug-macos.ini:/etc/php5/xdebug-macos.ini"
+          # Host SSH keys mapping. Uncomment one of the lines below based on your setup.
+          - ~/.ssh:/.ssh
+        labels:
+          - traefik.enable=false
+        network_mode: bridge
+    - image: memcached
+      hostname: memcached
+      environment:
+        # Memcached memory limit in megabytes
+        - MEMCACHED_MEMORY_LIMIT=128
+      labels:
+        - traefik.enable=false
+      network_mode: bridge
+    - image: selenium/standalone-chrome-debug:2.53.1
+      hostname: browser
+      # This helps keep selenium-chrome from crashing because it uses shared memory.
+      ports:
+        - "5900"
+      volumes:
+        - /dev/shm:/dev/shm
+        # Project root folder mapping
+        - "../../:/var/www/"
+      links:
+        - web
+      environment:
+        # no_proxy="" required for default Docker For Mac system proxy that contains a space and prevents Selenium from loading.
+        - no_proxy=""
+      network_mode: bridge
+      labels:
+        - traefik.enable=false
+    - image: devinci/drupal-solr:3.x
+      hostname: solr
+      ports:
+        - "8983"
+      volumes:
+        - "./.docker/etc/solr/3.x:/var/lib/solr/conf"
+      labels:
+        - "traefik.frontend.rule=Host:${SLUG}-solr.${PROXY_DOMAIN}"
+      network_mode: bridge
+      
+      env_file:
+        - mysql.env
+          environment:
+            MYSQL_HOST: "127.0.0.1"
+            DATABASE_URL: "mysql://drupal:123@127.0.0.1:3306/drupal"
+            MYSQL_USER: "drupal"
+            MYSQL_PASSWORD: "123"
+            MYSQL_DATABASE: "drupal"
+        - image: circleci/mariadb:10.3.3-ram
+          command: --secure-file-priv='' --max-allowed-packet=128M --innodb-buffer-pool-size=256M
+          environment:
+            - MYSQL_ROOT_PASSWORD=
+            - MYSQL_USER=drupal
+            - MYSQL_PASSWORD=123
+            - MYSQL_DATABASE=drupal
+        # Selenium image won't start, running via npm install
+        #- image: selenium/standalone-chrome-debug:2.53.1
     steps:
       - restore_cache:
           keys:
