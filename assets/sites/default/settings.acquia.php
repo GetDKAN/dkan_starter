@@ -5,6 +5,29 @@
  * Acquia Settings.
  */
 
+/**
+ * Override domain detection in Acquia Purge.
+ */
+if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
+  switch ($_ENV['AH_SITE_ENVIRONMENT']) {
+    case 'prod':
+      $domain = $conf['acquia']['prod']['base_url'];
+      $domain = parse_url($domain, PHP_URL_HOST);
+      $conf['acquia_purge_domains'] = array($domain);
+      break;
+    case 'test':
+      $domain = $conf['acquia']['test']['base_url'];
+      $domain = parse_url($domain, PHP_URL_HOST);
+      $conf['acquia_purge_domains'] = array($domain);
+      break;
+    case 'dev':
+      $domain = $conf['acquia']['dev']['base_url'];
+      $domain = parse_url($domain, PHP_URL_HOST);
+      $conf['acquia_purge_domains'] = array($domain);
+      break;
+  }
+}
+
 if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   if (isset($conf['memcache_servers'])) {
     $conf['cache_backends'][] = './sites/all/modules/contrib/memcache/memcache.inc';
