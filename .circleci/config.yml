@@ -73,58 +73,58 @@ jobs:
         labels:
           - traefik.enable=false
         network_mode: bridge
-    - image: memcached
-      hostname: memcached
-      environment:
-        # Memcached memory limit in megabytes
-        - MEMCACHED_MEMORY_LIMIT=128
-      labels:
-        - traefik.enable=false
-      network_mode: bridge
-    - image: selenium/standalone-chrome-debug:2.53.1
-      hostname: browser
-      # This helps keep selenium-chrome from crashing because it uses shared memory.
-      ports:
-        - "5900"
-      volumes:
-        - /dev/shm:/dev/shm
-        # Project root folder mapping
-        - "../../:/var/www/"
-      links:
-        - web
-      environment:
-        # no_proxy="" required for default Docker For Mac system proxy that contains a space and prevents Selenium from loading.
-        - no_proxy=""
-      network_mode: bridge
-      labels:
-        - traefik.enable=false
-    - image: devinci/drupal-solr:3.x
-      hostname: solr
-      ports:
-        - "8983"
-      volumes:
-        - "./.docker/etc/solr/3.x:/var/lib/solr/conf"
-      labels:
-        - "traefik.frontend.rule=Host:${SLUG}-solr.${PROXY_DOMAIN}"
-      network_mode: bridge
-      
-      env_file:
-        - mysql.env
-          environment:
-            MYSQL_HOST: "127.0.0.1"
-            DATABASE_URL: "mysql://drupal:123@127.0.0.1:3306/drupal"
-            MYSQL_USER: "drupal"
-            MYSQL_PASSWORD: "123"
-            MYSQL_DATABASE: "drupal"
-        - image: circleci/mariadb:10.3.3-ram
-          command: --secure-file-priv='' --max-allowed-packet=128M --innodb-buffer-pool-size=256M
-          environment:
-            - MYSQL_ROOT_PASSWORD=
-            - MYSQL_USER=drupal
-            - MYSQL_PASSWORD=123
-            - MYSQL_DATABASE=drupal
-        # Selenium image won't start, running via npm install
-        #- image: selenium/standalone-chrome-debug:2.53.1
+      - image: memcached
+        hostname: memcached
+        environment:
+          # Memcached memory limit in megabytes
+          - MEMCACHED_MEMORY_LIMIT=128
+        labels:
+          - traefik.enable=false
+        network_mode: bridge
+      - image: selenium/standalone-chrome-debug:2.53.1
+        hostname: browser
+        # This helps keep selenium-chrome from crashing because it uses shared memory.
+        ports:
+          - "5900"
+        volumes:
+          - /dev/shm:/dev/shm
+          # Project root folder mapping
+          - "../../:/var/www/"
+        links:
+          - web
+        environment:
+          # no_proxy="" required for default Docker For Mac system proxy that contains a space and prevents Selenium from loading.
+          - no_proxy=""
+        network_mode: bridge
+        labels:
+          - traefik.enable=false
+      - image: devinci/drupal-solr:3.x
+        hostname: solr
+        ports:
+          - "8983"
+        volumes:
+          - "./.docker/etc/solr/3.x:/var/lib/solr/conf"
+        labels:
+          - "traefik.frontend.rule=Host:${SLUG}-solr.${PROXY_DOMAIN}"
+        network_mode: bridge
+        
+        env_file:
+          - mysql.env
+            environment:
+              MYSQL_HOST: "127.0.0.1"
+              DATABASE_URL: "mysql://drupal:123@127.0.0.1:3306/drupal"
+              MYSQL_USER: "drupal"
+              MYSQL_PASSWORD: "123"
+              MYSQL_DATABASE: "drupal"
+          - image: circleci/mariadb:10.3.3-ram
+            command: --secure-file-priv='' --max-allowed-packet=128M --innodb-buffer-pool-size=256M
+            environment:
+              - MYSQL_ROOT_PASSWORD=
+              - MYSQL_USER=drupal
+              - MYSQL_PASSWORD=123
+              - MYSQL_DATABASE=drupal
+          # Selenium image won't start, running via npm install
+          #- image: selenium/standalone-chrome-debug:2.53.1
     steps:
       - restore_cache:
           keys:
