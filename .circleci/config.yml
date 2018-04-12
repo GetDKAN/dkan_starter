@@ -34,9 +34,10 @@ jobs:
       - run:
           name: Start container and verify it's working
           command: |
-						ahoy docker up
-						ahoy site setup
+            ahoy docker up
+            ahoy site setup
       - run:
           name: Run tests 
           command: |
-						ahoy site test 
+            ahoy site test 
+
