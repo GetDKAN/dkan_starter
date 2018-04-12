@@ -58,7 +58,7 @@ jobs:
       - run:
           name: Run tests 
           command: |
-						export AHOY_CMD_PROXY=DOCKER
+            export AHOY_CMD_PROXY=DOCKER
             ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh docroot/profiles/dkan/test
             ahoy cmd-proxy ruby dkan/.ahoy/.scripts/dkan-test.rb --skip-composer
 
