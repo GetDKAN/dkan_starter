@@ -107,7 +107,6 @@ jobs:
         labels:
           - "traefik.frontend.rule=Host:${SLUG}-solr.${PROXY_DOMAIN}"
         network_mode: bridge
-        
         env_file:
           - mysql.env
             environment:
@@ -116,15 +115,6 @@ jobs:
               MYSQL_USER: "drupal"
               MYSQL_PASSWORD: "123"
               MYSQL_DATABASE: "drupal"
-          - image: circleci/mariadb:10.3.3-ram
-            command: --secure-file-priv='' --max-allowed-packet=128M --innodb-buffer-pool-size=256M
-            environment:
-              - MYSQL_ROOT_PASSWORD=
-              - MYSQL_USER=drupal
-              - MYSQL_PASSWORD=123
-              - MYSQL_DATABASE=drupal
-          # Selenium image won't start, running via npm install
-          #- image: selenium/standalone-chrome-debug:2.53.1
     steps:
       - restore_cache:
           keys:
@@ -316,131 +306,12 @@ jobs:
       # Selenium image won't start, running via npm install
       #- image: selenium/standalone-chrome-debug:2.53.1
     steps:
-      - restore_cache:
-          keys:
-            - v1-dkan-{{ .Branch }}
-            - v1-dkan-test-vendor
-      # Selenium is already installed, run it
-      - run:
-          name: Run Selenium
-          command: |
-            sudo selenium-standalone start
-          background: true
-#################################
-#DKAN Starter Modifications BEGIN
-#################################
-      - run:
-          name: DKAN Starter Configuration
-          command: |
-            sudo sh -c "echo 'db 127.0.0.1' >> /etc/hosts"
-            sudo wget -O - https://install.perlbrew.pl | bash
-            ~/perl5/perlbrew/bin/perlbrew install-cpanm
-            sudo ~/perl5/perlbrew/bin/cpanm install Digest::HMAC_SHA1
-###############################
-#DKAN Starter Modifications END
-###############################
-      - checkout
-      - run: php -i
-      - run:
-          name: Setup Apache
-          command : |
-            sudo cp .circleci/tests/circle/circle.conf /etc/apache2/sites-available
-            sudo a2dissite 000-default
-            sudo a2ensite circle.conf
-            sudo a2enmod rewrite
-            sudo service apache2 restart
-
-      # Ahoy install in dkan-init.sh had problems detecting root user.
-      - run:
-          name: Install Ahoy
-          command: |
-            sudo wget -q https://github.com/devinci-code/ahoy/releases/download/1.1.0/ahoy-`uname -s`-amd64 -O /usr/local/bin/ahoy &&
-            sudo chmod +x /usr/local/bin/ahoy
-
-      ### Setup DKAN
-#################################
-#DKAN Starter Modifications BEGIN
-#################################
-      - run:
-          name: DKAN Initialization
-          command: |
-            #bash dkan-init.sh dkan --deps --build=$DATABASE_URL
-            bash dkan/dkan-init.sh dkan --deps-only
-            drush dl -n registry_rebuild-7.x
-            #ahoy drush --yes en dkan_harvest dkan_harvest_datajson dkan_harvest_dashboard
-            #ahoy drush cc all
-###############################
-#DKAN Starter Modifications END
-###############################
-      - run:
-          name: Server Router Background Server Task
-          command: ahoy dkan server
-          background: true
-      - run:
-          name: X11 VNC Background Server Task
-          command: x11vnc -forever -nopw
-          background: true
-
-#################################
-#DKAN Starter Modifications BEGIN
-#################################
-#      - run:
-#          name: Enable dkan_harvest_test and reinstall
-#          command: |
-#            ahoy drush en --yes dkan_harvest_test
-#            ahoy dkan reinstall --yes
-      - run:
-          name: DKAN Starter Site Up
-          command: |
-            ahoy site up --db-user=drupal --db-pass=123 --db-host=127.0.0.1 --db-name=drupal
-            ahoy utils fail-when-bad-disable
-###############################
-#DKAN Starter Modifications END
-###############################
-      - save_cache:
-          key: v1-dkan-{{ .Branch }}
-          paths:
-            - ~/.drush
-            - ~/.composer
-      - run:
-          name: Edit MySQL Configuration
-          command: |
-            mysql -uroot -e "grant FILE on *.* to 'drupal'@'%'"
-      - save_cache:
-          key: v1-dkan-test-vendor
-          paths:
-            - dkan/test/vendor
-# Uncomment for local testing to sleep before testing.
-#      - run:
-#          command: sleep 1d
-#          no_output_timeout: 1h
-
-      - run:
-          name: Run Parallel Behat Tests
-          command: |
-            mkdir -p $CIRCLE_ARTIFACTS/junit
-            BEHAT_FOLDER=/home/circleci/site_build/tests ruby dkan/.ahoy/.scripts/circle-behat.rb tests/features dkan/test/features tests/features dkan/test/features config/tests/features --tags='~@customizable&&~@fixme&&~@testBug'
-
-      # Lint only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
-      - run:
-          name: Run Lint
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-              ahoy dkan lint
-            fi
-      # Unit Tests only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
       - run:
           name: Run PHPUnit Tests
           command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-              ahoy dkan unittests
-            fi
+            ahoy dkan unittests
       - store_artifacts:
           path: ~/site_build/dkan/test/assets
-
-
-#Workflow to only run PHP 7 build if branch name contains php7
-#TODO - filter to run PHP71 on releases
 workflows:
   version: 2
   build_php5:
