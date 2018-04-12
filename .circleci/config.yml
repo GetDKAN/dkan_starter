@@ -37,7 +37,12 @@ jobs:
             export AHOY_CMD_PROXY=DOCKER
             env | grep AHOY
             ahoy docker up
-            ahoy site up
+            ahoy docker ps
+            ahoy cmd-proxy ls -l
+            ahoy cmd-proxy ls .ahoy/site
+            ahoy utils setup
+            ahoy site reinstall
+            ahoy ci deploy
       - run:
           name: Run tests 
           command: |
