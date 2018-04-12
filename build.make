@@ -45,7 +45,11 @@ projects:
   clamav:
     version: 1.x-dev
   seckit:
-    version: '1.9'
+	  download:
+      type: git
+      url: https://git.drupal.org/project/seckit.git
+      branch: 7.x-1.x
+      revision: 19843dc4bf7b92b054f9f38a964edbf8da4e9982
   dkan_acquia_expire:
     type: module
     download:

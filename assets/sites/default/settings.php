@@ -168,7 +168,8 @@ if (isset($data_config['seckit']) && $data_config['seckit']['enable']) {
   $seckit_ssl = array(
     'hsts' => $conf['default']['seckit']['hsts'],
     'hsts_max_age' => $conf['default']['seckit']['hsts_max_age'],
-    'hsts_sudomains' => $conf['default']['seckit']['hsts_subdomains'],
+    'hsts_subdomains' => $conf['default']['seckit']['hsts_subdomains'],
+    'hsts_preload' => $conf['default']['seckit']['hsts_preload'],
   );
 
   $conf['seckit_ssl'] = $seckit_ssl;

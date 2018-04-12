@@ -113,6 +113,7 @@ $conf = array (
       'hsts' => 1,
       'hsts_max_age' => '1000',
       'hsts_subdomains' => 0,
+      'hsts_preload' => 0,
     ),
     'stage_file_proxy_files' => 
     array (
