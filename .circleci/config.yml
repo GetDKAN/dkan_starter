@@ -36,7 +36,7 @@ jobs:
           name: Start container and verify it's working
           command: |
             ahoy docker up
-            ahoy site setup
+            ahoy site up
       - run:
           name: Run tests 
           command: |
