@@ -59,6 +59,5 @@ jobs:
           name: Run tests 
           command: |
             ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh
-            b64=`echo "payload: $input" | base64 $wrap 0`
-            ahoy cmd-proxy ruby dkan/.ahoy/.scripts/dkan-test.rb "$b64" --skip-composer
+            ahoy cmd-proxy ruby dkan/.ahoy/.scripts/dkan-test.rb --skip-composer
 
