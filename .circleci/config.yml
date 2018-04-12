@@ -31,6 +31,7 @@ jobs:
             wget -q https://github.com/devinci-code/ahoy/releases/download/1.1.0/ahoy-`uname -s`-amd64 -O /usr/local/bin/ahoy &&
             chmod +x /usr/local/bin/ahoy
             ahoy
+            export AHOY_CMD_PROXY=DOCKER
       - run:
           name: Start container and verify it's working
           command: |
