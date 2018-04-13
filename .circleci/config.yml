@@ -55,10 +55,15 @@ jobs:
             docker cp assets/sites/default/settings.docker.demo.php $(docker-compose ps -q cli):/var/www/docroot/sites/default/settings.docker.php
             ahoy site reinstall
             ahoy ci deploy
+            ahoy drush en -y dkan_dataset_rest_api 
+      - run:
+          name: Install Test Libs 
+          command: |
+            export AHOY_CMD_PROXY=DOCKER
+            ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh docroot/profiles/dkan/test
       - run:
           name: Run tests 
           command: |
             export AHOY_CMD_PROXY=DOCKER
-            ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh docroot/profiles/dkan/test
             ahoy cmd-proxy ruby dkan/.ahoy/.scripts/dkan-test.rb --skip-composer
 
