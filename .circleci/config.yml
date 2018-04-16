@@ -44,7 +44,6 @@ jobs:
           command: |
             cp dkan/.ahoy/docker-compose.common.yml docker-compose.yml
             cp dkan/.ahoy/mysql.env mysql.env 
-            export AHOY_CMD_PROXY=DOCKER
             ahoy docker up
             rm -rf dkan/.ahoy/.docker
             docker cp .ahoy $(docker-compose ps -q cli):/var/www
@@ -64,11 +63,9 @@ jobs:
       - run:
           name: Install Test Libs 
           command: |
-            export AHOY_CMD_PROXY=DOCKER
             ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh docroot/profiles/dkan/test
       - run:
           name: Run tests 
           command: |
-            export AHOY_CMD_PROXY=DOCKER
             ahoy cmd-proxy ruby dkan/.ahoy/.scripts/dkan-test.rb --skip-composer
 
