@@ -8,6 +8,7 @@ jobs:
     environment:
       TEST_RESULTS: /tmp/test-results
       AHOY_CMD_PROXY: DOCKER
+      CI: true
     steps:
       - checkout
       - setup_remote_docker
