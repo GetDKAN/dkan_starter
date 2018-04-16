@@ -67,6 +67,9 @@ jobs:
           command: |
             ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh docroot/profiles/dkan/test
       - run:
+          name: Run Parallel Behat Tests
+          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
+      - run:
           name: Run tests 
           command: |
             echo $(circleci tests split < ./dkan/test/features)
