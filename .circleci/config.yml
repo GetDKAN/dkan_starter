@@ -69,8 +69,7 @@ jobs:
       - run:
           name: Run tests 
           command: |
-            files=$(circleci tests split < ./dkan/test/features)
-            echo $files
-            bin/behat $files --colors --suite='dkan' --format='pretty' --out='std' --format='junit' --colors --tags='~@customizable&&~@fixme&&~@testBug' --colors --config=behat.circleci.yml
+            echo $(circleci tests split < ./dkan/test/features)
+            bin/behat $(circleci tests split < ./dkan/test/features) --colors --suite='dkan' --format='pretty' --out='std' --format='junit' --colors --tags='~@customizable&&~@fixme&&~@testBug' --colors --config=behat.circleci.yml
             # todo: --out='/tmp/circle-artifacts.AA2Qnid/junit'            
 
