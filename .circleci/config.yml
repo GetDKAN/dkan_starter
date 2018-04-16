@@ -16,7 +16,7 @@ jobs:
           command: |
             apt-get update
             apt-get upgrade -y
-            apt-get install curl wget -y
+            apt-get install curl wget ruby -y
       - run:
           name: Install Docker client
           command: |
@@ -70,9 +70,8 @@ jobs:
           name: Run Parallel Behat Tests
           command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
       - run:
-          name: Run tests 
+          name: Figure out cirlce tools 
           command: |
-            echo $(circleci tests split < ./dkan/test/features)
-            bin/behat $(circleci tests split < ./dkan/test/features) --colors --suite='dkan' --format='pretty' --out='std' --format='junit' --colors --tags='~@customizable&&~@fixme&&~@testBug' --colors --config=behat.circleci.yml
+            echo $(circleci tests split < dkan/test/features)
             # todo: --out='/tmp/circle-artifacts.AA2Qnid/junit'            
 
