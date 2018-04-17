@@ -45,10 +45,10 @@ jobs:
       - run:
           name: Start containers
           command: |
-            cp dkan/.ahoy/docker-compose.common.yml docker-compose.yml
-            cp dkan/.ahoy/mysql.env mysql.env 
+            #cp dkan/.ahoy/docker-compose.common.yml docker-compose.yml
+            #cp dkan/.ahoy/mysql.env mysql.env 
             # Adds circle envs. TODO: remove once we have our own base image.
-            cp dkan/.ahoy/circle.env .env
+            #cp dkan/.ahoy/circle.env .env
             ahoy docker up
             rm -rf dkan/.ahoy/.docker
             docker cp .ahoy $(docker-compose ps -q cli):/var/www
