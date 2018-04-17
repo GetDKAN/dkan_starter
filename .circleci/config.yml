@@ -51,16 +51,14 @@ jobs:
             #cp dkan/.ahoy/circle.env .env
             ahoy docker up
             rm -rf dkan/.ahoy/.docker
-            cli_id=$(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli)
-            echo $cli_id
-            docker cp .ahoy $cliId :/var/www
-            docker cp .ahoy.yml $cli_id:/var/www
-            docker cp docroot $cli_id:/var/www
-            docker cp config $cli_id::/var/www
-            docker cp assets $cli_id::/var/www
-            docker cp dkan $cli_id::/var/www
-            docker cp hooks $cli_id::/var/www
-            docker cp assets/sites/default/settings.docker.demo.php $cli_id:/var/www/docroot/sites/default/settings.docker.php
+            docker cp .ahoy $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
+            docker cp .ahoy.yml $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
+            docker cp docroot $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
+            docker cp config $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
+            docker cp assets $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
+            docker cp dkan $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
+            docker cp hooks $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
+            docker cp assets/sites/default/settings.docker.demo.php $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www/docroot/sites/default/settings.docker.php
       - run:
           name: Install DKAN 
           command: |
