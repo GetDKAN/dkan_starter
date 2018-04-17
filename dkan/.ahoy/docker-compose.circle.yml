@@ -3,5 +3,5 @@ version: "2"
 services:
   cli:
     environment:
-      - CI=TRUE
-      - CIRCLECI=TRUE
+      - CI=true
+      - CIRCLECI=true
