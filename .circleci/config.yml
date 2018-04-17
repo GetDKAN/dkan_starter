@@ -51,8 +51,8 @@ jobs:
             #cp dkan/.ahoy/circle.env .env
             ahoy docker up
             rm -rf dkan/.ahoy/.docker
-						cli_id=$(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli)
-						echo $cli_id
+            cli_id=$(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli)
+            echo $cli_id
             docker cp .ahoy $cliId :/var/www
             docker cp .ahoy.yml $cli_id:/var/www
             docker cp docroot $cli_id:/var/www
