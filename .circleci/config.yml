@@ -45,20 +45,18 @@ jobs:
       - run:
           name: Start containers
           command: |
-            #cp dkan/.ahoy/docker-compose.common.yml docker-compose.yml
-            #cp dkan/.ahoy/mysql.env mysql.env 
-            # Adds circle envs. TODO: remove once we have our own base image.
-            #cp dkan/.ahoy/circle.env .env
+            cp dkan/.ahoy/docker-compose.common.yml docker-compose.yml
+            cp dkan/.ahoy/mysql.env mysql.env 
             ahoy docker up
             rm -rf dkan/.ahoy/.docker
-            docker cp .ahoy $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
-            docker cp .ahoy.yml $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
-            docker cp docroot $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
-            docker cp config $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
-            docker cp assets $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
-            docker cp dkan $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
-            docker cp hooks $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www
-            docker cp assets/sites/default/settings.docker.demo.php $(docker-compose ps -f dkan/.ahoy/docker-compose.common.yml -q cli):/var/www/docroot/sites/default/settings.docker.php
+            docker cp .ahoy $(docker-compose ps -q cli):/var/www
+            docker cp .ahoy.yml $(docker-compose ps -q cli):/var/www
+            docker cp docroot $(docker-compose ps -q cli):/var/www
+            docker cp config $(docker-compose ps -q cli):/var/www
+            docker cp assets $(docker-compose ps -q cli):/var/www
+            docker cp dkan $(docker-compose ps -q cli):/var/www
+            docker cp hooks $(docker-compose ps -q cli):/var/www
+            docker cp assets/sites/default/settings.docker.demo.php $(docker-compose ps -q cli):/var/www/docroot/sites/default/settings.docker.php
       - run:
           name: Install DKAN 
           command: |
