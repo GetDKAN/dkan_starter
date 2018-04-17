@@ -1,3 +1,0 @@
-# DKAN Topics
-
-See documentation.

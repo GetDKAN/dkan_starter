@@ -1,6 +1,0 @@
-name = DKAN Datastore API
-description = Access datastore info over json.
-package = DKAN API
-core = 7.x
-dependencies[] = services
-
