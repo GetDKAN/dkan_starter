@@ -233,10 +233,6 @@ commands:
         PROXY_CONF="-f dkan/.ahoy/docker-compose.noproxy.yml"
       fi;
 
-      if [ ! -z "$CI" ]; then
-        CI_CONF="-f dkan/.ahoy/docker-compose.circle.yml"
-      fi;
-
       if [ ! -z "$AHOY_DOCKER_SYNC" ]; then
         export SLUG=$(ahoy docker get-slug)
         VOLUME_CONF="dkan/.ahoy/docker-compose.docker-sync.yml"
@@ -253,7 +249,7 @@ commands:
         PROXY_DOMAIN=$(ahoy get-proxy-domain)
       fi
       export PROXY_DOMAIN=$PROXY_DOMAIN
-      docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF $PROXY_CONF $CI_CONF -p "${PWD##*/}" {{args}}
+      docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF $PROXY_CONF -p "${PWD##*/}" {{args}}
     usage: Abstraction for docker-compose
   web-host:
     cmd: |

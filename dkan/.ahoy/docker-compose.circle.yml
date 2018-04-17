@@ -1,7 +1,0 @@
-# Let's our cli container know we are using circle.
-version: "2"
-services:
-  cli:
-    environment:
-      - CI=true
-      - CIRCLECI=true
