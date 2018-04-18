@@ -24,8 +24,8 @@ jobs:
     steps:
       - restore_cache:
           keys:
-            - v1-dkan-{{ .Branch }}
-            - v1-dkan-test-vendor
+            - v1-dkan-just-start-over-{{ .Branch }}
+            - v1-dkan-new-cache-please-test-vendor
       - run:
           name: Install Selenium
           command: |
@@ -43,7 +43,7 @@ jobs:
           command: sudo apt-get update
       - run:
           name: Install Packages
-          command: sudo apt-get install -y ruby libpng-dev libmcrypt-dev mysql-client x11vnc
+          command: sudo apt-get install -y ruby libpng-dev libmcrypt-dev mysql-client x11vnc google-chrome-stable
 
 #Available Extensions:
 #bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mcrypt mssql mysql mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets spl standard sybase_ct sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zip
@@ -118,23 +118,28 @@ jobs:
           key: v1-dkan-test-vendor
           paths:
             - dkan/test/vendor
+      # - run:
+      #     name: Run Parallel Behat Tests
+      #     command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
+      # # Lint only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
+      # - run:
+      #     name: Run Lint
+      #     command: |
+      #       if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
+      #         ahoy dkan lint
+      #       fi
+      # # Unit Tests only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
+      # - run:
+      #     name: Run PHPUnit Tests
+      #     command: |
+      #       if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
+      #         ahoy dkan unittests
+      #       fi
       - run:
-          name: Run Parallel Behat Tests
-          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
-      # Lint only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
-      - run:
-          name: Run Lint
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-              ahoy dkan lint
-            fi
-      # Unit Tests only on 1st parallel instance. Deploy: blocks until parallelism is done, so doing it this way.
-      - run:
-          name: Run PHPUnit Tests
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-              ahoy dkan unittests
-            fi
+          name: Do nothing for local testing
+          no_output_timeout: 6h
+          command: sleep 6000
+
       - store_artifacts:
           path: ~/site_build/dkan/test/assets
   build_php71:

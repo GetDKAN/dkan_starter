@@ -7,6 +7,8 @@ default:
       base_url: "http://127.0.0.1:8888"
       selenium2:
         wd_host: "http://127.0.0.1:4444/wd/hub"
+        capabilities:
+            marionette: null
     Drupal\DrupalExtension:
       drupal:
         drupal_root: "%paths.base%/../../docroot"

@@ -1,0 +1,77 @@
+version: 2
+jobs:
+  build:
+    parallelism: 4
+    docker:
+      - image: ubuntu:16.04 
+    working_directory: /go/src/github.com/dkan_starter
+    environment:
+      TEST_RESULTS: /tmp/test-results
+      AHOY_CMD_PROXY: DOCKER
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Updates etc 
+          command: |
+            apt-get update
+            apt-get upgrade -y
+            apt-get install curl wget ruby -y
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: Install Docker Compose
+          command: |
+            set -x
+            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+      - run:
+          name: Install Ahoy
+          command: |
+            wget -q https://github.com/devinci-code/ahoy/releases/download/1.1.0/ahoy-`uname -s`-amd64 -O /usr/local/bin/ahoy &&
+            chmod +x /usr/local/bin/ahoy
+            ahoy
+      - run:
+          name: Install CircleCI CLI
+          command: |
+            curl -o /usr/local/bin/circleci https://circle-downloads.s3.amazonaws.com/releases/build_agent_wrapper/circleci && chmod +x /usr/local/bin/circleci
+      - run:
+          name: Start containers
+          command: |
+            cp dkan/.ahoy/docker-compose.common.yml docker-compose.yml
+            cp dkan/.ahoy/mysql.env mysql.env 
+            ahoy docker up
+            rm -rf dkan/.ahoy/.docker
+            docker cp .ahoy $(docker-compose ps -q cli):/var/www
+            docker cp .ahoy.yml $(docker-compose ps -q cli):/var/www
+            docker cp docroot $(docker-compose ps -q cli):/var/www
+            docker cp config $(docker-compose ps -q cli):/var/www
+            docker cp assets $(docker-compose ps -q cli):/var/www
+            docker cp dkan $(docker-compose ps -q cli):/var/www
+            docker cp hooks $(docker-compose ps -q cli):/var/www
+            docker cp assets/sites/default/settings.docker.demo.php $(docker-compose ps -q cli):/var/www/docroot/sites/default/settings.docker.php
+      - run:
+          name: Install DKAN 
+          command: |
+            ahoy site reinstall
+            ahoy ci deploy
+            ahoy drush en -y dkan_dataset_rest_api 
+      - run:
+          name: Install Test Libs 
+          command: |
+            ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh docroot/profiles/dkan/test
+      - run:
+          name: Run Parallel Behat Tests
+          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features
+      - run:
+          name: Figure out cirlce tools 
+          command: |
+            echo $(circleci tests split < dkan/test/features)
+            # todo: --out='/tmp/circle-artifacts.AA2Qnid/junit'            
+

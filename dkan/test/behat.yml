@@ -134,8 +134,9 @@ default:
         guzzle_parameters:
           verify: false
 
-      selenium2: []
-
+      selenium2:
+        capabilities:
+          marionette: null
       default_session: "goutte"
       javascript_session: "selenium2"
       browser_name: chrome

@@ -1,5 +1,8 @@
 # Change log
 
+## [1.14.0.1]
+- Updated CircleCI to v2 #476
+
 ## [1.14.0.0]
 - Add admin_views to features master in data_config
 

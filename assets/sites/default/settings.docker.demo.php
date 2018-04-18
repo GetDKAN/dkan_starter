@@ -24,7 +24,7 @@ if (getenv('DB_1_ENV_MYSQL_DATABASE') != FALSE || getenv('MYSQL_DATABASE') != FA
   // Define our environment to use.
   if (getenv('CI')) {
     // On circleCI, use the testing environment.
-    define('ENVIRONMENT', 'testing');
+    define('ENVIRONMENT', 'test');
   }
   else {
     // Everywhere else, use the local environment.

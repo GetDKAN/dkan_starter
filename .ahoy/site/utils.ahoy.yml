@@ -17,7 +17,7 @@ commands:
 
       if [ "$CI" = "true" ]; then
         # Drush alias points to /var/www/docroot so we need this here.
-        sudo ln -sf $HOME/$CIRCLE_PROJECT_REPONAME/docroot /var/www/docroot
+        sudo ln -sf /home/circleci/site_build/docroot /var/www/docroot
       fi
 
       if [ "$AHOY_CMD_PROXY" == "DOCKER" ]; then
