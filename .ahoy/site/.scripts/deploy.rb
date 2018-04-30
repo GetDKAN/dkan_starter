@@ -17,8 +17,9 @@ puts "Clearing caches"
 
 puts "Checking drupal boostrap."
 drupal=`drush @#{drush_alias} status | grep -e "Drupal bootstrap" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'`
+puts drupal
 
-if  drupal =~ /Successful/
+if  drupal =~ /"Successful"/
   puts "Installation detected, running deploy script"
   `drush @#{drush_alias} en custom_config -y`
   `drush @#{drush_alias} cc all`
@@ -41,7 +42,7 @@ else
 end
 
 # Extra non-acquia steps.
-if target_env  =~ /local/
+if target_env  =~ /"local"/
   `ahoy dkan create-qa-users`
 
   password = CONFIG["private"]["probo"]["password"]
