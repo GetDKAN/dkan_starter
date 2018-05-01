@@ -1,13 +1,32 @@
 <?php
 require_once "util.php";
+require_once "vendor/autoload.php";
 
 echoe("Running dkan-get");
+
+$exit_message = "";
 
 if (isset($argv[1])) {
   $dkan_version = $argv[1];
 }
 else {
-  throw new \Exception("The first argument should be the dkan version.");
+  $config_file = "dktl.yaml";
+  if (file_exists($config_file)) {
+    $config = Symfony\Component\Yaml\Yaml::parse(file_get_contents($config_file));
+    if (isset($config['DKAN Version'])) {
+      $dkan_version = $config['DKAN Version'];
+    }
+    else {
+      $exit_message = "DKAN version is not set in {$config_file}";
+    }
+  }
+  else {
+    $exit_message = "The first argument should be the dkan version.";
+  }
+}
+
+if (!empty($exit_message)) {
+  throw new \Exception($exit_message);
 }
 
 $file_name = "{$dkan_version}.tar.gz";
@@ -60,5 +79,13 @@ if (!file_exists($dkan)) {
 }
 else {
   echoe("Got {$dkan}");
+}
+
+if (!file_exists("./docroot/profiles/dkan")) {
+  `cp -r ./dkan ./docroot/profiles/`;
+
+}
+else {
+  echoe("Either DKAN is already in docroot, or Drupal has not been installed.");
 }
 

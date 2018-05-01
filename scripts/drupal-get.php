@@ -1,5 +1,6 @@
 <?php
 require_once "util.php";
+require_once "vendor/autoload.php";
 
 echoe("Running drupal-get");
 
@@ -7,7 +8,23 @@ if (isset($argv[1])) {
   $drupal_version = $argv[1];
 }
 else {
-  throw new \Exception("The first argument should be the drupal version.");
+  $config_file = "dktl.yaml";
+  if (file_exists($config_file)) {
+    $config = Symfony\Component\Yaml\Yaml::parse(file_get_contents($config_file));
+    if (isset($config['Drupal Version'])) {
+      $drupal_version = $config['Drupal Version'];
+    }
+    else {
+      $exit_message = "Drupal Version is not set in {$config_file}";
+    }
+  }
+  else {
+    $exit_message = "The first argument should be the Drupal Version.";
+  }
+}
+
+if (!empty($exit_message)) {
+  throw new \Exception($exit_message);
 }
 
 $file_name = "drupal-{$drupal_version}.tar.gz";

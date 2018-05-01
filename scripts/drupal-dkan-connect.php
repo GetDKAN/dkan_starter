@@ -1,18 +1,6 @@
 <?php
 require_once "util.php";
 
-if (file_exists("dkan") && file_exists("docroot")) {
-  if (!file_exists("docroot/profiles/dkan")) {
-    `cd docroot/profiles && ln -s ../../dkan dkan`;
-  }
-  else {
-    echoe("DKAN symlink exists.");
-  }
-}
-else {
-  echoe("Either DKAN or Drupal are not present.");
-}
-
 if (!file_exists("docroot/sites/default/settings.php")) {
   `cp ./docroot/sites/default/default.settings.php ./docroot/sites/default/settings.php`;
   if (file_exists("docroot/sites/default/settings.php")) {
