@@ -41,7 +41,7 @@ fi
 
 export PROXY_DOMAIN=$PROXY_DOMAIN
 
-docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF $PROXY_CONF -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY exec cli composer --working-dir=/dktl install
+docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF $PROXY_CONF -f $DKTL_CURRENT_DIRECTORY/custom/docker-compose.custom.yml -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY exec cli composer --working-dir=/dktl install
 
 if [ $1 = "docker-compose" ]
 then
