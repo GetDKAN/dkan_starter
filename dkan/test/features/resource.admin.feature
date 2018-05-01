@@ -96,7 +96,7 @@ Feature: Resource
     And I wait for "Delete Items"
     Then "Resource 02" should have datastore records
 
-  @noworkflow @datastore @javascript
+  @noworkflow @datastore @javascript @fixme
   Scenario: Delete items on datastore of any resource
     # Backgorund steps to add a file to a resource
     Given I am logged in as "John"
