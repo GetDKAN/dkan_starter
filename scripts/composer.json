@@ -1,0 +1,12 @@
+{
+    "name": "fmizzell/dkan_starter",
+    "require": {
+        "symfony/yaml": "^3.4"
+    },
+    "authors": [
+        {
+            "name": "fmizzell",
+            "email": "fmizzell@1312210.no-reply.drupal.org"
+        }
+    ]
+}
