@@ -29,7 +29,7 @@ function entity_path_schema() {
       'cid' => array(
         'type' => 'serial',
         'unsigned' => TRUE,
-        'not null' => TRUE,
+        'not null' => FALSE,
         'description' => 'The primary identifier for a entity_path configuration set.',
       ),
       'instance' => array(
@@ -107,17 +107,4 @@ function entity_path_update_7101() {
   }
 
   return t('You now can specify query and fragment in your entity path configurations.');
-}
-
-/**
- * Updates cid for MySQL 5.7 compatibility.
- */
-function entity_path_update_7102() {
-  $cid = array(
-    'type' => 'serial',
-    'unsigned' => TRUE,
-    'not null' => TRUE,
-    'description' => 'The primary identifier for a entity_path configuration set.',
-  );
-  db_change_field('entity_path_config', 'cid', 'cid', $cid);
 }
