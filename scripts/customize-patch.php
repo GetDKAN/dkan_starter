@@ -1,8 +1,6 @@
 <?php
 require_once "util.php";
 
-`cp -Rn custom/docroot/* docroot/`;
-
 if (file_exists("./custom/diffs")) {
   $directories[] = "./custom/diffs";
 
