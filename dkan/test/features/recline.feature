@@ -97,7 +97,7 @@ Feature: Recline
     Given I press "Graph"
     Then I should see "There's no graph here yet"
 
-  @javascript @noworkflow
+  @javascript @noworkflow @fixme
   Scenario: Searching data
     Given I am logged in as "John"
     And I am on "/dataset/dataset-01"
