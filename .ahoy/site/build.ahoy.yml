@@ -34,22 +34,19 @@ commands:
   remake:
     usage: Rebuild all the dkan projects from the build.make file.
     cmd: |
-      set -e
-      AHOY_CMD_PROXY=''
       DIRNAME=${PWD##*/}
       # IF this is dkan_starter
       if [[ "$DIRNAME" == "dkan_starter" ]]; then
         # Building in a new directory
         # drush make is stupid, delete docroot_new just in case
-        rm -rf docroot_new
+        ahoy cmd-proxy rm -rf docroot_new
         ahoy drush -y make build.make --no-recursion --no-cache --verbose docroot_new
-        rm -rf docroot
-        mv docroot_new docroot
+        ahoy cmd-proxy rm -rf docroot
+        ahoy cmd-proxy mv docroot_new docroot
         # Move dkan folder from docroot/profiles to base folder
-        mv dkan dkan_old
-        mv docroot/profiles/dkan ./
-        ln -s ../../dkan docroot/profiles/dkan
-        rm -rf dkan_old
+        ahoy cmd-proxy mv "dkan dkan_old; mv docroot/profiles/dkan ./"
+        ahoy cmd-proxy ln "-s ../../dkan docroot/profiles/dkan"
+        ahoy cmd-proxy rm "-rf dkan_old"
         # No recursive prevents dkan build to happen. Run it now from dkan remake.
         ahoy dkan remake
       fi
@@ -125,35 +122,35 @@ commands:
     usage: Runs (what used to be buildmanager) post build commands.
     cmd: |
       # Setup a folder for contrib modules and themes.
-      mkdir -p docroot/sites/all/modules/contrib
-      mkdir -p docroot/sites/all/themes/contrib
+      ahoy cmd-proxy "mkdir -p docroot/sites/all/modules/contrib"
+      ahoy cmd-proxy "mkdir -p docroot/sites/all/themes/contrib"
       # Replace the default .htaccess file with our own that includes a working non-www to www example for acquia.
       if [ -f config/.htaccess ]; then
-        rm -rf docroot/.htaccess
-        ln -s ../config/.htaccess docroot/.htaccess
+        ahoy cmd-proxy "rm -rf docroot/.htaccess"
+        ahoy cmd-proxy "ln -s ../config/.htaccess docroot/.htaccess"
       fi
       # Replace sites/default with our own sites/default outside of the drupal root.
-      rm -rf docroot/sites/default;
-      ln -s ../../assets/sites/default docroot/sites/default
+      ahoy cmd-proxy "rm -rf docroot/sites/default;"
+      ahoy cmd-proxy "ln -s ../../assets/sites/default docroot/sites/default"
       # Add .htaccess to the files directory if it does not exist.
       if [ ! -f docroot/sites/default/files/.htaccess ]; then
-        ln -s ../../config/files/.htaccess docroot/sites/default/files/.htaccess
+        ahoy cmd-proxy "ln -s ../../config/files/.htaccess docroot/sites/default/files/.htaccess"
       fi
       # Clean out any .gitignore files imported from other modules, libraries, and profiles.
-      find dkan -type f -name .gitignore -exec rm -rf {} \;
-      find dkan -type d -name .git -exec rm -rf {} \;
-      find docroot/sites/all -type f -name .gitignore -exec rm -rf {} \;
-      find docroot/sites/all -type d -name .git -exec rm -rf {} \;
+      ahoy cmd-proxy "find dkan -type f -name .gitignore -exec rm -rf {} \;"
+      ahoy cmd-proxy "find dkan -type d -name .git -exec rm -rf {} \;"
+      ahoy cmd-proxy "find docroot/sites/all -type f -name .gitignore -exec rm -rf {} \;"
+      ahoy cmd-proxy "find docroot/sites/all -type d -name .git -exec rm -rf {} \;"
       # Setup custom modules folder outside of the drupal root.
-      rm -rf docroot/sites/all/modules/custom
-      rm -rf docroot/sites/all/modules/data_config
-      ln -s ../../../../assets/modules/data_config docroot/sites/all/modules/data_config
-      ln -s ../../../../config/modules/custom docroot/sites/all/modules/custom
-      ln -s ../../../../config/themes/custom docroot/sites/all/themes/custom
+      ahoy cmd-proxy "rm -rf docroot/sites/all/modules/custom"
+      ahoy cmd-proxy "rm -rf docroot/sites/all/modules/data_config"
+      ahoy cmd-proxy "ln -s ../../../../assets/modules/data_config docroot/sites/all/modules/data_config"
+      ahoy cmd-proxy "ln -s ../../../../config/modules/custom docroot/sites/all/modules/custom"
+      ahoy cmd-proxy "ln -s ../../../../config/themes/custom docroot/sites/all/themes/custom"
       # Remove README/INSTALL files for security reasons CIVIC-3122
-      find ./docroot -type f -name "README*" -exec rm -f {} \;
-      find ./docroot -type f -name "INSTALL*" -exec rm -f {} \;
-      find ./docroot -type f -name "CHANGELOG*" -exec rm -rf {} \;
+      ahoy cmd-proxy find ./docroot -type f -name "README*" -exec rm -f {} \;
+      ahoy cmd-proxy find ./docroot -type f -name "INSTALL*" -exec rm -f {} \;
+      ahoy cmd-proxy find ./docroot -type f -name "CHANGELOG*" -exec rm -rf {} \;
       if [ "$(ahoy custom | grep post-build)" != '' ]
       then
         ahoy custom post-build

@@ -55,34 +55,3 @@ commands:
 
   ci:
     usage: A series of commands to handle ci setup
-    import: .ahoy/site/ci.ahoy.yml
-    hide: true
-
-  tools:
-    usage: A series of commands to setup dev tools
-    import: .ahoy/site/tools.ahoy.yml
-    hide: true
-
-  debug:
-    usage: A series of commands to setup debugging
-    import: .ahoy/site/debug.ahoy.yml
-    hide: true
-
-  launch-checklist:
-    usage: A series of commands to handle pre launch checks
-    import: .ahoy/site/launch-checklist.ahoy.yml
-    hide: true
-
-  site:
-    usage: A series of commands for site development
-    import: .ahoy/site/site.ahoy.yml
-
-  utils:
-    hide: true
-    usage: A series of helper commands (hide the details)
-    import: .ahoy/site/utils.ahoy.yml
-
-  remote:
-    usage: A series of commands for site remote management
-    import: .ahoy/site/remote.ahoy.yml
-    hide: true
