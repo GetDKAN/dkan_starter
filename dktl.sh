@@ -27,8 +27,17 @@ which docker-compose || (echo "you don't seem to have docker-compose installed. 
 export AHOY_CMD_PROXY=DOCKER
 
 DOCKER_COMPOSE_COMMON_CONF="$DKTL_DIRECTORY/docker/docker-compose.common.yml"
-PROXY_CONF="-f $DKTL_DIRECTORY/docker/docker-compose.noproxy.yml"
+PROXY_CONF="$DKTL_DIRECTORY/docker/docker-compose.noproxy.yml"
 VOLUME_CONF="$DKTL_DIRECTORY/docker/docker-compose.nosync.yml"
+CUSTOM_CONF="$DKTL_CURRENT_DIRECTORY/custom/docker-compose.custom.yml"
+
+BASE_DOCKER_COMPOSE_COMMAND="docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF -f $PROXY_CONF -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY"
+
+if [ -f $CUSTOM_CONF ]; then
+    BASE_DOCKER_COMPOSE_COMMAND="docker-compose -f $CUSTOM_CONF -f $VOLUME_CONF -f $PROXY_CONF -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY"
+fi
+
+echo "DOCKER COMPOSE COMMAND: ${BASE_DOCKER_COMPOSE_COMMAND}"
 
 #Check for proxy container, get domain from that.
 PROXY_DOMAIN=`docker inspect proxy 2> /dev/null | grep docker.domain | tr -d ' ",-' | cut -d \= -f 2 | head -1`
@@ -41,22 +50,21 @@ fi
 
 export PROXY_DOMAIN=$PROXY_DOMAIN
 
-docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF $PROXY_CONF -f $DKTL_CURRENT_DIRECTORY/custom/docker-compose.custom.yml -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY exec cli composer --working-dir=/dktl install
-
 if [ $1 = "docker-compose" ]
 then
-    docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF $PROXY_CONF -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY ${@:2}
+    $BASE_DOCKER_COMPOSE_COMMAND ${@:2}
 else
     script_file=$1.php
-    script_file_exists=$(docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF $PROXY_CONF -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY exec cli ls /dktl | grep $script_file)
+    script_file_exists=$(docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF -f $PROXY_CONF -f $CUSTOM_CONF -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY exec cli ls /dktl | grep $script_file)
     echo $script_file_exists
 
-    docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF $PROXY_CONF -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY up -d
+    $BASE_DOCKER_COMPOSE_COMMAND up -d
     if [ -n "$script_file_exists" ]
     then
-        docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF $PROXY_CONF -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY exec cli php /dktl/$script_file ${@:2}
+        $BASE_DOCKER_COMPOSE_COMMAND exec cli composer --working-dir=/dktl install
+        $BASE_DOCKER_COMPOSE_COMMAND exec cli php /dktl/$script_file ${@:2}
     else
-        docker-compose -f $DOCKER_COMPOSE_COMMON_CONF -f $VOLUME_CONF $PROXY_CONF -p "${SLUG}" --project-directory $DKTL_CURRENT_DIRECTORY exec cli $@
+        $BASE_DOCKER_COMPOSE_COMMAND exec cli $@
     fi
 fi
 
