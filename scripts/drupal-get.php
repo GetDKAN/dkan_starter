@@ -2,79 +2,79 @@
 require_once "util.php";
 require_once "vendor/autoload.php";
 
+use \DkanTools\Configuration;
+
 echoe("Running drupal-get");
 
 if (isset($argv[1])) {
   $drupal_version = $argv[1];
 }
 else {
-  $config_file = "dktl.yaml";
-  if (file_exists($config_file)) {
-    $config = Symfony\Component\Yaml\Yaml::parse(file_get_contents($config_file));
-    if (isset($config['Drupal Version'])) {
-      $drupal_version = $config['Drupal Version'];
-    }
-    else {
-      $exit_message = "Drupal Version is not set in {$config_file}";
-    }
-  }
-  else {
-    $exit_message = "The first argument should be the Drupal Version.";
-  }
+  $config = new Configuration();
+  $drupal_version = $config->getDrupalVersion();
 }
 
-if (!empty($exit_message)) {
-  throw new \Exception($exit_message);
-}
+get_drupal_archive($drupal_version);
 
-$file_name = "drupal-{$drupal_version}.tar.gz";
-$destination_folder = ".";
-$temp_folder = "/tmp";
-$archive = "{$temp_folder}/{$file_name}";
-$archive_copy = "{$destination_folder}/{$file_name}";
-$archive_decompressed = "{$destination_folder}/drupal-{$drupal_version}";
-$drupal = "{$destination_folder}/docroot";
+decompress_drupal_archive($drupal_version);
 
-$urls = [
-  "https://ftp.drupal.org/files/projects/{$file_name}",
-];
+copy_drupal_as_docroot($drupal_version);
 
-foreach ($urls as $url) {
+function get_drupal_archive($drupal_version) {
+  prepare_tmp();
+
+  $file_name = "drupal-{$drupal_version}.tar.gz";
+
+  $archive = TMP_DIR . "/{$file_name}";
   $got_drupal = file_exists($archive);
-  echoe("Got Drupal .tar.gz: " . bool_to_str($got_drupal));
-
   if ($got_drupal) {
-    break;
+    echoe("Got Drupal .tar.gz: " . bool_to_str($got_drupal));
+    return;
   }
 
-  if (!$got_drupal && url_exists($url)) {
-    echoe("Getting Drupal from {$url}");
-    `wget -O {$archive} {$url}`;
-    break;
+  $source = "https://ftp.drupal.org/files/projects/{$file_name}";
+
+  if (url_exists($source)) {
+    echoe("Getting Drupal from {$source}");
+    `wget -O {$archive} {$source}`;
   }
   else {
-    echoe("{$url} does not exist.");
+    throw new \Exception("Could not get Drupal at {$source}");
   }
 }
 
-if (!file_exists($archive_copy)) {
-  `cp {$archive} {$destination_folder}`;
-}
-else {
-  echoe("Got {$archive_copy}");
+function decompress_drupal_archive($drupal_version) {
+  $file_name = "drupal-{$drupal_version}.tar.gz";
+  $archive = TMP_DIR . "/{$file_name}";
+  $decompressed = TMP_DIR . "/drupal-{$drupal_version}";
+
+  if (file_exists($decompressed)) {
+    echoe("Got {$decompressed}");
+    return;
+  }
+
+  if (file_exists($archive)) {
+    $tmp = TMP_DIR;
+    `tar -xzvf {$archive} -C {$tmp}`;
+  }
+  else {
+    throw new \Exception("The Drupal archive {$archive} does not exist.");
+  }
 }
 
-if (!file_exists($archive_decompressed)) {
-  `tar -xzvf {$archive_copy}`;
-}
-else {
-  echoe("Got {$archive_decompressed}");
-}
+function copy_drupal_as_docroot($drupal_version) {
+  $drupal = "docroot";
+  $decompressed = TMP_DIR . "/drupal-{$drupal_version}";
 
-if (!file_exists($drupal)) {
-  `cp -r {$archive_decompressed} docroot`;
-}
-else {
-  echoe("Got {$drupal}");
-}
+  if (file_exists($drupal)) {
+    echoe("Got {$drupal}");
+    return;
+  }
 
+  if (file_exists($decompressed)) {
+    `cp -r {$decompressed} {$drupal}`;
+  }
+  else {
+    throw new \Exception("Drupal not found at {$decompressed}");
+  }
+}

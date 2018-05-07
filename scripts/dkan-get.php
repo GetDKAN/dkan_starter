@@ -2,6 +2,8 @@
 require_once "util.php";
 require_once "vendor/autoload.php";
 
+use DkanTools\Configuration;
+
 echoe("Running dkan-get");
 
 $exit_message = "";
@@ -10,82 +12,85 @@ if (isset($argv[1])) {
   $dkan_version = $argv[1];
 }
 else {
-  $config_file = "dktl.yaml";
-  if (file_exists($config_file)) {
-    $config = Symfony\Component\Yaml\Yaml::parse(file_get_contents($config_file));
-    if (isset($config['DKAN Version'])) {
-      $dkan_version = $config['DKAN Version'];
-    }
-    else {
-      $exit_message = "DKAN version is not set in {$config_file}";
-    }
-  }
-  else {
-    $exit_message = "The first argument should be the dkan version.";
-  }
+  $config = new Configuration();
+  $dkan_version = $config->getDkanVersion();
 }
 
-if (!empty($exit_message)) {
-  throw new \Exception($exit_message);
+if (!file_exists('docroot')) {
+  throw new \Exception("Drupal needs to be present before getting DKAN.");
 }
 
-$file_name = "{$dkan_version}.tar.gz";
-$destination_folder = ".";
-$temp_folder = "/tmp";
-$archive = "{$temp_folder}/{$file_name}";
-$archive_copy = "{$destination_folder}/{$file_name}";
-$archive_decompressed = "{$destination_folder}/dkan-{$dkan_version}";
-$dkan = "{$destination_folder}/dkan";
+get_dkan_archive($dkan_version);
 
-$urls = [
-  "https://github.com/GetDKAN/dkan/releases/download/{$dkan_version}/{$file_name}",
-  "https://github.com/GetDKAN/dkan/archive/{$file_name}",
-];
+decompress_dkan_archive($dkan_version);
 
-foreach ($urls as $url) {
+copy_dkan_to_drupal_profiles($dkan_version);
+
+function get_dkan_archive($dkan_version) {
+  prepare_tmp();
+
+  $file_name = "{$dkan_version}.tar.gz";
+
+  $archive = TMP_DIR . "/dkan-{$file_name}";
   $got_dkan = file_exists($archive);
-  echoe("Got DKAN .tar.gz: " . bool_to_str($got_dkan));
-
   if ($got_dkan) {
-    break;
+    echoe("Got DKAN .tar.gz: " . bool_to_str($got_dkan));
+    return;
   }
 
-  if (!$got_dkan && url_exists($url)) {
-    echoe("Getting DKAN from {$url}");
-    `wget -O {$archive} {$url}`;
-    break;
+  $sources = [
+    "https://github.com/GetDKAN/dkan/releases/download/{$dkan_version}/{$file_name}",
+    "https://github.com/GetDKAN/dkan/archive/{$file_name}",
+  ];
+
+  $source = NULL;
+  foreach ($sources as $s) {
+    if (url_exists($s)) {
+      $source = $s;
+      break;
+    }
+  }
+
+  if (!isset($source)) {
+    throw new \Exception("Could not get DKAN at {$source}");
+  }
+
+  echoe("Getting DKAN from {$source}");
+  `wget -O {$archive} {$source}`;
+}
+
+function decompress_dkan_archive($dkan_version) {
+  $file_name = "{$dkan_version}.tar.gz";
+  $archive = TMP_DIR . "/dkan-{$file_name}";
+  $decompressed = TMP_DIR . "/dkan-{$dkan_version}";
+
+  if (file_exists($decompressed)) {
+    echoe("Got {$decompressed}");
+    return;
+  }
+
+  if (file_exists($archive)) {
+    $tmp = TMP_DIR;
+    `tar -xzvf {$archive} -C {$tmp}`;
   }
   else {
-    echoe("{$url} does not exist.");
+    throw new \Exception("The DKAN archive {$archive} does not exist.");
   }
 }
 
-if (!file_exists($archive_copy)) {
-  `cp {$archive} {$destination_folder}`;
-}
-else {
-  echoe("Got {$archive_copy}");
-}
+function copy_dkan_to_drupal_profiles($dkan_version) {
+  $dkan = "docroot/profiles/dkan";
+  $decompressed = TMP_DIR . "/dkan-{$dkan_version}";
 
-if (!file_exists($archive_decompressed)) {
-  `tar -xzvf {$archive_copy}`;
-}
-else {
-  echoe("Got {$archive_decompressed}");
-}
+  if (file_exists($dkan)) {
+    echoe("Got {$dkan}");
+    return;
+  }
 
-if (!file_exists($dkan)) {
-  `cp -r {$archive_decompressed} dkan`;
+  if (file_exists($decompressed)) {
+    `cp -r {$decompressed} {$dkan}`;
+  }
+  else {
+    throw new \Exception("Drupal not found at {$decompressed}");
+  }
 }
-else {
-  echoe("Got {$dkan}");
-}
-
-if (!file_exists("./docroot/profiles/dkan")) {
-  `cp -r ./dkan ./docroot/profiles/`;
-
-}
-else {
-  echoe("Either DKAN is already in docroot, or Drupal has not been installed.");
-}
-

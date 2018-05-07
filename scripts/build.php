@@ -1,4 +1,10 @@
 <?php
+require_once "util.php";
+
+if (file_exists("docroot")) {
+  echoe("Removing docroot");
+  `rm -rf docroot`;
+}
 passthru("php /dktl/drupal-get.php");
 passthru("php /dktl/dkan-get.php");
 passthru("php /dktl/drupal-dkan-connect.php");

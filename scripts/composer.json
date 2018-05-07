@@ -3,6 +3,11 @@
     "require": {
         "symfony/yaml": "^3.4"
     },
+    "autoload": {
+        "psr-4": {
+            "DkanTools\\": "src/"
+        }
+    },
     "authors": [
         {
             "name": "fmizzell",

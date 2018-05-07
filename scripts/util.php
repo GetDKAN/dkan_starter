@@ -1,5 +1,14 @@
 <?php
 
+define("TMP_DIR", "./tmp");
+
+function prepare_tmp() {
+  $tmp_dir = TMP_DIR;
+  if(!file_exists($tmp_dir)) {
+    mkdir($tmp_dir);
+  }
+}
+
 function bool_to_str($bool) {
   return ($bool) ? 'true' : 'false';
 }
