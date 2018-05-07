@@ -13,4 +13,4 @@ puts "Unpacking the $db database."
 puts ""
 
 `ahoy cmd-proxy gunzip backups/#{db}.sql.gz -f`
-`cp -f backups/#{db}.sql backups/last_install.sql`
+`ahoy cmd-proxy cp -f backups/#{db}.sql backups/last_install.sql`
