@@ -1,2 +1,2 @@
 
-drush @$drush_alias en menu_admin_per_menu -y
+$drush_cmd drush en menu_admin_per_menu -y

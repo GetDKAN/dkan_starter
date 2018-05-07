@@ -2,7 +2,6 @@ drush_cmd="drush"
 if [ "$target_env" == "local" ]; then
   drush_cmd="ahoy cmd-proxy drush"
 fi
-$drush_alias st
 echo "Running drush rr --no-cache-clear"
 $drush_cmd drush rr --no-cache-clear
 echo "Truncating cache table"
