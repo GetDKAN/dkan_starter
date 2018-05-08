@@ -43,8 +43,8 @@ if [ "$target_env" == "local" ]; then
 
   if [ "$CI" = "true" ]; then
     private_probo_password=admin
+    $drush_cmd user-password 1 --password="$private_probo_password"
+    $drush_cmd user-password admin --password="$private_probo_password"
   fi
 
-  $drush_cmd user-password 1 --password="$private_probo_password"
-  $drush_cmd user-password admin --password="$private_probo_password"
 fi
