@@ -1,6 +1,7 @@
+echo "running: .ahoy/site/.scripts/deploy.sh"
 drush_cmd="drush"
 if [ "$target_env" == "local" ]; then
-  drush_cmd="ahoy cmd-proxy drush"
+  drush_cmd="ahoy drush"
 fi
 echo "Running drush rr --no-cache-clear"
 ${drush_cmd} rr --no-cache-clear

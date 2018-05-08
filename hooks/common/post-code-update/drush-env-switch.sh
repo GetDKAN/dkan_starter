@@ -3,8 +3,7 @@
 # Cloud Hook: drush-env-switch
 #
 
-site=$1
-env=$2
+env=$1
 drush_alias=$site'.'$env
 env_map=(
   "local:local"
@@ -28,8 +27,4 @@ for m in "${env_map[@]}"; do
   fi
 done
 
-if [ "$env" != "local" ]; then
-  cd /var/www/html/$drush_alias
-fi
-
-target_env=$target_env drush_alias=$drush_alias bash .ahoy/site/.scripts/upgrade-deploy.sh
+target_env=$target_env bash .ahoy/site/.scripts/upgrade-deploy.sh
