@@ -3,32 +3,32 @@ if [ "$target_env" == "local" ]; then
   drush_cmd="ahoy cmd-proxy drush"
 fi
 echo "Running drush rr --no-cache-clear"
-$drush_cmd drush rr --no-cache-clear
+$drush_cmd rr --no-cache-clear
 echo "Truncating cache table"
-$drush_cmd drush sqlq "TRUNCATE cache;"
+$drush_cmd sqlq "TRUNCATE cache;"
 echo "Running database update"
-$drush_cmd drush updatedb -y
+$drush_cmd updatedb -y
 echo "Clearing caches"
-$drush_cmd drush cc all
+$drush_cmd cc all
 
 echo "Checking drupal boostrap."
-drupal=$($drush_cmd drush status | grep -e "Drupal bootstrap" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+drupal=$($drush_cmd status | grep -e "Drupal bootstrap" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 
 if [[ "$drupal" =~ "Successful" ]]; then
   echo "Installation detected, running deploy script"
-  $drush_cmd drush en custom_config -y
-  $drush_cmd drush cc all
-  $drush_cmd drush -y fr --force custom_config
-  $drush_cmd drush env-switch $target_env --force
-  $drush_cmd drush -y updb
+  $drush_cmd en custom_config -y
+  $drush_cmd cc all
+  $drush_cmd -y fr --force custom_config
+  $drush_cmd env-switch $target_env --force
+  $drush_cmd -y updb
   DB_BASED_SEARCH=`$drush_cmd drush pmi dkan_acquia_search_solr | grep disabled`
   if [ -z "$DB_BASED_SEARCH" ]; then
     echo "SOLR Search, avoiding indexing data"
   else
     echo "DB Search, indexing data"
-    $drush_cmd drush search-api-index datasets
-    $drush_cmd drush search-api-index groups_di
-    $drush_cmd drush search-api-index stories_index
+    $drush_cmd search-api-index datasets
+    $drush_cmd search-api-index groups_di
+    $drush_cmd search-api-index stories_index
   fi
 else
   echo "Installation not detected"
@@ -44,6 +44,6 @@ if [ "$target_env" == "local" ]; then
     private_probo_password=admin
   fi
 
-  drush --root=docroot user-password 1 --password="$private_probo_password"
-  drush --root=docroot user-password admin --password="$private_probo_password"
+  $drush_cmd user-password 1 --password="$private_probo_password"
+  $drush_cmd user-password admin --password="$private_probo_password"
 fi
