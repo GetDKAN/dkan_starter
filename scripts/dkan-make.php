@@ -20,9 +20,10 @@ $cache_libs = TMP_DIR . "/dkan_libs";
 
 if (file_exists($cache_modules) && file_exists($cache_libs)) {
   echoe("Using the cache: {$cache_modules}");
-  `cp -r {$cache_modules} {$contrib_modules_location}`;
-  `cp -r {$cache_libs} {$contrib_libraries_location}`;
   run_drush_make_without_cached();
+
+  `cp -r {$cache_modules} ../{$contrib_modules_location}`;
+  `cp -r {$cache_libs} {$contrib_libraries_location}`;
 }
 else {
   `drush --root=docroot -y make --strict=0 --cache --no-core --contrib-destination=./ docroot/profiles/dkan/drupal-org.make --no-recursion --verbose docroot/profiles/dkan`;
