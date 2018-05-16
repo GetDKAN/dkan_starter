@@ -27,4 +27,12 @@ for m in "${env_map[@]}"; do
   fi
 done
 
+acquia=`env | grep AH_REALM`
+
+if [ "$acquia" != '' ]; then
+  echo "Acquia environment detected. Moving to correct directory."
+  cd /var/www/html/$drush_alias
+fi
+
+
 target_env=$target_env bash .ahoy/site/.scripts/upgrade-deploy.sh
