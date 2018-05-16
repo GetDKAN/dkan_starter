@@ -3,7 +3,7 @@
 # Cloud Hook: drush-env-switch
 #
 
-env=$1
+env=$2
 env_map=(
   "local:local"
   "pro:production"
