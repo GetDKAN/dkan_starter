@@ -28,9 +28,10 @@ done
 acquia=`env | grep AH_REALM`
 
 if [ "$acquia" != '' ]; then
-  echo "Acquia environment detected. Moving to correct directory."
+  echo "Acquia environment detected. Moving to correct directory. /var/www/html/$1'.'$2"
   cd /var/www/html/$1'.'$2
+  PWD
 fi
 
-
+echo "target_env is $target_env"
 target_env=$target_env bash .ahoy/site/.scripts/upgrade-deploy.sh
