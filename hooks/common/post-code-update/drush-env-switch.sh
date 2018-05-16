@@ -34,4 +34,4 @@ if [ "$acquia" != '' ]; then
 fi
 
 echo "target_env is $target_env"
-target_env=$target_env bash .ahoy/site/.scripts/upgrade-deploy.sh
+target_env=$target_env bash ../.ahoy/site/.scripts/upgrade-deploy.sh
