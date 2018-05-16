@@ -25,4 +25,4 @@ if [ "$target_env" == 'local' ]; then
   $drush_cmd dis memcache memcache_admin -y
 fi
 
-target_env=$target_env bash .ahoy/site/.scripts/deploy.sh
+target_env=$target_env bash ../.ahoy/site/.scripts/deploy.sh
