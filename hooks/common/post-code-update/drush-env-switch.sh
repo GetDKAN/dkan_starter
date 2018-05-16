@@ -4,7 +4,6 @@
 #
 
 env=$1
-drush_alias=$site'.'$env
 env_map=(
   "local:local"
   "pro:production"
@@ -19,7 +18,6 @@ env_map=(
 
 for m in "${env_map[@]}"; do
   target_key=$(echo $m | cut -d: -f1)
-  echo $target_key
   if [ "$target_key" = "$env" ]; then
   echo $m
     target_env=$(echo $m | cut -d: -f2)
@@ -31,7 +29,7 @@ acquia=`env | grep AH_REALM`
 
 if [ "$acquia" != '' ]; then
   echo "Acquia environment detected. Moving to correct directory."
-  cd /var/www/html/$drush_alias
+  cd /var/www/html/$1'.'$2
 fi
 
 
