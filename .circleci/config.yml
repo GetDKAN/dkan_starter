@@ -59,6 +59,7 @@ jobs:
       - run:
           name: Install DKAN 
           command: |
+            cd docroot
             ahoy site reinstall
             ahoy ci deploy
             ahoy drush en -y dkan_dataset_rest_api 
