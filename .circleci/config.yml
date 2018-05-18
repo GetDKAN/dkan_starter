@@ -16,7 +16,7 @@ jobs:
           command: |
             apt-get update
             apt-get upgrade -y
-            apt-get install curl wget ruby -y
+            apt-get install curl wget ruby language-pack-en-base libdigest-hmac-perl -y
       - run:
           name: Install Docker client
           command: |
@@ -53,16 +53,26 @@ jobs:
             docker cp docroot $(docker-compose ps -q cli):/var/www
             docker cp config $(docker-compose ps -q cli):/var/www
             docker cp assets $(docker-compose ps -q cli):/var/www
+            mkdir -p dkan/test/assets/junut
             docker cp dkan $(docker-compose ps -q cli):/var/www
             docker cp hooks $(docker-compose ps -q cli):/var/www
             docker cp assets/sites/default/settings.docker.demo.php $(docker-compose ps -q cli):/var/www/docroot/sites/default/settings.docker.php
       - run:
-          name: Install DKAN 
+          name: Install DKAN or Client site
           command: |
-            cd docroot
-            ahoy site reinstall
+            ahoy utils setup
+            if [ "$CIRCLE_PROJECT_REPONAME" == 'dkan_starter' ]; then
+              ahoy site reinstall 
+            else
+              ahoy utils s3-setup
+              mkdir backups
+              ahoy utils asset-download-db
+              gunzip backups/sanitized.sql.gz -f
+              docker cp backups $(docker-compose ps -q cli):/var/www
+              ahoy drush sql-cli < backups/sanitized.sql
+            fi
             ahoy ci deploy
-            ahoy drush en -y dkan_dataset_rest_api 
+            ahoy drush en -y dkan_dataset_rest_api maillog
       - run:
           name: Install Test Libs 
           command: |

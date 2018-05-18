@@ -109,11 +109,11 @@ commands:
         ahoy cmd-proxy drush php-script .ahoy/site/.scripts/overrides.php
         # Check file exits and file not empty.
         if [ -e overriden_make.make ] && [ -s overriden_make.make ]; then
-          rm -rf docroot/sites/all/modules/overrides
-          mkdir -p docroot/sites/all/modules/overrides
+          ahoy cmd-proxy "mkdir -p docroot/sites/all/modules/contrib"
+          ahoy cmd-proxy "mkdir -p docroot/sites/all/themes/contrib"
           ahoy drush -y make --no-core --contrib-destination=overrides overriden_make.make --no-recursion --no-cache --verbose
-          mv overrides/modules/* docroot/sites/all/modules/overrides
-          rm -rf overrides
+          ahoy cmd-proxy "rm -rf docroot/.htaccess"
+          ahoy cmd-proxy "ln -s ../config/.htaccess docroot/.htaccess"
         fi
         rm -f overriden_make.make
       fi

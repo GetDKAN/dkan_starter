@@ -4,9 +4,9 @@ if [ "$target_env" == "local" ]; then
   drush_cmd="ahoy drush"
 fi
 echo "Running drush rr --no-cache-clear"
-${drush_cmd} rr --no-cache-clear
+$drush_cmd rr --no-cache-clear
 echo "Truncating cache table"
-${drush_cmd} sqlq "TRUNCATE cache;"
+$drush_cmd sqlq "TRUNCATE cache;"
 echo "Running database update"
 $drush_cmd updatedb -y
 echo "Clearing caches"
@@ -42,7 +42,6 @@ if [ "$target_env" == "local" ]; then
   ahoy dkan create-qa-users
 
   if [ "$CI" = "true" ]; then
-    private_probo_password=admin
     $drush_cmd user-password 1 --password="$private_probo_password"
     $drush_cmd user-password admin --password="$private_probo_password"
   fi

@@ -18,7 +18,7 @@ fi
 if [ "$upgrade_status" != 'upgraded' ]; then
   echo "The site was not upgraded. Running $upgrade_version.sh"
   drush_cmd=$drush_cmd bash .ahoy/site/.scripts/upgrades/$upgrade_version.sh
-  ${drush_cmd} vset $upgrade_version upgraded
+  $drush_cmd vset $upgrade_version upgraded
 fi
 
 if [ "$target_env" == 'local' ]; then
