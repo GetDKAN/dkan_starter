@@ -25,4 +25,12 @@ if [ "$target_env" == 'local' ]; then
   $drush_cmd dis memcache memcache_admin -y
 fi
 
-target_env=$target_env bash ../.ahoy/site/.scripts/deploy.sh
+acquia=`env | grep AH_REALM`
+
+echo "target_env is $target_env"
+if [ "$acquia" != '' ]; then
+  target_env=$target_env bash ../.ahoy/site/.scripts/deploy.sh
+else
+  target_env=$target_env bash .ahoy/site/.scripts/deploy.sh
+fi
+
