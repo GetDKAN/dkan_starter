@@ -80,7 +80,7 @@ jobs:
             ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh docroot/profiles/dkan/test
       - run:
           name: Run Parallel Behat Tests
-          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features --tags="~@datastore&&~@fixme"
+          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features --tags="~@fixme"
       - run:
           name: Figure out cirlce tools 
           command: |
