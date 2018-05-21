@@ -47,6 +47,7 @@ jobs:
             cp dkan/.ahoy/docker-compose.common.yml docker-compose.yml
             cp dkan/.ahoy/mysql.env mysql.env 
             ahoy docker up
+            ahoy docker xdebug stop
             rm -rf dkan/.ahoy/.docker
             docker cp .ahoy $(docker-compose ps -q cli):/var/www
             docker cp .ahoy.yml $(docker-compose ps -q cli):/var/www
@@ -76,7 +77,6 @@ jobs:
       - run:
           name: Install Test Libs 
           command: |
-            ahoy docker xdebug stop
             ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh docroot/profiles/dkan/test
       - run:
           name: Run Parallel Behat Tests
