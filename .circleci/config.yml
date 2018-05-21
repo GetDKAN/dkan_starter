@@ -76,6 +76,7 @@ jobs:
       - run:
           name: Install Test Libs 
           command: |
+            ahoy docker xdebug stop
             ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh docroot/profiles/dkan/test
       - run:
           name: Run Parallel Behat Tests
