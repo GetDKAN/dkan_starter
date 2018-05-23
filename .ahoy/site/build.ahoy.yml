@@ -112,6 +112,10 @@ commands:
           ahoy cmd-proxy "mkdir -p docroot/sites/all/modules/contrib"
           ahoy cmd-proxy "mkdir -p docroot/sites/all/themes/contrib"
           ahoy drush -y make --no-core --contrib-destination=overrides overriden_make.make --no-recursion --no-cache --verbose
+				  ahoy cmd-proxy "rm -rf docroot/sites/all/modules/overrides"
+          ahoy cmd-proxy "mkdir -p docroot/sites/all/modules/overrides"
+          ahoy cmd-proxy "cp -r overrides/modules/* docroot/sites/all/modules/overrides/."
+          ahoy cmd-proxy "rm -rf overrides"
           ahoy cmd-proxy "rm -rf docroot/.htaccess"
           ahoy cmd-proxy "ln -s ../config/.htaccess docroot/.htaccess"
         fi
