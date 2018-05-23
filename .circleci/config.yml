@@ -82,15 +82,10 @@ jobs:
           name: Run Parallel Behat Tests
           command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features --tags="~@fixme&&~@resource_author_17"
       - run:
-          name: Figure out cirlce tools 
-          command: |
-            echo $(circleci tests split < dkan/test/features)
-            # todo: --out='/tmp/circle-artifacts.AA2Qnid/junit'            
-
-      - run:
           name: Copy Assets to Base Image
           command: |
-            docker cp $(docker-compose ps -q cli):/var/www/dkan/test/assets assets
+            docker cp $(docker-compose ps -q cli):/var/www/dkan/test/assets artifacts 
+            ls -l artifacts
       - store_artifacts:
-          path: /go/src/github.com/dkan_starter/assets
+          path: /go/src/github.com/dkan_starter/artifacts
 
