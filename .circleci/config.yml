@@ -87,3 +87,10 @@ jobs:
             echo $(circleci tests split < dkan/test/features)
             # todo: --out='/tmp/circle-artifacts.AA2Qnid/junit'            
 
+      - run:
+          name: Copy Assets to Base Image
+          command: |
+            docker cp $(docker-compose ps -q cli):/var/www/dkan/test/assets assets
+      - store_artifacts:
+          path: /go/src/github.com/dkan_starter/assets
+
