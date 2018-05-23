@@ -11,5 +11,7 @@ commands:
     cmd: |
       echo "running ci deploy"
       ahoy utils truncate-watchdog
-      echo "running hooks/common/post-code-deploy/drush-env-switch.sh local"
-      ahoy cmd-proxy bash hooks/common/post-code-deploy/drush-env-switch.sh local
+      name=$(ahoy utils name)
+      echo "running hooks/common/post-code-deploy/drush-env-switch.sh $name local"
+      ahoy cmd-proxy bash hooks/common/post-code-deploy/drush-env-switch.sh $name local
+
