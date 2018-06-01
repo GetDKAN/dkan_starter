@@ -47,16 +47,14 @@ jobs:
             cp dkan/.ahoy/docker-compose.common.yml docker-compose.yml
             cp dkan/.ahoy/mysql.env mysql.env 
             ahoy docker up
-            ahoy docker xdebug stop
             rm -rf dkan/.ahoy/.docker
-            docker cp .ahoy $(docker-compose ps -q cli):/var/www
-            docker cp .ahoy.yml $(docker-compose ps -q cli):/var/www
-            docker cp docroot $(docker-compose ps -q cli):/var/www
-            docker cp config $(docker-compose ps -q cli):/var/www
-            docker cp assets $(docker-compose ps -q cli):/var/www
             mkdir -p dkan/test/assets/junut
-            docker cp dkan $(docker-compose ps -q cli):/var/www
-            docker cp hooks $(docker-compose ps -q cli):/var/www
+            mkdir -p docroot/sites/default/files
+            FILES="dkan .ahoy .ahoy.yml docroot config assets hooks tests"
+            for file in $FILES
+            do
+              docker cp $file $(docker-compose ps -q cli):/var/www
+            done
             docker cp assets/sites/default/settings.docker.demo.php $(docker-compose ps -q cli):/var/www/docroot/sites/default/settings.docker.php
       - run:
           name: Install DKAN or Client site
@@ -77,15 +75,18 @@ jobs:
       - run:
           name: Install Test Libs 
           command: |
-            ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh docroot/profiles/dkan/test
+            ahoy docker exec "php -i | grep memory"
+            ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh tests
       - run:
           name: Run Parallel Behat Tests
-          command: ruby dkan/.ahoy/.scripts/circle-behat.rb docroot/profiles/dkan/test/features --tags="~@fixme&&~@resource_author_17"
-      - run:
-          name: Copy Assets to Base Image
+          halt_build_on_fail: false
           command: |
-            docker cp $(docker-compose ps -q cli):/var/www/dkan/test/assets artifacts 
-            ls -l artifacts
+            BEHAT_FOLDER=tests ruby dkan/.ahoy/.scripts/circle-behat.rb config/tests/features --tags='~@customizable&&~@fixme&&~@testBug'
+      - run:
+          name: Copy Artifacts 
+          when: on_fail
+          command: |
+            docker cp $(docker-compose ps -q cli):/var/www/tests/assets artifacts 
       - store_artifacts:
           path: /go/src/github.com/dkan_starter/artifacts
 
