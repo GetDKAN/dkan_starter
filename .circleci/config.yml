@@ -3,7 +3,7 @@ jobs:
   build:
     parallelism: 5
     docker:
-      - image: ubuntu:16.04 
+      - image: ubuntu:16.04
     working_directory: /go/src/github.com/dkan_starter
     environment:
       TEST_RESULTS: /tmp/test-results
@@ -12,7 +12,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Updates etc 
+          name: Updates etc
           command: |
             apt-get update
             apt-get upgrade -y
@@ -45,7 +45,7 @@ jobs:
           name: Start containers
           command: |
             cp dkan/.ahoy/docker-compose.common.yml docker-compose.yml
-            cp dkan/.ahoy/mysql.env mysql.env 
+            cp dkan/.ahoy/mysql.env mysql.env
             ahoy docker up
             rm -rf dkan/.ahoy/.docker
             mkdir -p dkan/test/assets/junut
@@ -61,7 +61,7 @@ jobs:
           command: |
             ahoy utils setup
             if [ "$CIRCLE_PROJECT_REPONAME" == 'dkan_starter' ]; then
-              ahoy site reinstall 
+              ahoy site reinstall
             else
               ahoy utils s3-setup
               mkdir backups
@@ -73,7 +73,7 @@ jobs:
             ahoy ci deploy
             ahoy drush en -y dkan_dataset_rest_api maillog
       - run:
-          name: Install Test Libs 
+          name: Install Test Libs
           command: |
             ahoy docker exec "php -i | grep memory"
             ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh tests
@@ -81,12 +81,12 @@ jobs:
           name: Run Parallel Behat Tests
           halt_build_on_fail: false
           command: |
-            BEHAT_FOLDER=tests ruby dkan/.ahoy/.scripts/circle-behat.rb config/tests/features --tags='~@customizable&&~@fixme&&~@testBug'
+            BEHAT_FOLDER=tests ruby dkan/.ahoy/.scripts/circle-behat.rb config/tests/features --tags='~@customizable&&~@exceeds30seconds&&~@fixme&&~@pod_json_valid&&~@testBug&&~@noworkflow&&@~javascript&&~@user_all_06&&~@user_all_07&&~@resource_author_24&&~@resource_author_24&&~@resource_author_21&&~@group_all_03&&@~@resource_author_23&&~@harvest_08&&~@resource.author.feature&&~@group_all_06&&~@@no-main-menu'
       - run:
-          name: Copy Artifacts 
+          name: Copy Artifacts
           when: on_fail
           command: |
-            docker cp $(docker-compose ps -q cli):/var/www/tests/assets artifacts 
+            docker cp $(docker-compose ps -q cli):/var/www/tests/assets artifacts
       - store_artifacts:
           path: /go/src/github.com/dkan_starter/artifacts
 
