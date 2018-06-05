@@ -45,7 +45,7 @@ projects:
   clamav:
     version: 1.x-dev
   seckit:
-	  download:
+    download:
       type: git
       url: https://git.drupal.org/project/seckit.git
       branch: 7.x-1.x

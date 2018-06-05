@@ -1,3 +1,7 @@
+// TODO: This code could likely all be converted to Form API #states
+// (allowing us to remove this file entirely).
+// https://api.drupal.org/api/drupal/includes!common.inc/function/drupal_process_states/7
+
 Drupal.behaviors.seckit = {
   attach: function(context) {
     seckit_listener_hsts(context);
@@ -41,11 +45,13 @@ function seckit_listener_hsts(context) {
     if ($('#edit-seckit-ssl-hsts').is(':checked')) {
       $('#edit-seckit-ssl-hsts-max-age', context).removeAttr('disabled');
       $('#edit-seckit-ssl-hsts-subdomains', context).removeAttr('disabled');
+      $('#edit-seckit-ssl-hsts-preload', context).removeAttr('disabled');
       $('label[for="edit-seckit-ssl-hsts-max-age"]', context).append('<span title="' + Drupal.t('This field is required.') + '" class="form-required">*</span>');
     }
     else {
       $('#edit-seckit-ssl-hsts-max-age', context).attr('disabled', 'disabled');
       $('#edit-seckit-ssl-hsts-subdomains', context).attr('disabled', 'disabled');
+      $('#edit-seckit-ssl-hsts-preload', context).attr('disabled', 'disabled');
       $('label[for="edit-seckit-ssl-hsts-max-age"] > span', context).remove();
     }
   })(jQuery);
@@ -89,6 +95,7 @@ function _seckit_csp_remove_attributes(context) {
     $('#edit-seckit-xss-csp-img-src', context).removeAttr('disabled');
     $('#edit-seckit-xss-csp-media-src', context).removeAttr('disabled');
     $('#edit-seckit-xss-csp-frame-src', context).removeAttr('disabled');
+    $('#edit-seckit-xss-csp-child-src', context).removeAttr('disabled');
     $('#edit-seckit-xss-csp-font-src', context).removeAttr('disabled');
     $('#edit-seckit-xss-csp-connect-src', context).removeAttr('disabled');
     $('#edit-seckit-xss-csp-report-uri', context).removeAttr('disabled');
@@ -107,6 +114,7 @@ function _seckit_csp_add_attributes(context) {
     $('#edit-seckit-xss-csp-img-src', context).attr('disabled', 'disabled');
     $('#edit-seckit-xss-csp-media-src', context).attr('disabled', 'disabled');
     $('#edit-seckit-xss-csp-frame-src', context).attr('disabled', 'disabled');
+    $('#edit-seckit-xss-csp-child-src', context).attr('disabled', 'disabled');
     $('#edit-seckit-xss-csp-font-src', context).attr('disabled', 'disabled');
     $('#edit-seckit-xss-csp-connect-src', context).attr('disabled', 'disabled');
     $('#edit-seckit-xss-csp-report-uri', context).attr('disabled', 'disabled');
