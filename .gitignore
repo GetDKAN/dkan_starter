@@ -42,6 +42,7 @@ dkan/test/assets/*
 .DS_Store*
 ehthumbs.db
 Thumbs.db
+*.swp
 #Icon
 
 ._*

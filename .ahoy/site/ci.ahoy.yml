@@ -9,6 +9,9 @@ commands:
   deploy:
     usage: deploys within a ci setup
     cmd: |
-      name=$(ahoy utils name)
+      echo "running ci deploy"
       ahoy utils truncate-watchdog
+      name=$(ahoy utils name)
+      echo "running hooks/common/post-code-deploy/drush-env-switch.sh $name local"
       ahoy cmd-proxy bash hooks/common/post-code-deploy/drush-env-switch.sh $name local
+

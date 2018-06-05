@@ -13,6 +13,7 @@ else
   stage_file_proxy_origin = CONFIG["default"]["stage_file_proxy_origin"]
   if  !stage_file_proxy_origin.empty?  && stage_file_proxy_origin != "changeme"
     `ahoy utils asset-download-db`
+    `ahoy utils asset-unpack-db sanitized`
   else
     `ahoy utils asset-download`
     `ahoy utils files-link`

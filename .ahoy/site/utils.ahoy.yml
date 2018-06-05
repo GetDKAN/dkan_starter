@@ -121,6 +121,14 @@ commands:
       ruby .ahoy/site/.scripts/utils-asset-download-files.rb
     hide: true
 
+  asset-unpack-db:
+    usage: Unpacks database
+    cmd: |
+      db={{args}}
+      echo "Unpacking the $db"
+      ahoy cmd-proxy gunzip backups/$db.sql.gz -f`
+      ahoy cmd-proxy cp -f backups/$db.sql backups/last_install.sql
+
   asset-upload:
     usage: Upload database and files assets to dedicated S3 bucket.
     cmd: |
