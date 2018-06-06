@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    parallelism: 5
+    parallelism: 6
     docker:
       - image: ubuntu:16.04
     working_directory: /go/src/github.com/dkan_starter
@@ -41,6 +41,15 @@ jobs:
           name: Install CircleCI CLI
           command: |
             curl -o /usr/local/bin/circleci https://circle-downloads.s3.amazonaws.com/releases/build_agent_wrapper/circleci && chmod +x /usr/local/bin/circleci
+      - run:
+          name: Remove empty test files
+          command: |
+            # These files have no tests after the flags we apply.
+            FILES="dataset.admin.feature panels.feature leaflet_draw_widget.feature page.editor.feature resource.editor.feature theme.admin.feature dataset.author.feature datastore_fast_import.feature widgets.feature resource.admin.feature dataset.editor.feature user.site_manager.feature datastore.feature topics.feature dataset_rest_api.feature resource.author.feature user.author.feature"
+            for file in $FILES
+            do
+              rm dkan/test/features/$file
+            done
       - run:
           name: Start containers
           command: |
@@ -89,4 +98,3 @@ jobs:
             docker cp $(docker-compose ps -q cli):/var/www/tests/assets artifacts
       - store_artifacts:
           path: /go/src/github.com/dkan_starter/artifacts
-
