@@ -5,6 +5,16 @@
  */
 
 /**
+ * Implements hook_install().
+ */
+function seckit_install() {
+  // Unlimited CSP reports are likely to be necessary during the initial
+  // development of a content security policy, but this should be treated as
+  // an override of the default value of zero.
+  variable_set('seckit_advanced', array('unlimited_csp_reports' => 1));
+}
+
+/**
  * Implements hook_uninstall().
  */
 function seckit_uninstall() {
@@ -13,6 +23,7 @@ function seckit_uninstall() {
   variable_del('seckit_clickjacking');
   variable_del('seckit_ssl');
   variable_del('seckit_various');
+  variable_del('seckit_advanced');
 }
 
 /**
@@ -93,7 +104,6 @@ function seckit_update_7103() {
   variable_set('seckit_xss', $options);
 }
 
-
 /**
  * Removes Content-Security-Policy "frame-ancestors" directive and "options".
  *
@@ -109,4 +119,43 @@ function seckit_update_7104() {
   // delete and set new version of variable
   variable_del('seckit_xss');
   variable_set('seckit_xss', $options);
+}
+
+/**
+ * Update saved instances of the old (deprecated) CSP report URI.
+ */
+function seckit_update_7105() {
+  // We only care about variable values which are saved in the database.
+  $variables = variable_initialize(array());
+
+  if (!empty($variables['seckit_xss']['csp']['report-uri'])) {
+    $seckit_xss = $variables['seckit_xss'];
+    $deprecated = 'admin/config/system/seckit/csp-report';
+    if ($seckit_xss['csp']['report-uri'] === $deprecated) {
+      $seckit_xss['csp']['report-uri'] = SECKIT_CSP_REPORT_URL;
+      variable_set('seckit_xss', $seckit_xss);
+      return t("Changed CSP violation report path from '@old' to '@new'.",
+               array('@old' => $deprecated,
+                     '@new' => SECKIT_CSP_REPORT_URL));
+    }
+  }
+}
+
+/**
+ * If no CSP has been configured, enable unlimited_csp_reports by default.
+ */
+function seckit_update_7106() {
+  // Unlimited CSP reports are likely to be necessary during the initial
+  // development of a content security policy, but this should be treated as
+  // an override of the default value of zero.
+
+  // As per seckit_install(), but catching the case when SecKit is already
+  // enabled but no CSP policy has yet been configured.
+  $options = _seckit_get_options();
+  $defaults = _seckit_get_options_defaults();
+  if ($options['seckit_xss']['csp'] == $defaults['seckit_xss']['csp']) {
+    $seckit_advanced = variable_get('seckit_advanced', array());
+    $seckit_advanced['unlimited_csp_reports'] = 1;
+    variable_set('seckit_advanced', $seckit_advanced);
+  }
 }

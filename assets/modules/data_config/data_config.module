@@ -208,6 +208,7 @@ function data_config_enabled_modules() {
     'taxonomy_menu' => 'taxonomy_menu',
     'text' => 'text',
     'token' => 'token',
+    'token_tweaks' => 'token_tweaks',
     'user' => 'user',
     'uuid' => 'uuid',
     'uuidreference' => 'uuidreference',
