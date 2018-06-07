@@ -9,7 +9,8 @@ asset = "#{aws_url}/#{site}.prod.#{db}.sql.gz"
 `LC_TIME=en_US.UTF-8 perl .ahoy/site/.scripts/s3curl.pl --id local #{asset} > backups/#{db}.sql.gz`
 
 puts ""
-puts "Unpacking the files asset."
+puts "Unpacking the $db database."
 puts ""
 
-`tar xvzf backups/#{site}.prod.files.tar.gz`
+`ahoy cmd-proxy gunzip backups/#{db}.sql.gz -f`
+`cp -f backups/#{db}.sql backups/last_install.sql`
