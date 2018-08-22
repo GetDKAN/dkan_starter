@@ -8,4 +8,4 @@ projects:
     download:
       type: git
       url: https://github.com/GetDKAN/dkan.git
-      tag: 7.x-1.15.1
+      tag: 7.x-1.15.3
