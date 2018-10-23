@@ -286,8 +286,7 @@ commands:
       # You can rsync now
       rsync -av --exclude=.git --exclude=.dkan_starter .dkan_starter/ ./
       cp config/config.yml .config/example.config.yml
-      ahoy cmd-proxy "rm -rf config"
-      ahoy cmd-proxy "mv .config config"
+      ahoy cmd-proxy "rm -rf config; mv .config config"
       ahoy cmd-proxy "rm -rf .dkan_starter"
 
   test:
