@@ -39,10 +39,10 @@ commands:
       if [[ "$DIRNAME" == "dkan_starter" ]]; then
         # Building in a new directory
         # drush make is stupid, delete docroot_new just in case
-        ahoy cmd-proxy rm -rf docroot_new
+        ahoy cmd-proxy "rm -rf docroot_new"
         ahoy drush -y make build.make --no-recursion --no-cache --verbose docroot_new
-        ahoy cmd-proxy rm -rf docroot
-        ahoy cmd-proxy mv docroot_new docroot
+        ahoy cmd-proxy "rm -rf docroot"
+        ahoy cmd-proxy "mv docroot_new docroot"
         # Move dkan folder from docroot/profiles to base folder
         ahoy cmd-proxy mv "dkan dkan_old; mv docroot/profiles/dkan ./"
         ahoy cmd-proxy ln "-s ../../dkan docroot/profiles/dkan"
@@ -63,11 +63,11 @@ commands:
         dirs=( $(find ./contrib/modules -maxdepth 1 -type d | sed 's/\.\/contrib\/modules\///g') )
         for dir in "${dirs[@]}";
         do
-          rm -fR ./docroot/sites/all/modules/contrib/$dir
+          ahoy cmd-proxy "rm -fR ./docroot/sites/all/modules/contrib/$dir"
         done
 
-        mv -f contrib/modules/* docroot/sites/all/modules/contrib
-        rm -rf contrib
+        ahoy cmd-proxy "mv -f contrib/modules/* docroot/sites/all/modules/contrib"
+        ahoy cmd-proxy "rm -rf contrib"
       fi
 
   custom-libs:
@@ -75,7 +75,7 @@ commands:
     cmd: |
       if [ ! -d docroot/sites/all/libraries ]; then
          echo 'Creating docroot/sites/all/libraries'
-         mkdir docroot/sites/all/libraries
+         ahoy cmd-proxy "mkdir docroot/sites/all/libraries"
       fi
 
       # Make writable so that error not thrown on second attempt.
@@ -93,11 +93,11 @@ commands:
             continue;
           fi
           echo "Replace ./docroot/sites/all/libraries/$dir"
-          rm -fR ./docroot/sites/all/libraries/$dir
-          mv contrib/libraries/$dir docroot/sites/all/libraries/
+          ahoy cmd-proxy "rm -fR ./docroot/sites/all/libraries/$dir"
+          ahoy cmd-proxy "mv contrib/libraries/$dir docroot/sites/all/libraries/"
         done
 
-        rm -fR contrib
+        ahoy cmd-proxy "rm -fR contrib"
 
       fi
 
@@ -119,7 +119,7 @@ commands:
           ahoy cmd-proxy "rm -rf docroot/.htaccess"
           ahoy cmd-proxy "ln -s ../config/.htaccess docroot/.htaccess"
         fi
-        rm -f overriden_make.make
+        ahoy cmd-proxy rm -f overriden_make.make
       fi
 
   post-build:
@@ -199,7 +199,7 @@ commands:
       cd ..
       git clone 'git@github.com:NuCivic/dkan_starter.git' {{args}} --depth=1
       cd {{args}}
-      rm -rf .git build.make build-dkan.make drupal-org-core.make
+      ahoy cmd-proxy "rm -rf .git build.make build-dkan.make drupal-org-core.make"
       echo "Site {{args}} initiated at ../{{args}}"
       git init .
       git add . -A
@@ -281,14 +281,13 @@ commands:
       fi
       git checkout $ARGS
       cd ..
-      mv config .config
-      rm -rf * .ahoy .ahoy.yml .github .probo.public.yml .probo.yml
+      ahoy cmd-proxy "mv config .config"
+      ahoy cmd-proxy "rm -rf * .ahoy .ahoy.yml .github .probo.public.yml .probo.yml"
       # You can rsync now
       rsync -av --exclude=.git --exclude=.dkan_starter .dkan_starter/ ./
       cp config/config.yml .config/example.config.yml
-      rm -rf config
-      mv .config config
-      rm -rf .dkan_starter
+      ahoy cmd-proxy "rm -rf config; mv .config config"
+      ahoy cmd-proxy "rm -rf .dkan_starter"
 
   test:
     usage: Run some build command tests
