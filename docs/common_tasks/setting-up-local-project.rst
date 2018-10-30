@@ -1,5 +1,6 @@
 Setting up a project locally
 ----------------------------
+Docker upgrade in progress - this documentation is outdated and will be refreshed soon.
 
 1. Install docker as described in `this guide <../docker-dev-env/installation.html>`_
 2. Run 
