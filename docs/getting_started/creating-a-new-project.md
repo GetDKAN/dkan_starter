@@ -66,7 +66,7 @@ For details see [Custom Site Configuration](custom-site-configruation).
 
 ## Docker
 
-See the [Docker](docker-dev-env/installation) installation page for details on setting up and using Docker.
+See the [Docker](../docker-dev-env/installation) installation page for details on setting up and using Docker.
 
 Once you have setup the rest of these services, developers simply need to run:
 
