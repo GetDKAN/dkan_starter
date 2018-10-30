@@ -3,9 +3,7 @@
 # Cloud Hook: drush-env-switch
 #
 
-site=$1
 env=$2
-drush_alias=$site'.'$env
 env_map=(
   "local:local"
   "pro:production"
@@ -20,16 +18,21 @@ env_map=(
 
 for m in "${env_map[@]}"; do
   target_key=$(echo $m | cut -d: -f1)
-  echo $target_key
   if [ "$target_key" = "$env" ]; then
-  echo $m
+    echo $m
     target_env=$(echo $m | cut -d: -f2)
    break
   fi
 done
 
-if [ "$env" != "local" ]; then
-  cd /var/www/html/$drush_alias
+acquia=`env | grep AH_REALM`
+
+echo "target_env is $target_env"
+if [ "$acquia" != '' ]; then
+  echo "Acquia environment detected. Moving to correct directory."
+  cd /var/www/html/$1'.'$2/docroot
+  target_env=$target_env bash ../.ahoy/site/.scripts/upgrade-deploy.sh
+else
+  target_env=$target_env bash .ahoy/site/.scripts/upgrade-deploy.sh
 fi
 
-target_env=$target_env drush_alias=$drush_alias bash .ahoy/site/.scripts/upgrade-deploy.sh

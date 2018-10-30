@@ -487,7 +487,7 @@ function drupal_http_build_query(array $query, $parent = '') {
   $params = array();
 
   foreach ($query as $key => $value) {
-    $key = ($parent ? $parent . '[' . rawurlencode($key) . ']' : rawurlencode($key));
+    $key = $parent ? $parent . rawurlencode('[' . $key . ']') : rawurlencode($key);
 
     // Recurse into children.
     if (is_array($value)) {
@@ -611,8 +611,9 @@ function drupal_parse_url($url) {
   }
   // The 'q' parameter contains the path of the current page if clean URLs are
   // disabled. It overrides the 'path' of the URL when present, even if clean
-  // URLs are enabled, due to how Apache rewriting rules work.
-  if (isset($options['query']['q'])) {
+  // URLs are enabled, due to how Apache rewriting rules work. The path
+  // parameter must be a string.
+  if (isset($options['query']['q']) && is_string($options['query']['q'])) {
     $options['path'] = $options['query']['q'];
     unset($options['query']['q']);
   }
@@ -2236,8 +2237,11 @@ function url($path = NULL, array $options = array()) {
     'prefix' => ''
   );
 
+  // Determine whether this is an external link, but ensure that the current
+  // path is always treated as internal by default (to prevent external link
+  // injection vulnerabilities).
   if (!isset($options['external'])) {
-    $options['external'] = url_is_external($path);
+    $options['external'] = $path === $_GET['q'] ? FALSE : url_is_external($path);
   }
 
   // Preserve the original path before altering or aliasing.
@@ -2307,7 +2311,10 @@ function url($path = NULL, array $options = array()) {
     $language = isset($options['language']) && isset($options['language']->language) ? $options['language']->language : '';
     $alias = drupal_get_path_alias($original_path, $language);
     if ($alias != $original_path) {
-      $path = $alias;
+      // Strip leading slashes from internal path aliases to prevent them
+      // becoming external URLs without protocol. /example.com should not be
+      // turned into //example.com.
+      $path = ltrim($alias, '/');
     }
   }
 

@@ -25,15 +25,20 @@ class WorkflowContext extends RawDKANContext {
     define('MAINTENANCE_MODE', 'update');
     @module_enable(array(
       'dkan_workflow',
+      'dkan_workflow_permissions',
       'drafty',
       'workbench_moderation',
       'workbench_email', 'workbench',
       'views_dkan_workflow_tree',
       'menu_badges',
       'link_badges',
-      'dkan_workflow_permissions'
     ));
+
+    if (module_exists('dkan_feeedback')) {
+      features_revert(array('dkan_feedback'));
+    }
     drupal_flush_all_caches();
+    node_access_rebuild(TRUE);
   }
 
   /**
@@ -57,8 +62,8 @@ class WorkflowContext extends RawDKANContext {
     // Clean users and disable modules.
     entity_delete_multiple('user', $users_to_delete);
     module_disable(array_values($modules_to_disable));
-    drupal_uninstall_modules(array_values($modules_to_disable));
     drupal_flush_all_caches();
+    node_access_rebuild(TRUE);
   }
 
   /**

@@ -164,6 +164,9 @@ require_once dirname(__FILE__) . '/query.inc';
  * @see drupal_install_schema()
  */
 
+/**
+ * Base class for database schema definitions.
+ */
 abstract class DatabaseSchema implements QueryPlaceholderInterface {
 
   protected $connection;
@@ -291,7 +294,7 @@ abstract class DatabaseSchema implements QueryPlaceholderInterface {
   protected function buildTableNameCondition($table_name, $operator = '=', $add_prefix = TRUE) {
     $info = $this->connection->getConnectionOptions();
 
-    // Retrive the table name and schema
+    // Retrieve the table name and schema
     $table_info = $this->getPrefixInfo($table_name, $add_prefix);
 
     $condition = new DatabaseCondition('AND');
@@ -657,7 +660,13 @@ abstract class DatabaseSchema implements QueryPlaceholderInterface {
    */
   public function createTable($name, $table) {
     if ($this->tableExists($name)) {
-      throw new DatabaseSchemaObjectExistsException(t('Table @name already exists.', array('@name' => $name)));
+      if (db_select($name)->countQuery()->execute()->fetchField() == 0) {
+        $this->dropTable($name);
+        watchdog('database', 'Dropped empty, already existing table @name before recreating it.', array('@name' => $name));
+      }
+      else {
+        throw new DatabaseSchemaObjectExistsException(t('Table @name already exists and has data. Can\'t automatically recreate it.', array('@name' => $name)));
+      }
     }
     $statements = $this->createTableSql($name, $table);
     foreach ($statements as $statement) {

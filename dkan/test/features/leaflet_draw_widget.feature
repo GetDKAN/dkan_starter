@@ -1,18 +1,28 @@
 # time:0m11.71s
-@api @javascript
+@api @javascript @disablecaptcha
 Feature: Leaflet Map Widget
 
   Scenario: Adds "New Table Widget" block to home page using panels ipe editor
 
     Given "Tags" terms:
-      | name     |
+      | name    |
       | New Tag |
+    Given users:
+      | name    | mail                | roles  |
+      | Gabriel | gabriel@example.com | editor |
+    Given groups:
+      | title    | author | published |
+      | Group 01 | Admin  | Yes       |
+    And group memberships:
+      | user    | group    | role on group        | membership status |
+      | Gabriel | Group 01 | administrator member | Active            |
     And datasets:
-      | title                  | author | published | tags    | description |
-      | This is a test dataset | admin  | Yes       | New Tag | Test        |
-    And I am logged in as a user with the "editor" role
+      | title                  | author | published | tags    | description | publisher |
+      | This is a test dataset | admin  | Yes       | New Tag | Test        | Group 01  |
+    And I am logged in as "Gabriel"
     And I visit the "This is a test dataset" page
     And I click "Edit"
+    And I hide the admin menu
     Then I should see "Spatial / Geographical Coverage Area"
     And I should see the link "Map" in the "dataset spatial" region
     And I should see the link "GeoJSON" in the "dataset spatial" region

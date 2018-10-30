@@ -29,6 +29,48 @@ function dkan_dataset_content_types_form_alter(&$form, &$form_state, $form_id) {
 
     $form['field_data_dictionary'][LANGUAGE_NONE]['#after_build'][] = 'data_dictionary_after_build';
   }
+  // Allow users to publish/unpublish content without giving them
+  // "administer nodes" permission.
+  if (preg_match('/_node_form$/', $form_id) && _dkan_dataset_content_types_access($form['#node']->type)) {
+    if ($form['options']['#access'] == FALSE) {
+      $form['options']['#access'] = TRUE;
+    }
+  }
+  if ($form_id == 'resource_node_form') {
+    $allowed = dkan_allowed_extensions();
+    $form['field_upload'][LANGUAGE_NONE][0]['#file_resup_upload_validators']['file_validate_extensions'][0] = $allowed;
+    $form['field_link_remote_file'][LANGUAGE_NONE][0]['#upload_validators']['file_validate_extensions'][0] = $allowed;
+  }
+}
+
+/**
+ * Create default extensions variable from the resource upload field config.
+ */
+function dkan_default_extensions() {
+  $field_config = db_select('field_config_instance', 'f')
+    ->fields('f', array('data'))
+    ->condition('field_name', 'field_upload')
+    ->execute()
+    ->fetchCol();
+
+  $data = unserialize($field_config[0]);
+  $default = $data['settings']['file_extensions'];
+  return $default;
+}
+
+/**
+ * Store allowed file extensions in a variable for UI customization.
+ */
+function dkan_allowed_extensions() {
+  $default = dkan_default_extensions();
+  $custom = variable_get('dkan_custom_extensions');
+  if (isset($custom) && !empty($custom)) {
+    $allowed = $default . ' ' . $custom;
+  }
+  else {
+    $allowed = $default;
+  }
+  return $allowed;
 }
 
 /**
@@ -96,6 +138,10 @@ function dkan_dataset_content_types_facet_items_alter(&$build, &$settings) {
     foreach ($build as $key => $item) {
       if (isset($allowed_values[$key])) {
         $build[$key]['#markup'] = $allowed_values[$key];
+      }
+      // If license doesn't have a key, don't list it.
+      else {
+        unset($build[$key]);
       }
     }
   }
@@ -187,6 +233,7 @@ function dkan_dataset_content_types_iso_frecuency_map() {
     'R/P0.5M' => 18,
     'R/P4M' => 17,
     'R/P1W' => 1,
+    'irregular' => 5,
   );
 }
 
@@ -235,4 +282,45 @@ function dkan_dataset_content_types_date_format_types() {
   return array(
     'iso_8601_date' => t('ISO 8601 Date'),
   );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function dkan_dataset_content_types_permission() {
+  $perms = array(
+    'administer status of any content' => array(
+      'title' => t('Administer status for all content types'),
+      'description' => '',
+      'restrict access' => TRUE,
+    ),
+  );
+
+  foreach (node_type_get_types() as $type) {
+    if (isset($type->type)) {
+      $perm_types = array(
+        'administer status of any ' . check_plain($type->type) . ' content' => array(
+          'title' => t('Administer status of any @type content', array('@type' => check_plain($type->type))),
+          'description' => '',
+        ),
+
+        'administer status of own ' . check_plain($type->type) . ' content' => array(
+          'title' => t('Administer status of own @type content', array('@type' => check_plain($type->type))),
+          'description' => '',
+        ),
+      );
+      $perms = array_merge($perms, $perm_types);
+    }
+  }
+
+  return $perms;
+}
+
+/**
+ * Check content type publishing options access.
+ */
+function _dkan_dataset_content_types_access($type) {
+  return user_access('administer status of any content')
+      || user_access('administer status of any ' . check_plain($type) . ' content')
+      || user_access('administer status of own ' . check_plain($type) . ' content');
 }

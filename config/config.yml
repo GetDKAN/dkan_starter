@@ -1,61 +1,75 @@
-default:
-  hostname: www.example.com
-  https_everywhere: FALSE
-  https_securepages: FALSE
-  clamav:
-    enable: FALSE
-  odfe:
-    enable: FALSE
-  dkan_workflow:
-    enable: FALSE
-  stage_file_proxy_origin: changeme
-  fast_file:
-    enable: TRUE
-    limit: 10MB
-    queue: 50MB
-
-redirectDomains:
-  - example.com
-  - oldsite.example.com
-
-private:
-  aws:
-    scrubbed_data_url: CHANGE ME
-  probo:
-    password: CHANGE ME
-
+---
 acquia:
-  subscription: 'professional'
-  search:
-    host: changeme
-    id: dkan_acquia_solr
   dev:
     base_url: http://devurl
-    core_id: changeme
-    derived_key: changeme
-  test:
-    base_url: http://testurl
-    core_id: changeme
-    derived_key: changeme
-  ra:
-    base_url: http://testurl
     core_id: changeme
     derived_key: changeme
   prod:
     base_url: http://produrl
     core_id: changeme
     derived_key: changeme
-
+  ra:
+    base_url: http://testurl
+    core_id: changeme
+    derived_key: changeme
+  search:
+    host: changeme
+    id: dkan_acquia_solr
+  subscription: professional
+  test:
+    base_url: http://testurl
+    core_id: changeme
+    derived_key: changeme
+behat:
+  contexts:
+    datasets:
+      defaults: {}
+      fields: {}
+      labels: {}
+      sets: {}
+    services:
+      request_fields_map: {}
+circle:
+  memory_limit: 256M
+  skip_features: []
+  skip_tags:
+  - customizable
+  - fixme
+  - testBug
+  test_dirs:
+  - tests/features
+  - dkan/test/features
+  - config/tests/features
+default:
+  clamav:
+    enable: false
+  dkan_workflow:
+    enable: false
+  fast_file:
+    enable: true
+    limit: 10MB
+    queue: 50MB
+  hostname: www.example.com
+  https_everywhere: false
+  https_securepages: false
+  odfe:
+    enable: false
+  seckit:
+    enable: false
+    hsts: 1
+    hsts_max_age: '1000'
+    hsts_subdomains: 0
+    hsts_preload: 0
+  stage_file_proxy_files: []
+  stage_file_proxy_origin: changeme
+dkan_dash: []
 gaClientTrackingCode: UA-XXXXX-Y
 gaNuCivicTrackingCode: UA-XXXXX-Z
-
-circle:
-  test_dirs:
-    - tests/features
-    - dkan/test/features
-    - config/tests/features
-  skip_tags:
-    - customizable 
-    - fixme
-    - testBug
-  memory_limit: 256M
+private:
+  aws:
+    scrubbed_data_url: CHANGE ME
+  probo:
+    password: CHANGE ME
+redirectDomains:
+- example.com
+- oldsite.example.com

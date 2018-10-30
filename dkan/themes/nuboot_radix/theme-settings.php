@@ -24,7 +24,7 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
     '#title' => t('Footer text'),
     '#type' => 'text_format',
     '#format' => 'html',
-    '#default_value' => isset($copyright['value']) ? $copyright['value'] : t('Powered by <a href="http://getdkan.com/">DKAN</a>, a project of <a href="http://granicus.com">Granicus</a>'),
+    '#default_value' => isset($copyright['value']) ? $copyright['value'] : t('Powered by <a href="https://getdkan.org/">DKAN</a>'),
   );
 
   $display_login_menu = (theme_get_setting('display_login_menu', 'nuboot_radix') === NULL) ? 1 : theme_get_setting('display_login_menu', 'nuboot_radix');
@@ -38,7 +38,7 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
   // Hero fieldset.
   $form['hero'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Hero Unit'),
+    '#title' => t('Hero Region'),
     '#group' => 'general',
   );
   // Upload field.
@@ -68,6 +68,16 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
     '#element_validate' => array('_background_option_setting'),
   );
 
+// Hero container padding.
+  $form['hero']['hero_padding'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Extra Padding'),
+    '#description' => t('<p>Enter a number to add padding to the top and bottom of the hero container.'),
+    '#required' => FALSE,
+    '#default_value' => theme_get_setting('hero_padding', 'nuboot_radix'),
+    '#element_validate' => array('element_validate_number'),
+  );
+
   // Add svg logo option.
   $form['logo']['settings']['svg_logo'] = array(
     '#type' => 'managed_file',
@@ -81,8 +91,9 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
     ),
   );
 
-  //Allow alter basic site information instead use admin/config/system/site-information
-  //We have a lot information into page site-information we don't want to show site managers
+  // Allow site managers to alter basic site information.
+  // Pull specific fields from admin/config/system/site-information.
+  // We do not want to expose the entire site-information form to site managers.
   $form['site_information'] = array(
     '#type' => 'fieldset',
     '#title' => t('Site details'),
@@ -91,7 +102,7 @@ function nuboot_radix_form_system_theme_settings_alter(&$form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Site name'),
     '#default_value' => variable_get('site_name', 'Drupal'),
-    '#required' => TRUE
+    '#required' => TRUE,
   );
   $form['site_information']['site_slogan'] = array(
     '#type' => 'textfield',

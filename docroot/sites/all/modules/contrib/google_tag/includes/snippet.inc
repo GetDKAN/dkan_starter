@@ -48,7 +48,7 @@ function _google_tag_script_snippet() {
   var j=d.createElement(s);
   var dl=l!='dataLayer'?'&l='+l:'';
   j.type='text/javascript';
-  j.src='//www.googletagmanager.com/gtm.js?id='+i+dl+'$query';
+  j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl+'$query';
   j.async=true;
   f.parentNode.insertBefore(j,f);
 
@@ -81,8 +81,8 @@ function _google_tag_noscript_snippet() {
 
   // Build noscript snippet.
   $noscript = <<<EOS
-<noscript><iframe src="//www.googletagmanager.com/ns.html?id=$container_id$query"
- height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript aria-hidden="true"><iframe src="https://www.googletagmanager.com/ns.html?id=$container_id$query"
+ height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager">Google Tag Manager</iframe></noscript>
 EOS;
   if ($compact) {
     $noscript = str_replace("\n", '', $noscript);
@@ -105,8 +105,7 @@ EOS;
  */
 function _google_tag_data_layer_snippet(&$classes = array()) {
   // Gather data.
-  $data_layer = variable_get('google_tag_data_layer', 'dataLayer');
-  $data_layer = trim(drupal_json_encode($data_layer), '"');
+  $data_layer = _google_tag_variable_clean('google_tag_data_layer', 'dataLayer');
   $whitelist = variable_get('google_tag_whitelist_classes', GOOGLE_TAG_WHITELIST_CLASSES);
   $blacklist = variable_get('google_tag_blacklist_classes', GOOGLE_TAG_BLACKLIST_CLASSES);
 

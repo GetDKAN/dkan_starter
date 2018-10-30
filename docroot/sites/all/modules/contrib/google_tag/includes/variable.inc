@@ -113,9 +113,26 @@ function _google_tag_variable_info_path($options) {
  * Implements hook_variable_info().
  */
 function _google_tag_variable_info_role($options) {
+  global $language;
+
   // Gather data.
-  $roles = array_map('check_plain', user_roles());
-  $roles = drupal_map_assoc($roles);
+  // Set language code to default to prevent role names from being translated.
+  // Use role name in default language as array key as this matches the values
+  // attached to global user object (used when evaluating role condition). Set
+  // display value to translated role name.
+  // @todo This points out core would benefit from a $translate parameter to
+  // user_roles() to indicate whether to translate the role names. This would be
+  // used on the role and permission listing pages to consistently translate all
+  // roles not just the anonymous and authenticated roles.
+  $language_keep = $language->language;
+  $language->language = 'en';
+  $roles = user_roles();
+  $language->language = $language_keep;
+  foreach ($roles as $rid => $role) {
+    // Set display value to translated role name.
+    $roles[$role] = t($role);
+    unset($roles[$rid]);
+  }
 
   // Build variables.
   $variables['google_tag_role_toggle'] = array(
@@ -227,6 +244,7 @@ function _google_tag_variable_info_advanced($options) {
     'title' => t('Add classes to the data layer', array(), $options),
     'description' => t('If checked, then the listed classes will be added to the data layer.', array(), $options),
     'default' => 0,
+    'validate callback' => '_google_tag_validate_listed_classes',
   );
 
   $variables['google_tag_whitelist_classes'] = array(
@@ -317,6 +335,12 @@ function _google_tag_variable_info_internal($options) {
 
 /**
  * Returns states array for a form element.
+ *
+ * @param string $variable
+ *   The name of the form element.
+ *
+ * @return array
+ *   The states array.
  */
 function _google_tag_variable_states($variable) {
   return array(
@@ -382,7 +406,39 @@ function _google_tag_validate_data_layer($variable, $options, $element, $form, &
   $value = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
   $value = trim($value);
   drupal_array_set_nested_value($form_state['values'], $element['#parents'], $value);
-  return _google_tag_verify_data_layer($value);
+  return _google_tag_data_layer_verify($value);
+}
+
+/**
+ * Element validation handler for google_tag_listed_classes.
+ */
+function _google_tag_validate_listed_classes($variable, $options, $element, $form, &$form_state) {
+  if (!drupal_array_get_nested_value($form_state['values'], $element['#parents'])) {
+    return;
+  }
+
+  $keys = array('google_tag_whitelist_classes', 'google_tag_blacklist_classes');
+  $variables = isset($form['#variable_edit_form']) ? $form['#variable_edit_form'] : array();
+  $items = array_diff($keys, $variables);
+  if (!empty($items)) {
+    // Need both variables on form to validate.
+    form_set_error('google_tag_include_classes', t('To validate listed classes, include the whitelist and blacklist variables in the realm variables.'));
+    return;
+  }
+
+  $empty = TRUE;
+  foreach ($keys as $key) {
+    array_pop($element['#parents']);
+    $element['#parents'][] = $key;
+    $classes = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
+    google_tag_text_clean($classes);
+    $empty &= empty($classes);
+  }
+  if ($empty) {
+    form_set_error('google_tag_include_classes', t('Enter listed classes in at least one field, or uncheck the box.'));
+    form_set_error('google_tag_whitelist_classes', '');
+    form_set_error('google_tag_blacklist_classes', '');
+  }
 }
 
 /**

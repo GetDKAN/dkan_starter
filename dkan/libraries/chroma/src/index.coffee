@@ -1,7 +1,7 @@
 
 ###
 @requires
-    
+
     color
 
     colorbrewer
@@ -20,16 +20,20 @@
     luminance
     temperature
     contrast
+    distance
+    delta-e
 
     get set
+    clipped
 
-    alpha darken saturate premultiply blend    
+    alpha darken saturate premultiply blend
 
     scale
     limits
-    
+
     interpolate-hsx
     interpolate-rgb
     interpolate-num
     interpolate-lab
+    interpolate-lrgb
 ###

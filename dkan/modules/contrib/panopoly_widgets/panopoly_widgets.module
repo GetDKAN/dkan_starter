@@ -99,8 +99,8 @@ function panopoly_widgets_field_default_field_instances_alter(&$instances) {
 function panopoly_widgets_page_build(&$page) {
 
   // Add our custom javascript to the footer to override other things.
-  drupal_add_js(drupal_get_path('module', 'panopoly_widgets') . '/panopoly-widgets.js', array('scope' => 'footer'));
   drupal_add_library('system', 'ui.tabs');
+  drupal_add_js(drupal_get_path('module', 'panopoly_widgets') . '/panopoly-widgets.js', array('scope' => 'footer'));
   drupal_add_js(drupal_get_path('module', 'panopoly_widgets') . '/panopoly-widgets-spotlight.js', array('scope' => 'footer'));
 }
     
@@ -124,6 +124,7 @@ function panopoly_widgets_ctools_content_subtype_alter(&$subtype, &$plugin) {
     $subtype['icon'] = drupal_get_path('module', 'panopoly_widgets') . '/images/icon_submenu.png';
     $subtype['admin css'] = array(drupal_get_path('module', 'menu_block') . '/menu-block-admin.css');
     $subtype['admin js'] = array(drupal_get_path('module', 'menu_block') . '/menu-block.js');
+    $subtype['defaults']['expanded_max_depth'] = 0;
   }
 
   // Modify the general content item to appear in the generic content sidebar area
@@ -160,6 +161,65 @@ function panopoly_widgets_ctools_content_subtype_alter(&$subtype, &$plugin) {
 }
 
 /**
+ * Implements hook_ctools_plugin_post_alter().
+ */
+function panopoly_widgets_ctools_plugin_post_alter(&$plugin, &$info) {
+  if ($info['module'] == 'ctools' && $info['type'] == 'content_types' && $plugin['module'] == 'fieldable_panels_panes' && $plugin['name'] == 'fieldable_panels_pane') {
+    $plugin['original render callback'] = $plugin['render callback'];
+    $plugin['render callback'] = 'panopoly_widgets_fieldable_panels_pane_render';
+  }
+}
+
+/**
+ * Gets a list of all the required file fields for the given bundle.
+ */
+function panopoly_widgets_get_required_file_fields($bundle) {
+  $required_file_fields = array();
+
+  $field_instances = field_info_instances('fieldable_panels_pane', $bundle);
+  foreach ($field_instances as $field_name => $field_instance) {
+    $field_info = field_info_field($field_name);
+    if (in_array($field_info['type'], array('file', 'image')) && !empty($field_instance['required'])) {
+      $required_file_fields[] = $field_name;
+    }
+  }
+
+  return $required_file_fields;
+}
+
+/**
+ * Render callback for fieldable panels panes.
+ */
+function panopoly_widgets_fieldable_panels_pane_render($subtype, $conf, $panels_args = array(), $context = array()) {
+  $entity = fieldable_panels_panes_load_from_subtype($subtype);
+
+  // If the entity has some required file fields, check them.
+  $required_file_fields = panopoly_widgets_get_required_file_fields($entity->bundle);
+  $missing_required = FALSE;
+  if (!empty($required_file_fields)) {
+    foreach ($required_file_fields as $required_file_field) {
+      $items = field_get_items('fieldable_panels_pane', $entity, $required_file_field);
+
+      // Check if the required file field is empty or the file doesn't exist.
+      if (empty($items[0]) || empty($items[0]['fid']) || !file_load($items[0]['fid'])) {
+        $missing_required = TRUE;
+        break;
+      }
+    }
+  }
+
+  // If a required file field is missing, then we return nothing.
+  if ($missing_required) {
+    return NULL;
+  }
+
+  // Otherwise, hand off to the original render callback.
+  $plugin = ctools_get_content_type('fieldable_panels_pane');
+  $original_render_callback = $plugin['original render callback'];
+  return $original_render_callback($subtype, $conf, $panels_args, $context);
+}
+
+/**
  * Implementation of hook_form_alter()
  */
 function panopoly_widgets_form_alter(&$form, &$form_state, $form_id) {
@@ -175,13 +235,49 @@ function panopoly_widgets_form_alter(&$form, &$form_state, $form_id) {
 
     // Disable some options since they appear busted or confusing in Menu Block
     $form['sort']['#access'] = FALSE;
+
+    // Add configuration for max expanded depth.
+    $form['expanded_max_depth'] = array(
+      '#type' => 'select',
+      '#title' => t('Maximum expanded depth'),
+      '#weight' => 9,
+      '#options' => array(
+        '1' => t('Only 1 level'),
+        '2' => t('Only 2 levels'),
+        '3' => t('Only 3 levels'),
+        '4' => t('Only 4 levels'),
+        '5' => t('Only 5 levels'),
+        '6' => t('Only 6 levels'),
+        '7' => t('Only 7 levels'),
+        '8' => t('Only 8 levels'),
+        '9' => t('Only 9 levels'),
+        '0' => t('Expand all children'),
+      ),
+      '#default_value' => isset($form_state['conf']['expanded_max_depth']) ? $form_state['conf']['expanded_max_depth'] : 0,
+      '#states' => array(
+        'visible' => array(
+          ':input[name="expanded"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
+
+    // Modify the 'expanded' checkbox so it appears right above the max depth
+    // and makes sense with that option.
+    $form['expanded']['#weight'] = 8;
+    $form['expanded']['#title'] = t('<strong>Expand children</strong> of this tree.');
   }
 
   if ($form_id == 'fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form') {
 
     // Add fields to the FPP object if we are adding a reusable object for the first time
     if ($form_state['entity']->reusable && $form_state['op'] == 'add' && $form_state['rebuild'] == FALSE) {
-      $form = fieldable_panels_panes_entity_edit_form($form, $form_state);
+      if (fieldable_panels_panes_access('update', $form_state['entity'])) {
+        $form = fieldable_panels_panes_entity_edit_form($form, $form_state);
+      }
+      else {
+        $form['message']['#markup'] = '<p>' . t("You don't have permission to edit this widget.") . '</p>';
+        return;
+      }
     }
 
     // Add a custom pre-render method to deal with "Content Settings" fieldset.
@@ -463,14 +559,33 @@ function panopoly_widgets_file_type_alter(&$types, $file) {
 
 /**
  * Implements hook_menu_block_tree_alter().
- *
- * Updates menu block settings in case of IPE callback magic. This will only
- * work in limited cases but will be fixed when the page refreshes.
  */
-function panopoly_widgets_menu_block_tree_alter($tree, $config) {
+function panopoly_widgets_menu_block_tree_alter(&$tree, $config) {
+  // Only alter if 'expanded' is enabled and the max isn't 'Expand all children'
+  if ($config['expanded'] && isset($config['expanded_max_depth']) && $config['expanded_max_depth'] > 0) {
+    _panopoly_widgets_menu_block_tree_expanded_max_depth_alter($tree, $config);
+  }
+
+  // Updates menu block settings in case of IPE callback magic. This will only
+  // work in limited cases but will be fixed when the page refreshes.
   if (arg(0) == 'panels' && arg(1) == 'ajax') {
     foreach ($tree as $key => $value) {
       $tree[$key]['link']['in_active_trail'] = TRUE;
+    }
+  }
+}
+
+/**
+ * Remove items from tree which are below the 'expanded_max_depth'.
+ */
+function _panopoly_widgets_menu_block_tree_expanded_max_depth_alter(&$tree, $config) {
+  // Remove all items above the max depth.
+  foreach ($tree as $name => &$item) {
+    if (!$item['link']['in_active_trail'] && $item['link']['depth'] > $config['expanded_max_depth']) {
+      unset($tree[$name]);
+    }
+    else {
+      _panopoly_widgets_menu_block_tree_expanded_max_depth_alter($item['below'], $config);
     }
   }
 }
@@ -487,6 +602,25 @@ function panopoly_widgets_fieldable_panels_pane_view($entity, $view_mode, $langc
       );
     }
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function panopoly_widgets_form_fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form_alter(&$form, &$form_state) {
+  if (isset($form['widget_settings']['link'])) {
+    // For when panopoly_magic is enabled.
+    $element =& $form['widget_settings']['link'];
+  }
+  else {
+    $element =& $form['link'];
+  }
+
+  $element['path']['#linkit'] = array(
+    'enable' => TRUE,
+    'profile' => 'content_fields',
+    'button_text' => t('Search for existing content'),
+  );
 }
 
 /**

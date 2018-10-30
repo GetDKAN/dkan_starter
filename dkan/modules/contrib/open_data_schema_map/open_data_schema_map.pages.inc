@@ -30,8 +30,6 @@ function open_data_schema_map_page_overview() {
       $function($data);
     }
     // TODO: report features status.
-    // $data['configuration'] = theme('entity_status',
-    // array('status' => $data['features']));
     $data['enabled'] = $data['enabled'] ? t('Enabled') : t('Disabled');
     $list[] = $data;
   }
@@ -41,11 +39,11 @@ function open_data_schema_map_page_overview() {
   $header[] = t('Schema');
   $header[] = t('Entity');
   $header[] = t('Bundle');
-  $header[] = t('Endpoint');
   $header[] = t('Output Format');
+  $header[] = t('Endpoint');
   $header[] = t('Edit');
+  $header[] = t('Cache');
   $header[] = t('Delete');
-  // $header[] = t('Configuration');
   $rows = $list;
   return array(
     '#theme' => 'table',
@@ -58,6 +56,16 @@ function open_data_schema_map_page_overview() {
 
 /**
  * Callback for delete page.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ * @param object $api
+ *   API Object
+ *
+ * @return array
+ *   Form Array
  */
 function open_data_schema_map_delete(array $form, array &$form_state, $api = NULL) {
   if (isset($api->callback)) {
@@ -75,6 +83,11 @@ function open_data_schema_map_delete(array $form, array &$form_state, $api = NUL
 
 /**
  * Submit function for deleting an API.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
  */
 function open_data_schema_map_delete_submit(array $form, array &$form_state) {
   $api = $form['#api'];
@@ -92,8 +105,19 @@ function open_data_schema_map_delete_submit(array $form, array &$form_state) {
 
 /**
  * Callback for primary menu page.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ * @param object $api
+ *   API Object
+ *
+ * @return array
+ *   Form Array
  */
 function open_data_schema_map_manage(array $form, array &$form_state, $api = NULL) {
+  $entity_list = array();
   if (isset($api->callback)) {
     $form['in_code'] = array(
       '#type' => 'item',
@@ -294,6 +318,15 @@ function open_data_schema_map_manage(array $form, array &$form_state, $api = NUL
     }
     $form['mapping'] = $form['mapping'] + open_data_schema_map_schema_map_form($schema, $api);
 
+    if (in_array($api->machine_name, _open_data_schema_map_get_available_filters('machine_name'))) {
+      $form['filter_enabled'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Apply Data Federation Filters'),
+        '#description' => t('Check to apply filters configured in the') . ' ' . l(t('Data Federation Filters'), '/admin/config/services/odsm/settings') . ' ' . t('settings'),
+        '#weight' => 6,
+      );
+    }
+
     // Load defaults.
     $form['name']['#default_value'] = $api->name;
     $form['machine_name']['#default_value'] = $api->machine_name;
@@ -304,12 +337,12 @@ function open_data_schema_map_manage(array $form, array &$form_state, $api = NUL
     $form['enabled']['#default_value'] = $api->enabled;
     $form['api_schema']['#default_value'] = $api->api_schema;
     $form['arguments']['#default_value'] = $api->arguments;
+    $form['filter_enabled']['#default_value'] = $api->filter_enabled;
 
     $form['id'] = array(
       '#type' => 'hidden',
       '#value' => $api->id,
     );
-
   }
   if ($api) {
     $form['submit'] = array(
@@ -336,6 +369,14 @@ function open_data_schema_map_manage(array $form, array &$form_state, $api = NUL
 
 /**
  * Creates form for schema fields.
+ *
+ * @param array $schema
+ *   Schema array
+ * @param object $api
+ *   API Object
+ *
+ * @return array
+ *   Form array
  */
 function open_data_schema_map_schema_map_form($schema, $api) {
   $function = open_data_schema_map_schema_types_callback($schema['$schema']);
@@ -349,6 +390,14 @@ function open_data_schema_map_schema_map_form($schema, $api) {
 
 /**
  * Form AJAX handler.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ *
+ * @return array
+ *   Bundle array
  */
 function open_data_schema_map_bundle_ajax_callback(array $form, array &$form_state) {
   return $form['bundle'];
@@ -356,6 +405,14 @@ function open_data_schema_map_bundle_ajax_callback(array $form, array &$form_sta
 
 /**
  * Form AJAX handler.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ *
+ * @return array
+ *   Arguments array
  */
 function open_data_schema_mapper_args_ajax_callback(array $form, array &$form_state) {
   return $form['arguments'];
@@ -363,6 +420,11 @@ function open_data_schema_mapper_args_ajax_callback(array $form, array &$form_st
 
 /**
  * Submit function for api map.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
  */
 function open_data_schema_map_manage_submit($form, $form_state) {
   $db_schema = drupal_get_schema('open_data_schema_map');
@@ -405,6 +467,11 @@ function open_data_schema_map_manage_submit($form, $form_state) {
 
 /**
  * Adds field type to field definition.
+ *
+ * @param array $values
+ *   Values array
+ * @param array $mapping
+ *   Mapping array
  */
 function open_data_schema_map_add_type(&$values, $mapping) {
   foreach ($values as $api_field => $token) {
@@ -419,17 +486,20 @@ function open_data_schema_map_add_type(&$values, $mapping) {
 }
 
 /**
- * Main endpoint callback
+ * Main endpoint callback.
+ *
+ * @param object $api
+ *   API object
  */
 function open_data_schema_map_endpoint($api) {
-  // Start by setting the content type header based on the API settings
+  // Start by setting the content type header based on the API settings.
   if ($output_format = open_data_schema_map_output_format_load($api->outputformat)) {
-    foreach($output_format['headers'] as $key => $value) {
+    foreach ($output_format['headers'] as $key => $value) {
       drupal_add_http_header($key, $value);
     }
   }
 
-  // Check if a file cache exists, and simply return this if it does
+  // Check if a file cache exists, and simply return this if it does.
   if (open_data_schema_map_file_cache_exits($api)) {
     $filename = open_data_schema_map_file_cache_name_helper($api);
     drupal_add_http_header('Expires', gmdate('D, d M Y H:i:s \G\M\T', time() + 3600));
@@ -438,7 +508,7 @@ function open_data_schema_map_endpoint($api) {
     readfile($filename);
   }
 
-  // If not, render the results and output with the appropriate formatter
+  // If not, render the results and output with the appropriate formatter.
   else {
     $render = open_data_schema_map_render_api($api);
     $headers = $render['headers'];
@@ -457,3 +527,92 @@ function open_data_schema_map_endpoint($api) {
     }
   }
 }
+
+
+/**
+ * Callback for validation page.
+ */
+function open_data_schema_map_validation_page($validator_class, $api_endpoint) {
+  $render = array();
+
+  $results = _open_data_schema_map_process_validate($validator_class);
+  $cache_date = isset($results['cache_date']) ? $results['cache_date'] : '';
+  $cache_form = drupal_get_form('open_data_schema_map_validate_cache_clear', $cache_date, $validator_class, $api_endpoint);
+
+  $total = array(
+    array(
+      $results['count'],
+      count($results['error_datasets']),
+      $results['total_errors'],
+    ),
+  );
+
+  $total_table = theme('table', array(
+    'header' => array(
+      t('Total Datasets'),
+      t('Datasets with Errors'),
+      t('Errors'),
+    ), 'rows' => $total,
+  ));
+
+  $render['total'] = array(
+    '#type' => 'markup',
+    '#markup' => $total_table,
+  );
+
+  if ($results['errors']) {
+    $headers = array('id', 'property', 'error', 'link');
+    $table = theme('table', array('header' => $headers, 'rows' => $results['errors']));
+    $render['fieldset'] = array(
+      '#type' => 'fieldset',
+      '#title' => 'errors',
+      '#attributes' => array('class' => array('collapsible', 'collapsed')),
+      'content' => array(
+        '#markup' => $table,
+      ),
+      '#attached' => array('js' => array('misc/collapse.js', 'misc/form.js')),
+    );
+  }
+
+  return drupal_render($cache_form) . drupal_render($render);
+}
+
+/**
+ * Returns the render array for the form.
+ */
+function open_data_schema_map_validate_cache_clear($form, $form_state, $created, $validator_class, $api_endpoint) {
+  if (!empty($created)) {
+    $form['cache'] = array(
+      '#type' => 'markup',
+      '#markup' => t('Result cached %date.', array('%date' => date('F j, Y, g:i a', $created))),
+    );
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Clear cache'),
+    );
+  }
+
+  $form['validator_class'] = array(
+    '#type' => 'hidden',
+    '#value' => $validator_class,
+  );
+  $form['api_endpoint'] = array(
+    '#type' => 'hidden',
+    '#value' => $api_endpoint,
+  );
+  return $form;
+}
+
+/**
+ * Add a submit handler/function to the form.
+ */
+function open_data_schema_map_validate_cache_clear_submit($form, &$form_state) {
+  if ($form_state['triggering_element']['#id'] == 'edit-submit') {
+    $validator_class = $form_state['input']['validator_class'];
+    $cache_key = strtolower($validator_class) . '_validate_result';
+    cache_clear_all($cache_key, 'cache');
+
+    drupal_set_message(t('The validator cache has been cleared.'));
+  }
+}
+

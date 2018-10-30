@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * dkan_sitewide_panels.views_default.inc
@@ -76,6 +77,13 @@ function dkan_sitewide_panels_views_default_views() {
   $handler->display->display_options['sorts']['changed']['order'] = 'DESC';
   $handler->display->display_options['sorts']['changed']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['changed']['expose']['label'] = 'Date changed';
+  /* Sort criterion: Indexed Node: Date created */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'search_api_index_datasets';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  $handler->display->display_options['sorts']['created']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['created']['expose']['label'] = 'Date created';
   /* Sort criterion: Indexed Node: Title */
   $handler->display->display_options['sorts']['title']['id'] = 'title';
   $handler->display->display_options['sorts']['title']['table'] = 'search_api_index_datasets';
@@ -388,11 +396,10 @@ function dkan_sitewide_panels_views_default_views() {
   $handler->display->display_options['fields']['body']['settings'] = array(
     'trim_length' => '100',
   );
-  /* Sort criterion: Content: Post date */
-  $handler->display->display_options['sorts']['created']['id'] = 'created';
-  $handler->display->display_options['sorts']['created']['table'] = 'node';
-  $handler->display->display_options['sorts']['created']['field'] = 'created';
-  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  /* Sort criterion: Content: Title */
+  $handler->display->display_options['sorts']['title']['id'] = 'title';
+  $handler->display->display_options['sorts']['title']['table'] = 'node';
+  $handler->display->display_options['sorts']['title']['field'] = 'title';
   /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
@@ -528,7 +535,8 @@ function dkan_sitewide_panels_views_default_views() {
   $handler->display->display_options['arguments']['etid']['field'] = 'etid';
   $handler->display->display_options['arguments']['etid']['ui_name'] = 'We pass the user ID as the Entity ID.';
   $handler->display->display_options['arguments']['etid']['default_action'] = 'default';
-  $handler->display->display_options['arguments']['etid']['default_argument_type'] = 'current_user';
+  $handler->display->display_options['arguments']['etid']['default_argument_type'] = 'user';
+  $handler->display->display_options['arguments']['etid']['default_argument_options']['user'] = FALSE;
   $handler->display->display_options['arguments']['etid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['etid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['etid']['summary_options']['items_per_page'] = '25';

@@ -6,11 +6,11 @@ components that make up DKAN.
 
 With the exception of the modules described in the
 last two items in this table of contents
-(`Open Data Schema Map <https://github.com/NuCivic/open_data_schema_map/>`_ and
-`Visualization Entity <https://github.com/NuCivic/visualization_entity>`_),
-and of the `Recline <https://github.com/NuCivic/recline>`_ module which is
+(`Open Data Schema Map <https://github.com/GetDKAN/open_data_schema_map/>`_ and
+`Visualization Entity <https://github.com/GetDKAN/visualization_entity>`_),
+and of the `Recline <https://github.com/GetDKAN/recline>`_ module which is
 described inside the Datasets section, all this functionality is provided by the
-`modules that ship with the DKAN  profile <https://github.com/NuCivic/dkan/tree/7.x-1.x/modules/dkan>`_.
+`modules that ship with the DKAN  profile <https://github.com/GetDKAN/dkan/tree/7.x-1.x/modules/dkan>`_.
 
 .. toctree::
    :maxdepth: 1
@@ -25,9 +25,10 @@ described inside the Datasets section, all this functionality is provided by the
    search
    theme
    Roles and Permissions <permissions>
-   Storytelling <storytelling/index>
+   Storytelling <storytelling>
    Open Data Schema Map <open-data-schema>
    Visualizations <visualizations/index>
+   Link checker <linkchecker>
 
 .. note:: The three modules mentioned above that are not distributed with DKAN
    continue to be maintained in separate repositories because they work

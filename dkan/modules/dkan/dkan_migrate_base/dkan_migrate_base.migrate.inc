@@ -54,8 +54,8 @@ class CKANListJSON extends MigrateListJSON {
   public function __construct($list_url, $http_options = array()) {
     parent::__construct($list_url);
     $this->httpOptions = $http_options;
-    $this->page = isset($http_options['page']) ? $http_options['page'] : '';
-    $this->offset = isset($http_options['offset']) ? $http_options['offset'] : '';
+    $this->page = isset($http_options['page']) ? intval($http_options['page']) : 0;
+    $this->offset = isset($http_options['offset']) ? intval($http_options['offset']) : 0;
     $this->ids = isset($http_options['ids']) ? $http_options['ids'] : '';
   }
 
@@ -373,9 +373,15 @@ abstract class MigrateDKAN extends Migration {
   }
 
   /**
-   * Creates resource node.
+   * Create a dkan group node from the values provided.
+   *
+   * @param object $group
+   *   Values for the group node to be created.
+   *
+   * @return object
+   *   Group node object.
    */
-  public function createGroupNode($group) {
+  public function createGroupNode(stdClass $group) {
     // TODO: Check high water mark.
     global $user;
     // This is necessary for group permissions. If there is not a properly
@@ -413,9 +419,16 @@ abstract class MigrateDKAN extends Migration {
   }
 
   /**
-   * Creates resource node.
+   * Create a dkan resource node from the values provided.
+   *
+   * @param object $res
+   *   Values for the resources node to be created.
+   *        Formated with the self::prepareResourceHelper() method.
+   *
+   * @return object
+   *   Resource node object.
    */
-  public function createResourceNode($res) {
+  public function createResourceNode(stdClass $res) {
 
     // TODO: Check high water mark.
     // TODO: Check if UUID exits.
@@ -688,6 +701,8 @@ abstract class MigrateDKAN extends Migration {
    *   Drupal uri of where to save file public://archive/test.pdf.
    * @param int $save_mode
    *   File save mode from drupal core, ex FILE_EXISTS_REPLACE.
+   * @param bool $manage_file
+   *   Set to FALSE to save the file as an unmanaged file.
    */
   public function downloadExternalFile($url, $uri, $save_mode = FILE_EXISTS_RENAME, $manage_file = TRUE) {
 

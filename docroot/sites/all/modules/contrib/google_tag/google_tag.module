@@ -65,6 +65,16 @@ function google_tag_permission() {
 }
 
 /**
+ * Implements hook_cron().
+ *
+ * @todo Could instead implement hook_flush_caches() called from system_cron()
+ *   and drupal_flush_all_caches().
+ */
+function google_tag_cron() {
+  google_tag_assets_create();
+}
+
+/**
  * Implements hook_variable_group_info().
  */
 function google_tag_variable_group_info() {
@@ -167,6 +177,8 @@ function google_tag_page_build(&$page) {
   $include_classes = variable_get('google_tag_include_classes', 0);
 
   list($realm_name, $realm_key) = google_tag_realm_values();
+  $realm_name .= $realm_name ? '/' : '';
+  $realm_key .= $realm_key ? '.' : '';
   $types = $include_classes ? array('data_layer', 'script') : array('script');
 
   $data_layer = variable_get('google_tag_data_layer', 'dataLayer');
@@ -188,7 +200,7 @@ function google_tag_page_build(&$page) {
       // whichever class implements the stream, e.g. local, S3, or App Engine.
       $path = "$base_path/google_tag/{$realm_name}google_tag.$realm_key$type.js";
       // @todo Will it matter if file is empty?
-      drupal_add_js($path, array('group' => JS_LIBRARY * 2));
+      drupal_add_js($path, array('group' => JS_LIBRARY * 2, 'requires_jquery' => FALSE));
     }
   }
   else {
@@ -199,7 +211,7 @@ function google_tag_page_build(&$page) {
       // For inline JavaScript to validate as XHTML, all JavaScript containing
       // XHTML needs to be wrapped in CDATA.
       if ($contents) {
-        drupal_add_js($contents, array('type' => 'inline', 'group' => JS_LIBRARY * 2));
+        drupal_add_js($contents, array('type' => 'inline', 'group' => JS_LIBRARY * 2, 'requires_jquery' => FALSE));
       }
     }
   }
@@ -257,9 +269,6 @@ function google_tag_realm_values() {
 
     $debug = variable_get('google_tag_debug_output', 0);
     $debug ? drupal_set_message(t('realm:key = @realm:@key', array('@realm' => $realm_name, '@key' => $realm_key))) : '';
-
-    $realm_name .= $realm_name ? '/' : '';
-    $realm_key .= $realm_key ? '.' : '';
   }
   return array($realm_name, $realm_key);
 }
@@ -380,4 +389,12 @@ function _google_tag_role_check() {
     $debug ? drupal_set_message(t('role check @satisfied', array('@satisfied' => $satisfied))) : '';
   }
   return $satisfied;
+}
+
+/**
+ * Saves snippet files and data layer classes based on current settings.
+ */
+function google_tag_assets_create() {
+  module_load_include('inc', 'google_tag', 'includes/admin');
+  _google_tag_assets_create();
 }

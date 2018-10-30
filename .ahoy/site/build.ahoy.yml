@@ -34,22 +34,19 @@ commands:
   remake:
     usage: Rebuild all the dkan projects from the build.make file.
     cmd: |
-      set -e
-      AHOY_CMD_PROXY=''
       DIRNAME=${PWD##*/}
       # IF this is dkan_starter
       if [[ "$DIRNAME" == "dkan_starter" ]]; then
         # Building in a new directory
         # drush make is stupid, delete docroot_new just in case
-        rm -rf docroot_new
+        ahoy cmd-proxy "rm -rf docroot_new"
         ahoy drush -y make build.make --no-recursion --no-cache --verbose docroot_new
-        rm -rf docroot
-        mv docroot_new docroot
+        ahoy cmd-proxy "rm -rf docroot"
+        ahoy cmd-proxy "mv docroot_new docroot"
         # Move dkan folder from docroot/profiles to base folder
-        mv dkan dkan_old
-        mv docroot/profiles/dkan ./
-        ln -s ../../dkan docroot/profiles/dkan
-        rm -rf dkan_old
+        ahoy cmd-proxy mv "dkan dkan_old; mv docroot/profiles/dkan ./"
+        ahoy cmd-proxy ln "-s ../../dkan docroot/profiles/dkan"
+        ahoy cmd-proxy rm "-rf dkan_old"
         # No recursive prevents dkan build to happen. Run it now from dkan remake.
         ahoy dkan remake
       fi
@@ -66,11 +63,11 @@ commands:
         dirs=( $(find ./contrib/modules -maxdepth 1 -type d | sed 's/\.\/contrib\/modules\///g') )
         for dir in "${dirs[@]}";
         do
-          rm -fR ./docroot/sites/all/modules/contrib/$dir
+          ahoy cmd-proxy "rm -fR ./docroot/sites/all/modules/contrib/$dir"
         done
 
-        mv -f contrib/modules/* docroot/sites/all/modules/contrib
-        rm -rf contrib
+        ahoy cmd-proxy "mv -f contrib/modules/* docroot/sites/all/modules/contrib"
+        ahoy cmd-proxy "rm -rf contrib"
       fi
 
   custom-libs:
@@ -78,7 +75,7 @@ commands:
     cmd: |
       if [ ! -d docroot/sites/all/libraries ]; then
          echo 'Creating docroot/sites/all/libraries'
-         mkdir docroot/sites/all/libraries
+         ahoy cmd-proxy "mkdir docroot/sites/all/libraries"
       fi
 
       # Make writable so that error not thrown on second attempt.
@@ -86,7 +83,7 @@ commands:
 
       if [ -f config/custom_libs.make ] && [ `cat config/custom_libs.make | sed '/^\s*$/d' | wc -l` -gt 2 ]; then
         ahoy drush -y make --no-core --contrib-destination=contrib config/custom_libs.make --no-recursion --no-cache --verbose
-      
+
         # Remove old stuff first
         dirs=( $(find ./contrib/libraries -type d  -maxdepth 1 | sed 's/\.\/contrib\/libraries\///g') )
         for dir in "${dirs[@]}";
@@ -96,12 +93,12 @@ commands:
             continue;
           fi
           echo "Replace ./docroot/sites/all/libraries/$dir"
-          rm -fR ./docroot/sites/all/libraries/$dir
-          mv contrib/libraries/$dir docroot/sites/all/libraries/
+          ahoy cmd-proxy "rm -fR ./docroot/sites/all/libraries/$dir"
+          ahoy cmd-proxy "mv contrib/libraries/$dir docroot/sites/all/libraries/"
         done
 
-        rm -fR contrib
-  
+        ahoy cmd-proxy "rm -fR contrib"
+
       fi
 
   overrides:
@@ -112,48 +109,52 @@ commands:
         ahoy cmd-proxy drush php-script .ahoy/site/.scripts/overrides.php
         # Check file exits and file not empty.
         if [ -e overriden_make.make ] && [ -s overriden_make.make ]; then
-          rm -rf docroot/sites/all/modules/overrides
-          mkdir -p docroot/sites/all/modules/overrides
+          ahoy cmd-proxy "mkdir -p docroot/sites/all/modules/contrib"
+          ahoy cmd-proxy "mkdir -p docroot/sites/all/themes/contrib"
           ahoy drush -y make --no-core --contrib-destination=overrides overriden_make.make --no-recursion --no-cache --verbose
-          mv overrides/modules/* docroot/sites/all/modules/overrides
-          rm -rf overrides
+          ahoy cmd-proxy "rm -rf docroot/sites/all/modules/overrides"
+          ahoy cmd-proxy "mkdir -p docroot/sites/all/modules/overrides"
+          ahoy cmd-proxy "cp -r overrides/modules/* docroot/sites/all/modules/overrides/."
+          ahoy cmd-proxy "rm -rf overrides"
+          ahoy cmd-proxy "rm -rf docroot/.htaccess"
+          ahoy cmd-proxy "ln -s ../config/.htaccess docroot/.htaccess"
         fi
-        rm -f overriden_make.make
+        ahoy cmd-proxy rm -f overriden_make.make
       fi
 
   post-build:
     usage: Runs (what used to be buildmanager) post build commands.
     cmd: |
       # Setup a folder for contrib modules and themes.
-      mkdir -p docroot/sites/all/modules/contrib
-      mkdir -p docroot/sites/all/themes/contrib
+      ahoy cmd-proxy "mkdir -p docroot/sites/all/modules/contrib"
+      ahoy cmd-proxy "mkdir -p docroot/sites/all/themes/contrib"
       # Replace the default .htaccess file with our own that includes a working non-www to www example for acquia.
       if [ -f config/.htaccess ]; then
-        rm -rf docroot/.htaccess
-        ln -s ../config/.htaccess docroot/.htaccess
+        ahoy cmd-proxy "rm -rf docroot/.htaccess"
+        ahoy cmd-proxy "ln -s ../config/.htaccess docroot/.htaccess"
       fi
       # Replace sites/default with our own sites/default outside of the drupal root.
-      rm -rf docroot/sites/default;
-      ln -s ../../assets/sites/default docroot/sites/default
+      ahoy cmd-proxy "rm -rf docroot/sites/default;"
+      ahoy cmd-proxy "ln -s ../../assets/sites/default docroot/sites/default"
       # Add .htaccess to the files directory if it does not exist.
       if [ ! -f docroot/sites/default/files/.htaccess ]; then
-        ln -s ../../config/files/.htaccess docroot/sites/default/files/.htaccess
+        ahoy cmd-proxy "ln -s ../../config/files/.htaccess docroot/sites/default/files/.htaccess"
       fi
       # Clean out any .gitignore files imported from other modules, libraries, and profiles.
-      find dkan -type f -name .gitignore -exec rm -rf {} \;
-      find dkan -type d -name .git -exec rm -rf {} \;
-      find docroot/sites/all -type f -name .gitignore -exec rm -rf {} \;
-      find docroot/sites/all -type d -name .git -exec rm -rf {} \;
+      ahoy cmd-proxy "find dkan -type f -name .gitignore -exec rm -rf {} \;"
+      ahoy cmd-proxy "find dkan -type d -name .git -exec rm -rf {} \;"
+      ahoy cmd-proxy "find docroot/sites/all -type f -name .gitignore -exec rm -rf {} \;"
+      ahoy cmd-proxy "find docroot/sites/all -type d -name .git -exec rm -rf {} \;"
       # Setup custom modules folder outside of the drupal root.
-      rm -rf docroot/sites/all/modules/custom
-      rm -rf docroot/sites/all/modules/data_config
-      ln -s ../../../../assets/modules/data_config docroot/sites/all/modules/data_config
-      ln -s ../../../../config/modules/custom docroot/sites/all/modules/custom
-      ln -s ../../../../config/themes/custom docroot/sites/all/themes/custom
+      ahoy cmd-proxy "rm -rf docroot/sites/all/modules/custom"
+      ahoy cmd-proxy "rm -rf docroot/sites/all/modules/data_config"
+      ahoy cmd-proxy "ln -s ../../../../assets/modules/data_config docroot/sites/all/modules/data_config"
+      ahoy cmd-proxy "ln -s ../../../../config/modules/custom docroot/sites/all/modules/custom"
+      ahoy cmd-proxy "ln -s ../../../../config/themes/custom docroot/sites/all/themes/custom"
       # Remove README/INSTALL files for security reasons CIVIC-3122
-      find ./docroot -type f -name "README*" -exec rm -f {} \;
-      find ./docroot -type f -name "INSTALL*" -exec rm -f {} \;
-      find ./docroot -type f -name "CHANGELOG*" -exec rm -rf {} \;
+      ahoy cmd-proxy find ./docroot -type f -name "README*" -exec rm -f {} \;
+      ahoy cmd-proxy find ./docroot -type f -name "INSTALL*" -exec rm -f {} \;
+      ahoy cmd-proxy find ./docroot -type f -name "CHANGELOG*" -exec rm -rf {} \;
       if [ "$(ahoy custom | grep post-build)" != '' ]
       then
         ahoy custom post-build
@@ -165,11 +166,14 @@ commands:
       # render custom .htaccess
       ahoy cmd-proxy ruby .ahoy/site/.scripts/htaccess.rb
       ahoy cmd-proxy ruby .ahoy/site/.scripts/circle.rb
+      ahoy cmd-proxy PROCESS_CONFIG=true ruby .ahoy/site/.scripts/config.rb
+      ahoy cmd-proxy PROCESS_CONFIG=true ruby .ahoy/site/.scripts/config-behat.rb
 
       # Transpose config.yml to php
       cd .ahoy/site
       composer install
-      php .scripts/config.php
+      cd -
+      ahoy cmd-proxy php .ahoy/site/.scripts/config.php
 
   new:
     usage: Sets new client site from dkan-starter
@@ -195,7 +199,7 @@ commands:
       cd ..
       git clone 'git@github.com:NuCivic/dkan_starter.git' {{args}} --depth=1
       cd {{args}}
-      rm -rf .git build.make build-dkan.make drupal-org-core.make
+      ahoy cmd-proxy "rm -rf .git build.make build-dkan.make drupal-org-core.make"
       echo "Site {{args}} initiated at ../{{args}}"
       git init .
       git add . -A
@@ -277,15 +281,14 @@ commands:
       fi
       git checkout $ARGS
       cd ..
-      mv config .config
-      rm -rf * .ahoy .ahoy.yml .github .probo.public.yml .probo.yml
+      ahoy cmd-proxy "mv config .config"
+      ahoy cmd-proxy "rm -rf * .ahoy .ahoy.yml .github .probo.public.yml .probo.yml"
       # You can rsync now
       rsync -av --exclude=.git --exclude=.dkan_starter .dkan_starter/ ./
       cp config/config.yml .config/example.config.yml
-      rm -rf config
-      mv .config config
-      rm -rf .dkan_starter
+      ahoy cmd-proxy "rm -rf config; mv .config config"
+      ahoy cmd-proxy "rm -rf .dkan_starter"
 
-    upgrade-sites:
-      usage: ahoy build upgrade-sites $tag
-      cmd: ahoy cmd-proxy bash .ahoy/site/.scripts/upgrade-sites.sh
+  test:
+    usage: Run some build command tests
+    cmd: ahoy cmd-proxy ruby .ahoy/site/.scripts/build-test.rb

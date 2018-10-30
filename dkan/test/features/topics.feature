@@ -1,4 +1,5 @@
-# time:0m2.37s
+# time:0m50.03s
+@disablecaptcha
 Feature: Topics
 
   Background:
@@ -10,8 +11,17 @@ Feature: Topics
       | name    | mail                | roles                |
       | John    | john@example.com    | site manager         |
     Given pages:
-      | name         | url                                        |
-      | Add Topic    | /admin/structure/taxonomy/dkan_topics/add  |
+      | name           | url                                        |
+      | Add Topic      | /admin/structure/taxonomy/dkan_topics/add  |
+      | Rebuild perms  | /admin/reports/status/rebuild              |
+
+  @api @javascript @exceeds30seconds
+  Scenario: Rebuild Permissions
+    Given I am logged in as a user with the "administrator" role
+    Given I am on the "Rebuild perms" page
+    And I press "Rebuild permissions"
+    And I wait for "Status report"
+    Then I should see "The content access permissions have been rebuilt."
 
   @api @Topics @defaultHomepage @customizable
   Scenario: See topics on the homepage as anonymous user
@@ -42,4 +52,4 @@ Feature: Topics
     And I check the box "edit-field-topic-icon-und-xe909"
     And I press "Save"
     Then I should see "Created new term Abibliophobia."
-    
+

@@ -113,31 +113,21 @@ commands:
     hide: true
     usage: Download DB backup asset from S3 to local backups folder.
     cmd: |
-      eval $(ahoy parse config/config.yml)
-      ahoy cmd-proxy exec mkdir -p backups
-      site=$(ahoy utils name)
-      db={{args}}
-      asset="$private_aws_scrubbed_data_url/$site.prod.$db.sql.gz"
-      LC_TIME=en_US.UTF-8 perl .ahoy/site/.scripts/s3curl.pl --id local $asset > backups/$db.sql.gz
-      echo ""
-      echo "Unpacking the $db database."
-      echo ""
-      ahoy cmd-proxy gunzip backups/$db.sql.gz -f
-      cp -f backups/$db.sql backups/last_install.sql
+      ruby .ahoy/site/.scripts/utils-asset-download-dbs.rb {{args}}
 
   asset-download-files:
     usage: Download files backup asset from S3 to local backups folder.
     cmd: |
-      eval $(ahoy parse config/config.yml)
-      ahoy cmd-proxy exec mkdir -p backups
-      site=$(ahoy utils name)
-      asset="$private_aws_scrubbed_data_url/$site.prod.files.tar.gz"
-      LC_TIME=en_US.UTF-8 perl .ahoy/site/.scripts/s3curl.pl --id local $asset > backups/$site.prod.files.tar.gz
-      echo ""
-      echo "Unpacking the files asset."
-      echo ""
-      tar xvzf backups/$site.prod.files.tar.gz
+      ruby .ahoy/site/.scripts/utils-asset-download-files.rb
     hide: true
+
+  asset-unpack-db:
+    usage: Unpacks database
+    cmd: |
+      db={{args}}
+      echo "Unpacking the $db"
+      ahoy cmd-proxy gunzip backups/$db.sql.gz -f`
+      ahoy cmd-proxy cp -f backups/$db.sql backups/last_install.sql
 
   asset-upload:
     usage: Upload database and files assets to dedicated S3 bucket.

@@ -72,6 +72,6 @@ If you are unable to use Acquia there are many hosts that can be substituted or 
 
 You can use [this checklist](https://docs.google.com/spreadsheets/d/167rJVtwfg5S5kBdsbr34i27nDR3-u8Ligh4lypobips/edit#gid=0) as a tool for preparing your Project Plan. Make a copy for your own project.
 
-## Contact Granicus
+## Contact CivicActions
 
 We would love to hear from you if you are using DKAN Starter. Contact us through the [DKAN channels](https://getdkan.com/community). Let us know your use case, questions or concerns.

@@ -1,6 +1,6 @@
 # Federal Extras
 
-The [Open Data Federal Extras Module](https://github.com/NuCivic/dkan/tree/7.x-1.x/modules/dkan/open_data_federal_extras) module extends DKAN Dataset to include selected Project Open Data and other federal requirements. See the [Project Open Data Schema](https://project-open-data.cio.gov/v1.1/schema/) for more information (this module essentially adds the fields marked "USG"). It includes a list of U.S. federal bureau and program codes, with a script to keep program codes up-to-date.
+The [Open Data Federal Extras Module](https://github.com/GetDKAN/dkan/tree/7.x-1.x/modules/dkan/open_data_federal_extras) module extends DKAN Dataset to include selected Project Open Data and other federal requirements. See the [Project Open Data Schema](https://project-open-data.cio.gov/v1.1/schema/) for more information (this module essentially adds the fields marked "USG"). It includes a list of U.S. federal bureau and program codes, with a script to keep program codes up-to-date.
 
 ## Additional Fields
 
@@ -13,7 +13,7 @@ The [Open Data Federal Extras Module](https://github.com/NuCivic/dkan/tree/7.x-1
 Enabling the module will add these fields to your Dataset content type. Note that _disabling_ the module will _not_ remove them. To remove the fields completely (which will permanently delete all data in those fields), _uninstall_ the module from the module administration screen or via `drush pm-uninstall`.
 
 ### Updating the Program Code list
-1. Go to http://project-open-data.github.io/schema/#programCode
+1. Go to https://project-open-data.github.io/schema/#programCode
 2. Download "Federal Program Inventory"
 3. Export in csv to ``fed_program_code_list``
 4. cd 'fed_program_code_list'

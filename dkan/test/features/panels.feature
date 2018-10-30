@@ -1,4 +1,5 @@
 # time:0m21.02s
+@disablecaptcha
 Feature: Panels
 
   @api @javascript
@@ -17,6 +18,8 @@ Feature: Panels
       And I fill in "edit-body-value" with "Custom item body."
       And I press "Finish"
       And I wait and press "Save"
+      # Avoid unexpected alert open: with next two lines.
+      And I wait for "5" seconds
       And I wait for "New Custom Item"
 
   @api @javascript

@@ -1,13 +1,36 @@
-
+echo "running upgrade deploy script: .ahoy/site/.scripts/upgrade-deploy.sh"
+drush_cmd="drush"
+if [ "$target_env" == "local" ]; then
+  drush_cmd="ahoy drush"
+fi
 echo "Target environment is $target_env"
-echo "Drush alias is $drush_alias"
 
-upgrade_version=upgrade_1_13
-upgrade_status=`drush @$drush_alias vget $upgrade_version --exact`
+upgrade_version="upgrade_1_14"
+upgrade_status=`${drush_cmd} vget $upgrade_version --exact |tr -d '\n'`
 
-if [ $upgrade_status != 'upgraded' ]; then
-  target_env=$target_env drush_alias=$drush_alias bash .ahoy/site/.scripts/upgrades/$upgrade_version.sh
-  drush @$drush_alias vset $upgrade_version upgraded
+echo "The upgrade status is $upgrade_status"
+
+if [ -z "$upgrade_status" ]; then
+  upgrade_status='never upgraded';
 fi
 
-target_env=$target_env drush_alias=$drush_alias bash .ahoy/site/.scripts/deploy.sh
+
+if [ "$upgrade_status" != 'upgraded' ]; then
+  echo "The site was not upgraded. Running $upgrade_version.sh"
+  drush_cmd=$drush_cmd bash .ahoy/site/.scripts/upgrades/$upgrade_version.sh
+  $drush_cmd vset $upgrade_version upgraded
+fi
+
+if [ "$target_env" == 'local' ]; then
+  $drush_cmd dis memcache memcache_admin -y
+fi
+
+acquia=`env | grep AH_REALM`
+
+echo "target_env is $target_env"
+if [ "$acquia" != '' ]; then
+  target_env=$target_env bash ../.ahoy/site/.scripts/deploy.sh
+else
+  target_env=$target_env bash .ahoy/site/.scripts/deploy.sh
+fi
+

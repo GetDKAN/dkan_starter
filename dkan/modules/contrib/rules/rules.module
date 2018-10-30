@@ -4,6 +4,11 @@
  * @file Rules engine module
  */
 
+// The class autoloader may fail for classes added in 7.x-2.4 (Issue 2090511).
+if (!drupal_autoload_class('RulesEventHandlerEntityBundle')) {
+  require_once dirname(__FILE__) . '/includes/rules.event.inc';
+}
+
 // Include our hook implementations early, as they can be called even before
 // hook_init().
 require_once dirname(__FILE__) . '/modules/events.inc';
@@ -367,7 +372,7 @@ function &rules_get_cache($cid = 'data') {
       // same time.
       while (!lock_acquire(__FUNCTION__ . $cid . $cid_suffix, 60)) {
         // Now wait until the lock is released.
-        lock_wait(__FUNCTION__ . $cid . $cid_suffix, 10);
+        lock_wait(__FUNCTION__ . $cid . $cid_suffix, 30);
         // If the lock is released it's likely the cache was rebuild. Thus check
         // again if we can fetch it from the persistent cache.
         if ($get = cache_get($cid . $cid_suffix, 'cache_rules')) {

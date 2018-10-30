@@ -5,11 +5,38 @@
  * Acquia Settings.
  */
 
+/**
+ * Override domain detection in Acquia Purge.
+ */
+if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
+  switch ($_ENV['AH_SITE_ENVIRONMENT']) {
+    case 'prod':
+      $domain = $conf['acquia']['prod']['base_url'];
+      $domain = parse_url($domain, PHP_URL_HOST);
+      $conf['acquia_purge_domains'] = array($domain);
+      break;
+    case 'test':
+      $domain = $conf['acquia']['test']['base_url'];
+      $domain = parse_url($domain, PHP_URL_HOST);
+      $conf['acquia_purge_domains'] = array($domain);
+      break;
+    case 'dev':
+      $domain = $conf['acquia']['dev']['base_url'];
+      $domain = parse_url($domain, PHP_URL_HOST);
+      $conf['acquia_purge_domains'] = array($domain);
+      break;
+  }
+}
+
 if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
   if (isset($conf['memcache_servers'])) {
     $conf['cache_backends'][] = './sites/all/modules/contrib/memcache/memcache.inc';
     $conf['cache_default_class'] = 'MemCacheDrupal';
     $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
+
+    # hotfixed for Acquia ticket 679235
+    # # Move semaphore out of the database and into memory for performance purposes
+    $conf['lock_inc'] = './sites/all/modules/contrib/memcache/memcache-lock.inc';
   }
 
   $env = getenv('AH_SITE_ENVIRONMENT');
@@ -53,9 +80,11 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
     );
   }
 
-  // {{{1 Conditionally manage memory.
+  // Conditionally manage memory.
+  $high_memory_paths = array();
+  // Things that break in ODFE.
   if (isset($conf['default']['odfe']) && $conf['default']['odfe']['enabled']) {
-    $high_memory_paths = array(
+    $high_memory_paths += array(
       'admin',
       'node/add',
       'node/%node/edit',
@@ -63,13 +92,16 @@ if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
       'file/ajax',
       'api/action/datastore/search.json',
     );
+  }
 
-    // Standarize node edit paths for validation.
-    $current_path = preg_replace("/\d+/", '%node', $_GET['q']);
-    foreach ($high_memory_paths as $high_memory_path) {
-      if ((strpos($current_path, $high_memory_path) === 0)) {
-        ini_set('memory_limit', '512M');
-      }
+  // ODSM edit forms.
+  $high_memory_paths[] = 'admin/config/services/odsm/edit';
+
+  // Standarize node edit paths for validation.
+  $current_path = preg_replace("/\/\d+/", '/%node', $_GET['q']);
+  foreach ($high_memory_paths as $high_memory_path) {
+    if ((strpos($current_path, $high_memory_path) === 0)) {
+      ini_set('memory_limit', '512M');
     }
   }
 

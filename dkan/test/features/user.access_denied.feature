@@ -1,5 +1,5 @@
-# time:2m5.09s
-@api
+# time:1m43.09s
+@api @disablecaptcha
 Feature: Users with Editor, Content Creator or Site Manager roles should not have access to administration pages.
 
   Background:

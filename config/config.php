@@ -5,16 +5,88 @@
  * DO NOT EDIT.
  */
 $conf = array (
+  'acquia' => 
+  array (
+    'dev' => 
+    array (
+      'base_url' => 'http://devurl',
+      'core_id' => 'changeme',
+      'derived_key' => 'changeme',
+    ),
+    'prod' => 
+    array (
+      'base_url' => 'http://produrl',
+      'core_id' => 'changeme',
+      'derived_key' => 'changeme',
+    ),
+    'ra' => 
+    array (
+      'base_url' => 'http://testurl',
+      'core_id' => 'changeme',
+      'derived_key' => 'changeme',
+    ),
+    'search' => 
+    array (
+      'host' => 'changeme',
+      'id' => 'dkan_acquia_solr',
+    ),
+    'subscription' => 'professional',
+    'test' => 
+    array (
+      'base_url' => 'http://testurl',
+      'core_id' => 'changeme',
+      'derived_key' => 'changeme',
+    ),
+  ),
+  'behat' => 
+  array (
+    'contexts' => 
+    array (
+      'datasets' => 
+      array (
+        'defaults' => 
+        array (
+        ),
+        'fields' => 
+        array (
+        ),
+        'labels' => 
+        array (
+        ),
+        'sets' => 
+        array (
+        ),
+      ),
+      'services' => 
+      array (
+        'request_fields_map' => 
+        array (
+        ),
+      ),
+    ),
+  ),
+  'circle' => 
+  array (
+    'memory_limit' => '256M',
+    'skip_features' => 
+    array (
+    ),
+    'skip_tags' => 
+    array (
+      0 => 'customizable',
+      1 => 'fixme',
+      2 => 'testBug',
+    ),
+    'test_dirs' => 
+    array (
+      0 => 'tests/features',
+      1 => 'dkan/test/features',
+      2 => 'config/tests/features',
+    ),
+  ),
   'default' => 
   array (
-    'hostname' => 'www.example.com',
-    'https_everywhere' => false,
-    'https_securepages' => false,
     'clamav' => 
-    array (
-      'enable' => false,
-    ),
-    'odfe' => 
     array (
       'enable' => false,
     ),
@@ -22,19 +94,37 @@ $conf = array (
     array (
       'enable' => false,
     ),
-    'stage_file_proxy_origin' => 'changeme',
     'fast_file' => 
     array (
       'enable' => true,
       'limit' => '10MB',
       'queue' => '50MB',
     ),
+    'hostname' => 'www.example.com',
+    'https_everywhere' => false,
+    'https_securepages' => false,
+    'odfe' => 
+    array (
+      'enable' => false,
+    ),
+    'seckit' => 
+    array (
+      'enable' => false,
+      'hsts' => 1,
+      'hsts_max_age' => '1000',
+      'hsts_subdomains' => 0,
+      'hsts_preload' => 0,
+    ),
+    'stage_file_proxy_files' => 
+    array (
+    ),
+    'stage_file_proxy_origin' => 'changeme',
   ),
-  'redirectDomains' => 
+  'dkan_dash' => 
   array (
-    0 => 'example.com',
-    1 => 'oldsite.example.com',
   ),
+  'gaClientTrackingCode' => 'UA-XXXXX-Y',
+  'gaNuCivicTrackingCode' => 'UA-XXXXX-Z',
   'private' => 
   array (
     'aws' => 
@@ -46,55 +136,9 @@ $conf = array (
       'password' => 'CHANGE ME',
     ),
   ),
-  'acquia' => 
+  'redirectDomains' => 
   array (
-    'subscription' => 'professional',
-    'search' => 
-    array (
-      'host' => 'changeme',
-      'id' => 'dkan_acquia_solr',
-    ),
-    'dev' => 
-    array (
-      'base_url' => 'http://devurl',
-      'core_id' => 'changeme',
-      'derived_key' => 'changeme',
-    ),
-    'test' => 
-    array (
-      'base_url' => 'http://testurl',
-      'core_id' => 'changeme',
-      'derived_key' => 'changeme',
-    ),
-    'ra' => 
-    array (
-      'base_url' => 'http://testurl',
-      'core_id' => 'changeme',
-      'derived_key' => 'changeme',
-    ),
-    'prod' => 
-    array (
-      'base_url' => 'http://produrl',
-      'core_id' => 'changeme',
-      'derived_key' => 'changeme',
-    ),
-  ),
-  'gaClientTrackingCode' => 'UA-XXXXX-Y',
-  'gaNuCivicTrackingCode' => 'UA-XXXXX-Z',
-  'circle' => 
-  array (
-    'test_dirs' => 
-    array (
-      0 => 'tests/features',
-      1 => 'dkan/test/features',
-      2 => 'config/tests/features',
-    ),
-    'skip_tags' => 
-    array (
-      0 => 'customizable',
-      1 => 'fixme',
-      2 => 'testBug',
-    ),
-    'memory_limit' => '256M',
+    0 => 'example.com',
+    1 => 'oldsite.example.com',
   ),
 );

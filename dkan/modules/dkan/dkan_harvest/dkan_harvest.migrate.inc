@@ -60,6 +60,13 @@ class HarvestMigration extends MigrateDKAN {
   protected $dkanHarvestDisabledRules = array();
 
   /**
+   * Save migration results to be used on logs later.
+   *
+   * @var array
+   */
+  protected $migrationResults = array();
+
+  /**
    * General initialization of a HarvestMigration object.
    */
   public function __construct(array $arguments) {
@@ -133,13 +140,103 @@ class HarvestMigration extends MigrateDKAN {
     if (isset($result['node'])) {
       $harvest_source_nids = array_keys($result['node']);
       $this->dkanHarvestSourceNid = array_pop($harvest_source_nids);
+      $this->dkanHarvestSourceNode = node_load($this->dkanHarvestSourceNid);
     }
     else {
       $this->dkanHarvestSourceNid = FALSE;
+      $this->dkanHarvestSourceNode = NULL;
     }
+
+    // Disable the logging system of the migration module.
+    // The module logs every time the processImport() method is called but we
+    // want to log only once, when the full migration event finishes. If we
+    // don't do that then we are going to get one log record per batch chunk.
+    $this->logHistory = FALSE;
+
+    // Initialize results.
+    $this->migrationResults = array(
+      'process_type' => 0,
+      'start_time' => 0,
+      'end_time' => 0,
+      'initial_highwater' => 0,
+      'final_highwater' => 0,
+      'datasets_on_source' => 0,
+      'datasets_processed' => 0,
+      'datasets_created' => 0,
+      'datasets_updated' => 0,
+      'datasets_failed' => 0,
+      'datasets_orphaned' => 0,
+    );
 
     // Add Field mappings.
     $this->setFieldMappings();
+  }
+
+  /**
+   * Returns migration results.
+   */
+  public function getResults() {
+    return $this->migrationResults;
+  }
+
+  /**
+   * Implementation of MigrationBase::beginProcess().
+   */
+  protected function beginProcess($newStatus) {
+
+    // Begin process.
+    parent::beginProcess($newStatus);
+
+    // If an import if being run then update the results.
+    if ($this->processing) {
+      $this->migrationResults['process_type'] = $newStatus;
+      $this->migrationResults['start_time'] = round(microtime(TRUE) * 1000);
+      $this->migrationResults['initial_highwater'] = $this->getHighwater();
+      $this->migrationResults['datasets_on_source'] = $this->sourceCount();
+    }
+  }
+
+  /**
+   * Logs a migration event.
+   */
+  public function logEvent($event_data) {
+    // First add record on the 'migrate_log' table.
+    try {
+      $this->logID = db_insert('migrate_log')
+        ->fields(array(
+            'machine_name' => $this->machineName,
+            'process_type' => $event_data['process_type'],
+            'starttime' => $event_data['start_time'],
+            'endtime' => $event_data['end_time'],
+            'initialHighwater' => $event_data['initial_highwater'],
+            'finalHighwater' => $event_data['final_highwater'],
+            'numprocessed' => $event_data['datasets_processed'],
+          ))
+        ->execute();
+    }
+    catch (PDOException $e) {
+      Migration::displayMessage(t('Could not log event for migration !name',
+        array('!name' => $this->machineName)));
+    }
+
+    // Then add a record on the log table that's specific for this migration.
+    // Use the same migration log ID that was used on the 'migrate_log' table.
+    try {
+      db_merge($this->map->getLogTable())
+        ->key(array('mlid' => $this->logID))
+        ->fields(array(
+          'created' => $event_data['datasets_created'],
+          'updated' => $event_data['datasets_updated'],
+          'unchanged' => $event_data['datasets_unchanged'],
+          'failed' => $event_data['datasets_failed'],
+          'orphaned' => $event_data['datasets_orphaned'],
+        ))
+        ->execute();
+    }
+    catch (PDOException $e) {
+      Migration::displayMessage(t('Could not log event for migration !name',
+        array('!name' => $this->machineName)));
+    }
   }
 
   /**
@@ -199,17 +296,9 @@ class HarvestMigration extends MigrateDKAN {
    * Add support for harvest migration specific checks and options.
    */
   public function processImport(array $options = array()) {
-    if ($this->getStatus() == MigrationBase::STATUS_IDLE) {
-      // Add any extra Harvest Migration Arguments. The arguments array should
-      // already exist.
-      $this->arguments = array_merge($this->arguments, $options);
-
-      parent::processImport($options);
-    }
-    else {
-      $this->resetStatus();
-      $this->processImport($options);
-    }
+    // Add any extra Harvest Migration Arguments.
+    $this->arguments = array_merge($this->arguments, $options);
+    return parent::processImport($options);
   }
 
   /**
@@ -224,8 +313,8 @@ class HarvestMigration extends MigrateDKAN {
     // Check the license field.
     // Convert URI values to license ID values from hook_license_subscribe(),
     // change the value to match the expected key value.
-    // Clients will need to provide a custom hook_license_subscribe() function if
-    // they are using different urls than dkan: (i.e. opendatacommons.org or
+    // Clients will need to provide a custom hook_license_subscribe() function
+    // if they are using different urls than dkan: (i.e. opendatacommons.org or
     // creativecommons.org rather than opendefinition.org)
     if (isset($row->license) && $row->license != '') {
       $licenses = dkan_dataset_content_types_license_subscribe();
@@ -273,6 +362,11 @@ class HarvestMigration extends MigrateDKAN {
 
     // Add group.
     $this->prepareGroup($dataset, $row);
+
+    // Set topics in dataset to same as Harvest node.
+    if ($this->dkanHarvestSourceNode) {
+      $dataset->field_topic = $this->dkanHarvestSourceNode->field_dkan_harvest_topic;
+    }
 
     // Save dataset.
     node_save($dataset);
@@ -344,11 +438,20 @@ class HarvestMigration extends MigrateDKAN {
       // Create all resources and assign them to the dataset.
       $field_resources_value = array();
       foreach ($row->resources as $resource_row) {
-        $resource_node = $this->createResourceNode($resource_row);
-        // TODO add check?
-        $field_resources_value[] = $resource_node->nid;
-      }
 
+        try {
+          $resource_node = $this->createResourceNode($resource_row);
+          $field_resources_value[] = $resource_node->nid;
+        }
+        catch (EntityMetadataWrapperException $emwException) {
+          $message = t(
+            'Cannot create the resource. @exception_message',
+            array(
+              '@exception_message' => $emwException->getMessage(),
+            ));
+          $this->saveMessage($message);
+        }
+      }
       if (!empty($field_resources_value)) {
         foreach ($field_resources_value as $key => $resource_nid) {
           $dataset->field_resources[LANGUAGE_NONE][$key] = array(
@@ -612,31 +715,6 @@ class HarvestMigration extends MigrateDKAN {
     $this->postImportRestoredSource();
     $this->postImportMissingSource();
 
-    // Update the migratino log table with the status of the import. This needs
-    // to happen after self::postImportMissingSource() and
-    // self::postImportRestoredSource() methodes.
-    // Check the logHistory flag to make sure we do have the logID key.
-    if ($this->logHistory) {
-      try {
-        db_merge($this->map->getLogTable())
-          ->key(array('mlid' => $this->logID))
-          ->fields(array(
-            'created' => $this->destination->getCreated(),
-            'updated' => $this->destination->getUpdated(),
-            // Number of source datasets mines the number of processed
-            // datasets.
-            'unchanged' => $this->sourceCount() - $this->total_processed,
-            'failed' => $this->errorCount(),
-            'orphaned' => $this->map->orphanedCount(),
-          ))
-          ->execute();
-      }
-      catch (PDOException $e) {
-        Migration::displayMessage(t('Could not log items status on migration !name',
-          array('!name' => $this->machineName)));
-      }
-    }
-
     // Restore any rule disabled in the preImport call. This is restored last
     // in the postImport call to make sure any processing done is done while
     // the rules are disabled as well.
@@ -652,6 +730,17 @@ class HarvestMigration extends MigrateDKAN {
           '@rules_list' => implode(', ', $this->dkanHarvestDisabledRules),
         ));
       self::displayMessage($message, 'notice');
+    }
+
+    // If an import if being run then update the results.
+    if ($this->processing) {
+      $this->migrationResults['end_time'] = round(microtime(TRUE) * 1000);
+      $this->migrationResults['final_highwater'] = $this->getHighwater();
+      $this->migrationResults['datasets_processed'] = $this->total_processed;
+      $this->migrationResults['datasets_created'] = $this->destination->getCreated();
+      $this->migrationResults['datasets_updated'] = $this->destination->getUpdated();
+      $this->migrationResults['datasets_failed'] = $this->errorCount();
+      $this->migrationResults['datasets_orphaned'] = $this->map->orphanedCount();
     }
 
     migrate_instrument_stop('HarvestMigration->postImport');
@@ -824,7 +913,7 @@ class HarvestMigration extends MigrateDKAN {
    * @param array $dataset_nids
    *   An array of nids of datasets imported.
    */
-  public function prepareRollback($dataset_nids) {
+  public function prepareRollback(array $dataset_nids) {
     foreach ($dataset_nids as $dataset_id) {
       $dataset_emw = entity_metadata_wrapper('node', $dataset_id);
       $delete_nids = array();
@@ -927,7 +1016,7 @@ class HarvestMigration extends MigrateDKAN {
       $this->addFieldMapping('field_odfe_language', 'odfe_language');
       $this->addFieldMapping('field_odfe_investment_uii', 'odfe_investment_uii');
       $this->addFieldMapping('field_odfe_system_of_records', 'odfe_system_of_records');
-      $this->addFieldMapping('field_odfe_category', 'odfe_category');
+      $this->addFieldMapping('field_pod_theme', 'odfe_category');
     }
   }
 
@@ -944,6 +1033,8 @@ class HarvestMigration extends MigrateDKAN {
    *   Taxonomy term name.
    * @param string $vocab_name
    *   Taxonomy vocabulary name.
+   * @param string $vid
+   *   The ID of the vocabulary.
    *
    * @return mixed
    *   An object term. Or null if failed.
@@ -1068,10 +1159,14 @@ class HarvestMigration extends MigrateDKAN {
           return FALSE;
         }
 
-        // Finally this URL is determined to be field_link_remote_file
-        // material.
-        // Make sure to use the effective URL.
-        $resource->url = $remoteFileInfo->getEffectiveUrl();
+        // If the URL is determined to be a remote file,
+        // check that the URL is no more than 255 characters.
+        // More than 255 will give the 'Data too long for column' error.
+        if (strlen($resource->url) > 255 &&
+          strlen($remoteFileInfo->getEffectiveUrl()) < 256) {
+          // Switch to the effective url if the json url is too long.
+          $resource->url = $remoteFileInfo->getEffectiveUrl();
+        }
         $resource->url_type = 'file';
         $format_detected = $remoteFileInfo->getExtension();
       }
@@ -1082,7 +1177,8 @@ class HarvestMigration extends MigrateDKAN {
     $resource->format = isset($format) ? strtolower($format) : $format_detected;
 
     // Title.
-    $resource->title = isset($title) ? $title : $url;
+    $name = isset($title) ? $title : $remoteFileInfo->getName();
+    $resource->title = isset($name) ? $name : $resource->format;
 
     // Created.
     $resource->created = isset($created) ? $created : time();
@@ -1096,14 +1192,14 @@ class HarvestMigration extends MigrateDKAN {
   /**
    * Create a dkan resource node from the values provided.
    *
-   * @param array $res
+   * @param object $res
    *   Values for the resources node to be created.
    *        Formated with the self::prepareResourceHelper() method.
    *
    * @return object
    *   Resource node object.
    */
-  public function createResourceNode($res) {
+  public function createResourceNode(stdClass $res) {
     migrate_instrument_start('HarvestMigration->createResourceNode');
     // Creates a new resource for every linked file.
     // Linked files contain title, format, and accessURL.
@@ -1207,13 +1303,13 @@ class HarvestMigration extends MigrateDKAN {
   /**
    * Create a dkan group node from the values provided.
    *
-   * @param array $group
+   * @param object $group
    *   Values for the group node to be created.
    *
    * @return object
    *   Group node object.
    */
-  public function createGroupNode($group) {
+  public function createGroupNode(stdClass $group) {
 
     $values = array(
       "type" => 'group',

@@ -12,86 +12,14 @@ class GetRemoteFileInfo {
    *
    * @var info
    */
-  public $info = FALSE;
   public $url;
-  public $agent;
-  public $followRedirect;
 
   /**
    * Class constructor.
    */
   public function __construct($url, $agent, $followRedirect = TRUE) {
     $this->url = $url;
-    $this->agent = $agent;
-    $this->followRedirect = $followRedirect;
-
-    $this->info = $this->curlHeader($this->url, $this->agent, $this->followRedirect);
-  }
-
-  /**
-   * Retrieves headers from url.
-   */
-  public function curlHeader($url, $agent, $followRedirect) {
-    $info = array();
-
-    $ch = $this->getBaseCh($url, $agent, $followRedirect);
-
-    // This changes the request method to HEAD. No need to "GET" the hole link.
-    curl_setopt($ch, CURLOPT_NOBODY, TRUE);
-
-    $http_heading = curl_exec($ch);
-
-    if (!$http_heading) {
-      // Should set the GetRemoteFileInfo::$info to false.
-      return FALSE;
-    }
-
-    $info['header'] = $this->httpParseHeaders($http_heading);
-    $info['info'] = curl_getinfo($ch);
-    $info['effective_url'] = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
-    curl_close($ch);
-
-    return $info;
-  }
-
-  /**
-   * Helper method to construct a base cURL handle.
-   */
-  private function getBaseCh($url, $agent, $followRedirect) {
-    $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_URL, $url);
-    // Spoof the User Agent.
-    curl_setopt($ch, CURLOPT_USERAGENT, $agent);
-
-    // Wait only 5 seconds.
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-
-    // Return the transfer as a string of the return value of curl_exec()
-    // instead of outputting it out directly.
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-
-    // Follow redirects.
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $followRedirect);
-    curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-
-    // Force the use of a new connection instead of a cached one.
-    curl_setopt($ch, CURLOPT_FRESH_CONNECT, TRUE);
-
-    // Attempt to retrieve the modification date of the remote document.
-    curl_setopt($ch, CURLOPT_FILETIME, TRUE);
-
-    // Cookies.
-    curl_setopt($ch, CURLOPT_COOKIESESSION, TRUE);
-    curl_setopt($ch, CURLOPT_COOKIE, "");
-
-    // Include the header in the output.
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-    curl_setopt($ch, CURLOPT_HEADER, TRUE);
-
-    return $ch;
+    $this->info = $this->getFileInfo($this->url);
   }
 
   /**
@@ -106,18 +34,16 @@ class GetRemoteFileInfo {
    */
   public function getType() {
     if ($info = $this->getInfo()) {
-      $type = $info['header']['Content-Type'];
-      // If the url had redirects, CURL will stack the Content Types from all
-      // the urls. Get the last url.
-      if (is_array($type)) {
-        $type = array_pop($type);
-      }
+      if (!empty($info["Content-Type"])) {
+        $content_types = array_values($info["Content-Type"]);
+        $array_size = count($content_types);
+        $last_element = $array_size - 1;
 
-      if ($explode = explode(";", $type)) {
-        return $explode[0];
-      }
-      else {
-        return $type;
+        $type = $content_types[$last_element];
+
+        $pieces = explode(";", $type);
+
+        return trim($pieces[0]);
       }
     }
 
@@ -138,37 +64,38 @@ class GetRemoteFileInfo {
     $path = parse_url($this->getEffectiveUrl(), PHP_URL_PATH);
     $extension_parsed = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-    if (is_null($this->getType())) {
+    if ($extension_parsed) {
       return $extension_parsed;
     }
+    elseif ($this->getType()) {
+      // Use drupal file mimetypes store.
+      include_once DRUPAL_ROOT . '/includes/file.mimetypes.inc';
+      $mimetype_mappings = file_mimetype_mapping();
+      $mimetype_keys = array_keys($mimetype_mappings['mimetypes'], $this->getType());
 
-    // Use drupal file mimetypes store.
-    include_once DRUPAL_ROOT . '/includes/file.mimetypes.inc';
-    $mimetype_mappings = file_mimetype_mapping();
-    $mimetype_keys = array_keys($mimetype_mappings['mimetypes'], $this->getType());
+      // If the destination mimetype in unknown to us then default to the
+      // extension as parsed from the url.
+      if (empty($mimetype_keys)) {
+        return $extension_parsed;
+      }
 
-    // If the destination mimetype in unknown to us then default to the
-    // extension as parsed from the url.
-    if (empty($mimetype_keys)) {
-      return $extension_parsed;
+      // Get the candidate extensions from the mimetype_keys.
+      $extensions_lookup = array();
+      foreach ($mimetype_keys as $mimetype_key) {
+        $extensions_lookup = array_merge($extensions_lookup,
+          array_keys($mimetype_mappings['extensions'], $mimetype_key));
+      }
+
+      // If we couldn't find any potential candidates or the extension from the
+      // url matches one of the candidate extensions then use it.
+      if (empty($extensions_lookup) || in_array($extension_parsed, $extensions_lookup)) {
+        return $extension_parsed;
+      }
+
+      // At this point we may have multiple candidate extensions and we couldn't
+      // find the best one. Default to the first element.
+      return array_pop($extensions_lookup);
     }
-
-    // Get the candidate extensions from the mimetype_keys.
-    $extensions_lookup = array();
-    foreach ($mimetype_keys as $mimetype_key) {
-      $extensions_lookup = array_merge($extensions_lookup,
-        array_keys($mimetype_mappings['extensions'], $mimetype_key));
-    }
-
-    // If we couldn't find any potential candidates or the extension from the
-    // url matches one of the candidate extensions then use it.
-    if (empty($extensions_lookup) || in_array($extension_parsed, $extensions_lookup)) {
-      return $extension_parsed;
-    }
-
-    // At this point we may have multiple candidate extensions and we couldn't
-    // find the best one. Default to the first element.
-    return array_pop($extensions_lookup);
   }
 
   /**
@@ -176,45 +103,18 @@ class GetRemoteFileInfo {
    */
   public function getEffectiveUrl() {
     $info = $this->getInfo();
-    if (!empty($info)) {
-      return $info['effective_url'];
-    }
-    return FALSE;
-  }
 
-  /**
-   * Retrieves URL from end of string.
-   */
-  public function getNameFromUrl() {
-    $basename = basename($this->url);
-    $name = explode('.', $basename);
-    if (count($name) > 2) {
-      $name = parse_url($basename);
-      if (isset($name['path'])) {
-        return $name['path'];
-      }
-    }
-    elseif (count($name) == 1) {
-      return $name[0];
-    }
-    return FALSE;
-  }
+    if (!empty($info['Location'])) {
+      $urls = array_values($info["Location"]);
+      $array_size = count($urls);
+      $last_element = $array_size - 1;
 
-  /**
-   * Finds filename from Content Disposition header.
-   */
-  public function checkDisposition($disposition) {
-    if (preg_match('/.*?filename=(.+)/i', $disposition, $matches)) {
-      return trim($matches[1]);
+      $url = $urls[$last_element];
+
+      return trim($url);
     }
-    elseif (preg_match('/.*?filename="(.+?)"/i', $disposition, $matches)) {
-      return trim($matches[1]);
-    }
-    elseif (preg_match('/.*?filename=([^; ]+)/i', $header, $matches)) {
-      return trim($matches[1]);
-    }
-    elseif ($exploded = explode('filename=', $disposition)) {
-      return trim($exploded[1]);
+    else {
+      return $this->url;
     }
   }
 
@@ -228,72 +128,172 @@ class GetRemoteFileInfo {
    */
   public function getName() {
     if ($info = $this->getInfo()) {
-      // Check Location for proper URL.
-      // When URL have redirects the ['header']['Location'] will be an array.
-      if (isset($info['header']['Location']) && is_array($info['header']['Location'])) {
-        $location = $info['header']['Location'];
-        $location = array_shift($location);
-      }
+      $spellings = [
+        'Content-Disposition',
+        'Content-disposition',
+        'content-disposition'
+      ];
 
-      if (isset($location) && valid_url($location)) {
-        if ($name = $this->getNameFromUrl($this->url)) {
+      foreach ($spellings as $spelling) {
+        if (isset($info[$spelling]) && $name = $this->checkDisposition($info[$spelling])) {
           return $name;
         }
       }
 
-      // Check content disposition.
-      if (isset($info['header']['Content-Disposition'])) {
-        return $this->checkDisposition($info['header']['Content-Disposition']);
-      }
-      elseif (isset($info['header']['Content-disposition'])) {
-        return $this->checkDisposition($info['header']['Content-disposition']);
-      }
-      elseif (isset($info['header']['content-disposition'])) {
-        return $this->checkDisposition($info['header']['content-disposition']);
-      }
       // Check URL for filename at end of string.
-      if ($name = $this->getNameFromUrl($this->url)) {
+      if ($name = $this->getNameFromUrl()) {
         return $name;
       }
       else {
         return NULL;
       }
     }
-    else {
-      return NULL;
+
+    return NULL;
+  }
+
+  /**
+   * Helper function - If the server doesn't support HTTP HEAD, download $limit bytes.
+   */
+  private function getPartialContent($url, $limit) {
+    $writefn = function($ch, $chunk) use ($limit, &$datadump) {
+      static $data = '';
+
+      $len = strlen($data) + strlen($chunk);
+      if ($len >= $limit) {
+        $data .= substr($chunk, 0, $limit - strlen($data));
+        $datadump = $data;
+        return -1;
+      }
+      $data .= $chunk;
+      return strlen($chunk);
+    };
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, 1);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_WRITEFUNCTION, $writefn);
+    $data = curl_exec($ch);
+    curl_close($ch);
+
+    if ($datadump) {
+      $info = $this->parseRequestData($datadump);
+      return $info;
     }
+
+    return FALSE;
+  }
+
+  /**
+   * Helper function.
+   */
+  private function getFileInfoHelper($url, $no_body = TRUE) {
+    ob_start();
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HEADER, 1);
+    if ($no_body) {
+      curl_setopt($ch, CURLOPT_NOBODY, 1);
+    }
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+
+    $ok = curl_exec($ch);
+
+    curl_close($ch);
+
+    $data = ob_get_contents();
+    @ob_end_clean();
+
+    if ($ok) {
+      $info = $this->parseRequestData($data);
+      if (empty($info['Content-Type'])) {
+        return FALSE;
+      }
+      return $info;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Retrieves info from url.
+   */
+  private function getFileInfo($url) {
+    if ($info = $this->getFileInfoHelper($url)) {
+      return $info;
+    }
+
+    // If the above did not work that means the server doesn't support HTTP HEAD,
+    // and more often than not the server does not honor the Range header.
+    // (i.e. curl_setopt($ch, CURLOPT_HTTPHEADER, array("Range: bytes=0-1000")))
+    // So we will need to download a portion of the file (500 bytes) to get the info.
+    // Downloading the entire file can cause the harvest to fail with out of memory errors.
+    if ($info = $this->getPartialContent($url, 500)) {
+      return $info;
+    }
+
+    return FALSE;
   }
 
   /**
    * Converts headers from curl request to array.
    */
-  public function httpParseHeaders($raw_headers) {
-    $headers = array();
-    $key = '';
-    foreach (explode("\n", $raw_headers) as $i => $h) {
-      $h = explode(':', $h, 2);
-      if (isset($h[1])) {
-        if (!isset($headers[$h[0]])) {
-          $headers[$h[0]] = trim($h[1]);
-        }
-        elseif (is_array($headers[$h[0]])) {
-          $headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1])));
-        }
-        else {
-          $headers[$h[0]] = array_merge(array($headers[$h[0]]), array(trim($h[1])));
-        }
-        $key = $h[0];
-      }
-      else {
-        if (substr($h[0], 0, 1) == "\t") {
-          $headers[$key] .= "\r\n\t" . trim($h[0]);
-        }
-        elseif (!$key) {
-          $headers[0] = trim($h[0]);trim($h[0]);
-        }
+  private function parseRequestData($request_data) {
+    $info = [];
+    $pieces = explode(PHP_EOL, $request_data);
+
+    foreach ($pieces as $piece) {
+      $key_value = explode(":", $piece);
+      if (count($key_value) >= 2) {
+        $key = array_shift($key_value);
+        $info[$key][] = implode(":", $key_value);
       }
     }
-    return $headers;
+
+    return $info;
+  }
+
+  /**
+   * Retrieves URL from end of string.
+   */
+  private function getNameFromUrl() {
+
+    $url = $this->getEffectiveUrl();
+
+    $parsed = parse_url($url);
+
+    if (isset($parsed['path'])) {
+      $pieces = explode('/', $parsed['path']);
+      return $pieces[count($pieces) - 1];
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Finds filename from Content Disposition header.
+   */
+  private function checkDisposition($disposition) {
+    $disposition = array_shift($disposition);
+
+    $regexes = [
+      '/.*?filename=(.+)/i',
+      '/.*?filename="(.+?)"/i',
+      '/.*?filename=([^; ]+)/i'
+    ];
+
+    foreach ($regexes as $regex) {
+      if (preg_match($regex, $disposition, $matches)) {
+        return trim($matches[1]);
+      }
+    }
+
+    if ($exploded = explode('filename=', $disposition)) {
+      return trim($exploded[1]);
+    }
+
+    return FALSE;
   }
 
 }

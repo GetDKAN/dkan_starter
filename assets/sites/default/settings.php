@@ -17,14 +17,6 @@
  *    to configure more complex environment setups, or with custom hosting
  *    companies beside acquia and pantheon.
  */
-$settings_local = DRUPAL_ROOT . '/' . conf_path() . '/settings.local.php';
-$settings_docker = DRUPAL_ROOT . '/' . conf_path() . '/settings.docker.php';
-if (file_exists($settings_local)) {
-  include $settings_local;
-}
-elseif (file_exists($settings_docker)) {
-  include $settings_docker;
-}
 
 /**
  * Include config file from config folder.
@@ -32,6 +24,15 @@ elseif (file_exists($settings_docker)) {
 $config_file = DRUPAL_ROOT . '/../config/config.php';
 if (file_exists($config_file)) {
   include $config_file;
+}
+
+$settings_local = DRUPAL_ROOT . '/' . conf_path() . '/settings.local.php';
+$settings_docker = DRUPAL_ROOT . '/' . conf_path() . '/settings.docker.php';
+if (file_exists($settings_local)) {
+  include $settings_local;
+}
+elseif (file_exists($settings_docker)) {
+  include $settings_docker;
 }
 
 /**
@@ -148,10 +149,7 @@ ini_set('session.gc_maxlifetime', 200000);
 ini_set('session.cookie_lifetime', 2000000);
 
 // Disable cron. We run this from Jenkins.
-// Except for CircleCI or test purpose.
-if (CI) {
-  $conf['cron_safe_threshold'] = 0;
-}
+$conf['cron_safe_threshold'] = 0;
 
 // Disable git support for the environment indicator by default.
 $conf['environment_indicator_git_support'] = FALSE;
@@ -162,6 +160,19 @@ $conf['install_profile'] = 'dkan';
 // This should be updated to the actual live site url if using stage_file_proxy.
 if (_data_starter_validates('stage_file_proxy_origin')) {
   $conf['stage_file_proxy_origin'] = $conf['default']['stage_file_proxy_origin'];
+}
+
+// Configure Security Kit If Enabled.
+$data_config = variable_get('default');
+if (isset($data_config['seckit']) && $data_config['seckit']['enable']) {
+  $seckit_ssl = array(
+    'hsts' => $conf['default']['seckit']['hsts'],
+    'hsts_max_age' => $conf['default']['seckit']['hsts_max_age'],
+    'hsts_subdomains' => $conf['default']['seckit']['hsts_subdomains'],
+    'hsts_preload' => $conf['default']['seckit']['hsts_preload'],
+  );
+
+  $conf['seckit_ssl'] = $seckit_ssl;
 }
 
 // KEY for dkan health status.
@@ -180,13 +191,11 @@ $conf['shield_allow_cli'] = 1;
 switch (ENVIRONMENT) {
   case 'local':
     if (_data_starter_validates('stage_file_proxy_origin')) {
-      if ($conf['default']['stage_file_proxy']) {
-        $conf['features_master_temp_enabled_modules'] = array_merge(
-          $conf['features_master_temp_enabled_modules'],
-          array(
-            'stage_file_proxy',
-          ));
-      }
+      $conf['features_master_temp_enabled_modules'] = array_merge(
+        $conf['features_master_temp_enabled_modules'],
+        array(
+          'stage_file_proxy',
+        ));
     }
 
     // Features Master also supports temporarily disabling modules.
@@ -292,9 +301,6 @@ if (ENVIRONMENT == "production") {
 // Disable dkan_worflow modules so that dkan tests pass
 // See: https://jira.govdelivery.com/browse/CIVIC-5128
 if (getenv('CI') == "true") {
-  // TODO: change clamav feature tests so that they enable clamav.
-  $conf['features_master_temp_enabled_modules'][] = 'clamav';
-
   $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow';
   $conf['features_master_temp_disabled_modules'][] = 'dkan_workflow_permissions';
   $conf['features_master_temp_disabled_modules'][] = 'link_badges';

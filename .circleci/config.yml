@@ -1,0 +1,100 @@
+version: 2
+jobs:
+  build:
+    parallelism: 6
+    docker:
+      - image: ubuntu:16.04
+    working_directory: /go/src/github.com/dkan_starter
+    environment:
+      TEST_RESULTS: /tmp/test-results
+      AHOY_CMD_PROXY: DOCKER
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Updates etc
+          command: |
+            apt-get update
+            apt-get upgrade -y
+            apt-get install curl wget ruby language-pack-en-base libdigest-hmac-perl -y
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: Install Docker Compose
+          command: |
+            set -x
+            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+      - run:
+          name: Install Ahoy
+          command: |
+            wget -q https://github.com/devinci-code/ahoy/releases/download/1.1.0/ahoy-`uname -s`-amd64 -O /usr/local/bin/ahoy &&
+            chmod +x /usr/local/bin/ahoy
+            ahoy
+      - run:
+          name: Install CircleCI CLI
+          command: |
+            curl -o /usr/local/bin/circleci https://circle-downloads.s3.amazonaws.com/releases/build_agent_wrapper/circleci && chmod +x /usr/local/bin/circleci
+      - run:
+          name: Remove empty test files
+          command: |
+            # These files have no tests after the flags we apply.
+            FILES="dataset.admin.feature panels.feature leaflet_draw_widget.feature page.editor.feature resource.editor.feature theme.admin.feature dataset.author.feature datastore_fast_import.feature widgets.feature resource.admin.feature dataset.editor.feature user.site_manager.feature datastore.feature topics.feature dataset_rest_api.feature resource.author.feature user.author.feature"
+            for file in $FILES
+            do
+              rm dkan/test/features/$file
+            done
+      - run:
+          name: Start containers
+          command: |
+            cp dkan/.ahoy/docker-compose.common.yml docker-compose.yml
+            cp dkan/.ahoy/mysql.env mysql.env
+            ahoy docker up
+            rm -rf dkan/.ahoy/.docker
+            mkdir -p dkan/test/assets/junut
+            mkdir -p docroot/sites/default/files
+            FILES="dkan .ahoy .ahoy.yml docroot config assets hooks tests"
+            for file in $FILES
+            do
+              docker cp $file $(docker-compose ps -q cli):/var/www
+            done
+            docker cp assets/sites/default/settings.docker.demo.php $(docker-compose ps -q cli):/var/www/docroot/sites/default/settings.docker.php
+      - run:
+          name: Install DKAN or Client site
+          command: |
+            ahoy utils setup
+            if [ "$CIRCLE_PROJECT_REPONAME" == 'dkan_starter' ]; then
+              ahoy site reinstall
+            else
+              ahoy utils s3-setup
+              mkdir backups
+              ahoy utils asset-download-db
+              gunzip backups/sanitized.sql.gz -f
+              docker cp backups $(docker-compose ps -q cli):/var/www
+              ahoy drush sql-cli < backups/sanitized.sql
+            fi
+            ahoy ci deploy
+            ahoy drush en -y dkan_dataset_rest_api maillog
+      - run:
+          name: Install Test Libs
+          command: |
+            ahoy docker exec "php -i | grep memory"
+            ahoy cmd-proxy bash dkan/.ahoy/.scripts/composer-install.sh tests
+      - run:
+          name: Run Parallel Behat Tests
+          halt_build_on_fail: false
+          command: |
+            BEHAT_FOLDER=tests ruby dkan/.ahoy/.scripts/circle-behat.rb config/tests/features --tags='~@customizable&&~@exceeds30seconds&&~@fixme&&~@pod_json_valid&&~@testBug&&~@noworkflow&&@~javascript&&~@user_all_06&&~@user_all_07&&~@resource_author_24&&~@resource_author_24&&~@resource_author_21&&~@group_all_03&&@~@resource_author_23&&~@harvest_08&&~@resource.author.feature&&~@group_all_06&&~@@no-main-menu'
+      - run:
+          name: Copy Artifacts
+          when: on_fail
+          command: |
+            docker cp $(docker-compose ps -q cli):/var/www/tests/assets artifacts
+      - store_artifacts:
+          path: /go/src/github.com/dkan_starter/artifacts

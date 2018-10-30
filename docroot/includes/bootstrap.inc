@@ -8,7 +8,7 @@
 /**
  * The current system version.
  */
-define('VERSION', '7.54');
+define('VERSION', '7.60');
 
 /**
  * Core API compatibility.
@@ -254,8 +254,13 @@ define('DRUPAL_PHP_FUNCTION_PATTERN', '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*'
  * http://tools.ietf.org/html/rfc7231#section-7.1.1.1
  *
  * Example: Sun, 06 Nov 1994 08:49:37 GMT
+ *
+ * This constant was introduced in PHP 7.0.19 and PHP 7.1.5 but needs to be
+ * defined by Drupal for earlier PHP versions.
  */
-define('DATE_RFC7231', 'D, d M Y H:i:s \G\M\T');
+if (!defined('DATE_RFC7231')) {
+  define('DATE_RFC7231', 'D, d M Y H:i:s \G\M\T');
+}
 
 /**
  * Provides a caching wrapper to be used in place of large array structures.
@@ -2627,6 +2632,10 @@ function _drupal_bootstrap_configuration() {
   timer_start('page');
   // Initialize the configuration, including variables from settings.php.
   drupal_settings_initialize();
+
+  // Sanitize unsafe keys from the request.
+  require_once DRUPAL_ROOT . '/includes/request-sanitizer.inc';
+  DrupalRequestSanitizer::sanitize();
 }
 
 /**
@@ -2768,6 +2777,11 @@ function _drupal_bootstrap_variables() {
     if (isset($_GET['destination']) && url_is_external($_GET['destination'])) {
       unset($_GET['destination']);
       unset($_REQUEST['destination']);
+    }
+    // Use the DrupalRequestSanitizer to ensure that the destination's query
+    // parameters are not dangerous.
+    if (isset($_GET['destination'])) {
+      DrupalRequestSanitizer::cleanDestination();
     }
     // If there's still something in $_REQUEST['destination'] that didn't come
     // from $_GET, check it too.

@@ -43,7 +43,7 @@ function nuboot_radix_preprocess_page(&$variables) {
   }
   // Add copyright to theme.
   if ($copyright = theme_get_setting('copyright')) {
-    $variables['copyright'] = isset($copyright['value']) ? check_markup($copyright['value'], 'html') : t('Powered by <a href="http://getdkan.com/">DKAN</a>, a project of <a href="http://granicus.com">Granicus</a>');
+    $variables['copyright'] = isset($copyright['value']) ? check_markup($copyright['value'], 'html') : t('Powered by <a href="http://getdkan.com/">DKAN</a>');
   }
   // Use front page template for node front page.
   $alias = drupal_get_path_alias($_GET['q']);
@@ -53,6 +53,14 @@ function nuboot_radix_preprocess_page(&$variables) {
   if (drupal_is_front_page()) {
     $variables['title'] = '';
     unset($variables['page']['content']['system_main']['default_message']);
+  }
+  // Print friendly version.
+  if (arg(0) == 'node' && is_numeric(arg(1)) && arg(2) == 'print') {
+    module_load_include('inc', 'page_manager', 'plugins/tasks/node_view');
+    $node = node_load(arg(1));
+    $variables['content'] = page_manager_node_view_page($node);
+    $variables['theme_hook_suggestions'][] = 'print';
+    drupal_add_css(drupal_get_path('theme', 'nuboot_radix') . "/assets/css/print.css");
   }
   // Add external css files.
   $external_css = array(

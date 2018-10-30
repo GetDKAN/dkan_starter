@@ -13,7 +13,7 @@ vows
             topic:
                 f: chroma.scale ['white','black']
             'starts white': (topic) -> assert.equal topic.f(0).hex(), '#ffffff'
-            'mid gray': (topic) -> assert.equal topic.f(0.5).hex(), '#7f7f7f'
+            'mid gray': (topic) -> assert.equal topic.f(0.5).hex(), '#808080'
             'ends black': (topic) -> assert.equal topic.f(1).hex(), '#000000'
 
         'simple hsv scale (white-->black)':
@@ -23,6 +23,10 @@ vows
             'mid gray': (topic) -> assert.equal topic.f(0.5).hex(), '#808080'
             'ends black': (topic) -> assert.equal topic.f(1).hex(), '#000000'
             'colors': (topic) -> assert.deepEqual topic.f.colors(), ['#ffffff', '#000000']
+            'colors start and end': (topic) -> assert.deepEqual topic.f.colors(2), ['#ffffff', '#000000']
+            'color mode': (topic) -> assert.deepEqual topic.f.colors(2, 'rgb')[1], [0,0,0]
+            'color mode null len': (topic) -> assert.equal topic.f.colors(2, null).length, 2
+            'color mode null': (topic) -> assert topic.f.colors(2, null)[0]._rgb
 
         'simple hsv scale (white-->black), classified':
             topic:
@@ -68,7 +72,7 @@ vows
             '10': (topic) -> assert.equal topic.f(10).hex(), '#a50026'
             'mid gray': (topic) -> assert.equal topic.f(50).hex(), '#ffffbf'
             'ends black': (topic) -> assert.equal topic.f(100).hex(), '#006837'
-            'get colors': (topic) -> assert.deepEqual topic.f.colors(5), ['#a50026', '#f88d52', '#ffffbf', '#86cb66', '#006837']
+            'get colors': (topic) -> assert.deepEqual topic.f.colors(5), ['#a50026', '#f98e52', '#ffffbf', '#86cb67', '#006837']
 
         'calling domain with no arguments':
             topic:
@@ -113,10 +117,10 @@ vows
             'dont round alpha value': (topic) -> assert.equal topic, 'rgba(170,222,183,0.675)'
 
         'get colors from a scale':
-            topic: 
+            topic:
                 f: chroma.scale(['yellow','darkgreen'])
             'just colors': (topic) -> assert.deepEqual topic.f.colors(), ['#ffff00', '#006400']
-            'five hex colors': (topic) -> assert.deepEqual topic.f.colors(5), ['#ffff00', '#bfd800', '#7fb100', '#3f8a00', '#006400']
+            'five hex colors': (topic) -> assert.deepEqual topic.f.colors(5), ['#ffff00','#bfd800','#80b200','#408b00','#006400']
             'three css colors': (topic) -> assert.deepEqual topic.f.colors(3,'css'), ['rgb(255,255,0)', 'rgb(128,178,0)', 'rgb(0,100,0)' ]
 
         'get colors from a scale with more than two colors':
@@ -125,28 +129,28 @@ vows
             'just origianl colors': (topic) -> assert.deepEqual topic.f.colors(), ['#ffff00', '#ffa500', '#006400']
 
         'test example in readme':
-            topic: 
+            topic:
                 f: chroma.scale('RdYlGn')
-            'five hex colors (new)': (topic) -> assert.deepEqual topic.f.colors(5),           ['#a50026', '#f88d52', '#ffffbf', '#86cb66', '#006837']
+            'five hex colors (new)': (topic) -> assert.deepEqual topic.f.colors(5), ['#a50026','#f98e52','#ffffbf','#86cb67','#006837']
 
         'weird result':
             topic:
                 f: chroma.scale([[ 0, 0, 0, 1 ], [ 255, 255, 255, 1 ]]).domain([0,10]).mode('rgb')
-            'has hex function at 0.5': (topic) -> assert.equal typeof topic.f(0.5).hex, 'function' 
-            'has hex function at 0': (topic) -> assert.equal typeof topic.f(0).hex, 'function' 
+            'has hex function at 0.5': (topic) -> assert.equal typeof topic.f(0.5).hex, 'function'
+            'has hex function at 0': (topic) -> assert.equal typeof topic.f(0).hex, 'function'
 
         'scale padding, simple':
             topic:
                 f: chroma.scale('RdYlBu').padding(0.15)
-            '0': (topic) -> assert.equal topic.f(0).hex(), '#e54e35'
+            '0': (topic) -> assert.equal topic.f(0).hex(), '#e64f35'
             '0.5': (topic) -> assert.equal topic.f(0.5).hex(), '#ffffbf'
-            '1': (topic) -> assert.equal topic.f(1).hex(), '#5c91c2'
+            '1': (topic) -> assert.equal topic.f(1).hex(), '#5d91c3'
 
         'scale padding, one-sided':
             topic:
                 f: chroma.scale('OrRd').padding([0.2, 0])
-            '0': (topic) -> assert.equal topic.f(0).hex(), '#fddcae'
-            '0.5': (topic) -> assert.equal topic.f(0.5).hex(), '#f16c4b'
+            '0': (topic) -> assert.equal topic.f(0).hex(), '#fddcaf'
+            '0.5': (topic) -> assert.equal topic.f(0.5).hex(), '#f26d4b'
             '1': (topic) -> assert.equal topic.f(1).hex(), '#7f0000'
 
         'colors return original colors':

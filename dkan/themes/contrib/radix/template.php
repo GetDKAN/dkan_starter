@@ -16,10 +16,12 @@ foreach (glob($includes_path) as $filename) {
 function radix_preprocess_html(&$variables) {
   global $base_url;
 
-//  // Add Bootstrap JS from CDN if bootstrap library is not installed.
+  // Adding Bootstrap JS from CDN causes cross-domain javascript source
+  // file inclusion security errors. So load a local copy from nuboot_radix.
+  // Using bootstrap_library breaks recline functionality.
   if (!module_exists('bootstrap_library')) {
-    $base = parse_url($base_url);
-    $url = $base['scheme'] . '://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js';
+    $theme = drupal_get_path('theme', 'nuboot_radix');
+    $url = $base_url . '/' . $theme . '/assets/js/bootstrap.min.js';
     $jquery_ui_library = drupal_get_library('system', 'ui');
     $jquery_ui_js = reset($jquery_ui_library['js']);
     drupal_add_js($url, array(
@@ -181,6 +183,11 @@ function radix_preprocess_page(&$variables) {
     // we set it to the default.
     $main_menu_parameters['max_depth'] = 2;
   }
+  $active_trail_items = menu_get_active_trail();
+  foreach($active_trail_items as $key => $item) {
+    $active_trail[$key] = isset($item['mlid']) ? $item['mlid'] : 0;
+  }
+  $main_menu_parameters['active_trail'] = $active_trail;
   $variables['main_menu'] = _radix_dropdown_menu_tree(variable_get('menu_main_links_source', 'main-menu'), $main_menu_parameters);
 
   // Add a copyright message.

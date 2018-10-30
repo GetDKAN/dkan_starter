@@ -15,8 +15,8 @@ try {
     $overriden_modules = array_keys($overrides_make['projects']);
     foreach ($overriden_modules as $key) {
       $module_definition = array_replace_recursive(
-        $overrides_make['projects'][$key],
-        $drupal_org_make['projects'][$key]
+        $drupal_org_make['projects'][$key],
+        $overrides_make['projects'][$key]
       );
       $overrides_make['projects'][$key] = $module_definition;
     }
