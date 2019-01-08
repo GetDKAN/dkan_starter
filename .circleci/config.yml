@@ -45,7 +45,7 @@ jobs:
           name: Remove empty test files
           command: |
             # These files have no tests after the flags we apply.
-            FILES="dataset.admin.feature panels.feature leaflet_draw_widget.feature page.editor.feature resource.editor.feature theme.admin.feature dataset.author.feature datastore_fast_import.feature widgets.feature resource.admin.feature dataset.editor.feature user.site_manager.feature datastore.feature topics.feature dataset_rest_api.feature resource.author.feature user.author.feature"
+            FILES="dataset.admin.feature panels.feature leaflet_draw_widget.feature resource.editor.feature theme.admin.feature dataset.author.feature widgets.feature resource.admin.feature dataset.editor.feature user.site_manager.feature datastore.feature topics.feature dataset_rest_api.feature resource.author.feature user.author.feature"
             for file in $FILES
             do
               rm dkan/test/features/$file
